@@ -16,3 +16,6 @@ hs_err_pid*
 
 # IDE
 .idea
+config/
+modules/
+target/

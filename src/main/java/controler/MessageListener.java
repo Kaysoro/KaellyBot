@@ -1,5 +1,8 @@
 package controler;
 
+import commands.Command;
+import commands.ItemCommand;
+import commands.ParrotCommand;
 import data.ClientConfig;
 import sx.blah.discord.api.events.EventSubscriber;
 import sx.blah.discord.handle.impl.events.MessageReceivedEvent;
@@ -9,25 +12,25 @@ import sx.blah.discord.util.MessageBuilder;
 import sx.blah.discord.util.MissingPermissionsException;
 import sx.blah.discord.util.RequestBuffer;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by steve on 14/07/2016.
  */
 public class MessageListener {
+
+    private List<Command> commands;
+
+    public MessageListener(){
+        super();
+        commands = new ArrayList<Command>();
+        commands.add(new ItemCommand());
+        commands.add(new ParrotCommand());
+    }
         @EventSubscriber
         public void onReady(MessageReceivedEvent event) {
-                if (event.getMessage().getContent().equals("!test")) {
-                    MessageBuilder builder = new MessageBuilder(ClientConfig
-                            .getIDiscordClient())
-                            .withChannel(event.getMessage().getChannel());
-                        RequestBuffer.request(() -> {
-                            try {
-                                IMessage msg = builder.withContent(event.getMessage().getAuthor() + " tu m'as parlé ?").build();
-
-                            } catch (DiscordException | MissingPermissionsException e) {
-                                e.printStackTrace();
-                            }
-                            return null;
-                        });
-                }
+            for(Command command : commands)
+                command.request(event.getMessage());
         }
 }

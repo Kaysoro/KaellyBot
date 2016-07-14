@@ -1,20 +1,23 @@
 package controler;
 
+import commands.ItemCommand;
 import data.ClientConfig;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import sx.blah.discord.api.events.EventSubscriber;
 import sx.blah.discord.handle.impl.events.ReadyEvent;
-import sx.blah.discord.handle.obj.IMessage;
-import sx.blah.discord.util.DiscordException;
-import sx.blah.discord.util.MessageBuilder;
-import sx.blah.discord.util.MissingPermissionsException;
-import sx.blah.discord.util.RequestBuffer;
 
 /**
  * Created by steve on 14/07/2016.
  */
 public class ReadyListener {
+    private final static Logger LOG = LoggerFactory.getLogger(ReadyListener.class);
+
     @EventSubscriber
     public void onReady(ReadyEvent event) {
-        System.out.println("KaellyBot prêt à l'emploi !");
+        LOG.info("KaellyBot connecté !");
+
+        LOG.info("Ajout d'un Message Listener");
+        ClientConfig.CLIENT().getDispatcher().registerListener(new MessageListener());
     }
 }

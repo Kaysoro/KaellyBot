@@ -1,13 +1,14 @@
 package data;
 
+import org.apache.commons.lang3.ObjectUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import sx.blah.discord.api.ClientBuilder;
 import sx.blah.discord.api.IDiscordClient;
 import sx.blah.discord.util.DiscordException;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
+import java.net.URLDecoder;
 import java.util.Properties;
 
 /**
@@ -16,28 +17,30 @@ import java.util.Properties;
 public class ClientConfig {
     
     private static ClientConfig instance = null;
-    private IDiscordClient client;
-    private String token;
+    private final static Logger LOG = LoggerFactory.getLogger(ClientConfig.class);
+    private final static String FILENAME = "\\config\\config.properties";
+    private IDiscordClient CLIENT;
+
     private ClientConfig(){
         super();
         Properties prop = new Properties();
-        String propFileName = "config\\config.properties";
-        System.out.println( new File(propFileName));
 
         try {
-            InputStream inputStream = getClass().getClassLoader().getResourceAsStream(propFileName);
-            prop.load(inputStream);
-            inputStream.close();
-            token = prop.getProperty("discord.token");
+            FileInputStream file = new FileInputStream(locationFile() + FILENAME);
 
-            client = new ClientBuilder().withToken(token).login();
+            prop.load(file);
+            file.close();
+
+            String token = prop.getProperty("discord.token");
+            CLIENT = new ClientBuilder().withToken(token).login();
 
             } catch(FileNotFoundException e){
-                e.printStackTrace();
+            LOG.error("Fichier de configuration non trouvé.");
             } catch (IOException e) {
-                e.printStackTrace();
+            LOG.error("Fichier de configuration non trouvé.");
             } catch(DiscordException e){
-            e.printStackTrace();
+            LOG.error("Impossible de se connecter à Discord : verifiez votre token dans "
+                    + FILENAME + " ainsi que votre connexion.");
         }
     }
 
@@ -47,11 +50,18 @@ public class ClientConfig {
         return instance;
     }
 
-    public static IDiscordClient getIDiscordClient() {
-        return getInstance().client;
+    private static File locationFile()
+    {
+        String path = ClassLoader.getSystemClassLoader().getResource(".").getPath();
+        try {
+            path = URLDecoder.decode(path, "UTF-8"); } catch (UnsupportedEncodingException e) {
+            LOG.error(e.getMessage());
+        }
+        File ret = new File(path);
+        return ret;
     }
 
-    public static String getToken() {
-        return getInstance().token;
+    public static IDiscordClient CLIENT() {
+        return getInstance().CLIENT;
     }
 }

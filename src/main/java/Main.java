@@ -1,4 +1,3 @@
-import controler.MessageListener;
 import controler.ReadyListener;
 import data.ClientConfig;
 import sx.blah.discord.api.IDiscordClient;
@@ -9,8 +8,7 @@ import sx.blah.discord.api.IDiscordClient;
 public class Main {
 
     public static void main(String[] args) {
-        IDiscordClient client = ClientConfig.getIDiscordClient();
+        IDiscordClient client = ClientConfig.CLIENT();
         client.getDispatcher().registerListener(new ReadyListener());
-        client.getDispatcher().registerListener(new MessageListener());
     }
 }
