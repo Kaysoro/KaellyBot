@@ -15,17 +15,6 @@ import sx.blah.discord.util.RequestBuffer;
 public class ReadyListener {
     @EventSubscriber
     public void onReady(ReadyEvent event) {
-        System.out.println(ClientConfig.getIDiscordClient().getChannels(true).toString());
-        RequestBuffer.request(() -> {
-            try {
-                new MessageBuilder(ClientConfig.getIDiscordClient())
-                        //.withChannel()
-                        .build();
-
-            } catch (DiscordException | MissingPermissionsException e) {
-                e.printStackTrace();
-            }
-            return null;
-        });
+        System.out.println("KaellyBot prêt à l'emploi !");
     }
 }
