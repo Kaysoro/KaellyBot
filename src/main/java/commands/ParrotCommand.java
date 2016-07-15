@@ -1,7 +1,6 @@
 package commands;
 
 import data.ClientConfig;
-import data.ItemDofus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sx.blah.discord.handle.obj.IMessage;
@@ -10,34 +9,28 @@ import sx.blah.discord.util.MessageBuilder;
 import sx.blah.discord.util.MissingPermissionsException;
 import sx.blah.discord.util.RequestBuffer;
 
-import java.util.List;
 import java.util.regex.Pattern;
 
 /**
  * Created by steve on 14/07/2016.
  */
-public class ItemCommand extends AbstractCommand{
+public class ParrotCommand extends AbstractCommand{
 
-    private final static Logger LOG = LoggerFactory.getLogger(ItemCommand.class);
-    private List<ItemDofus> items;
+    private final static Logger LOG = LoggerFactory.getLogger(ParrotCommand.class);
 
-    public ItemCommand(){
+    public ParrotCommand(){
         super();
-        this.pattern = Pattern.compile("^(!item)\\W+(.*)$");
-        items = ItemDofus.getItems();
+        this.pattern = Pattern.compile("^(!parrot)\\W+(.*)$");
     }
 
     @Override
     public boolean request(IMessage message) {
-        if (super.request(message)){
-            //TODO
+        if (super.request(message)) {
             RequestBuffer.request(() -> {
                 try {
                     new MessageBuilder(ClientConfig.CLIENT())
                             .withChannel(message.getChannel())
-                            .withContent("Cette commande est en cours de développement "
-                                    + message.getAuthor()
-                                    + ", tu pourrais attendre un peu quand même !")
+                            .withContent(content)
                             .build();
                 } catch (DiscordException e){
                     LOG.error(e.getErrorMessage());
@@ -48,7 +41,6 @@ public class ItemCommand extends AbstractCommand{
             });
             return true;
         }
-
         return false;
     }
 }

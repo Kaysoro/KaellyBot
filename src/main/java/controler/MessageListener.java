@@ -2,6 +2,7 @@ package controler;
 
 import commands.Command;
 import commands.ItemCommand;
+import commands.MapCommand;
 import commands.ParrotCommand;
 import data.ClientConfig;
 import sx.blah.discord.api.events.EventSubscriber;
@@ -27,6 +28,7 @@ public class MessageListener {
         commands = new ArrayList<Command>();
         commands.add(new ItemCommand());
         commands.add(new ParrotCommand());
+        commands.add(new MapCommand());
     }
         @EventSubscriber
         public void onReady(MessageReceivedEvent event) {
