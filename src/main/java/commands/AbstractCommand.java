@@ -22,7 +22,7 @@ public abstract class AbstractCommand implements Command {
     public boolean request(IMessage message) {
         Matcher m =  pattern.matcher(message.getContent());
         if (m.matches()) {
-            content = m.group(2);
+            content = (m.groupCount() >= 2) ? m.group(2) : null;
             return true;
         }
         return false;

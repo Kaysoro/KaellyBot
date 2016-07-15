@@ -1,17 +1,8 @@
 package controler;
 
-import commands.Command;
-import commands.ItemCommand;
-import commands.MapCommand;
-import commands.ParrotCommand;
-import data.ClientConfig;
+import commands.*;
 import sx.blah.discord.api.events.EventSubscriber;
 import sx.blah.discord.handle.impl.events.MessageReceivedEvent;
-import sx.blah.discord.handle.obj.IMessage;
-import sx.blah.discord.util.DiscordException;
-import sx.blah.discord.util.MessageBuilder;
-import sx.blah.discord.util.MissingPermissionsException;
-import sx.blah.discord.util.RequestBuffer;
 
 import java.util.ArrayList;
 import java.util.List;
