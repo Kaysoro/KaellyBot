@@ -1,6 +1,7 @@
 package commands;
 
 import data.ClientConfig;
+import data.Constants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sx.blah.discord.handle.obj.IMessage;
@@ -20,8 +21,8 @@ public class MapCommand extends AbstractCommand{
     private final static Logger LOG = LoggerFactory.getLogger(MapCommand.class);
 
     public MapCommand(){
-        super();
-        this.pattern = Pattern.compile("^(!map)([\\W+\\w+]*)$");
+        super(Pattern.compile("!map"),
+              Pattern.compile("^(!map)([\\W+\\w+]*)$"));
     }
 
     @Override
@@ -46,7 +47,7 @@ public class MapCommand extends AbstractCommand{
                     } catch (DiscordException e){
                         LOG.error(e.getErrorMessage());
                     } catch(MissingPermissionsException e){
-                        LOG.warn("Le bot n'a pas les permissions pour appliquer cette requête.");
+                        LOG.warn(Constants.name + " n'a pas les permissions pour appliquer cette requête.");
                     }
                     return null;
                 });
@@ -63,7 +64,7 @@ public class MapCommand extends AbstractCommand{
                     } catch (DiscordException e2){
                         LOG.error(e2.getErrorMessage());
                     } catch(MissingPermissionsException e2){
-                        LOG.warn("Le bot n'a pas les permissions pour appliquer cette requête.");
+                        LOG.warn(Constants.name + " n'a pas les permissions pour appliquer cette requête.");
                     }
                     return null;
                 });
@@ -71,5 +72,11 @@ public class MapCommand extends AbstractCommand{
             return true;
         }
         return false;
+    }
+
+    @Override
+    public String help() {
+        //TODO
+        return null;
     }
 }

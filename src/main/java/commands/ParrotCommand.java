@@ -1,6 +1,7 @@
 package commands;
 
 import data.ClientConfig;
+import data.Constants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sx.blah.discord.handle.obj.IMessage;
@@ -19,8 +20,8 @@ public class ParrotCommand extends AbstractCommand{
     private final static Logger LOG = LoggerFactory.getLogger(ParrotCommand.class);
 
     public ParrotCommand(){
-        super();
-        this.pattern = Pattern.compile("^(!parrot)\\W+(.*)$");
+        super(Pattern.compile("!parrot"),
+        Pattern.compile("^(!parrot)\\W+(.*)$"));
     }
 
     @Override
@@ -35,12 +36,18 @@ public class ParrotCommand extends AbstractCommand{
                 } catch (DiscordException e){
                     LOG.error(e.getErrorMessage());
                 } catch(MissingPermissionsException e){
-                    LOG.warn("Le bot n'a pas les permissions pour appliquer cette requête.");
+                    LOG.warn(Constants.name + " n'a pas les permissions pour appliquer cette requête.");
                 }
                 return null;
             });
             return true;
         }
         return false;
+    }
+
+    @Override
+    public String help() {
+        //TODO
+        return null;
     }
 }

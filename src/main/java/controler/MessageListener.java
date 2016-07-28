@@ -1,29 +1,30 @@
 package controler;
 
 import commands.*;
+import data.User;
 import sx.blah.discord.api.events.EventSubscriber;
 import sx.blah.discord.handle.impl.events.MessageReceivedEvent;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by steve on 14/07/2016.
  */
 public class MessageListener {
 
-    private List<Command> commands;
-
     public MessageListener(){
         super();
-        commands = new ArrayList<Command>();
-        commands.add(new ItemCommand());
-        commands.add(new ParrotCommand());
-        commands.add(new MapCommand());
     }
         @EventSubscriber
         public void onReady(MessageReceivedEvent event) {
-            for(Command command : commands)
+            // If the author doesn't exist in our database, we added it with the lowest rights
+            String authorId = event.getMessage().getAuthor().getID();
+            String guildId = event.getMessage().getGuild().getID();
+
+            if (! User.getUsers(guildId).containsKey(authorId)){
+                User user = new User(authorId, User.RIGHT_INVITE, guildId);
+                user.addToDatabase();
+            }
+
+            for(Command command : Command.commands)
                 command.request(event.getMessage());
         }
 }

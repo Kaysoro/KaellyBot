@@ -1,6 +1,7 @@
 package commands;
 
 import data.ClientConfig;
+import data.Constants;
 import data.ItemDofus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,8 +23,8 @@ public class ItemCommand extends AbstractCommand{
     private List<ItemDofus> items;
 
     public ItemCommand(){
-        super();
-        this.pattern = Pattern.compile("^(!item)\\W+(.*)$");
+        super(Pattern.compile("!item"),
+        Pattern.compile("^(!item)\\W+(.*)$"));
         items = ItemDofus.getItems();
     }
 
@@ -42,7 +43,7 @@ public class ItemCommand extends AbstractCommand{
                 } catch (DiscordException e){
                     LOG.error(e.getErrorMessage());
                 } catch(MissingPermissionsException e){
-                    LOG.warn("Le bot n'a pas les permissions pour appliquer cette requête.");
+                    LOG.warn(Constants.name + " n'a pas les permissions pour appliquer cette requête.");
                 }
                 return null;
             });
@@ -50,5 +51,11 @@ public class ItemCommand extends AbstractCommand{
         }
 
         return false;
+    }
+
+    @Override
+    public String help() {
+        //TODO
+        return null;
     }
 }
