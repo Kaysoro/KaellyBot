@@ -59,7 +59,7 @@ public class AddRSSCommand extends AbstractCommand{
 
     @Override
     public String help() {
-        return "**!rss** gère les flux RSS par channel; nécessite un niveau d'administration 2 (Modérateur).";
+        return "**!rss** gère les flux RSS par channel; nécessite un niveau d'administration 2 (Modérateur) minimum.";
     }
 
     @Override
