@@ -34,7 +34,8 @@ public class RightCommand extends AbstractCommand{
             if (User.getUsers().get(message.getGuild().getID())
                     .get(message.getAuthor().getID()).getRights() >= User.RIGHT_MODERATOR) {
                 try {
-                    User.getUsers().get(message.getGuild().getID())
+                    if (!m.group(2).equals(message.getAuthor().getID()))
+                        User.getUsers().get(message.getGuild().getID())
                             .get(m.group(2)).changeRight(Integer.parseInt(m.group(3)));
                 } catch(NullPointerException e){
                     LOG.warn("L'utilisateur <@!" + m.group(2) + "> n'existe pas.");
