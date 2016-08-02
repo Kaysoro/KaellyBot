@@ -63,13 +63,14 @@ public class RightCommand extends AbstractCommand{
 
     @Override
     public String help() {
-        //TODO
-        return null;
+        return "**!right** permet de changer les droits de quelqu'un d'autre tant qu'il n'est pas plus"
+                + " haut que le sien. Nécessite un niveau d'administration 2 (Modérateur) minimum."
+                + " Les niveaux sont :\n0 : Invité\n1 : Membre\n2 : Modérateur\n3 : Administrateur.";
     }
 
     @Override
     public String helpDetailed() {
-        //TODO
-        return null;
+        return help()
+                + "\n`!right `*`@pseudo niveau`* : change le niveau d'administration d'une personne.\n";
     }
 }
