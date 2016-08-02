@@ -22,7 +22,7 @@ public class AddRSSCommand extends AbstractCommand{
 
     public AddRSSCommand(){
         super(Pattern.compile("rss"),
-        Pattern.compile("^(!rss)\\W+[-add](http[s?]://[.*].xml)$"));
+        Pattern.compile("^(!rss)\\W+(-add)\\W+(.*)$"));
         //TODO name ?
     }
 

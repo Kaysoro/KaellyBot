@@ -55,13 +55,13 @@ public class ItemCommand extends AbstractCommand{
 
     @Override
     public String help() {
-        //TODO
-        return null;
+        return "**!item** renvoit les statistiques d'un item du jeu Dofus.";
     }
 
     @Override
     public String helpDetailed() {
-        //TODO
-        return null;
+        return help()
+                + "\n`!item `*`item`* : renvoit les statistiques de l'item spécifié : son nom peut"
+                + " être approximatif.\n";
     }
 }
