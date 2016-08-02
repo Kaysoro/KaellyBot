@@ -59,13 +59,15 @@ public class AddRSSCommand extends AbstractCommand{
 
     @Override
     public String help() {
-        //TODO
-        return null;
+        return "**!rss** gère les flux RSS par channel; nécessite un niveau d'administration 2 (Modérateur).";
     }
 
     @Override
     public String helpDetailed() {
-        //TODO
-        return null;
+        return help()
+                + "\n`!rss` : montre tous les flux RSS rattachés au channel."
+                + "\n`!rss -add `*`http://rss.xml`* : écoute le flux RSS dans le channel et poste dedans"
+                + " s'il y a des news."
+                + "\n`!rss -rm `*`rss`* : supprime le *ième* flux RSS rattaché au channel.\n";
     }
 }
