@@ -81,7 +81,8 @@ public class MapCommand extends AbstractCommand{
 
     @Override
     public String helpDetailed() {
-        //TODO
-        return null;
+        return help()
+                + "\n`!map` : sélectionne une carte du Goultarminator entre I et XII compris."
+                + "\n`!map `*`map1, map2, ...`* : sélectionne une carte parmi celles spécifiées en paramètre.\n";
     }
 }
