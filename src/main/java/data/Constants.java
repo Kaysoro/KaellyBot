@@ -6,4 +6,6 @@ package data;
 public class Constants {
 
     public final static String name = "Kaelly";
+    public final static String author = "Kaysoro";
+    public final static String database = "bdd.sqlite";
 }

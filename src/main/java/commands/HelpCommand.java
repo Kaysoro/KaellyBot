@@ -20,8 +20,8 @@ public class HelpCommand extends AbstractCommand{
     private final static Logger LOG = LoggerFactory.getLogger(HelpCommand.class);
 
     public HelpCommand(){
-        super(Pattern.compile("!help"),
-                Pattern.compile("^(!help)\\W+([!?][.*])$"));
+        super(Pattern.compile("help"),
+                Pattern.compile("^(!help)(\\W+!?(\\w+))?$"));
     }
 
     @Override
@@ -29,17 +29,17 @@ public class HelpCommand extends AbstractCommand{
         if (super.request(message)) {
 
             StringBuilder st = new StringBuilder();
-            boolean argumentFound = content != null || ! content.equals("");
+            boolean argumentFound = m.group(2) != null && m.group(2).replaceAll("^\\W+", "").length() > 0;
             for(Command command : commands)
                 if (! argumentFound)
-                    st.append(command.help());
-                else if (command.getName().matcher(content).find()){
-                    st.append(command.help());
+                    st.append(command.help() + "\n");
+                else if (command.getName().matcher(m.group(2)).find()){
+                    st.append(command.helpDetailed());
                     break;
                 }
 
             if (argumentFound && st.length() == 0)
-                st.append("Aucune commande ne répond au nom de " + content + ".");
+                st.append("Aucune commande ne répond au nom de *" + m.group(2).replaceAll("^\\W+", "") + "*.");
 
             // Envoyer le message en privée
                 RequestBuffer.request(() -> {
@@ -62,10 +62,13 @@ public class HelpCommand extends AbstractCommand{
 
     @Override
     public String help() {
-        //TODO HTML ?
-        return "Help est la commande permettant d'afficher les descriptions de chaque commande que possède "
-                + Constants.name + "."
-                + "`!help` : affiche chaque commande."
-                + "`!help _command_` : affiche uniquement la commande spécifiée.";
+        return "**!help** explique le fonctionnement de chaque commande de " + Constants.name + ".";
+    }
+
+    @Override
+    public String helpDetailed() {
+        return help()
+                + "\n`!help` : explique succintement chaque commande."
+                + "\n`!help `*`command`* : explique de façon détaillée la commande spécifiée.\n";
     }
 }

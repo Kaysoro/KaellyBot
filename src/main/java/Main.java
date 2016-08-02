@@ -1,7 +1,11 @@
 import commands.*;
 import controler.ReadyListener;
 import data.ClientConfig;
+import data.Connexion;
+import data.Guild;
 import sx.blah.discord.api.IDiscordClient;
+
+import java.util.regex.Pattern;
 
 /**
  * Created by steve on 14/07/2016.

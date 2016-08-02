@@ -13,26 +13,21 @@ import org.sqlite.SQLiteConfig;
 
 public class Connexion {
 	private final static Logger LOG = LoggerFactory.getLogger(Connexion.class);
-	private static String DBPath = "Chemin aux base de donnée SQLite";
 	private static Connexion instance = null;
 	private Connection connection = null;
 	private Statement statement = null;
 
-	private Connexion(String dBPath) {
-		DBPath = dBPath;
-	}
-
 	public void connect() {
 		try {
 			Class.forName("org.sqlite.JDBC");
-			connection = DriverManager.getConnection("jdbc:sqlite:" + DBPath);
+			connection = DriverManager.getConnection("jdbc:sqlite:" + Constants.database);
 
 			statement = connection.createStatement();
-			LOG.info("Connexion à " + DBPath + " avec succès");
+			LOG.info("Connexion à " + Constants.database + " avec succès");
 
 			SQLiteConfig config = new SQLiteConfig();  
 			config.enforceForeignKeys(true);  
-			connection = DriverManager.getConnection("jdbc:sqlite:" + DBPath,config.toProperties());
+			connection = DriverManager.getConnection("jdbc:sqlite:" + Constants.database,config.toProperties());
 
 		} catch (ClassNotFoundException e) {
             LOG.error("Librairie SQLite non trouvé.");
@@ -52,8 +47,10 @@ public class Connexion {
 	}
 	
 	public static Connexion getInstance(){
-		if (instance == null)
-			instance = new Connexion(Connexion.DBPath);
+		if (instance == null) {
+			instance = new Connexion();
+			instance.connect();
+		}
 		return instance;
 	}
 
@@ -65,14 +62,9 @@ public class Connexion {
 			LOG.error("Erreur dans la requête : " + requet);
 		}
 		return resultat;
-
 	}
 
 	public Connection getConnection(){
 		return connection;
-	}
-	
-	public static void setDBPath(String DBPath){
-		Connexion.DBPath = DBPath;
 	}
 }
