@@ -32,14 +32,16 @@ public class HelpCommand extends AbstractCommand{
             boolean argumentFound = m.group(2) != null && m.group(2).replaceAll("^\\W+", "").length() > 0;
             for(Command command : commands)
                 if (! argumentFound)
-                    st.append(command.help() + "\n");
+                    st.append(command.help()).append("\n");
                 else if (command.getName().matcher(m.group(2)).find()){
                     st.append(command.helpDetailed());
                     break;
                 }
 
             if (argumentFound && st.length() == 0)
-                st.append("Aucune commande ne répond au nom de *" + m.group(2).replaceAll("^\\W+", "") + "*.");
+                st.append("Aucune commande ne répond au nom de *")
+                        .append(m.group(2).replaceAll("^\\W+", ""))
+                        .append("*.");
 
             // Envoyer le message en privée
                 RequestBuffer.request(() -> {
