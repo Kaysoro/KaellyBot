@@ -21,7 +21,7 @@ public class MapCommand extends AbstractCommand{
     private final static Logger LOG = LoggerFactory.getLogger(MapCommand.class);
 
     public MapCommand(){
-        super(Pattern.compile("!map"),
+        super(Pattern.compile("map"),
               Pattern.compile("^(!map)([\\W+\\w+]*)$"));
     }
 
@@ -29,10 +29,9 @@ public class MapCommand extends AbstractCommand{
     public boolean request(IMessage message) {
         if (super.request(message)) {
             String[] maps;
-
             try {
-                if (content == null || ! content.equals(""))
-                    maps = content.replaceAll("^\\W+", "").split("\\W+");
+                if (m.group(2).replaceAll("^\\W+", "").length() > 0)
+                    maps = m.group(2).replaceAll("^\\W+", "").split("\\W+");
                 else
                     maps = new String[]{"I", "II", "III", "IV", "V", "VI",
                             "VII", "VIII", "IX", "X", "XI", "XII"};
@@ -76,6 +75,12 @@ public class MapCommand extends AbstractCommand{
 
     @Override
     public String help() {
+        return "**!map** sélectionne au hasard une carte du Goultarminator ou bien parmi celles"
+                + " spécifiées en paramètre.";
+    }
+
+    @Override
+    public String helpDetailed() {
         //TODO
         return null;
     }

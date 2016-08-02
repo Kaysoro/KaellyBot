@@ -21,7 +21,7 @@ public class AddRSSCommand extends AbstractCommand{
     private final static Logger LOG = LoggerFactory.getLogger(AddRSSCommand.class);
 
     public AddRSSCommand(){
-        super(Pattern.compile("!rss"),
+        super(Pattern.compile("rss"),
         Pattern.compile("^(!rss)\\W+[-add](http[s?]://[.*].xml)$"));
         //TODO name ?
     }
@@ -31,7 +31,7 @@ public class AddRSSCommand extends AbstractCommand{
         if (super.request(message)) {
 
             //On check si la personne a bien les droits pour exécuter cette commande
-            if (User.getUsers(message.getGuild().getID())
+            if (User.getUsers().get(message.getGuild().getID())
                     .get(message.getAuthor().getID()).getRights() >= User.RIGHT_MODERATOR) {
                 // TODO Do command
             } else {
@@ -59,6 +59,12 @@ public class AddRSSCommand extends AbstractCommand{
 
     @Override
     public String help() {
+        //TODO
+        return null;
+    }
+
+    @Override
+    public String helpDetailed() {
         //TODO
         return null;
     }

@@ -13,7 +13,7 @@ public abstract class AbstractCommand implements Command {
 
     protected Pattern name;
     protected Pattern pattern;
-    protected String content;
+    protected Matcher m;
 
     public AbstractCommand(Pattern name, Pattern pattern){
         super();
@@ -23,12 +23,8 @@ public abstract class AbstractCommand implements Command {
 
     @Override
     public boolean request(IMessage message) {
-        Matcher m =  pattern.matcher(message.getContent());
-        if (m.matches()) {
-            content = (m.groupCount() >= 2) ? m.group(2) : null;
-            return true;
-        }
-        return false;
+        m =  pattern.matcher(message.getContent());
+        return (m.find());
     }
 
     @Override

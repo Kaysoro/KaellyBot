@@ -20,7 +20,7 @@ public class ParrotCommand extends AbstractCommand{
     private final static Logger LOG = LoggerFactory.getLogger(ParrotCommand.class);
 
     public ParrotCommand(){
-        super(Pattern.compile("!parrot"),
+        super(Pattern.compile("parrot"),
         Pattern.compile("^(!parrot)\\W+(.*)$"));
     }
 
@@ -31,7 +31,7 @@ public class ParrotCommand extends AbstractCommand{
                 try {
                     new MessageBuilder(ClientConfig.CLIENT())
                             .withChannel(message.getChannel())
-                            .withContent(content)
+                            .withContent(m.group(2))
                             .build();
                 } catch (DiscordException e){
                     LOG.error(e.getErrorMessage());
@@ -47,7 +47,13 @@ public class ParrotCommand extends AbstractCommand{
 
     @Override
     public String help() {
+        return "**!parrot** renvoit le message envoyé en argument, tel un perroquet.";
+    }
+
+    @Override
+    public String helpDetailed() {
         //TODO
-        return null;
+        return help()
+                + "\n`!parrot `*`message`* : renvoit le message spécifié.\n";
     }
 }

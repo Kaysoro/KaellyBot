@@ -23,7 +23,7 @@ public class ItemCommand extends AbstractCommand{
     private List<ItemDofus> items;
 
     public ItemCommand(){
-        super(Pattern.compile("!item"),
+        super(Pattern.compile("item"),
         Pattern.compile("^(!item)\\W+(.*)$"));
         items = ItemDofus.getItems();
     }
@@ -55,6 +55,12 @@ public class ItemCommand extends AbstractCommand{
 
     @Override
     public String help() {
+        //TODO
+        return null;
+    }
+
+    @Override
+    public String helpDetailed() {
         //TODO
         return null;
     }

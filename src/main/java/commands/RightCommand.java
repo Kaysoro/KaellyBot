@@ -3,6 +3,7 @@ package commands;
 import data.ClientConfig;
 import data.Constants;
 import data.User;
+import org.apache.commons.lang3.ObjectUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sx.blah.discord.handle.obj.IMessage;
@@ -21,9 +22,8 @@ public class RightCommand extends AbstractCommand{
     private final static Logger LOG = LoggerFactory.getLogger(RightCommand.class);
 
     public RightCommand(){
-        super(Pattern.compile("!right"),
-        Pattern.compile("^(!right)\\W+(\\d)$"));
-        // TODO change pattern to match with !right @pseudo 1
+        super(Pattern.compile("right"),
+        Pattern.compile("^(!right)\\W+<@!(\\d+)>\\W+(\\d)$"));
     }
 
     @Override
@@ -31,15 +31,21 @@ public class RightCommand extends AbstractCommand{
         if (super.request(message)) {
 
             //On check si la personne a bien les droits pour exécuter cette commande
-            if (User.getUsers(message.getGuild().getID())
+            if (User.getUsers().get(message.getGuild().getID())
                     .get(message.getAuthor().getID()).getRights() >= User.RIGHT_MODERATOR) {
-                // TODO Do command
+                try {
+                    User.getUsers().get(message.getGuild().getID())
+                            .get(m.group(2)).changeRight(Integer.parseInt(m.group(3)));
+                } catch(NullPointerException e){
+                    LOG.warn("L'utilisateur <@!" + m.group(2) + "> n'existe pas.");
+                }
             } else {
                 RequestBuffer.request(() -> {
                     try {
                         new MessageBuilder(ClientConfig.CLIENT())
                                 .withChannel(message.getChannel())
-                                .withContent("Vous ne pouvez pas donner des droits plus forts que les vôtres.")
+                                .withContent("Vous ne pouvez pas changer les droits des autres : il faut être " +
+                                        "modérateur ou administrateur pour cela.")
                                 .build();
                     } catch (DiscordException e) {
                         LOG.error(e.getErrorMessage());
@@ -57,6 +63,12 @@ public class RightCommand extends AbstractCommand{
 
     @Override
     public String help() {
+        //TODO
+        return null;
+    }
+
+    @Override
+    public String helpDetailed() {
         //TODO
         return null;
     }
