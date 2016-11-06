@@ -52,7 +52,6 @@ public class ParrotCommand extends AbstractCommand{
 
     @Override
     public String helpDetailed() {
-        //TODO
         return help()
                 + "\n`!parrot `*`message`* : renvoit le message spécifié.\n";
     }
