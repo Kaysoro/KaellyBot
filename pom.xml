@@ -14,7 +14,11 @@
     </properties>
 
     <repositories>
-            <repository>
+        <repository> <!-- This repo fixes issues with transitive dependencies -->
+            <id>jcenter</id>
+            <url>http://jcenter.bintray.com</url>
+        </repository>
+        <repository>
             <id>jitpack.io</id>
             <url>https://jitpack.io</url>
         </repository>
@@ -34,7 +38,8 @@
         <dependency>
             <groupId>com.github.austinv11</groupId>
             <artifactId>Discord4j</artifactId>
-            <version>dev-SNAPSHOT</version> <!-- Current way to get 2.5 before it's officially stable -->
+            <version>dev-SNAPSHOT</version>
+            <classifier>shaded</classifier>
         </dependency>
         <dependency>
             <groupId>ch.qos.logback</groupId>

@@ -14,7 +14,7 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="Maven: org.jsoup:jsoup:1.7.2" level="project" />
     <orderEntry type="library" name="Maven: org.xerial:sqlite-jdbc:3.8.11.2" level="project" />
-    <orderEntry type="library" name="Maven: com.github.austinv11:Discord4j:dev-2.5.2-g58e3cf7-35" level="project" />
+    <orderEntry type="library" name="Maven: com.github.austinv11:Discord4j:shaded:dev-2.5.4-gae0469e-135" level="project" />
     <orderEntry type="library" name="Maven: org.slf4j:slf4j-api:1.7.21" level="project" />
     <orderEntry type="library" name="Maven: org.apache.httpcomponents:httpcore:4.4.5" level="project" />
     <orderEntry type="library" name="Maven: org.apache.httpcomponents:httpclient:4.5.2" level="project" />
@@ -22,21 +22,21 @@
     <orderEntry type="library" name="Maven: commons-codec:commons-codec:1.9" level="project" />
     <orderEntry type="library" name="Maven: org.apache.httpcomponents:httpmime:4.5.2" level="project" />
     <orderEntry type="library" name="Maven: commons-io:commons-io:2.5" level="project" />
-    <orderEntry type="library" name="Maven: org.eclipse.jetty.websocket:websocket-client:9.3.11.v20160721" level="project" />
-    <orderEntry type="library" name="Maven: org.eclipse.jetty:jetty-util:9.3.11.v20160721" level="project" />
-    <orderEntry type="library" name="Maven: org.eclipse.jetty:jetty-io:9.3.11.v20160721" level="project" />
-    <orderEntry type="library" name="Maven: org.eclipse.jetty.websocket:websocket-common:9.3.11.v20160721" level="project" />
-    <orderEntry type="library" name="Maven: org.eclipse.jetty.websocket:websocket-api:9.3.11.v20160721" level="project" />
-    <orderEntry type="library" name="Maven: net.jodah:typetools:0.4.7" level="project" />
+    <orderEntry type="library" name="Maven: org.eclipse.jetty.websocket:websocket-client:9.3.12.v20160915" level="project" />
+    <orderEntry type="library" name="Maven: org.eclipse.jetty:jetty-util:9.3.12.v20160915" level="project" />
+    <orderEntry type="library" name="Maven: org.eclipse.jetty:jetty-io:9.3.12.v20160915" level="project" />
+    <orderEntry type="library" name="Maven: org.eclipse.jetty.websocket:websocket-common:9.3.12.v20160915" level="project" />
+    <orderEntry type="library" name="Maven: org.eclipse.jetty.websocket:websocket-api:9.3.12.v20160915" level="project" />
+    <orderEntry type="library" name="Maven: net.jodah:typetools:0.4.8" level="project" />
     <orderEntry type="library" name="Maven: org.apache.commons:commons-lang3:3.4" level="project" />
     <orderEntry type="library" name="Maven: com.google.code.gson:gson:2.7" level="project" />
-    <orderEntry type="library" name="Maven: net.java.dev.jna:jna:4.2.1" level="project" />
-    <orderEntry type="library" name="Maven: com.googlecode.soundlibs:mp3spi:1.9.5-1" level="project" />
-    <orderEntry type="library" name="Maven: com.googlecode.soundlibs:jlayer:1.0.1-1" level="project" />
+    <orderEntry type="library" name="Maven: net.java.dev.jna:jna:4.2.2" level="project" />
+    <orderEntry type="library" name="Maven: com.googlecode.soundlibs:mp3spi:1.9.5-2" level="project" />
+    <orderEntry type="library" name="Maven: com.googlecode.soundlibs:jlayer:1.0.1-2" level="project" />
     <orderEntry type="library" name="Maven: junit:junit:3.8.2" level="project" />
     <orderEntry type="library" name="Maven: org.jcraft:jorbis:0.0.17" level="project" />
     <orderEntry type="library" name="Maven: jflac:jflac:1.3" level="project" />
-    <orderEntry type="library" name="Maven: com.googlecode.soundlibs:tritonus-share:0.3.7-2" level="project" />
+    <orderEntry type="library" name="Maven: com.googlecode.soundlibs:tritonus-share:0.3.7-3" level="project" />
     <orderEntry type="library" name="Maven: org.tritonus:tritonus-dsp:0.3.6" level="project" />
     <orderEntry type="library" name="Maven: ch.qos.logback:logback-classic:1.1.7" level="project" />
     <orderEntry type="library" name="Maven: ch.qos.logback:logback-core:1.1.7" level="project" />
