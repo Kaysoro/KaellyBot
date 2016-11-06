@@ -19,6 +19,7 @@ public class Main {
         Command.commands.add(new MapCommand());
         Command.commands.add(new ParrotCommand());
         Command.commands.add(new RightCommand());
+        Command.commands.add(new AlmanaxCommand());
     }
 
     public static void main(String[] args) {
