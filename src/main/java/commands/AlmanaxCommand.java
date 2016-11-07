@@ -62,32 +62,50 @@ public class AlmanaxCommand extends AbstractCommand{
 
             Almanax almanax = Almanax.get(botToAlmanax.format(date));
 
-            StringBuilder st = new StringBuilder("*Almanax du ")
-                    .append(discordToBot.format(date))
-                    .append(" :*\n");
+            if (almanax != null) {
+                StringBuilder st = new StringBuilder("**Almanax du ")
+                        .append(discordToBot.format(date))
+                        .append(" :**\n");
+                LOG.info("\"" + m.group(2) + "\"");
+                if (m.group(2) == null || m.group(2).matches("\\W+-b"))
+                    st.append(almanax.getBonus()).append("\n");
+                if (m.group(2) == null || m.group(2).matches("\\W+-o"))
+                    st.append(almanax.getOffrande()).append("\n");
 
-            if (m.group(2) == null || m.group(2).equals("-b"))
-                st.append(almanax.getBonus()).append("\n");
-            if (m.group(2) == null || m.group(2).equals("-o"))
-                st.append(almanax.getOffrande()).append("\n");
-
-            RequestBuffer.request(() -> {
-                try {
-                    new MessageBuilder(ClientConfig.CLIENT())
-                            .withChannel(message.getChannel())
-                            .withContent(st.toString())
-                            .build();
-                } catch (DiscordException e) {
-                    LOG.error(e.getErrorMessage());
-                } catch (MissingPermissionsException e) {
-                    LOG.warn(Constants.name + " n'a pas les permissions pour appliquer cette requête.");
-                }
-                return null;
-            });
+                RequestBuffer.request(() -> {
+                    try {
+                        new MessageBuilder(ClientConfig.CLIENT())
+                                .withChannel(message.getChannel())
+                                .withContent(st.toString())
+                                .build();
+                    } catch (DiscordException e) {
+                        LOG.error(e.getErrorMessage());
+                    } catch (MissingPermissionsException e) {
+                        LOG.warn(Constants.name + " n'a pas les permissions pour appliquer cette requête.");
+                    }
+                    return null;
+                });
                 return true;
             }
-            return false;
+            else {
+                RequestBuffer.request(() -> {
+                    try {
+                        new MessageBuilder(ClientConfig.CLIENT())
+                                .withChannel(message.getChannel())
+                                .withContent("Impossible de trouver des informations sur l'almanax désiré.")
+                                .build();
+                    } catch (DiscordException e) {
+                        LOG.error(e.getErrorMessage());
+                    } catch (MissingPermissionsException e) {
+                        LOG.warn(Constants.name + " n'a pas les permissions pour appliquer cette requête.");
+                    }
+                    return null;
+                });
+                return false;
+            }
         }
+        return false;
+    }
 
     @Override
     public String help() {

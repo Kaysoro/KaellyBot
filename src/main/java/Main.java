@@ -2,9 +2,14 @@ import commands.*;
 import controler.ReadyListener;
 import data.ClientConfig;
 import data.Connexion;
+import data.Constants;
 import data.Guild;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
 import sx.blah.discord.api.IDiscordClient;
 
+import java.io.IOException;
 import java.util.regex.Pattern;
 
 /**
@@ -22,7 +27,7 @@ public class Main {
         Command.commands.add(new AlmanaxCommand());
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         initCommands();
         IDiscordClient client = ClientConfig.CLIENT();
         client.getDispatcher().registerListener(new ReadyListener());
