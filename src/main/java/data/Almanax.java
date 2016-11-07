@@ -1,6 +1,14 @@
 package data;
 
-import java.util.Date;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -9,13 +17,14 @@ import java.util.Map;
  */
 public class Almanax {
 
+    private final static Logger LOG = LoggerFactory.getLogger(Almanax.class);
     private static Map<String, Almanax> calendar;
 
     private String bonus;
     private String offrande;
     private String day;
 
-    public Almanax(String bonus, String offrande, String day) {
+    private Almanax(String bonus, String offrande, String day) {
         this.bonus = bonus;
         this.offrande = offrande;
         this.day = day;
@@ -47,22 +56,39 @@ public class Almanax {
     }
 
     private void addToDatabase() {
-        if (! getCalendar().containsKey(day))
+        if (! getCalendar().containsKey(day)) {
             getCalendar().put(day, this);
 
-        //TODO call to database
+            //TODO call to database
+        }
     }
 
     private static Almanax gatheringOnlineData(String date){
-        //TODO
-        return null;
+        try {
+            LOG.info("connecting to " + Constants.almanaxURL + date + " ...");
+            Document doc = Jsoup.parse(new URL(Constants.almanaxURL + date).openStream(), "UTF-8",
+                    Constants.almanaxURL + date);
+
+            Element elem = doc.select("div.more").first();
+            String offrande = elem.select("p.fleft").first().text();
+
+            elem.children().get(elem.children().size() - 1).remove();
+            String bonus = elem.text();
+
+
+            return new Almanax(bonus, offrande, date);
+
+        } catch (Exception e) {
+            LOG.error(e.getMessage());
+            return null;
+        }
     }
 
     public String getBonus(){
-        return "Bonus : " + bonus;
+        return "*Bonus* : " + bonus;
     }
 
     public String getOffrande(){
-        return "Offrande : " + offrande;
+        return "*Offrande* : " + offrande;
     }
 }
