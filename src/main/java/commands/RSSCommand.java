@@ -16,11 +16,11 @@ import java.util.regex.Pattern;
 /**
  * Created by steve on 14/07/2016.
  */
-public class AddRSSCommand extends AbstractCommand{
+public class RSSCommand extends AbstractCommand{
 
-    private final static Logger LOG = LoggerFactory.getLogger(AddRSSCommand.class);
+    private final static Logger LOG = LoggerFactory.getLogger(RSSCommand.class);
 
-    public AddRSSCommand(){
+    public RSSCommand(){
         super(Pattern.compile("rss"),
         Pattern.compile("^(!rss)\\W+(-add)\\W+(.*)$"));
         //TODO name ?
