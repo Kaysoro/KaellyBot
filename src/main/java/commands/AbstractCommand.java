@@ -31,4 +31,9 @@ public abstract class AbstractCommand implements Command {
     public Pattern getName() {
         return name;
     }
+
+    @Override
+    public Pattern getPattern() {
+        return pattern;
+    }
 }

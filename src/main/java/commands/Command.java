@@ -12,6 +12,8 @@ import java.util.regex.Pattern;
 public interface Command {
     public static List<Command> commands = new ArrayList<Command>();
     public Pattern getName();
+    public Pattern getPattern();
     public boolean request(IMessage message);
     public String help();
+    public String helpDetailed();
 }
