@@ -23,7 +23,7 @@ public class RightCommand extends AbstractCommand{
 
     public RightCommand(){
         super(Pattern.compile("right"),
-        Pattern.compile("^(!right)\\W+<@!(\\d+)>\\W+(\\d)$"));
+        Pattern.compile("^(!right)\\W+<@[!|&](\\d+)>\\W+(\\d)$"));
     }
 
     @Override
