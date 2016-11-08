@@ -24,6 +24,8 @@ import java.util.regex.Pattern;
 public class AlmanaxCommand extends AbstractCommand{
 
     private final static Logger LOG = LoggerFactory.getLogger(AlmanaxCommand.class);
+    private final static DateFormat discordToBot = new SimpleDateFormat("dd/MM/yyyy", Locale.FRANCE);
+    private final static DateFormat botToAlmanax = new SimpleDateFormat("yyyy-MM-dd", Locale.FRANCE);
 
     public AlmanaxCommand(){
         super(Pattern.compile("almanax"),
@@ -35,8 +37,6 @@ public class AlmanaxCommand extends AbstractCommand{
         if (super.request(message)) {
 
             Date date = new Date();
-            DateFormat discordToBot = new SimpleDateFormat("dd/MM/yyyy", Locale.FRANCE);
-            DateFormat botToAlmanax = new SimpleDateFormat("yyyy-MM-dd", Locale.FRANCE);
 
             if (m.group(3) != null){
                 try {
@@ -84,7 +84,7 @@ public class AlmanaxCommand extends AbstractCommand{
                     }
                     return null;
                 });
-                return true;
+                return false;
             }
             else {
                 RequestBuffer.request(() -> {

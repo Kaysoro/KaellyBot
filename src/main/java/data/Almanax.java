@@ -3,11 +3,8 @@ package data;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.io.IOException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
@@ -29,7 +26,6 @@ public class Almanax {
         this.offrande = offrande;
         this.day = day;
     }
-
 
     public static Almanax get(String date) {
 
@@ -74,7 +70,6 @@ public class Almanax {
 
             elem.children().get(elem.children().size() - 1).remove();
             String bonus = elem.text();
-
 
             return new Almanax(bonus, offrande, date);
 
