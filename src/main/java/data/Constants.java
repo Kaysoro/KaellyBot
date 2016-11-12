@@ -16,6 +16,11 @@ public class Constants {
     public final static String author = "Kaysoro";
 
     /**
+     * URL for github KaellyBot repository
+     */
+    public final static String git = "https://github.com/Kaysoro/KaellyBot";
+
+    /**
      * Database name
      */
     public final static String database = "bdd.sqlite";
