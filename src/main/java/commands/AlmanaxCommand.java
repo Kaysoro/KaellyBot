@@ -29,7 +29,7 @@ public class AlmanaxCommand extends AbstractCommand{
 
     public AlmanaxCommand(){
         super(Pattern.compile("almanax"),
-                Pattern.compile("^(!almanax)(\\W+-[b|o])?(\\W+\\d{2}/\\d{2}/\\d{4})?$"));
+                Pattern.compile("^(!almanax)(\\s+-[b|o])?(\\s+\\d{2}/\\d{2}/\\d{4})?$"));
     }
 
     @Override

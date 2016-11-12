@@ -21,7 +21,7 @@ public class HelpCommand extends AbstractCommand{
 
     public HelpCommand(){
         super(Pattern.compile("help"),
-                Pattern.compile("^(!help)(\\W+!?(\\w+))?$"));
+                Pattern.compile("^(!help)(\\s+!?(\\w+))?$"));
     }
 
     @Override
@@ -29,7 +29,7 @@ public class HelpCommand extends AbstractCommand{
         if (super.request(message)) {
 
             StringBuilder st = new StringBuilder();
-            boolean argumentFound = m.group(2) != null && m.group(2).replaceAll("^\\W+", "").length() > 0;
+            boolean argumentFound = m.group(2) != null && m.group(2).replaceAll("^\\s+", "").length() > 0;
             for(Command command : commands)
                 if (! argumentFound)
                     st.append(command.help()).append("\n");

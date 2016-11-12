@@ -24,7 +24,7 @@ public class ItemCommand extends AbstractCommand{
 
     public ItemCommand(){
         super(Pattern.compile("item"),
-        Pattern.compile("^(!item)\\W+(.*)$"));
+        Pattern.compile("^(!item)\\s+(.*)$"));
         items = ItemDofus.getItems();
     }
 

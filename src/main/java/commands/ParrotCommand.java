@@ -21,7 +21,7 @@ public class ParrotCommand extends AbstractCommand{
 
     public ParrotCommand(){
         super(Pattern.compile("parrot"),
-        Pattern.compile("^(!parrot)\\W+(.*)$"));
+        Pattern.compile("^(!parrot)\\s+(.*)$"));
     }
 
     @Override

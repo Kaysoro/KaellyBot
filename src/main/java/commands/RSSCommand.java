@@ -22,7 +22,7 @@ public class RSSCommand extends AbstractCommand{
 
     public RSSCommand(){
         super(Pattern.compile("rss"),
-        Pattern.compile("^(!rss)\\W+(-add)\\W+(.*)$"));
+        Pattern.compile("^(!rss)\\s+(-add)\\s+(.*)$"));
         //TODO name ?
     }
 
@@ -33,7 +33,7 @@ public class RSSCommand extends AbstractCommand{
             //On check si la personne a bien les droits pour exécuter cette commande
             if (User.getUsers().get(message.getGuild().getID())
                     .get(message.getAuthor().getID()).getRights() >= User.RIGHT_MODERATOR) {
-                // TODO Do command
+                //TODO Do command
             } else {
                 RequestBuffer.request(() -> {
                     try {
