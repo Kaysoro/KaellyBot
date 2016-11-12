@@ -22,7 +22,7 @@ public class JobCommand extends AbstractCommand{
     private final static Logger LOG = LoggerFactory.getLogger(JobCommand.class);
 
     public JobCommand(){
-        super(Pattern.compile("item"),
+        super(Pattern.compile("job"),
         Pattern.compile("^(" + Constants.prefixCommand + "job)\\s+(\\w+)(\\s+\\d{1,3})?$"));
     }
 
