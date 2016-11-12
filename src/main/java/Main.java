@@ -11,6 +11,7 @@ public class Main {
     public static void initCommands(){
 
         Command.commands.add(new AlmanaxCommand());
+        Command.commands.add(new GitCommand());
         Command.commands.add(new HelpCommand());
         Command.commands.add(new ItemCommand());
         Command.commands.add(new JobCommand());

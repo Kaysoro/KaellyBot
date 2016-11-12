@@ -28,6 +28,12 @@ public class CommandPatternTest extends TestCase {
         assertTrue(pattern.matcher(Constants.prefixCommand + "almanax -o 20/02/2016").find());
     }
 
+    public void testGitCommand(){
+        Pattern pattern = new GitCommand().getPattern();
+
+        assertTrue(pattern.matcher(Constants.prefixCommand + "git").find());
+    }
+
     public void testHelpCommand(){
         Pattern pattern = new HelpCommand().getPattern();
 
