@@ -18,34 +18,44 @@ public class Guild {
     private final static Logger LOG = LoggerFactory.getLogger(Guild.class);
     private static Map<String, Guild> guilds;
     private String id;
+    private String name;
 
-    public Guild(String id){
+    public Guild(String id, String name){
         this.id = id;
+        this.name = name;
     }
 
     public void addToDatabase(){
         if (! getGuild().containsKey(id)){
             getGuild().put(id, this);
             User.getUsers().put(id, new HashMap<String, User>());
-            //TODO
+            //TODO SQL Part
         }
+    }
+
+    public void setName(String name){
+        this.name = name;
+
+        //TODO SQL Part
     }
 
     public static Map<String, Guild> getGuild(){
         if (guilds == null){
             guilds = new HashMap<String, Guild>();
             String id;
+            String name;
 
             Connexion connexion = Connexion.getInstance();
             Connection connection = connexion.getConnection();
 
             try {
-                PreparedStatement attributionClasse = connection.prepareStatement("SELECT id FROM Guild");
+                PreparedStatement attributionClasse = connection.prepareStatement("SELECT id, name FROM Guild");
                 ResultSet resultSet = attributionClasse.executeQuery();
 
                 while (resultSet.next()) {
                     id = resultSet.getString("id");
-                    guilds.put(id, new Guild(id));
+                    name = resultSet.getString("name");
+                    guilds.put(id, new Guild(id, name));
                     User.getUsers().put(id, new HashMap<String, User>());
                 }
             } catch (SQLException e) {
@@ -57,5 +67,9 @@ public class Guild {
 
     public String getId(){
         return id;
+    }
+
+    public String getName(){
+        return name;
     }
 }
