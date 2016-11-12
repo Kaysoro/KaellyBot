@@ -22,7 +22,7 @@ public class MapCommand extends AbstractCommand{
 
     public MapCommand(){
         super(Pattern.compile("map"),
-              Pattern.compile("^(!map)([\\W+\\w+]*)$"));
+              Pattern.compile("^(" + Constants.prefixCommand + "map)([\\W+\\w+]*)$"));
     }
 
     @Override
@@ -75,14 +75,14 @@ public class MapCommand extends AbstractCommand{
 
     @Override
     public String help() {
-        return "**!map** sélectionne au hasard une carte du Goultarminator ou bien parmi celles"
+        return "**" + Constants.prefixCommand + "map** sélectionne au hasard une carte du Goultarminator ou bien parmi celles"
                 + " spécifiées en paramètre.";
     }
 
     @Override
     public String helpDetailed() {
         return help()
-                + "\n`!map` : sélectionne une carte du Goultarminator entre I et XII compris."
-                + "\n`!map `*`map1, map2, ...`* : sélectionne une carte parmi celles spécifiées en paramètre.\n";
+                + "\n`" + Constants.prefixCommand + "map` : sélectionne une carte du Goultarminator entre I et XII compris."
+                + "\n`" + Constants.prefixCommand + "map `*`map1, map2, ...`* : sélectionne une carte parmi celles spécifiées en paramètre.\n";
     }
 }

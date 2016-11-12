@@ -22,7 +22,7 @@ public class RSSCommand extends AbstractCommand{
 
     public RSSCommand(){
         super(Pattern.compile("rss"),
-        Pattern.compile("^(!rss)\\s+(-add)\\s+(.*)$"));
+        Pattern.compile("^(" + Constants.prefixCommand + "rss)\\s+(-add)\\s+(.*)$"));
         //TODO name ?
     }
 
@@ -59,15 +59,15 @@ public class RSSCommand extends AbstractCommand{
 
     @Override
     public String help() {
-        return "**!rss** gère les flux RSS par channel; nécessite un niveau d'administration 2 (Modérateur) minimum.";
+        return "**" + Constants.prefixCommand + "rss** gère les flux RSS par channel; nécessite un niveau d'administration 2 (Modérateur) minimum.";
     }
 
     @Override
     public String helpDetailed() {
         return help()
-                + "\n`!rss` : montre tous les flux RSS rattachés au channel."
-                + "\n`!rss -add `*`http://rss.xml`* : écoute le flux RSS dans le channel et poste dedans"
+                + "\n`" + Constants.prefixCommand + "rss` : montre tous les flux RSS rattachés au channel."
+                + "\n`" + Constants.prefixCommand + "rss -add `*`http://rss.xml`* : écoute le flux RSS dans le channel et poste dedans"
                 + " s'il y a des news."
-                + "\n`!rss -rm `*`rss`* : supprime le *ième* flux RSS rattaché au channel.\n";
+                + "\n`" + Constants.prefixCommand + "rss -rm `*`rss`* : supprime le *ième* flux RSS rattaché au channel.\n";
     }
 }

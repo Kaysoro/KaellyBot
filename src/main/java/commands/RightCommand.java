@@ -23,7 +23,7 @@ public class RightCommand extends AbstractCommand{
 
     public RightCommand(){
         super(Pattern.compile("right"),
-        Pattern.compile("^(!right)\\s+<@[!|&](\\d+)>\\s+(\\d)$"));
+        Pattern.compile("^(" + Constants.prefixCommand + "right)\\s+<@[!|&](\\d+)>\\s+(\\d)$"));
     }
 
     @Override
@@ -64,7 +64,7 @@ public class RightCommand extends AbstractCommand{
 
     @Override
     public String help() {
-        return "**!right** permet de changer les droits de quelqu'un d'autre tant qu'il n'est pas plus"
+        return "**" + Constants.prefixCommand + "right** permet de changer les droits de quelqu'un d'autre tant qu'il n'est pas plus"
                 + " haut que le sien. Nécessite un niveau d'administration 2 (Modérateur) minimum."
                 + " Les niveaux sont 0 : Invité, 1 : Membre, 2 : Modérateur, 3 : Administrateur.";
     }
@@ -72,6 +72,6 @@ public class RightCommand extends AbstractCommand{
     @Override
     public String helpDetailed() {
         return help()
-                + "\n`!right `*`@pseudo niveau`* : change le niveau d'administration d'une personne.\n";
+                + "\n`" + Constants.prefixCommand + "right `*`@pseudo niveau`* : change le niveau d'administration d'une personne.\n";
     }
 }

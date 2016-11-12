@@ -23,7 +23,7 @@ public class PortalCommand extends AbstractCommand{
 
     public PortalCommand(){
         super(Pattern.compile("pos"),
-                Pattern.compile("^(!pos)(\\s+\\w+)?(\\s+\\[?(-?\\d{1,2})\\s*[,|\\s]\\s*(-?\\d{1,2})\\]?)?(\\s+\\d{1,3})?$"));
+                Pattern.compile("^(" + Constants.prefixCommand + "pos)(\\s+\\w+)?(\\s+\\[?(-?\\d{1,2})\\s*[,|\\s]\\s*(-?\\d{1,2})\\]?)?(\\s+\\d{1,3})?$"));
     }
 
     @Override
@@ -116,17 +116,17 @@ public class PortalCommand extends AbstractCommand{
 
     @Override
     public String help() {
-        return "**!pos** donne la position des portails dimension.";
+        return "**" + Constants.prefixCommand + "pos** donne la position des portails dimension.";
     }
 
     @Override
     public String helpDetailed() {
         return help()
-                + "\n`!pos` : donne la position de tous les portails."
-                + "\n`!pos `*`dimension`* : donne la position du portail de la dimension désirée."
-                + "\n`!pos `*`dimension`*` [POS, POS]` : met à jour la position du portail de la dimension spécifiée."
-                + "\n`!pos `*`dimension`*` [POS, POS] `*`nombre d'uti.`* : met à jour la position et le nombre d'utilisation"
+                + "\n`" + Constants.prefixCommand + "pos` : donne la position de tous les portails."
+                + "\n`" + Constants.prefixCommand + "pos `*`dimension`* : donne la position du portail de la dimension désirée."
+                + "\n`" + Constants.prefixCommand + "pos `*`dimension`*` [POS, POS]` : met à jour la position du portail de la dimension spécifiée."
+                + "\n`" + Constants.prefixCommand + "pos `*`dimension`*` [POS, POS] `*`nombre d'uti.`* : met à jour la position et le nombre d'utilisation"
                 + " de la dimension spécifiée."
-                + "\n`!pos update` : télécharge les positions des portails de diverses sites web.\n";
+                + "\n`" + Constants.prefixCommand + "pos update` : télécharge les positions des portails de diverses sites web.\n";
     }
 }

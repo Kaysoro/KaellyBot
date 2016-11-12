@@ -21,7 +21,7 @@ public class HelpCommand extends AbstractCommand{
 
     public HelpCommand(){
         super(Pattern.compile("help"),
-                Pattern.compile("^(!help)(\\s+!?(\\w+))?$"));
+                Pattern.compile("^(" + Constants.prefixCommand + "help)(\\s+" + Constants.prefixCommand + "?(\\w+))?$"));
     }
 
     @Override
@@ -64,13 +64,13 @@ public class HelpCommand extends AbstractCommand{
 
     @Override
     public String help() {
-        return "**!help** explique le fonctionnement de chaque commande de " + Constants.name + ".";
+        return "**" + Constants.prefixCommand + "help** explique le fonctionnement de chaque commande de " + Constants.name + ".";
     }
 
     @Override
     public String helpDetailed() {
         return help()
-                + "\n`!help` : explique succintement chaque commande."
-                + "\n`!help `*`command`* : explique de façon détaillée la commande spécifiée.\n";
+                + "\n`" + Constants.prefixCommand + "help` : explique succintement chaque commande."
+                + "\n`" + Constants.prefixCommand + "help `*`command`* : explique de façon détaillée la commande spécifiée.\n";
     }
 }

@@ -38,7 +38,7 @@ public class Portal {
     public static List<Portal> getPortals(){
         if (portals == null){
             portals = new ArrayList<Portal>();
-            portals.add(new Portal("Enutrosor", "[4,20]", 119, System.currentTimeMillis(), -1));
+            portals.add(new Portal("Enutrosor", null, -1, System.currentTimeMillis(), -1));
             portals.add(new Portal("Srambad", null, -1, System.currentTimeMillis(), System.currentTimeMillis()));
             portals.add(new Portal("Xélorium", null, -1, System.currentTimeMillis(), -1));
             portals.add(new Portal("Ecaflipus", null, -1, System.currentTimeMillis(), System.currentTimeMillis()));

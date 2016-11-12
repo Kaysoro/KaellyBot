@@ -24,7 +24,7 @@ public class ItemCommand extends AbstractCommand{
 
     public ItemCommand(){
         super(Pattern.compile("item"),
-        Pattern.compile("^(!item)\\s+(.*)$"));
+        Pattern.compile("^(" + Constants.prefixCommand + "item)\\s+(.*)$"));
         items = ItemDofus.getItems();
     }
 
@@ -55,13 +55,13 @@ public class ItemCommand extends AbstractCommand{
 
     @Override
     public String help() {
-        return "**!item** renvoit les statistiques d'un item du jeu Dofus.";
+        return "**" + Constants.prefixCommand + "item** renvoit les statistiques d'un item du jeu Dofus.";
     }
 
     @Override
     public String helpDetailed() {
         return help()
-                + "\n`!item `*`item`* : renvoit les statistiques de l'item spécifié : son nom peut"
-                + " être approximatif.\n";
+                + "\n`" + Constants.prefixCommand + "item `*`item`* : renvoit les statistiques de l'item spécifié :"
+                + " son nom peut être approximatif.\n";
     }
 }

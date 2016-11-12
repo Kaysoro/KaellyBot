@@ -29,7 +29,7 @@ public class AlmanaxCommand extends AbstractCommand{
 
     public AlmanaxCommand(){
         super(Pattern.compile("almanax"),
-                Pattern.compile("^(!almanax)(\\s+-[b|o])?(\\s+\\d{2}/\\d{2}/\\d{4})?$"));
+                Pattern.compile("^(" + Constants.prefixCommand + "almanax)(\\s+-[b|o])?(\\s+\\d{2}/\\d{2}/\\d{4})?$"));
     }
 
     @Override
@@ -108,17 +108,17 @@ public class AlmanaxCommand extends AbstractCommand{
 
     @Override
     public String help() {
-        return "**!almanax** donne le bonus et l'offrande d'une date particulière.";
+        return "**" + Constants.prefixCommand + "almanax** donne le bonus et l'offrande d'une date particulière.";
     }
 
     @Override
     public String helpDetailed() {
         return help()
-                + "\n`!almanax` : donne le bonus et l'offrande du jour actuel."
-                + "\n`!almanax -b` : donne uniquement le bonus du jour actuel."
-                + "\n`!almanax -o` : donne uniquement l'offrande du jour actuel."
-                + "\n`!almanax `*`jj/mm/aaaa`* : donne le bonus et l'offrande du jour spécifié."
-                + "\n`!almanax -b `*`jj/mm/aaaa`* : donne uniquement le bonus du jour spécifié."
-                + "\n`!almanax -o `*`jj/mm/aaaa`* : donne uniquement l'offrande du jour spécifié.\n";
+                + "\n`" + Constants.prefixCommand + "almanax` : donne le bonus et l'offrande du jour actuel."
+                + "\n`" + Constants.prefixCommand + "almanax -b` : donne uniquement le bonus du jour actuel."
+                + "\n`" + Constants.prefixCommand + "almanax -o` : donne uniquement l'offrande du jour actuel."
+                + "\n`" + Constants.prefixCommand + "almanax `*`jj/mm/aaaa`* : donne le bonus et l'offrande du jour spécifié."
+                + "\n`" + Constants.prefixCommand + "almanax -b `*`jj/mm/aaaa`* : donne uniquement le bonus du jour spécifié."
+                + "\n`" + Constants.prefixCommand + "almanax -o `*`jj/mm/aaaa`* : donne uniquement l'offrande du jour spécifié.\n";
     }
 }

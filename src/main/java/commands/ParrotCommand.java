@@ -21,7 +21,7 @@ public class ParrotCommand extends AbstractCommand{
 
     public ParrotCommand(){
         super(Pattern.compile("parrot"),
-        Pattern.compile("^(!parrot)\\s+(.*)$"));
+        Pattern.compile("^(" + Constants.prefixCommand + "parrot)\\s+(.*)$"));
     }
 
     @Override
@@ -47,12 +47,12 @@ public class ParrotCommand extends AbstractCommand{
 
     @Override
     public String help() {
-        return "**!parrot** renvoit le message envoyé en argument, tel un perroquet.";
+        return "**" + Constants.prefixCommand + "parrot** renvoit le message envoyé en argument, tel un perroquet.";
     }
 
     @Override
     public String helpDetailed() {
         return help()
-                + "\n`!parrot `*`message`* : renvoit le message spécifié.\n";
+                + "\n`" + Constants.prefixCommand + "parrot `*`message`* : renvoit le message spécifié.\n";
     }
 }
