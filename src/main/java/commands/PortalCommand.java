@@ -23,7 +23,7 @@ public class PortalCommand extends AbstractCommand{
 
     public PortalCommand(){
         super(Pattern.compile("pos"),
-                Pattern.compile("^(!pos)(\\W+\\w+)?[\\W+\\[?(-?\\d{1,2})\\W+(-?\\d{1,2})\\]?]?(\\W+\\d{1,3})?$"));
+                Pattern.compile("^(!pos)(\\s+\\w+)?(\\s+\\[?(-?\\d{1,2})\\s*[,|\\s]\\s*(-?\\d{1,2})\\]?)?(\\s+\\d{1,3})?$"));
     }
 
     @Override
@@ -73,10 +73,13 @@ public class PortalCommand extends AbstractCommand{
             else {
                 Portal portal = getPortal(m.group(2));
                 if (portal != null) {
-                    if (m.group(3) != null && m.group(4) != null)
-                        portal.setCoordonate("[" + m.group(3) + "," + m.group(4) + "]");
-                    //if (m.group(5) != null) TODO
-                    //  portal.setUtilisation(Integer.parseInt(m.group(5)));
+                    LOG.info(m.group(3));
+                    if (m.group(3) != null) {
+                        LOG.info(m.group(4) + ":" + m.group(5));
+                        portal.setCoordonate("[" + m.group(4) + "," + m.group(5) + "]");
+                    }
+                    if (m.group(6) != null)
+                      portal.setUtilisation(Integer.parseInt(m.group(6).replaceAll("\\s", "")));
 
                     RequestBuffer.request(() -> {
                         try {

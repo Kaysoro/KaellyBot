@@ -59,9 +59,10 @@ public class Portal {
     }
 
     public void setCoordonate(String coordonate) {
-        if (! coordonate.equals(coordonate)){
+        if (! coordonate.equals(this.coordonate)){
             this.coordonate = coordonate;
             this.creation = System.currentTimeMillis();
+            this.utilisation = -1;
             this.lastUpdate = -1;
             //TODO Database
         }
