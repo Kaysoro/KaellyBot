@@ -43,6 +43,16 @@ public class CommandPatternTest extends TestCase {
         assertFalse(pattern.matcher(Constants.prefixCommand + "item").find());
     }
 
+    public void testJobCommand(){
+        Pattern pattern = new JobCommand().getPattern();
+
+        assertTrue(pattern.matcher(Constants.prefixCommand + "job job").find());
+        assertTrue(pattern.matcher(Constants.prefixCommand + "job job 1").find());
+        assertTrue(pattern.matcher(Constants.prefixCommand + "job job 78").find());
+        assertTrue(pattern.matcher(Constants.prefixCommand + "job job 200").find());
+        assertFalse(pattern.matcher(Constants.prefixCommand + "job").find());
+    }
+
     public void testMapCommand(){
         Pattern pattern = new MapCommand().getPattern();
 
