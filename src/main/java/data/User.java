@@ -22,11 +22,13 @@ public class User {
 
     private static Map<String, Map<String, User>> users;
     private String id;
+    private String name;
     private int rights;
     private Guild guild;
 
-    public User(String id, int rights, Guild guild){
+    public User(String id, String name, int rights, Guild guild){
         this.id = id;
+        this.name = name;
         this.rights = rights;
         this.guild = guild;
     }
@@ -36,6 +38,12 @@ public class User {
             getUsers().put(guild.getId(), new HashMap<String, User>());
         }
         getUsers().get(guild.getId()).put(id, this);
+
+        //TODO SQL Part
+    }
+
+    public void setName(String name){
+        this.name = name;
 
         //TODO SQL Part
     }
@@ -51,6 +59,7 @@ public class User {
             users = new HashMap<String, Map<String, User>>();
 
             String id;
+            String name;
             int right;
             Guild guildId;
 
@@ -58,17 +67,18 @@ public class User {
             Connection connection = connexion.getConnection();
 
             try {
-                PreparedStatement attributionClasse = connection.prepareStatement("SELECT id_user, id_guild, rights FROM User_Guild");
+                PreparedStatement attributionClasse = connection.prepareStatement("SELECT id_user, name, id_guild, rights FROM User_Guild");
                 ResultSet resultSet = attributionClasse.executeQuery();
 
                 while (resultSet.next()) {
                     id = resultSet.getString("id_user");
+                    name = resultSet.getString("name");
                     right = resultSet.getInt("rights");
                     guildId = Guild.getGuild().get(resultSet.getString("id_guild"));
 
                     if (!users.containsKey(guildId.getId()))
                         users.put(guildId.getId(), new HashMap<String, User>());
-                    users.get(guildId.getId()).put(id, new User(id, right, guildId));
+                    users.get(guildId.getId()).put(id, new User(id, name, right, guildId));
                 }
             } catch (SQLException e) {
                 LOG.error(e.getMessage());
@@ -88,5 +98,9 @@ public class User {
 
     public String getId() {
         return id;
+    }
+
+    public String getName() {
+        return name;
     }
 }
