@@ -78,7 +78,6 @@ public class Guild {
                     id = resultSet.getString("id");
                     name = resultSet.getString("name");
                     guilds.put(id, new Guild(id, name));
-                    User.getUsers().put(id, new HashMap<String, User>());
                 }
             } catch (SQLException e) {
                 LOG.error(e.getMessage());
