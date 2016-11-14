@@ -4,6 +4,7 @@ import data.Constants;
 import data.User;
 import discord.Message;
 import exceptions.AutoChangeRightsException;
+import exceptions.BadUseCommandException;
 import exceptions.NoRightsForRolesException;
 import exceptions.NotEnoughRightsException;
 import org.slf4j.Logger;
@@ -32,8 +33,12 @@ public class RightCommand extends AbstractCommand{
 
             User author = User.getUsers().get(message.getGuild().getID()).get(message.getAuthor().getID());
 
-
             if (m.group(3) != null) { // Level precised : editing
+
+                if (m.group(2) == null){
+                    new BadUseCommandException().throwException(message, this);
+                    return false;
+                }
 
                 String idDecorated = m.group(2).replaceAll("\\s", "");
                 String id = idDecorated.replaceAll("\\W", "");
@@ -56,6 +61,9 @@ public class RightCommand extends AbstractCommand{
                                     + target.getName() + " n'ont pu être changés.\n");
                             }
                         }
+
+                        Message.send(message.getChannel(), "Droits d'administration des membres du groupe *"
+                                + role.getName() + "* mis au niveau " + level + ".");
                     }
                     else if (idDecorated.contains("!")){ // Manage users
                         User target = User.getUsers().get(message.getGuild().getID()).get(id);
@@ -71,6 +79,8 @@ public class RightCommand extends AbstractCommand{
                         }
 
                         target.changeRight(level);
+                        Message.send(message.getChannel(), "Droits d'administration de *"
+                                + target.getName() + "* mis au niveau " + target.getRights() + ".");
                     }
                 } // Not an admin or a moderator
                 else {
@@ -85,8 +95,8 @@ public class RightCommand extends AbstractCommand{
 
                     if (idDecorated.contains("!")){
                         User target = User.getUsers().get(message.getGuild().getID()).get(id);
-                        Message.send(message.getChannel(), target.getName()
-                                + " a des droits d'administration de niveau "
+                        Message.send(message.getChannel(), "*" + target.getName()
+                                + "* a des droits d'administration de niveau "
                                 + target.getRights() + ".");
                     }
                     else
