@@ -38,6 +38,16 @@ public class ReadyListener {
                             .addToDatabase();
                 }
 
+        LOG.info("Ajout des différents listeners");
+        ClientConfig.CLIENT().getDispatcher().registerListener(new GuildCreateListener());
+        ClientConfig.CLIENT().getDispatcher().registerListener(new GuildLeaveListener());
+        ClientConfig.CLIENT().getDispatcher().registerListener(new GuildTransferOwnershipListener());
+        ClientConfig.CLIENT().getDispatcher().registerListener(new GuildUpdateListener());
+        ClientConfig.CLIENT().getDispatcher().registerListener(new NickNameChangeListener());
+        ClientConfig.CLIENT().getDispatcher().registerListener(new UserBanListener());
+        ClientConfig.CLIENT().getDispatcher().registerListener(new UserJoinListener());
+        ClientConfig.CLIENT().getDispatcher().registerListener(new UserLeaveListener());
+
         LOG.info("Ecoute des messages...");
         ClientConfig.CLIENT().getDispatcher().registerListener(new MessageListener());
     }
