@@ -28,15 +28,37 @@ public class Guild {
     public void addToDatabase(){
         if (! getGuild().containsKey(id)){
             getGuild().put(id, this);
-            User.getUsers().put(id, new HashMap<String, User>());
-            //TODO SQL Part
+
+            Connexion connexion = Connexion.getInstance();
+            Connection connection = connexion.getConnection();
+
+            try {
+                PreparedStatement request = connection.prepareStatement("INSERT INTO"
+                        + " Guild(id, name) VALUES (?, ?);");
+                request.setString(1, id);
+                request.setString(2, name);
+                request.executeUpdate();
+
+            } catch (SQLException e) {
+                LOG.error(e.getMessage());
+            }
         }
     }
 
     public void setName(String name){
         this.name = name;
 
-        //TODO SQL Part
+        Connexion connexion = Connexion.getInstance();
+        Connection connection = connexion.getConnection();
+
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(
+                    "UPDATE Guild SET name = ?;");
+            preparedStatement.setString(1, name);
+            preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            LOG.error(e.getMessage());
+        }
     }
 
     public static Map<String, Guild> getGuild(){
