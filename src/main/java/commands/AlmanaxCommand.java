@@ -1,15 +1,13 @@
 package commands;
 
 import data.Almanax;
-import data.ClientConfig;
 import data.Constants;
+import discord.Message;
+import exceptions.AlmanaxNotFoundException;
+import exceptions.IncorrectDateFormatException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sx.blah.discord.handle.obj.IMessage;
-import sx.blah.discord.util.DiscordException;
-import sx.blah.discord.util.MessageBuilder;
-import sx.blah.discord.util.MissingPermissionsException;
-import sx.blah.discord.util.RequestBuffer;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -42,19 +40,7 @@ public class AlmanaxCommand extends AbstractCommand{
                 try {
                     date = discordToBot.parse(m.group(3));
                 } catch (ParseException e) {
-                    RequestBuffer.request(() -> {
-                        try {
-                            new MessageBuilder(ClientConfig.CLIENT())
-                                    .withChannel(message.getChannel())
-                                    .withContent("La date spécifiée ne correspond pas au format dd/mm/aaaa.")
-                                    .build();
-                        } catch (DiscordException e1) {
-                            LOG.error(e1.getErrorMessage());
-                        } catch (MissingPermissionsException e1) {
-                            LOG.warn(Constants.name + " n'a pas les permissions pour appliquer cette requête.");
-                        }
-                        return null;
-                    });
+                    new IncorrectDateFormatException().throwException(message, this);
                     return false;
                 }
             }
@@ -71,35 +57,11 @@ public class AlmanaxCommand extends AbstractCommand{
                 if (m.group(2) == null || m.group(2).matches("\\W+-o"))
                     st.append(almanax.getOffrande()).append("\n");
 
-                RequestBuffer.request(() -> {
-                    try {
-                        new MessageBuilder(ClientConfig.CLIENT())
-                                .withChannel(message.getChannel())
-                                .withContent(st.toString())
-                                .build();
-                    } catch (DiscordException e) {
-                        LOG.error(e.getErrorMessage());
-                    } catch (MissingPermissionsException e) {
-                        LOG.warn(Constants.name + " n'a pas les permissions pour appliquer cette requête.");
-                    }
-                    return null;
-                });
+                Message.send(message.getChannel(), st.toString());
                 return false;
             }
             else {
-                RequestBuffer.request(() -> {
-                    try {
-                        new MessageBuilder(ClientConfig.CLIENT())
-                                .withChannel(message.getChannel())
-                                .withContent("Impossible de trouver des informations sur l'almanax désiré.")
-                                .build();
-                    } catch (DiscordException e) {
-                        LOG.error(e.getErrorMessage());
-                    } catch (MissingPermissionsException e) {
-                        LOG.warn(Constants.name + " n'a pas les permissions pour appliquer cette requête.");
-                    }
-                    return null;
-                });
+                new AlmanaxNotFoundException().throwException(message, this);
                 return false;
             }
         }

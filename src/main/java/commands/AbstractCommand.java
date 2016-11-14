@@ -2,7 +2,6 @@ package commands;
 
 import sx.blah.discord.handle.obj.IMessage;
 
-import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
