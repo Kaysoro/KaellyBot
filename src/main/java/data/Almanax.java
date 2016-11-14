@@ -6,6 +6,10 @@ import org.jsoup.nodes.Element;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.net.URL;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -45,7 +49,26 @@ public class Almanax {
         if (calendar == null) {
             calendar = new HashMap<String, Almanax>();
 
-            //TODO Gathering data from database
+            String date;
+            String offrande;
+            String bonus;
+
+            Connexion connexion = Connexion.getInstance();
+            Connection connection = connexion.getConnection();
+
+            try {
+                PreparedStatement query = connection.prepareStatement("SELECT date, offrande, bonus FROM Almanax");
+                ResultSet resultSet = query.executeQuery();
+
+                while (resultSet.next()) {
+                    date = resultSet.getString("date");
+                    offrande = resultSet.getString("offrande");
+                    bonus = resultSet.getString("bonus");
+                    calendar.put(date, new Almanax(date, offrande, bonus));
+                }
+            } catch (SQLException e) {
+                LOG.error(e.getMessage());
+            }
         }
 
         return calendar;
@@ -55,7 +78,20 @@ public class Almanax {
         if (! getCalendar().containsKey(day)) {
             getCalendar().put(day, this);
 
-            //TODO call to database
+            Connexion connexion = Connexion.getInstance();
+            Connection connection = connexion.getConnection();
+
+            try {
+                PreparedStatement request = connection.prepareStatement("INSERT INTO"
+                        + " Almanax(date, offrande, bonus) VALUES (?, ?, ?);");
+                request.setString(1, day);
+                request.setString(2, offrande);
+                request.setString(3, bonus);
+                request.executeUpdate();
+
+            } catch (SQLException e) {
+                LOG.error(e.getMessage());
+            }
         }
     }
 

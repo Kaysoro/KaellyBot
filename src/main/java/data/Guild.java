@@ -71,8 +71,8 @@ public class Guild {
             Connection connection = connexion.getConnection();
 
             try {
-                PreparedStatement attributionClasse = connection.prepareStatement("SELECT id, name FROM Guild");
-                ResultSet resultSet = attributionClasse.executeQuery();
+                PreparedStatement query = connection.prepareStatement("SELECT id, name FROM Guild");
+                ResultSet resultSet = query.executeQuery();
 
                 while (resultSet.next()) {
                     id = resultSet.getString("id");

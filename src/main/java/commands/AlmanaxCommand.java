@@ -65,7 +65,7 @@ public class AlmanaxCommand extends AbstractCommand{
                 StringBuilder st = new StringBuilder("**Almanax du ")
                         .append(discordToBot.format(date))
                         .append(" :**\n");
-                LOG.info("\"" + m.group(2) + "\"");
+
                 if (m.group(2) == null || m.group(2).matches("\\W+-b"))
                     st.append(almanax.getBonus()).append("\n");
                 if (m.group(2) == null || m.group(2).matches("\\W+-o"))
