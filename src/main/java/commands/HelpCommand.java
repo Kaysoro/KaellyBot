@@ -1,15 +1,10 @@
 package commands;
 
-import data.ClientConfig;
 import data.Constants;
+import discord.Message;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sx.blah.discord.handle.obj.IMessage;
-import sx.blah.discord.util.DiscordException;
-import sx.blah.discord.util.MessageBuilder;
-import sx.blah.discord.util.MissingPermissionsException;
-import sx.blah.discord.util.RequestBuffer;
-
 import java.util.regex.Pattern;
 
 /**
@@ -43,20 +38,7 @@ public class HelpCommand extends AbstractCommand{
                         .append(m.group(2).replaceAll("^\\W+", ""))
                         .append("*.");
 
-            // Envoyer le message en privée
-                RequestBuffer.request(() -> {
-                    try {
-                        new MessageBuilder(ClientConfig.CLIENT())
-                                .withChannel(message.getChannel())
-                                .withContent(st.toString())
-                                .build();
-                    } catch (DiscordException e) {
-                        LOG.error(e.getErrorMessage());
-                    } catch (MissingPermissionsException e) {
-                        LOG.warn(Constants.name + " n'a pas les permissions pour appliquer cette requête.");
-                    }
-                    return null;
-                });
+                Message.send(message.getChannel(), st.toString());
                 return true;
             }
             return false;
