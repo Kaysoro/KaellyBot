@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sx.blah.discord.api.events.EventSubscriber;
 import sx.blah.discord.handle.impl.events.MessageReceivedEvent;
+import sx.blah.discord.handle.obj.IUser;
 
 /**
  * Created by steve on 14/07/2016.
@@ -22,13 +23,18 @@ public class MessageListener {
         public void onReady(MessageReceivedEvent event) {
             // If the author doesn't exist in our database, we added it with the lowest rights
             String authorId = event.getMessage().getAuthor().getID();
-            String authorName = event.getMessage().getAuthor().getName();
+            String authorName = event.getMessage().getAuthor().getDisplayName(event.getMessage().getGuild());
             String guildId = event.getMessage().getGuild().getID();
             String guildName = event.getMessage().getGuild().getName();
 
             if (! Guild.getGuild().containsKey(guildId)) {
                 LOG.info("Guild " + guildId + " - " + guildName + " is added to database.");
                 new Guild(guildId, guildName).addToDatabase();
+
+                // Now, we have to give correct rights for the owner.
+                IUser owner = event.getMessage().getGuild().getOwner();
+                new User(owner.getID(), owner.getDisplayName(event.getMessage().getGuild()),
+                        User.RIGHT_ADMIN, Guild.getGuild().get(guildId)).addToDatabase();
             }
             else if (! Guild.getGuild().get(guildId).getName().equals(guildName))
                 // GuildName from database is deprecated : it have to be updated.
