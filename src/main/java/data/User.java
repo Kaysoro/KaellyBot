@@ -33,6 +33,10 @@ public class User {
         this.guild = guild;
     }
 
+    public User(String id, String name, Guild guild){
+        this(id, name, User.RIGHT_INVITE, guild);
+    }
+
     public void addToDatabase() {
         if (!getUsers().containsKey(guild.getId())) {
             getUsers().put(guild.getId(), new HashMap<String, User>());
