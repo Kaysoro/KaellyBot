@@ -63,6 +63,26 @@ public class User {
         }
     }
 
+    public void removeToDatabase() {
+        if (getUsers().get(guild.getId()).containsKey(id)){
+            getUsers().get(guild.getId()).remove(id);
+
+            Connexion connexion = Connexion.getInstance();
+            Connection connection = connexion.getConnection();
+
+            try {
+                PreparedStatement request = connection.prepareStatement("DELETE FROM User WHERE id_user = ? AND id_guild = ?;");
+                request.setString(1, id);
+                request.setString(2, guild.getId());
+                request.executeUpdate();
+
+            } catch (SQLException e) {
+                LOG.error(id + " - " + name + " : " + e.getMessage());
+            }
+        }
+
+    }
+
     public void setName(String name){
         this.name = name;
 
