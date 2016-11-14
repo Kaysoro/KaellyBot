@@ -1,0 +1,86 @@
+DROP TABLE IF EXISTS "Almanax";
+CREATE TABLE Almanax(
+date TEXT PRIMARY KEY NOT NULL,
+offrande TEXT NOT NULL,
+bonus TEXT NOT NULL
+);
+
+DROP TABLE IF EXISTS "Guild";
+CREATE TABLE "Guild" ("id" TEXT PRIMARY KEY  NOT NULL , "name" TEXT );
+
+DROP TABLE IF EXISTS "Job";
+CREATE TABLE Job(
+name TEXT PRIMARY KEY NOT NULL
+);
+
+INSERT INTO "Job" VALUES('Alchimiste');
+INSERT INTO "Job" VALUES('Bijoutier');
+INSERT INTO "Job" VALUES('Bricoleur');
+INSERT INTO "Job" VALUES('Bûcheron');
+INSERT INTO "Job" VALUES('Chasseur');
+INSERT INTO "Job" VALUES('Cordomage');
+INSERT INTO "Job" VALUES('Cordonnier');
+INSERT INTO "Job" VALUES('Costumage');
+INSERT INTO "Job" VALUES('Façonneur');
+INSERT INTO "Job" VALUES('Forgemage');
+INSERT INTO "Job" VALUES('Forgeron');
+INSERT INTO "Job" VALUES('Joaillomage');
+INSERT INTO "Job" VALUES('Mineur');
+INSERT INTO "Job" VALUES('Paysan');
+INSERT INTO "Job" VALUES('Pêcheur');
+INSERT INTO "Job" VALUES('Sculptemage');
+INSERT INTO "Job" VALUES('Sculpteur');
+INSERT INTO "Job" VALUES('Tailleur');
+
+DROP TABLE IF EXISTS "Job_User";
+CREATE TABLE Job_User (
+name_job TEXT NOT NULL,
+id_user TEXT NOT NULL,
+level INTEGER NOT NULL,
+PRIMARY KEY(name_job, id_user),
+FOREIGN KEY (id_user)  REFERENCES User(id_user) ON UPDATE CASCADE ON DELETE CASCADE,
+FOREIGN KEY (name_job)  REFERENCES Job(name) ON UPDATE CASCADE ON DELETE CASCADE
+);
+
+DROP TABLE IF EXISTS "Portal";
+CREATE TABLE Portal(
+name TEXT PRIMARY KEY NOT NULL
+);
+
+INSERT INTO "Portal" VALUES('Enutrosor');
+INSERT INTO "Portal" VALUES('Srambad');
+INSERT INTO "Portal" VALUES('Xélorium');
+INSERT INTO "Portal" VALUES('Ecaflipus');
+
+DROP TABLE IF EXISTS "Portal_Guild";
+CREATE TABLE Portal_Guild (
+name_portal TEXT NOT NULL,
+id_guild TEXT NOT NULL,
+pos TEXT NOT NULL,
+utilisation INTEGER NOT NULL,
+creation INTEGER NOT NULL,
+last_update INTEGER NOT NULL,
+PRIMARY KEY(name_portal, id_guild),
+FOREIGN KEY (id_guild)  REFERENCES Guild(id) ON UPDATE CASCADE ON DELETE CASCADE,
+FOREIGN KEY (name_portal)  REFERENCES Portal(name) ON UPDATE CASCADE ON DELETE CASCADE
+);
+
+DROP TABLE IF EXISTS "RSS";
+CREATE TABLE "RSS" (
+"id" INTEGER PRIMARY KEY  AUTOINCREMENT  NOT NULL ,
+ "address" TEXT NOT NULL ,
+ "name" TEXT NOT NULL , 
+"id_guild" TEXT NOT NULL ,
+ "id_channel" TEXT NOT NULL,
+FOREIGN KEY (id_guild)  REFERENCES Guild(id) ON UPDATE CASCADE ON DELETE CASCADE
+ );
+ 
+DROP TABLE IF EXISTS "User";
+CREATE TABLE User(
+id_user TEXT NOT NULL,
+name TEXT NOT NULL,
+id_guild TEXT NOT NULL,
+rights INTEGER NOT NULL DEFAULT 0,
+PRIMARY KEY(id_user, id_guild),
+FOREIGN KEY (id_guild)  REFERENCES Guild(id) ON UPDATE CASCADE ON DELETE CASCADE
+);
