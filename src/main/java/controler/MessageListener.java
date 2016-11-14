@@ -20,22 +20,24 @@ public class MessageListener {
     }
         @EventSubscriber
         public void onReady(MessageReceivedEvent event) {
-            // If the author doesn't exist in our database, we added it with the lowest rights
-            String authorId = event.getMessage().getAuthor().getID();
-            String authorName = event.getMessage().getAuthor().getDisplayName(event.getMessage().getGuild());
-            String guildId = event.getMessage().getGuild().getID();
-            String guildName = event.getMessage().getGuild().getName();
 
-            if (! Guild.getGuilds().get(guildId).getName().equals(guildName))
-                // GuildName from database is deprecated : it have to be updated.
-                Guild.getGuilds().get(guildId).setName(guildName);
+            // If the author is a bot, message get ignored
+            if (! event.getMessage().getAuthor().isBot()) {
+                String authorId = event.getMessage().getAuthor().getID();
+                String authorName = event.getMessage().getAuthor().getDisplayName(event.getMessage().getGuild());
+                String guildId = event.getMessage().getGuild().getID();
+                String guildName = event.getMessage().getGuild().getName();
 
-            if (! User.getUsers().get(guildId).get(authorId).getName().equals(authorName))
-                // AuthorName from database is deprecated : it have to be updated.
-                User.getUsers().get(guildId).get(authorId).setName(authorName);
+                if (!Guild.getGuilds().get(guildId).getName().equals(guildName))
+                    // GuildName from database is deprecated : it have to be updated.
+                    Guild.getGuilds().get(guildId).setName(guildName);
 
+                if (!User.getUsers().get(guildId).get(authorId).getName().equals(authorName))
+                    // AuthorName from database is deprecated : it have to be updated.
+                    User.getUsers().get(guildId).get(authorId).setName(authorName);
 
-            for(Command command : Command.commands)
-                command.request(event.getMessage());
+                for(Command command : Command.commands)
+                    command.request(event.getMessage());
+            }
         }
 }
