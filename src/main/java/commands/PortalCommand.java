@@ -1,16 +1,12 @@
 package commands;
 
-import data.ClientConfig;
 import data.Constants;
 import data.Portal;
+import discord.Message;
+import exceptions.InDeveloppmentException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sx.blah.discord.handle.obj.IMessage;
-import sx.blah.discord.util.DiscordException;
-import sx.blah.discord.util.MessageBuilder;
-import sx.blah.discord.util.MissingPermissionsException;
-import sx.blah.discord.util.RequestBuffer;
-
 import java.text.Normalizer;
 import java.util.regex.Pattern;
 
@@ -34,19 +30,8 @@ public class PortalCommand extends AbstractCommand{
                 LOG.info("Gathering data from websites ...");
                 //TODO update from website
 
-                RequestBuffer.request(() -> {
-                    try {
-                        new MessageBuilder(ClientConfig.CLIENT())
-                                .withChannel(message.getChannel())
-                                .withContent("Téléchargement des positions des dimensions divines terminé.")
-                                .build();
-                    } catch (DiscordException e1) {
-                        LOG.error(e1.getErrorMessage());
-                    } catch (MissingPermissionsException e1) {
-                        LOG.warn(Constants.name + " n'a pas les permissions pour appliquer cette requête.");
-                    }
-                    return null;
-                });
+                new InDeveloppmentException().throwException(message, this);
+                //Message.send(message.getChannel(), "Téléchargement des positions des dimensions divines terminé.");
 
                 return false;
             }
@@ -55,19 +40,8 @@ public class PortalCommand extends AbstractCommand{
                 for(Portal pos : Portal.getPortals())
                         st.append(pos);
 
-                RequestBuffer.request(() -> {
-                    try {
-                        new MessageBuilder(ClientConfig.CLIENT())
-                                .withChannel(message.getChannel())
-                                .withContent(st.toString())
-                                .build();
-                    } catch (DiscordException e1) {
-                        LOG.error(e1.getErrorMessage());
-                    } catch (MissingPermissionsException e1) {
-                        LOG.warn(Constants.name + " n'a pas les permissions pour appliquer cette requête.");
-                    }
-                    return null;
-                });
+                Message.send(message.getChannel(), st.toString());
+
                 return false;
             }
             else {
@@ -81,19 +55,8 @@ public class PortalCommand extends AbstractCommand{
                     if (m.group(6) != null)
                       portal.setUtilisation(Integer.parseInt(m.group(6).replaceAll("\\s", "")));
 
-                    RequestBuffer.request(() -> {
-                        try {
-                            new MessageBuilder(ClientConfig.CLIENT())
-                                    .withChannel(message.getChannel())
-                                    .withContent(portal.toString())
-                                    .build();
-                        } catch (DiscordException e1) {
-                            LOG.error(e1.getErrorMessage());
-                        } catch (MissingPermissionsException e1) {
-                            LOG.warn(Constants.name + " n'a pas les permissions pour appliquer cette requête.");
-                        }
-                        return null;
-                    });
+                    Message.send(message.getChannel(), portal.toString());
+
                     return false;
                 }
             }
