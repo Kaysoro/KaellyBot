@@ -3,6 +3,8 @@ package commands;
 import data.ClientConfig;
 import data.Constants;
 import data.User;
+import exceptions.AutoChangeRightsException;
+import exceptions.NotEnoughRightsException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sx.blah.discord.handle.obj.IMessage;
@@ -22,57 +24,42 @@ public class RightCommand extends AbstractCommand{
 
     public RightCommand(){
         super(Pattern.compile("right"),
-        Pattern.compile("^(" + Constants.prefixCommand + "right)\\s+<@[!|&](\\d+)>\\s+(\\d)$"));
+        Pattern.compile("^(" + Constants.prefixCommand + "right)(\\s+<@[!|&]\\d+>)?(\\s+\\d)?$"));
     }
 
     @Override
     public boolean request(IMessage message) {
         if (super.request(message)) {
 
-            //On check si la personne a bien les droits pour exécuter cette commande
-            if (User.getUsers().get(message.getGuild().getID())
-                    .get(message.getAuthor().getID()).getRights() >= User.RIGHT_MODERATOR) {
-                try {
-                    if (!m.group(2).equals(message.getAuthor().getID()))
-                        User.getUsers().get(message.getGuild().getID())
-                            .get(m.group(2)).changeRight(Integer.parseInt(m.group(3)));
-                    else {
-                        RequestBuffer.request(() -> {
-                            try {
-                                new MessageBuilder(ClientConfig.CLIENT())
-                                        .withChannel(message.getChannel())
-                                        .withContent("Vous ne pouvez pas changer vos propres droits d'administration.")
-                                        .build();
-                            } catch (DiscordException e) {
-                                LOG.error(e.getErrorMessage());
-                            } catch (MissingPermissionsException e) {
-                                LOG.warn(Constants.name + " n'a pas les permissions pour appliquer cette requête.");
-                            }
-                            return null;
-                        });
-                    }
-                } catch(NullPointerException e){
-                    LOG.warn("L'utilisateur <@!" + m.group(2) + "> n'existe pas.");
-                }
-            } else {
-                RequestBuffer.request(() -> {
+            if (m.group(3) != null) { // Level precised : editing
+
+                if (User.getUsers().get(message.getGuild().getID())
+                        .get(message.getAuthor().getID()).getRights() >= User.RIGHT_MODERATOR) {
+
+                    String id = m.group(2).replaceAll("\\s", "");
+                    String level = m.group(3).replaceAll("\\s", "");
+
                     try {
-                        new MessageBuilder(ClientConfig.CLIENT())
-                                .withChannel(message.getChannel())
-                                .withContent("Vous ne pouvez pas changer les droits des autres : il faut être " +
-                                        "modérateur ou administrateur pour cela.")
-                                .build();
-                    } catch (DiscordException e) {
-                        LOG.error(e.getErrorMessage());
-                    } catch (MissingPermissionsException e) {
-                        LOG.warn(Constants.name + " n'a pas les permissions pour appliquer cette requête.");
+                        if (!m.group(2).equals(message.getAuthor().getID()))
+                            User.getUsers().get(message.getGuild().getID())
+                                    .get(id).changeRight(Integer.parseInt(level));
+                        else {
+                            new AutoChangeRightsException().throwException(message, this);
+                        }
+                    } catch (NullPointerException e) {
+                        //TODO add user
+                        LOG.warn("L'utilisateur <@!" + id + "> n'existe pas.");
                     }
-                    return null;
-                });
-                return false;
+                } else {
+                    new NotEnoughRightsException().throwException(message, this);
+                    return false;
+                }
+                return true;
+            } else { // Level is not precised : consulting
+
             }
-            return true;
         }
+
         return false;
     }
 
@@ -86,6 +73,8 @@ public class RightCommand extends AbstractCommand{
     @Override
     public String helpDetailed() {
         return help()
-                + "\n`" + Constants.prefixCommand + "right `*`@pseudo niveau`* : change le niveau d'administration d'une personne.\n";
+                + "\n`" + Constants.prefixCommand + "right` : donne le niveau d'administration de l'auteur de la requête."
+                + "\n`" + Constants.prefixCommand + "right `*`@pseudo`* : donne le niveau d'administration de l'utilisateur ou d'un groupe spécifié."
+                + "\n`" + Constants.prefixCommand + "right `*`@pseudo niveau`* : change le niveau d'administration d'un utilisateur ou d'un groupe spécifié.\n";
     }
 }
