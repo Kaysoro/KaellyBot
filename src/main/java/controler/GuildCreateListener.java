@@ -1,5 +1,6 @@
 package controler;
 
+import data.Constants;
 import data.Guild;
 import data.User;
 import org.slf4j.Logger;
@@ -21,6 +22,7 @@ public class GuildCreateListener {
 
         @EventSubscriber
         public void onReady(GuildCreateEvent event) {
+
             Guild guild = new Guild(event.getGuild().getID(), event.getGuild().getName());
             guild.addToDatabase();
 
@@ -34,5 +36,7 @@ public class GuildCreateListener {
                 new User(user.getID(), user.getDisplayName(event.getGuild()), level, guild)
                         .addToDatabase();
             }
+
+            LOG.info("La guilde " + guild.getId() + " - " + guild.getName() + " a ajouté " + Constants.name);
         }
 }

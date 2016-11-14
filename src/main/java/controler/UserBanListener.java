@@ -20,6 +20,9 @@ public class UserBanListener {
 
         @EventSubscriber
         public void onReady(UserBanEvent event) {
-            User.getUsers().get(event.getGuild().getID()).get(event.getUser().getID()).removeToDatabase();
+            User user = User.getUsers().get(event.getGuild().getID()).get(event.getUser().getID());
+            user.removeToDatabase();
+            LOG.info("L'utilisateur " + user.getId() + " - " + user.getName() + " a été bannis de "
+                    + event.getGuild().getName());
         }
 }

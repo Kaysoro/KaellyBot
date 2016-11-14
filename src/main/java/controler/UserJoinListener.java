@@ -25,6 +25,9 @@ public class UserJoinListener {
             String name = event.getUser().getDisplayName(event.getGuild());
             String guildId = event.getGuild().getID();
 
-            new User(id, name, Guild.getGuilds().get(guildId)).addToDatabase();
+            User user = new User(id, name, Guild.getGuilds().get(guildId));
+            user.addToDatabase();
+            LOG.info("L'utilisateur " + user.getId() + " - " + user.getName() + " a rejoint "
+                    + event.getGuild().getName());
         }
 }

@@ -19,6 +19,10 @@ public class UserLeaveListener {
 
         @EventSubscriber
         public void onReady(UserLeaveEvent event) {
-            User.getUsers().get(event.getGuild().getID()).get(event.getUser().getID()).removeToDatabase();
+            User user = User.getUsers().get(event.getGuild().getID()).get(event.getUser().getID());
+            user.removeToDatabase();
+
+            LOG.info("L'utilisateur " + user.getId() + " - " + user.getName() + " a quitté "
+                    + event.getGuild().getName());
         }
 }

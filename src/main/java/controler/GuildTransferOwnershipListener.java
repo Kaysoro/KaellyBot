@@ -16,7 +16,12 @@ public class GuildTransferOwnershipListener {
 
     @EventSubscriber
     public void onReady(GuildTransferOwnershipEvent event) {
-        User.getUsers().get(event.getGuild().getID()).get(event.getNewOwner().getID()).changeRight(User.RIGHT_ADMIN);
-        User.getUsers().get(event.getGuild().getID()).get(event.getOldOwner().getID()).changeRight(User.RIGHT_INVITE);
+
+        User oldOwner = User.getUsers().get(event.getGuild().getID()).get(event.getNewOwner().getID());
+        oldOwner.changeRight(User.RIGHT_ADMIN);
+        User newOwner = User.getUsers().get(event.getGuild().getID()).get(event.getOldOwner().getID());
+        newOwner.changeRight(User.RIGHT_INVITE);
+
+        LOG.info(event.getGuild().getName() + " : Passation de " + oldOwner.getName() + " à " + newOwner.getName());
     }
 }

@@ -1,5 +1,6 @@
 package controler;
 
+import data.Constants;
 import data.Guild;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,5 +21,8 @@ public class GuildLeaveListener {
         @EventSubscriber
         public void onReady(GuildLeaveEvent event) {
             Guild.getGuilds().get(event.getGuild().getID()).removeToDatabase();
+
+            LOG.info("La guilde " + event.getGuild().getID() + " - " + event.getGuild().getName()
+                    + " a supprimé " + Constants.name);
         }
 }
