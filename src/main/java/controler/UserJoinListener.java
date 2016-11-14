@@ -1,0 +1,30 @@
+package controler;
+
+import data.Guild;
+import data.User;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import sx.blah.discord.api.events.EventSubscriber;
+import sx.blah.discord.handle.impl.events.UserJoinEvent;
+
+/**
+ * Created by steve on 14/07/2016.
+ */
+public class UserJoinListener {
+
+    private final static Logger LOG = LoggerFactory.getLogger(UserJoinListener.class);
+
+    public UserJoinListener(){
+        super();
+    }
+
+        @EventSubscriber
+        public void onReady(UserJoinEvent event) {
+
+            String id = event.getUser().getID();
+            String name = event.getUser().getDisplayName(event.getGuild());
+            String guildId = event.getGuild().getID();
+
+            new User(id, name, Guild.getGuilds().get(guildId)).addToDatabase();
+        }
+}
