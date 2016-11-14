@@ -14,12 +14,12 @@ import java.util.Map;
  * Created by steve on 28/07/2016.
  */
 public class User {
-    private final static Logger LOG = LoggerFactory.getLogger(User.class);
     public static int RIGHT_INVITE = 0;
     public static int RIGHT_MEMBER = 1;
     public static int RIGHT_MODERATOR = 2;
     public static int RIGHT_ADMIN = 3;
 
+    private final static Logger LOG = LoggerFactory.getLogger(User.class);
     private static Map<String, Map<String, User>> users;
     private String id;
     private String name;
@@ -39,19 +39,59 @@ public class User {
         }
         getUsers().get(guild.getId()).put(id, this);
 
-        //TODO SQL Part
+        Connexion connexion = Connexion.getInstance();
+        Connection connection = connexion.getConnection();
+
+        try {
+            PreparedStatement request = connection.prepareStatement("INSERT INTO"
+                    + " User(id_user, name, id_guild, rights) VALUES (?, ?, ?, ?);");
+            request.setString(1, id);
+            request.setString(2, name);
+            request.setString(3, guild.getId());
+            request.setInt(4, rights);
+            request.executeUpdate();
+
+        } catch (SQLException e) {
+            LOG.error(e.getMessage());
+        }
     }
 
     public void setName(String name){
         this.name = name;
 
-        //TODO SQL Part
+        Connexion connexion = Connexion.getInstance();
+        Connection connection = connexion.getConnection();
+
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(
+                    "UPDATE User SET name = ? WHERE id_user = ? AND id_guild = ?;");
+            preparedStatement.setString(1, name);
+            preparedStatement.setString(2, id);
+            preparedStatement.setString(3, guild.getId());
+            preparedStatement.executeUpdate();
+
+        } catch (SQLException e) {
+            LOG.error(e.getMessage());
+        }
     }
 
     public void changeRight(int right){
         this.rights = right;
 
-        //TODO SQL Part
+        Connexion connexion = Connexion.getInstance();
+        Connection connection = connexion.getConnection();
+
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(
+                    "UPDATE User SET rights = ? WHERE id_user = ? AND id_guild = ?;");
+            preparedStatement.setInt(1, rights);
+            preparedStatement.setString(2, id);
+            preparedStatement.setString(3, guild.getId());
+            preparedStatement.executeUpdate();
+
+        } catch (SQLException e) {
+            LOG.error(e.getMessage());
+        }
     }
 
     public static Map<String, Map<String, User>> getUsers(){
@@ -67,8 +107,8 @@ public class User {
             Connection connection = connexion.getConnection();
 
             try {
-                PreparedStatement attributionClasse = connection.prepareStatement("SELECT id_user, name, id_guild, rights FROM User_Guild");
-                ResultSet resultSet = attributionClasse.executeQuery();
+                PreparedStatement query = connection.prepareStatement("SELECT id_user, name, id_guild, rights FROM User");
+                ResultSet resultSet = query.executeQuery();
 
                 while (resultSet.next()) {
                     id = resultSet.getString("id_user");
