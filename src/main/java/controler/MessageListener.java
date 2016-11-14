@@ -7,7 +7,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sx.blah.discord.api.events.EventSubscriber;
 import sx.blah.discord.handle.impl.events.MessageReceivedEvent;
-import sx.blah.discord.handle.obj.IUser;
 
 /**
  * Created by steve on 14/07/2016.
@@ -27,24 +26,11 @@ public class MessageListener {
             String guildId = event.getMessage().getGuild().getID();
             String guildName = event.getMessage().getGuild().getName();
 
-            if (! Guild.getGuild().containsKey(guildId)) {
-                LOG.info("Guild " + guildId + " - " + guildName + " is added to database.");
-                new Guild(guildId, guildName).addToDatabase();
-
-                // Now, we have to give correct rights for the owner.
-                IUser owner = event.getMessage().getGuild().getOwner();
-                new User(owner.getID(), owner.getDisplayName(event.getMessage().getGuild()),
-                        User.RIGHT_ADMIN, Guild.getGuild().get(guildId)).addToDatabase();
-            }
-            else if (! Guild.getGuild().get(guildId).getName().equals(guildName))
+            if (! Guild.getGuilds().get(guildId).getName().equals(guildName))
                 // GuildName from database is deprecated : it have to be updated.
-                Guild.getGuild().get(guildId).setName(guildName);
+                Guild.getGuilds().get(guildId).setName(guildName);
 
-            if (! User.getUsers().get(guildId).containsKey(authorId)) {
-                LOG.info("User " + authorId + " - " + authorName + " is added to database.");
-                new User(authorId, authorName, User.RIGHT_INVITE, Guild.getGuild().get(guildId)).addToDatabase();
-            }
-            else if (! User.getUsers().get(guildId).get(authorId).getName().equals(authorName))
+            if (! User.getUsers().get(guildId).get(authorId).getName().equals(authorName))
                 // AuthorName from database is deprecated : it have to be updated.
                 User.getUsers().get(guildId).get(authorId).setName(authorName);
 

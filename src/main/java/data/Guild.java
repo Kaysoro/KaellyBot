@@ -26,8 +26,8 @@ public class Guild {
     }
 
     public void addToDatabase(){
-        if (! getGuild().containsKey(id)){
-            getGuild().put(id, this);
+        if (! getGuilds().containsKey(id)){
+            getGuilds().put(id, this);
 
             Connexion connexion = Connexion.getInstance();
             Connection connection = connexion.getConnection();
@@ -43,6 +43,9 @@ public class Guild {
                 LOG.error(e.getMessage());
             }
         }
+
+        if (! User.getUsers().containsKey(id))
+            User.getUsers().put(id, new HashMap<String, User>());
     }
 
     public void setName(String name){
@@ -61,7 +64,7 @@ public class Guild {
         }
     }
 
-    public static Map<String, Guild> getGuild(){
+    public static Map<String, Guild> getGuilds(){
         if (guilds == null){
             guilds = new HashMap<String, Guild>();
             String id;

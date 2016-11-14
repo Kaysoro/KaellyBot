@@ -33,26 +33,29 @@ public class User {
         this.guild = guild;
     }
 
-    public void addToDatabase(){
-        if (!getUsers().containsKey(guild)) {
+    public void addToDatabase() {
+        if (!getUsers().containsKey(guild.getId())) {
             getUsers().put(guild.getId(), new HashMap<String, User>());
         }
-        getUsers().get(guild.getId()).put(id, this);
 
-        Connexion connexion = Connexion.getInstance();
-        Connection connection = connexion.getConnection();
+        if (! getUsers().get(guild.getId()).containsKey(id)){
+            getUsers().get(guild.getId()).put(id, this);
 
-        try {
-            PreparedStatement request = connection.prepareStatement("INSERT INTO"
-                    + " User(id_user, name, id_guild, rights) VALUES (?, ?, ?, ?);");
-            request.setString(1, id);
-            request.setString(2, name);
-            request.setString(3, guild.getId());
-            request.setInt(4, rights);
-            request.executeUpdate();
+            Connexion connexion = Connexion.getInstance();
+            Connection connection = connexion.getConnection();
 
-        } catch (SQLException e) {
-            LOG.error(e.getMessage());
+            try {
+                PreparedStatement request = connection.prepareStatement("INSERT INTO"
+                        + " User(id_user, name, id_guild, rights) VALUES (?, ?, ?, ?);");
+                request.setString(1, id);
+                request.setString(2, name);
+                request.setString(3, guild.getId());
+                request.setInt(4, rights);
+                request.executeUpdate();
+
+            } catch (SQLException e) {
+                LOG.error(id + " - " + name + " : " + e.getMessage());
+            }
         }
     }
 
@@ -114,7 +117,7 @@ public class User {
                     id = resultSet.getString("id_user");
                     name = resultSet.getString("name");
                     right = resultSet.getInt("rights");
-                    guildId = Guild.getGuild().get(resultSet.getString("id_guild"));
+                    guildId = Guild.getGuilds().get(resultSet.getString("id_guild"));
 
                     if (!users.containsKey(guildId.getId()))
                         users.put(guildId.getId(), new HashMap<String, User>());
