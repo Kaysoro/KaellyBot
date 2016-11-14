@@ -48,6 +48,27 @@ public class Guild {
             User.getUsers().put(id, new HashMap<String, User>());
     }
 
+    public void removeToDatabase() {
+        if (getGuilds().containsKey(id)) {
+            getGuilds().remove(id);
+
+            Connexion connexion = Connexion.getInstance();
+            Connection connection = connexion.getConnection();
+
+            try {
+                PreparedStatement request = connection.prepareStatement("DELETE FROM Guild WHERE ID = ?;");
+                request.setString(1, id);
+                request.executeUpdate();
+
+            } catch (SQLException e) {
+                LOG.error(e.getMessage());
+            }
+        }
+
+        if (User.getUsers().containsKey(id))
+            User.getUsers().remove(id);
+    }
+
     public void setName(String name){
         this.name = name;
 
