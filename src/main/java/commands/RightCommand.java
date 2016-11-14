@@ -3,7 +3,6 @@ package commands;
 import data.ClientConfig;
 import data.Constants;
 import data.User;
-import org.apache.commons.lang3.ObjectUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sx.blah.discord.handle.obj.IMessage;
@@ -37,6 +36,21 @@ public class RightCommand extends AbstractCommand{
                     if (!m.group(2).equals(message.getAuthor().getID()))
                         User.getUsers().get(message.getGuild().getID())
                             .get(m.group(2)).changeRight(Integer.parseInt(m.group(3)));
+                    else {
+                        RequestBuffer.request(() -> {
+                            try {
+                                new MessageBuilder(ClientConfig.CLIENT())
+                                        .withChannel(message.getChannel())
+                                        .withContent("Vous ne pouvez pas changer vos propres droits d'administration.")
+                                        .build();
+                            } catch (DiscordException e) {
+                                LOG.error(e.getErrorMessage());
+                            } catch (MissingPermissionsException e) {
+                                LOG.warn(Constants.name + " n'a pas les permissions pour appliquer cette requête.");
+                            }
+                            return null;
+                        });
+                    }
                 } catch(NullPointerException e){
                     LOG.warn("L'utilisateur <@!" + m.group(2) + "> n'existe pas.");
                 }
