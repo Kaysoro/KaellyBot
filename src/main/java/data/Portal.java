@@ -3,6 +3,10 @@ package data;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -19,30 +23,74 @@ public class Portal {
     private final static long LIMIT = 172800000;
     private final static DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy à HH:mm", Locale.FRANCE);
 
-    private static List<Portal> portals;
+    private static List<String> portals;
 
     private String name;
     private String coordonate;
     private int utilisation;
     private long creation;
     private long lastUpdate;
+    private Guild guild;
 
-    private Portal(String name, String coordonate, int utilisation, long creation, long lastUpdate) {
+    private Portal(String name, String coordonate, int utilisation, long creation, long lastUpdate, Guild guild) {
         this.name = name;
         this.coordonate = coordonate;
         this.utilisation = utilisation;
         this.creation = creation;
         this.lastUpdate = lastUpdate;
+        this.guild = guild;
     }
 
-    public static List<Portal> getPortals(){
+    public static List<String> getPortals(){
         if (portals == null){
-            portals = new ArrayList<Portal>();
-            portals.add(new Portal("Enutrosor", null, -1, System.currentTimeMillis(), -1));
-            portals.add(new Portal("Srambad", null, -1, System.currentTimeMillis(), System.currentTimeMillis()));
-            portals.add(new Portal("Xélorium", null, -1, System.currentTimeMillis(), -1));
-            portals.add(new Portal("Ecaflipus", null, -1, System.currentTimeMillis(), System.currentTimeMillis()));
-            //TODO Gathering data from database
+            portals = new ArrayList<String>();
+
+            Connexion connexion = Connexion.getInstance();
+            Connection connection = connexion.getConnection();
+
+            try {
+                PreparedStatement query = connection.prepareStatement("SELECT name FROM Portal");
+                ResultSet resultSet = query.executeQuery();
+
+                while (resultSet.next())
+                    portals.add(resultSet.getString("name"));
+            } catch (SQLException e) {
+                LOG.error(e.getMessage());
+            }
+        }
+
+        return portals;
+    }
+
+    public static List<Portal> getPortals(Guild g){
+        List<Portal> portals = new ArrayList<Portal>();
+
+        Connexion connexion = Connexion.getInstance();
+        Connection connection = connexion.getConnection();
+
+        try {
+            PreparedStatement query = connection.prepareStatement("SELECT name_portal, pos, utilisation, "
+                    + "creation, last_update FROM Portal_Guild WHERE id_guild = (?);");
+            query.setString(1, g.getId());
+            ResultSet resultSet = query.executeQuery();
+
+            String name;
+            String pos;
+            int utilisation;
+            long creation;
+            long lastUpdate;
+
+            while (resultSet.next()) {
+                name = resultSet.getString("name");
+                pos = resultSet.getString("pos");
+                utilisation = resultSet.getInt("utilisation");
+                creation = resultSet.getLong("creation");
+                lastUpdate = resultSet.getLong("last_update");
+                portals.add(new Portal(name, pos, utilisation, creation, lastUpdate, g));
+            }
+
+        } catch (SQLException e) {
+            LOG.error(e.getMessage());
         }
 
         return portals;

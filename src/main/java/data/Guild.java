@@ -7,7 +7,9 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -19,10 +21,13 @@ public class Guild {
     private static Map<String, Guild> guilds;
     private String id;
     private String name;
+    private List<Portal> portals;
 
     public Guild(String id, String name){
         this.id = id;
         this.name = name;
+
+        portals = Portal.getPortals(this);
     }
 
     public void addToDatabase(){
@@ -39,10 +44,20 @@ public class Guild {
                 request.setString(2, name);
                 request.executeUpdate();
 
+                for(String portal : Portal.getPortals()) {
+                    request = connection.prepareStatement("INSERT INTO Portal_Guild"
+                            + "(name_portal, id_guild) VALUES (?, ?);");
+                    request.setString(1, portal);
+                    request.setString(2, id);
+                    request.executeUpdate();
+                }
+
             } catch (SQLException e) {
                 LOG.error(e.getMessage());
             }
         }
+
+        portals = Portal.getPortals(this);
 
         if (! User.getUsers().containsKey(id))
             User.getUsers().put(id, new HashMap<String, User>());
@@ -116,5 +131,9 @@ public class Guild {
 
     public String getName(){
         return name;
+    }
+
+    public List<Portal> getPortals(){
+        return portals;
     }
 }
