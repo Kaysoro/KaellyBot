@@ -1,13 +1,18 @@
 package commands;
 
 import data.Constants;
+import data.Guild;
 import data.Portal;
 import discord.Message;
 import exceptions.InDeveloppmentException;
+import exceptions.PortalNotFoundException;
+import exceptions.TooMuchPossibilitiesException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sx.blah.discord.handle.obj.IMessage;
 import java.text.Normalizer;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Pattern;
 
 /**
@@ -37,7 +42,7 @@ public class PortalCommand extends AbstractCommand{
             }
             else if (m.group(2) == null) { // No dimension precised
                 StringBuilder st = new StringBuilder();
-                for(Portal pos : Portal.getPortals())
+                for(Portal pos : Guild.getGuilds().get(message.getGuild().getID()).getPortals())
                         st.append(pos);
 
                 Message.send(message.getChannel(), st.toString());
@@ -45,36 +50,41 @@ public class PortalCommand extends AbstractCommand{
                 return false;
             }
             else {
-                Portal portal = getPortal(m.group(2));
-                if (portal != null) {
+                List<Portal> portals = getPortal(m.group(2), Guild.getGuilds().get(message.getGuild().getID()));
+                if (portals.size() == 1) {
                     LOG.info(m.group(3));
                     if (m.group(3) != null) {
                         LOG.info(m.group(4) + ":" + m.group(5));
-                        portal.setCoordonate("[" + m.group(4) + "," + m.group(5) + "]");
+                        portals.get(0).setCoordonate("[" + m.group(4) + "," + m.group(5) + "]");
                     }
                     if (m.group(6) != null)
-                      portal.setUtilisation(Integer.parseInt(m.group(6).replaceAll("\\s", "")));
+                      portals.get(0).setUtilisation(Integer.parseInt(m.group(6).replaceAll("\\s", "")));
 
-                    Message.send(message.getChannel(), portal.toString());
+                    Message.send(message.getChannel(), portals.get(0).toString());
 
                     return false;
                 }
+                else if(portals.size() > 1)
+                    new TooMuchPossibilitiesException().throwException(message, this);
+                else
+                    new PortalNotFoundException().throwException(message, this);
             }
         }
         return false;
     }
 
-    public Portal getPortal(String nameProposed){
+    public List<Portal> getPortal(String nameProposed, Guild guild){
         nameProposed = Normalizer.normalize(nameProposed, Normalizer.Form.NFD)
                 .replaceAll("\\p{InCombiningDiacriticalMarks}+", "").toLowerCase();
         nameProposed = nameProposed.replaceAll("\\W+", "");
+        List<Portal> portals = new ArrayList<Portal>();
 
-        for(Portal portal : Portal.getPortals())
+        for(Portal portal : guild.getPortals())
             if (Normalizer.normalize(portal.getName(), Normalizer.Form.NFD)
                     .replaceAll("\\p{InCombiningDiacriticalMarks}+", "")
                     .toLowerCase().startsWith(nameProposed))
-                return portal;
-        return null;
+                    portals.add(portal);
+        return portals;
     }
 
     @Override
