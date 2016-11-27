@@ -81,7 +81,7 @@ public class Portal {
             long lastUpdate;
 
             while (resultSet.next()) {
-                name = resultSet.getString("name");
+                name = resultSet.getString("name_portal");
                 pos = resultSet.getString("pos");
                 utilisation = resultSet.getInt("utilisation");
                 creation = resultSet.getLong("creation");
