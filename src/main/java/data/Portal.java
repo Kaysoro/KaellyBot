@@ -103,7 +103,23 @@ public class Portal {
     public void setUtilisation(int utilisation) {
         this.utilisation = utilisation;
         this.lastUpdate = System.currentTimeMillis();
-        //TODO Database
+
+        Connexion connexion = Connexion.getInstance();
+        Connection connection = connexion.getConnection();
+
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(
+                    "UPDATE Portal_Guild SET utilisation = ?, last_update = ?"
+                            + "WHERE name_portal = ? AND id_guild = ?;");
+            preparedStatement.setInt(1, utilisation);
+            preparedStatement.setLong(2, lastUpdate);
+            preparedStatement.setString(3, name);
+            preparedStatement.setString(4, guild.getId());
+
+            preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            LOG.error(e.getMessage());
+        }
     }
 
     public void setCoordonate(String coordonate) {
@@ -112,7 +128,25 @@ public class Portal {
             this.creation = System.currentTimeMillis();
             this.utilisation = -1;
             this.lastUpdate = -1;
-            //TODO Database
+
+            Connexion connexion = Connexion.getInstance();
+            Connection connection = connexion.getConnection();
+
+            try {
+                PreparedStatement preparedStatement = connection.prepareStatement(
+                        "UPDATE Portal_Guild SET pos = ?, creation = ?, utilisation = ?, last_update = ?"
+                                + "WHERE name_portal = ? AND id_guild = ?;");
+                preparedStatement.setString(1, coordonate);
+                preparedStatement.setLong(2, creation);
+                preparedStatement.setInt(3, utilisation);
+                preparedStatement.setLong(4, lastUpdate);
+                preparedStatement.setString(5, name);
+                preparedStatement.setString(6, guild.getId());
+
+                preparedStatement.executeUpdate();
+            } catch (SQLException e) {
+                LOG.error(e.getMessage());
+            }
         }
 
     }
