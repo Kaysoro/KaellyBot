@@ -25,23 +25,36 @@ public class Job {
 
     public Job(String name, int level, User user){
         this.name = name;
+        if (level > 200)
+            level = 200;
         this.level = level;
         this.user = user;
     }
 
     public void setLevel(int level){
+        if (level > 200)
+            level = 200;
         this.level = level;
 
         Connexion connexion = Connexion.getInstance();
         Connection connection = connexion.getConnection();
 
         try {
-            PreparedStatement preparedStatement = connection.prepareStatement(
-                    "UPDATE Job_User SET level = ?"
-                            + "WHERE name_job = ? AND id_user = ?;");
-            preparedStatement.setInt(1, level);
-            preparedStatement.setString(2, name);
-            preparedStatement.setString(3, user.getId());
+            PreparedStatement preparedStatement;
+            if (level > 0) {
+                preparedStatement = connection.prepareStatement(
+                        "UPDATE Job_User SET level = ?"
+                                + "WHERE name_job = ? AND id_user = ?;");
+                preparedStatement.setInt(1, level);
+                preparedStatement.setString(2, name);
+                preparedStatement.setString(3, user.getId());
+            }
+            else {
+                preparedStatement = connection.prepareStatement(
+                        "DELETE FROM Job_User WHERE name_job = ? AND id_user = ?;");
+                preparedStatement.setString(1, name);
+                preparedStatement.setString(2, user.getId());
+            }
 
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
@@ -50,7 +63,7 @@ public class Job {
     }
 
     public void addToDatabase(){
-        if (! user.getJobs().containsKey(name)) {
+        if (! user.getJobs().containsKey(name) && level > 0) {
             user.getJobs().put(name, this);
             Connexion connexion = Connexion.getInstance();
             Connection connection = connexion.getConnection();
@@ -115,5 +128,9 @@ public class Job {
             }
         }
         return jobs;
+    }
+
+    public int getLevel(){
+        return level;
     }
 }
