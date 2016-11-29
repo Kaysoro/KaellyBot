@@ -55,9 +55,8 @@ public class JobCommand extends AbstractCommand{
                 }
                 else { // Consultation
                     //TODO
+                    new InDeveloppmentException().throwException(message, this);
                 }
-
-                Message.send(message.getChannel(), jobs.get(0).toString());
             }
             else if(jobs.size() > 1)
                 new TooMuchPossibilitiesException().throwException(message, this);
