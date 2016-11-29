@@ -92,14 +92,14 @@ public class Job {
         int level;
 
         try {
-            PreparedStatement query = connection.prepareStatement("SELECT name, level"
+            PreparedStatement query = connection.prepareStatement("SELECT name_job, level"
                     + " FROM Job_User WHERE id_user = ?;");
             query.setString(1, user.getId());
 
             ResultSet resultSet = query.executeQuery();
 
             while (resultSet.next()) {
-                name = resultSet.getString("name");
+                name = resultSet.getString("name_job");
                 level = resultSet.getInt("level");
                 jobs.put(name, new Job(name, level, user));
             }

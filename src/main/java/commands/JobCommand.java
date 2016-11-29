@@ -39,7 +39,7 @@ public class JobCommand extends AbstractCommand{
                 if (m.group(3) != null) { // setting data
                     User author = User.getUsers().get(message.getGuild().getID())
                             .get(message.getAuthor().getID());
-                    int level = Integer.parseInt(m.group(3));
+                    int level = Integer.parseInt(m.group(3).replaceAll("\\W+", ""));
                     if (! author.getJobs().containsKey(jobs.get(0)))
                         new Job(jobs.get(0), level, author).addToDatabase();
                     else
