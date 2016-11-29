@@ -25,12 +25,14 @@ public class User {
     private String name;
     private int rights;
     private Guild guild;
+    private Map<String, Job> jobs;
 
     public User(String id, String name, int rights, Guild guild){
         this.id = id;
         this.name = name;
         this.rights = rights;
         this.guild = guild;
+        this.jobs = Job.getJobs(this);
     }
 
     public User(String id, String name, Guild guild){
@@ -61,6 +63,12 @@ public class User {
                 LOG.error(id + " - " + name + " : " + e.getMessage());
             }
         }
+    }
+
+    public int getJob(String name){
+        if (getJobs().containsKey(name))
+            return getJobs().get(name).getLevel();
+        return 0;
     }
 
     public void removeToDatabase() {
@@ -169,5 +177,9 @@ public class User {
 
     public String getName() {
         return name;
+    }
+
+    public Map<String, Job> getJobs() {
+        return jobs;
     }
 }
