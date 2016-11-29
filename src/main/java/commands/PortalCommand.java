@@ -61,8 +61,6 @@ public class PortalCommand extends AbstractCommand{
                       portals.get(0).setUtilisation(Integer.parseInt(m.group(6).replaceAll("\\s", "")));
 
                     Message.send(message.getChannel(), portals.get(0).toString());
-
-                    return false;
                 }
                 else if(portals.size() > 1)
                     new TooMuchPossibilitiesException().throwException(message, this);
