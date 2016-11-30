@@ -11,10 +11,13 @@ import exceptions.TooMuchPossibilitiesException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sx.blah.discord.handle.obj.IMessage;
+import sx.blah.discord.handle.obj.IUser;
 
 import java.text.Normalizer;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 /**
@@ -54,8 +57,34 @@ public class JobCommand extends AbstractCommand{
                                 + " n'est plus inscrit dans l'annuaire en tant que " + jobs.get(0) + ".");
                 }
                 else { // Consultation
-                    //TODO
-                    new InDeveloppmentException().throwException(message, this);
+                    Map<String, User> users = User.getUsers().get(message.getGuild().getID());
+                    List<User> artisans = new ArrayList<User>();
+
+                    for(IUser iUser : message.getGuild().getUsers())
+                        if (users.get(iUser.getID()).getJob(jobs.get(0)) > 0)
+                            artisans.add(users.get(iUser.getID()));
+
+                    artisans.sort(new Comparator<User>(){
+                        @Override
+                        public int compare(User o1, User o2) {
+                            if (o2.getJob(jobs.get(0)) != o1.getJob(jobs.get(0)))
+                                return o2.getJob(jobs.get(0)) - o1.getJob(jobs.get(0));
+                            return o1.getName().compareTo(o2.getName());
+                        }
+                    });
+
+                    StringBuilder st = new StringBuilder("Voici l'annuaire des ").append(jobs.get(0))
+                            .append("s de ").append(message.getGuild().getName()).append(" :\n`");
+
+                    for(User user : artisans) {
+                        st.append("\n").append(user.getName());
+                        for (int i = user.getName().length(); i < (Constants.nicknameLimit + 10); i++)
+                            st.append(" ");
+                        st.append(user.getJob(jobs.get(0)));
+                    }
+                    st.append("`");
+
+                    Message.send(message.getChannel(), st.toString());
                 }
             }
             else if(jobs.size() > 1)

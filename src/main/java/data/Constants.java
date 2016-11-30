@@ -36,4 +36,10 @@ public class Constants {
      * Official Dofus URL for almanax
      */
     public final static String almanaxURL = "http://www.krosmoz.com/fr/almanax/";
+
+
+    /**
+     * Character limit for nickname discord
+     */
+    public final static int nicknameLimit = 32;
 }
