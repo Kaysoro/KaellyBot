@@ -39,6 +39,7 @@ public class CommandPatternTest extends TestCase {
 
         assertTrue(pattern.matcher(Constants.prefixCommand + "help").find());
         assertTrue(pattern.matcher(Constants.prefixCommand + "help help").find());
+        assertTrue(pattern.matcher(Constants.prefixCommand + "help hélp").find());
         assertTrue(pattern.matcher(Constants.prefixCommand + "help !help").find());
     }
 
@@ -66,6 +67,7 @@ public class CommandPatternTest extends TestCase {
 
         assertTrue(pattern.matcher(Constants.prefixCommand + "map").find());
         assertTrue(pattern.matcher(Constants.prefixCommand + "map un deux trois").find());
+        assertTrue(pattern.matcher(Constants.prefixCommand + "map un deûx trôis").find());
     }
 
     public void testParrotCommand(){
@@ -80,6 +82,7 @@ public class CommandPatternTest extends TestCase {
 
         assertTrue(pattern.matcher(Constants.prefixCommand + "pos").find());
         assertTrue(pattern.matcher(Constants.prefixCommand + "pos dimension").find());
+        assertTrue(pattern.matcher(Constants.prefixCommand + "pos dimensiôn").find());
         assertTrue(pattern.matcher(Constants.prefixCommand + "pos dimension [1,-1]").find());
         assertTrue(pattern.matcher(Constants.prefixCommand + "pos dimension -1 1").find());
         assertTrue(pattern.matcher(Constants.prefixCommand + "pos dimension [1,-1] 1").find());

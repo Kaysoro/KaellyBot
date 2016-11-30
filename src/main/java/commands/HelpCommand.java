@@ -16,7 +16,7 @@ public class HelpCommand extends AbstractCommand{
 
     public HelpCommand(){
         super(Pattern.compile("help"),
-                Pattern.compile("^(" + Constants.prefixCommand + "help)(\\s+" + Constants.prefixCommand + "?(\\w+))?$"));
+                Pattern.compile("^(" + Constants.prefixCommand + "help)(\\s+" + Constants.prefixCommand + "?(\\p{L}+))?$"));
     }
 
     @Override

@@ -18,7 +18,7 @@ public class MapCommand extends AbstractCommand{
 
     public MapCommand(){
         super(Pattern.compile("map"),
-              Pattern.compile("^(" + Constants.prefixCommand + "map)([\\W+\\w+]*)$"));
+              Pattern.compile("^(" + Constants.prefixCommand + "map)([\\W+\\p{L}+]*)$"));
     }
 
     @Override
