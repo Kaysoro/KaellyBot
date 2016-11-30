@@ -73,16 +73,22 @@ public class JobCommand extends AbstractCommand{
                         }
                     });
 
-                    StringBuilder st = new StringBuilder("Voici l'annuaire des ").append(jobs.get(0))
-                            .append("s de ").append(message.getGuild().getName()).append(" :\n`");
+                    StringBuilder st = new StringBuilder();
 
-                    for(User user : artisans) {
-                        st.append("\n").append(user.getName());
-                        for (int i = user.getName().length(); i < (Constants.nicknameLimit + 10); i++)
-                            st.append(" ");
-                        st.append(user.getJob(jobs.get(0)));
+                    if (! artisans.isEmpty()) {
+                        st.append("Voici l'annuaire des ").append(jobs.get(0))
+                                .append("s de ").append(message.getGuild().getName()).append(" :\n`");
+
+                        for (User user : artisans) {
+                            st.append("\n").append(user.getName());
+                            for (int i = user.getName().length(); i < (Constants.nicknameLimit + 10); i++)
+                                st.append(" ");
+                            st.append(user.getJob(jobs.get(0)));
+                        }
+                        st.append("`");
                     }
-                    st.append("`");
+                    else
+                        st.append("Aucun ").append(jobs.get(0)).append(" n'est inscrit à l'annuaire.");
 
                     Message.send(message.getChannel(), st.toString());
                 }
