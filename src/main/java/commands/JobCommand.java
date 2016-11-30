@@ -7,9 +7,11 @@ import data.User;
 import discord.Message;
 import exceptions.InDeveloppmentException;
 import exceptions.JobNotFoundException;
+import exceptions.LevelNotFoundException;
 import exceptions.TooMuchPossibilitiesException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import sx.blah.discord.Discord4J;
 import sx.blah.discord.handle.obj.IMessage;
 import sx.blah.discord.handle.obj.IUser;
 
@@ -114,6 +116,8 @@ public class JobCommand extends AbstractCommand{
                     Message.send(message.getChannel(), author.getName()
                             + " n'est plus inscrit des annuaires.");
             }
+            else
+                new LevelNotFoundException().throwException(message, this);
         }
 
         return false;
