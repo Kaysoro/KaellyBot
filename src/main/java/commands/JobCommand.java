@@ -31,13 +31,12 @@ public class JobCommand extends AbstractCommand{
 
     public JobCommand(){
         super(Pattern.compile("job"),
-        Pattern.compile("^(" + Constants.prefixCommand + "job)\\s+(\\w+|-all)(\\s+\\d{1,3})?$"));
+        Pattern.compile("^(" + Constants.prefixCommand + "job)\\s+(\\p{L}+|-all)(\\s+\\d{1,3})?$"));
     }
 
     @Override
     public boolean request(IMessage message) {
         if (super.request(message)) {
-
             if (!m.group(2).equals("-all")) {
                 List<String> jobs = getJob(m.group(2));
 
