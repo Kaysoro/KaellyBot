@@ -47,6 +47,7 @@ public class CommandPatternTest extends TestCase {
         Pattern pattern = new ItemCommand().getPattern();
 
         assertTrue(pattern.matcher(Constants.prefixCommand + "item test").find());
+        assertTrue(pattern.matcher(Constants.prefixCommand + "item tést test").find());
         assertFalse(pattern.matcher(Constants.prefixCommand + "item").find());
     }
 

@@ -18,7 +18,7 @@ public class MapCommand extends AbstractCommand{
 
     public MapCommand(){
         super(Pattern.compile("map"),
-              Pattern.compile("^(" + Constants.prefixCommand + "map)([\\W+\\p{L}+]*)$"));
+              Pattern.compile("^(" + Constants.prefixCommand + "map)([\\s+\\p{L}+]*)$"));
     }
 
     @Override
@@ -26,8 +26,8 @@ public class MapCommand extends AbstractCommand{
         if (super.request(message)) {
             String[] maps;
             try {
-                if (m.group(2).replaceAll("^\\W+", "").length() > 0)
-                    maps = m.group(2).replaceAll("^\\W+", "").split("\\W+");
+                if (m.group(2).replaceAll("^\\s+", "").length() > 0)
+                    maps = m.group(2).replaceAll("^\\s+", "").split("\\s+");
                 else
                     maps = new String[]{"I", "II", "III", "IV", "V", "VI",
                             "VII", "VIII", "IX", "X", "XI", "XII"};
@@ -54,6 +54,6 @@ public class MapCommand extends AbstractCommand{
     public String helpDetailed() {
         return help()
                 + "\n`" + Constants.prefixCommand + "map` : sélectionne une carte du Goultarminator entre I et XII compris."
-                + "\n`" + Constants.prefixCommand + "map `*`map1, map2, ...`* : sélectionne une carte parmi celles spécifiées en paramètre.\n";
+                + "\n`" + Constants.prefixCommand + "map `*`map1 map2 ...`* : sélectionne une carte parmi celles spécifiées en paramètre.\n";
     }
 }
