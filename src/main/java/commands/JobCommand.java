@@ -138,7 +138,7 @@ public class JobCommand extends AbstractCommand{
 
     @Override
     public String help() {
-        return "**" + Constants.prefixCommand + "job** renvoit l'annuaire des artisans pour ce métier.";
+        return "**" + Constants.prefixCommand + "job** renvoit l'annuaire des artisans d'un métier.";
     }
 
     @Override

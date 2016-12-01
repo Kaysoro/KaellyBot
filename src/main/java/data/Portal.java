@@ -34,7 +34,10 @@ public class Portal {
 
     private Portal(String name, String coordonate, int utilisation, long creation, long lastUpdate, Guild guild) {
         this.name = name;
-        this.coordonate = coordonate;
+        if (coordonate != null)
+            this.coordonate = coordonate;
+        else
+            this.coordonate = "";
         this.utilisation = utilisation;
         this.creation = creation;
         this.lastUpdate = lastUpdate;
@@ -123,8 +126,11 @@ public class Portal {
     }
 
     public void setCoordonate(String coordonate) {
-        if (! coordonate.equals(this.coordonate)){
-            this.coordonate = coordonate;
+        if (! this.coordonate.equals(coordonate)){
+            if (coordonate != null)
+                this.coordonate = coordonate;
+            else
+                this.coordonate = "";
             this.creation = System.currentTimeMillis();
             this.utilisation = -1;
             this.lastUpdate = -1;
@@ -157,8 +163,8 @@ public class Portal {
                 .append(getName())
                 .append( "* : ");
         if (System.currentTimeMillis() - creation > LIMIT
-                ||coordonate == null) {
-            coordonate = null;
+                ||coordonate.equals("")) {
+            coordonate = "";
             utilisation = -1;
             st.append("Aucune position récente trouvée.\n");
         }

@@ -24,41 +24,40 @@ public class PortalCommand extends AbstractCommand{
 
     public PortalCommand(){
         super(Pattern.compile("pos"),
-                Pattern.compile("^(" + Constants.prefixCommand + "pos)(\\s+\\p{L}+)?(\\s+\\[?(-?\\d{1,2})\\s*[,|\\s]\\s*(-?\\d{1,2})\\]?)?(\\s+\\d{1,3})?$"));
+                Pattern.compile("^(" + Constants.prefixCommand + "pos)(\\s+-reset|\\s+-update)?(\\s+\\p{L}+)?(\\s+\\[?(-?\\d{1,2})\\s*[,|\\s]\\s*(-?\\d{1,2})\\]?)?(\\s+\\d{1,3})?$"));
     }
 
     @Override
     public boolean request(IMessage message) {
         if (super.request(message)) {
 
-            if (m.group(2) != null && m.group(2).matches("\\W+update")) { // Update
+            if (m.group(2) != null && m.group(2).matches("\\s+-update")) { // Update
                 LOG.info("Gathering data from websites ...");
                 //TODO update from website
 
                 new InDeveloppmentException().throwException(message, this);
                 //Message.send(message.getChannel(), "Téléchargement des positions des dimensions divines terminé.");
-
-                return false;
             }
-            else if (m.group(2) == null) { // No dimension precised
+            else if (m.group(2) == null && m.group(3) == null && m.group(7) == null) { // No dimension precised
                 StringBuilder st = new StringBuilder();
                 for(Portal pos : Guild.getGuilds().get(message.getGuild().getID()).getPortals())
                         st.append(pos);
 
                 Message.send(message.getChannel(), st.toString());
-
-                return false;
             }
             else {
-                List<Portal> portals = getPortal(m.group(2), Guild.getGuilds().get(message.getGuild().getID()));
+                List<Portal> portals = new ArrayList<Portal>();
+                if (m.group(3) != null)
+                    portals = getPortal(m.group(3), Guild.getGuilds().get(message.getGuild().getID()));
                 if (portals.size() == 1) {
-                    LOG.info(m.group(3));
-                    if (m.group(3) != null) {
-                        LOG.info(m.group(4) + ":" + m.group(5));
-                        portals.get(0).setCoordonate("[" + m.group(4) + "," + m.group(5) + "]");
+                    if (m.group(2) != null && m.group(2).matches("\\s+-reset"))
+                        portals.get(0).setCoordonate(null);
+                    else {
+                        if (m.group(4) != null)
+                            portals.get(0).setCoordonate("[" + m.group(5) + "," + m.group(6) + "]");
+                        if (m.group(7) != null)
+                          portals.get(0).setUtilisation(Integer.parseInt(m.group(7).replaceAll("\\s", "")));
                     }
-                    if (m.group(6) != null)
-                      portals.get(0).setUtilisation(Integer.parseInt(m.group(6).replaceAll("\\s", "")));
 
                     Message.send(message.getChannel(), portals.get(0).toString());
                 }
@@ -98,6 +97,7 @@ public class PortalCommand extends AbstractCommand{
                 + "\n`" + Constants.prefixCommand + "pos `*`dimension`*` [POS, POS]` : met à jour la position du portail de la dimension spécifiée."
                 + "\n`" + Constants.prefixCommand + "pos `*`dimension`*` [POS, POS] `*`nombre d'uti.`* : met à jour la position et le nombre d'utilisation"
                 + " de la dimension spécifiée."
-                + "\n`" + Constants.prefixCommand + "pos update` : télécharge les positions des portails de diverses sites web.\n";
+                + "\n`" + Constants.prefixCommand + "pos -reset `*`dimension`* : supprime les informations de la dimension spécifiée."
+                + "\n`" + Constants.prefixCommand + "pos -update` : télécharge les positions des portails de diverses sites web.\n";
     }
 }
