@@ -120,8 +120,10 @@ public class RSSFinder {
                         long lastRSS = -1;
 
                         for(RSS rss : rssFeeds)
-                            if (rss.getDate() > finder.getLastRSS())
+                            if (rss.getDate() > finder.getLastRSS()) {
                                 Message.send(finder.getChan(), rss.toStringDiscord());
+                                lastRSS = rss.getDate();
+                            }
 
                         if (lastRSS != -1)
                             finder.setLastRSS(lastRSS);

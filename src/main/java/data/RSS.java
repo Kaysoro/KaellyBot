@@ -1,8 +1,15 @@
 package data;
 
+import com.rometools.rome.feed.synd.SyndEntry;
+import com.rometools.rome.feed.synd.SyndFeed;
+import com.rometools.rome.io.FeedException;
+import com.rometools.rome.io.SyndFeedInput;
+import com.rometools.rome.io.XmlReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
+import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -27,7 +34,16 @@ public class RSS implements Comparable<RSS>{
     public static List<RSS> getRSSFeeds(){
         List<RSS> rss = new ArrayList<>();
 
-        //TODO
+        try {
+            SyndFeedInput input = new SyndFeedInput();
+            SyndFeed feed = input.build(new XmlReader(new URL(Constants.dofusFeedURL)));
+
+            for(SyndEntry entry : feed.getEntries())
+                rss.add(new RSS(entry.getTitle(), entry.getLink(), entry.getPublishedDate().getTime()));
+
+        } catch (FeedException | IOException e) {
+            LOG.error(e.getMessage());
+        }
 
         Collections.sort(rss);
         return rss;
@@ -49,6 +65,13 @@ public class RSS implements Comparable<RSS>{
         StringBuilder st = new StringBuilder(getTitle()).append(" (")
                 .append(dateFormat.format(new Date(getDate()))).append(")\n")
                 .append(getUrl());
+        return st.toString();
+    }
+
+    @Override
+    public String toString(){
+        StringBuilder st = new StringBuilder(getTitle()).append(" (")
+                .append(dateFormat.format(new Date(getDate()))).append(")\n");
         return st.toString();
     }
 

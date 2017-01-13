@@ -1,12 +1,10 @@
 package controler;
 
-import data.Guild;
 import data.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sx.blah.discord.api.events.EventSubscriber;
 import sx.blah.discord.handle.impl.events.GuildTransferOwnershipEvent;
-import sx.blah.discord.handle.impl.events.GuildUpdateEvent;
 
 /**
  * Created by steve on 14/07/2016.
