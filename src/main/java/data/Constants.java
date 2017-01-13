@@ -37,6 +37,11 @@ public class Constants {
      */
     public final static String almanaxURL = "http://www.krosmoz.com/fr/almanax/";
 
+    /**
+     * Official Dofus URL for news feed
+     */
+    public final static String dofusFeedURL = "http://www.dofus.com/fr/rss/news.xml";
+
 
     /**
      * Character limit for nickname discord
