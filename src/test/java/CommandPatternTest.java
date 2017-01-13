@@ -13,8 +13,7 @@ public class CommandPatternTest extends TestCase {
         Pattern pattern = new RSSCommand().getPattern();
 
         assertTrue(pattern.matcher(Constants.prefixCommand + "rss").find());
-        assertTrue(pattern.matcher(Constants.prefixCommand + "rss -add http://rss.xml").find());
-        assertTrue(pattern.matcher(Constants.prefixCommand + "rss -rm 1").find());
+        assertTrue(pattern.matcher(Constants.prefixCommand + "rss -rm").find());
     }
 
     public void testAlmanaxCommand(){
