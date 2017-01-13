@@ -1,9 +1,6 @@
 package controler;
 
-import data.ClientConfig;
-import data.Constants;
-import data.Guild;
-import data.User;
+import data.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sx.blah.discord.api.events.EventSubscriber;
@@ -50,5 +47,8 @@ public class ReadyListener {
 
         LOG.info("Ecoute des messages...");
         ClientConfig.CLIENT().getDispatcher().registerListener(new MessageListener());
+
+        LOG.info("Ecoute des flux RSS du site Dofus...");
+        RSSFinder.start();
     }
 }
