@@ -97,6 +97,7 @@ public class CommandPatternTest extends TestCase {
 
         assertTrue(pattern.matcher(Constants.prefixCommand + "right").find());
         assertTrue(pattern.matcher(Constants.prefixCommand + "right <@!1234>").find());
+        assertTrue(pattern.matcher(Constants.prefixCommand + "right <@1234>").find());
         assertTrue(pattern.matcher(Constants.prefixCommand + "right <@&1234>").find());
         assertTrue(pattern.matcher(Constants.prefixCommand + "right <@!1234> 1").find());
         assertTrue(pattern.matcher(Constants.prefixCommand + "right <@&1234> 1").find());

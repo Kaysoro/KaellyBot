@@ -24,7 +24,7 @@ public class RightCommand extends AbstractCommand{
 
     public RightCommand(){
         super(Pattern.compile("right"),
-        Pattern.compile("^(" + Constants.prefixCommand + "right)(\\s+<@[!|&]\\d+>)?(\\s+\\d)?$"));
+        Pattern.compile("^(" + Constants.prefixCommand + "right)(\\s+<@[!|&]?\\d+>)?(\\s+\\d)?$"));
     }
 
     @Override
@@ -45,7 +45,7 @@ public class RightCommand extends AbstractCommand{
                 int level = Integer.parseInt(m.group(3).replaceAll("\\s", ""));
 
                 if (author.getRights() >= User.RIGHT_MODERATOR) {
-                    if (idDecorated.contains("&")){ // Manage Groups
+                    if (idDecorated.matches("<@&\\d+>")){ // Manage Groups
                         IRole role = message.getGuild().getRoleByID(id);
 
                         for(IUser user : message.getGuild().getUsers()){
@@ -65,7 +65,7 @@ public class RightCommand extends AbstractCommand{
                         Message.send(message.getChannel(), "Droits d'administration des membres du groupe *"
                                 + role.getName() + "* mis au niveau " + level + ".");
                     }
-                    else if (idDecorated.contains("!")){ // Manage users
+                    else if (idDecorated.matches("<@!?\\d+>")){ // Manage users
                         User target = User.getUsers().get(message.getGuild().getID()).get(id);
 
                         if (id.equals(message.getAuthor().getID())) {
@@ -93,7 +93,7 @@ public class RightCommand extends AbstractCommand{
                     String idDecorated = m.group(2).replaceAll("\\s", "");
                     String id = idDecorated.replaceAll("\\W", "");
 
-                    if (idDecorated.contains("!")){
+                    if (idDecorated.matches("<@!?\\d+>")){
                         User target = User.getUsers().get(message.getGuild().getID()).get(id);
                         Message.send(message.getChannel(), "*" + target.getName()
                                 + "* a des droits d'administration de niveau "
