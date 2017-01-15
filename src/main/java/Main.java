@@ -16,12 +16,11 @@ public class Main {
         Command.commands.add(new ItemCommand());
         Command.commands.add(new JobCommand());
         Command.commands.add(new MapCommand());
+        Command.commands.add(new MusicCommand());
         Command.commands.add(new ParrotCommand());
         Command.commands.add(new PortalCommand());
         Command.commands.add(new RightCommand());
         Command.commands.add(new RSSCommand());
-        Command.commands.add(new YoutubeCommand());
-
     }
 
     public static void main(String[] args) {

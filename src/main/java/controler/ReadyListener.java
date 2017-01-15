@@ -45,6 +45,10 @@ public class ReadyListener {
         ClientConfig.CLIENT().getDispatcher().registerListener(new UserJoinListener());
         ClientConfig.CLIENT().getDispatcher().registerListener(new UserLeaveListener());
 
+        ClientConfig.CLIENT().getDispatcher().registerListener(new TrackStartListener());
+        ClientConfig.CLIENT().getDispatcher().registerListener(new TrackQueueListener());
+        ClientConfig.CLIENT().getDispatcher().registerListener(new TrackFinishListener());
+
         LOG.info("Ecoute des messages...");
         ClientConfig.CLIENT().getDispatcher().registerListener(new MessageListener());
 

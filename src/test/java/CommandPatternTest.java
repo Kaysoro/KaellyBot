@@ -103,15 +103,15 @@ public class CommandPatternTest extends TestCase {
         assertTrue(pattern.matcher(Constants.prefixCommand + "right <@&1234> 1").find());
     }
 
-    public void testYoutubeCommand(){
-        Pattern pattern = new YoutubeCommand().getPattern();
+    public void testMusicCommand(){
+        Pattern pattern = new MusicCommand().getPattern();
 
-        assertTrue(pattern.matcher(Constants.prefixCommand + "ytb https://www.youtube.com/watch?v=dQw4w9WgXcQ").find());
-        assertTrue(pattern.matcher(Constants.prefixCommand + "ytb -join").find());
-        assertTrue(pattern.matcher(Constants.prefixCommand + "ytb -play").find());
-        assertTrue(pattern.matcher(Constants.prefixCommand + "ytb -pause").find());
-        assertTrue(pattern.matcher(Constants.prefixCommand + "ytb -skip").find());
-        assertTrue(pattern.matcher(Constants.prefixCommand + "ytb -shuffle").find());
-        assertTrue(pattern.matcher(Constants.prefixCommand + "ytb -leave").find());
+        assertTrue(pattern.matcher(Constants.prefixCommand + "music https://www.youtube.com/watch?v=dQw4w9WgXcQ").find());
+        assertTrue(pattern.matcher(Constants.prefixCommand + "music -join").find());
+        assertTrue(pattern.matcher(Constants.prefixCommand + "music -play").find());
+        assertTrue(pattern.matcher(Constants.prefixCommand + "music -pause").find());
+        assertTrue(pattern.matcher(Constants.prefixCommand + "music -skip").find());
+        assertTrue(pattern.matcher(Constants.prefixCommand + "music -shuffle").find());
+        assertTrue(pattern.matcher(Constants.prefixCommand + "music -leave").find());
     }
 }
