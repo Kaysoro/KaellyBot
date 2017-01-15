@@ -42,9 +42,13 @@ public class Constants {
      */
     public final static String dofusFeedURL = "http://www.dofus.com/fr/rss/news.xml";
 
-
     /**
      * Character limit for nickname discord
      */
     public final static int nicknameLimit = 32;
+
+    /**
+     * Youtube URL for music, without the code
+     */
+    public final static String youtubeURL = "https://www.youtube.com/watch?v=";
 }
