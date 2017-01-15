@@ -25,6 +25,8 @@ public class Message {
                 LoggerFactory.getLogger(Message.class).error(e.getErrorMessage());
             } catch(MissingPermissionsException e){
                 LoggerFactory.getLogger(Message.class).warn(Constants.name + " n'a pas les permissions pour appliquer cette requête.");
+            } catch(Exception e){
+                LoggerFactory.getLogger(Message.class).error(e.getMessage());
             }
             return null;
         });
