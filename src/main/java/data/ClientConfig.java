@@ -51,8 +51,8 @@ public class ClientConfig {
 
     private static File locationFile()
     {
-        String path = ClassLoader.getSystemClassLoader().getResource(".").getPath();
-        System.out.println(path);
+        String path = System.getProperty("user.dir");
+
         try {
             path = URLDecoder.decode(path, "UTF-8"); } catch (UnsupportedEncodingException e) {
             LOG.error(e.getMessage());
