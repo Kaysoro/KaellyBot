@@ -12,7 +12,7 @@
 hs_err_pid*
 
 # properties file
-
+*.properties
 
 # IDE
 .idea/
