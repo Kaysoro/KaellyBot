@@ -1,6 +1,5 @@
 package data;
 
-import org.apache.commons.lang3.ObjectUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sx.blah.discord.api.ClientBuilder;
@@ -18,7 +17,7 @@ public class ClientConfig {
     
     private static ClientConfig instance = null;
     private final static Logger LOG = LoggerFactory.getLogger(ClientConfig.class);
-    private final static String FILENAME = "\\config\\config.properties";
+    private final static String FILENAME = "\\config.properties";
     private IDiscordClient CLIENT;
 
     private ClientConfig(){
@@ -37,7 +36,7 @@ public class ClientConfig {
             } catch(FileNotFoundException e){
             LOG.error("Fichier de configuration non trouvé.");
             } catch (IOException e) {
-            LOG.error("Fichier de configuration non trouvé.");
+            LOG.error("IOException rencontré : " + e.getMessage());
             } catch(DiscordException e){
             LOG.error("Impossible de se connecter à Discord : verifiez votre token dans "
                     + FILENAME + " ainsi que votre connexion.");
@@ -53,6 +52,7 @@ public class ClientConfig {
     private static File locationFile()
     {
         String path = ClassLoader.getSystemClassLoader().getResource(".").getPath();
+        System.out.println(path);
         try {
             path = URLDecoder.decode(path, "UTF-8"); } catch (UnsupportedEncodingException e) {
             LOG.error(e.getMessage());
