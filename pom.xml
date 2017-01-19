@@ -100,10 +100,5 @@
             <artifactId>logback-classic</artifactId>
             <version>1.1.8</version>
         </dependency>
-        <dependency>
-            <groupId>com.github.Kaysoro</groupId>
-            <artifactId>KaellyBot</artifactId>
-            <version>1.0</version>
-        </dependency>
     </dependencies>
 </project>
