@@ -2,18 +2,12 @@ package exceptions;
 
 import data.ClientConfig;
 import data.Constants;
-import discord.Message;
-import org.omg.CORBA.PRIVATE_MEMBER;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sx.blah.discord.handle.obj.IChannel;
 import sx.blah.discord.handle.obj.IUser;
-import sx.blah.discord.util.DiscordException;
 import sx.blah.discord.util.MessageBuilder;
-import sx.blah.discord.util.MissingPermissionsException;
 import sx.blah.discord.util.RequestBuffer;
-
-import java.lang.*;
 
 /**
  * Created by steve on 12/02/2017.

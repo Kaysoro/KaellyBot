@@ -1,6 +1,7 @@
 package data;
 
 import discord.Message;
+import exceptions.Reporter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sx.blah.discord.handle.obj.IChannel;
@@ -17,7 +18,7 @@ import java.util.List;
  */
 public class RSSFinder {
     private final static Logger LOG = LoggerFactory.getLogger(RSSFinder.class);
-    private final static long DELTA = 3600000; // 1h
+    private final static long DELTA = 600000; // 10min
     private static boolean isStarted = false;
 
     private static List<RSSFinder> rssFinders = null;
@@ -47,6 +48,7 @@ public class RSSFinder {
 
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
+            Reporter.report(e);
             LOG.error(e.getMessage());
         }
     }
@@ -65,6 +67,7 @@ public class RSSFinder {
 
                 preparedStatement.executeUpdate();
             } catch (SQLException e) {
+                Reporter.report(e);
                 LOG.error(e.getMessage());
             }
         }
@@ -82,6 +85,7 @@ public class RSSFinder {
             request.executeUpdate();
 
         } catch (SQLException e) {
+            Reporter.report(e);
             LOG.error(getChan().getID() + " : " + e.getMessage());
         }
     }
@@ -103,6 +107,7 @@ public class RSSFinder {
                     rssFinders.add(new RSSFinder(chan, lastUpdate));
                 }
             } catch (SQLException e) {
+                Reporter.report(e);
                 LOG.error(e.getMessage());
             }
         }
@@ -115,24 +120,27 @@ public class RSSFinder {
             isStarted = true;
             new Thread() {
                 public void run() {
-                    List<RSS> rssFeeds = RSS.getRSSFeeds();
-                    for (RSSFinder finder : getRSSFinders()) {
-                        long lastRSS = -1;
+                    while(true) {
+                        List<RSS> rssFeeds = RSS.getRSSFeeds();
+                        for (RSSFinder finder : getRSSFinders()) {
+                            long lastRSS = -1;
 
-                        for(RSS rss : rssFeeds)
-                            if (rss.getDate() > finder.getLastRSS()) {
-                                Message.send(finder.getChan(), rss.toStringDiscord());
-                                lastRSS = rss.getDate();
-                            }
+                            for (RSS rss : rssFeeds)
+                                if (rss.getDate() > finder.getLastRSS()) {
+                                    Message.send(finder.getChan(), rss.toStringDiscord());
+                                    lastRSS = rss.getDate();
+                                }
 
-                        if (lastRSS != -1)
-                            finder.setLastRSS(lastRSS);
-                    }
+                            if (lastRSS != -1)
+                                finder.setLastRSS(lastRSS);
+                        }
 
-                    try {
-                        sleep(DELTA);
-                    } catch (InterruptedException e) {
-                        LOG.error(e.getMessage());
+                        try {
+                            sleep(DELTA);
+                        } catch (InterruptedException e) {
+                            Reporter.report(e);
+                            LOG.error(e.getMessage());
+                        }
                     }
                 }
             }.start();
