@@ -1,5 +1,6 @@
 package data;
 
+import exceptions.Reporter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -60,6 +61,7 @@ public class User {
                 request.executeUpdate();
 
             } catch (SQLException e) {
+                Reporter.report(e);
                 LOG.error(id + " - " + name + " : " + e.getMessage());
             }
         }
@@ -85,6 +87,7 @@ public class User {
                 request.executeUpdate();
 
             } catch (SQLException e) {
+                Reporter.report(e);
                 LOG.error(id + " - " + name + " : " + e.getMessage());
             }
         }
@@ -106,6 +109,7 @@ public class User {
             preparedStatement.executeUpdate();
 
         } catch (SQLException e) {
+            Reporter.report(e);
             LOG.error(e.getMessage());
         }
     }
@@ -125,6 +129,7 @@ public class User {
             preparedStatement.executeUpdate();
 
         } catch (SQLException e) {
+            Reporter.report(e);
             LOG.error(e.getMessage());
         }
     }
@@ -156,6 +161,7 @@ public class User {
                     users.get(guildId.getId()).put(id, new User(id, name, right, guildId));
                 }
             } catch (SQLException e) {
+                Reporter.report(e);
                 LOG.error(e.getMessage());
             }
         }

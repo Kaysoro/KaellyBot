@@ -1,5 +1,6 @@
 package data;
 
+import exceptions.Reporter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -58,6 +59,7 @@ public class Portal {
                 while (resultSet.next())
                     portals.add(resultSet.getString("name"));
             } catch (SQLException e) {
+                Reporter.report(e);
                 LOG.error(e.getMessage());
             }
         }
@@ -93,6 +95,7 @@ public class Portal {
             }
 
         } catch (SQLException e) {
+            Reporter.report(e);
             LOG.error(e.getMessage());
         }
 
@@ -121,6 +124,7 @@ public class Portal {
 
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
+            Reporter.report(e);
             LOG.error(e.getMessage());
         }
     }
@@ -151,6 +155,7 @@ public class Portal {
 
                 preparedStatement.executeUpdate();
             } catch (SQLException e) {
+                Reporter.report(e);
                 LOG.error(e.getMessage());
             }
         }

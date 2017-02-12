@@ -1,5 +1,6 @@
 package data;
 
+import exceptions.Reporter;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -67,6 +68,7 @@ public class Almanax {
                     calendar.put(date, new Almanax(date, offrande, bonus));
                 }
             } catch (SQLException e) {
+                Reporter.report(e);
                 LOG.error(e.getMessage());
             }
         }
@@ -90,6 +92,7 @@ public class Almanax {
                 request.executeUpdate();
 
             } catch (SQLException e) {
+                Reporter.report(e);
                 LOG.error(e.getMessage());
             }
         }
@@ -110,6 +113,7 @@ public class Almanax {
             return new Almanax(bonus, offrande, date);
 
         } catch (Exception e) {
+            Reporter.report(e);
             LOG.error(e.getMessage());
             return null;
         }

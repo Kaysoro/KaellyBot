@@ -1,5 +1,6 @@
 package data;
 
+import exceptions.Reporter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -52,6 +53,7 @@ public class Guild {
                 }
 
             } catch (SQLException e) {
+                Reporter.report(e);
                 LOG.error(e.getMessage());
             }
         }
@@ -75,6 +77,7 @@ public class Guild {
                 request.executeUpdate();
 
             } catch (SQLException e) {
+                Reporter.report(e);
                 LOG.error(e.getMessage());
             }
         }
@@ -95,6 +98,7 @@ public class Guild {
             preparedStatement.setString(1, name);
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
+            Reporter.report(e);
             LOG.error(e.getMessage());
         }
     }
@@ -118,6 +122,7 @@ public class Guild {
                     guilds.put(id, new Guild(id, name));
                 }
             } catch (SQLException e) {
+                Reporter.report(e);
                 LOG.error(e.getMessage());
             }
         }

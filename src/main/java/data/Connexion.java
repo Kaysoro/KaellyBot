@@ -7,6 +7,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 import controler.ReadyListener;
+import exceptions.Reporter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sqlite.SQLiteConfig;
@@ -30,8 +31,10 @@ public class Connexion {
 			connection = DriverManager.getConnection("jdbc:sqlite:" + Constants.database,config.toProperties());
 
 		} catch (ClassNotFoundException e) {
+			Reporter.report(e);
             LOG.error("Librairie SQLite non trouvé.");
 		} catch (SQLException e) {
+			Reporter.report(e);
             LOG.error("Erreur lors de la connexion à la base de données");
 		}
 	}
@@ -42,6 +45,7 @@ public class Connexion {
 			statement.close();
             LOG.info("Fermeture de la connexion");
 		} catch (SQLException e) {
+			Reporter.report(e);
             LOG.error("Erreur lors de la fermeture de la connexion");
 		}
 	}
@@ -59,6 +63,7 @@ public class Connexion {
 		try {
 			resultat = statement.executeQuery(requet);
 		} catch (SQLException e) {
+			Reporter.report(e);
 			LOG.error("Erreur dans la requête : " + requet);
 		}
 		return resultat;

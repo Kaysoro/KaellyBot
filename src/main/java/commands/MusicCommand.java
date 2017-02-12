@@ -105,6 +105,7 @@ public class MusicCommand extends AbstractCommand{
             new MalformedMusicURLException().throwException(message, this);
         } catch (IOException e) {
             LOG.error(e.getMessage());
+            Reporter.report(e);
             new UnknownErrorException().throwException(message, this);
         } catch (UnsupportedAudioFileException e) {
             new UnsupportedMusicFileException().throwException(message, this);

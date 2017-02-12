@@ -51,4 +51,9 @@ public class Constants {
      * Youtube URL for music, without the code
      */
     public final static String youtubeURL = "https://www.youtube.com/watch?v=";
+
+    /**
+     * User or channel dedicated to receive error logs.
+     */
+    public final static String chanReportID = "162842827183751169";
 }

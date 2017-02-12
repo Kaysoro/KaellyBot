@@ -2,6 +2,7 @@ package discord;
 
 import data.ClientConfig;
 import data.Constants;
+import exceptions.Reporter;
 import org.slf4j.LoggerFactory;
 import sx.blah.discord.handle.obj.IChannel;
 import sx.blah.discord.util.DiscordException;

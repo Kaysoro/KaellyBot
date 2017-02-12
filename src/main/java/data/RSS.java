@@ -5,6 +5,7 @@ import com.rometools.rome.feed.synd.SyndFeed;
 import com.rometools.rome.io.FeedException;
 import com.rometools.rome.io.SyndFeedInput;
 import com.rometools.rome.io.XmlReader;
+import exceptions.Reporter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,6 +43,7 @@ public class RSS implements Comparable<RSS>{
                 rss.add(new RSS(entry.getTitle(), entry.getLink(), entry.getPublishedDate().getTime()));
 
         } catch (FeedException | IOException e) {
+            Reporter.report(e);
             LOG.error(e.getMessage());
         }
 

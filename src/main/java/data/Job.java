@@ -1,5 +1,6 @@
 package data;
 
+import exceptions.Reporter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -61,6 +62,7 @@ public class Job {
 
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
+            Reporter.report(e);
             LOG.error(e.getMessage());
         }
     }
@@ -81,6 +83,7 @@ public class Job {
 
                 preparedStatement.executeUpdate();
             } catch (SQLException e) {
+                Reporter.report(e);
                 LOG.error(e.getMessage());
             }
         }
@@ -109,6 +112,7 @@ public class Job {
                 jobs.put(name, new Job(name, level, user));
             }
         } catch (SQLException e) {
+            Reporter.report(e);
             LOG.error(e.getMessage());
         }
 
@@ -129,6 +133,7 @@ public class Job {
                 while (resultSet.next())
                     jobs.add(resultSet.getString("name"));
             } catch (SQLException e) {
+                Reporter.report(e);
                 LOG.error(e.getMessage());
             }
         }
