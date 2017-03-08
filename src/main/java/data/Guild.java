@@ -94,8 +94,9 @@ public class Guild {
 
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(
-                    "UPDATE Guild SET name = ?;");
+                    "UPDATE Guild SET name = ? WHERE id = ?;");
             preparedStatement.setString(1, name);
+            preparedStatement.setString(2, id);
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
             Reporter.report(e);
