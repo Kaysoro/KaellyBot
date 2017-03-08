@@ -1,16 +1,10 @@
 package controler;
 
-import data.ClientConfig;
-import data.Constants;
 import data.Guild;
-import data.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sx.blah.discord.api.events.EventSubscriber;
-import sx.blah.discord.handle.impl.events.GuildUpdateEvent;
-import sx.blah.discord.handle.impl.events.ReadyEvent;
-import sx.blah.discord.handle.obj.IGuild;
-import sx.blah.discord.handle.obj.IUser;
+import sx.blah.discord.handle.impl.events.guild.GuildUpdateEvent;
 
 /**
  * Created by steve on 14/07/2016.
