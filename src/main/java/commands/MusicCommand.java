@@ -67,10 +67,10 @@ public class MusicCommand extends AbstractCommand{
     }
 
     private void join(IMessage message) {
-        if (message.getAuthor().getConnectedVoiceChannels().size() < 1)
+        if (message.getAuthor().getVoiceStateForGuild(message.getGuild()).getChannel() == null)
             new NotInVocalChannelException().throwException(message, this);
         else {
-            IVoiceChannel voice = message.getAuthor().getConnectedVoiceChannels().get(0);
+            IVoiceChannel voice = message.getAuthor().getVoiceStateForGuild(message.getGuild()).getChannel();
             if (!voice.getModifiedPermissions(ClientConfig.CLIENT().getOurUser()).contains(Permissions.VOICE_CONNECT))
                 new NoVoiceConnectPermissionException().throwException(message, this);
             else if (voice.getConnectedUsers().size() >= voice.getUserLimit() && voice.getUserLimit() != 0)
@@ -88,13 +88,12 @@ public class MusicCommand extends AbstractCommand{
     }
 
     private void leave(IMessage message) {
-        for(IVoiceChannel voice : ClientConfig.CLIENT().getOurUser().getConnectedVoiceChannels())
-            if (voice.getGuild() == message.getGuild()){
-                voice.leave();
-                Message.send(VoiceManager.getLastChannel().get(message.getGuild()), "Déconnecté de **" + voice.getName() + "**.");
-                VoiceManager.getLastChannel().remove(message.getGuild());
-                break;
-            }
+        IVoiceChannel voice = ClientConfig.CLIENT().getOurUser().getVoiceStateForGuild(message.getGuild()).getChannel();
+        if (voice != null) {
+            voice.leave();
+            Message.send(VoiceManager.getLastChannel().get(message.getGuild()), "Déconnecté de **" + voice.getName() + "**.");
+            VoiceManager.getLastChannel().remove(message.getGuild());
+        }
     }
 
     private void queueUrl(IMessage message, String url) {

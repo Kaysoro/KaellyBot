@@ -16,6 +16,6 @@ public class NoVoiceConnectPermissionException implements Exception {
     @Override
     public void throwException(IMessage message, Command command) {
         Message.send(message.getChannel(), "Je n'ai pas le droit de rejoindre " + message.getAuthor()
-                .getConnectedVoiceChannels().get(0).getName() + ".");
+                .getVoiceStateForGuild(message.getGuild()).getChannel().getName() + ".");
     }
 }

@@ -15,7 +15,7 @@ public class VoiceChannelLimitException implements Exception {
 
     @Override
     public void throwException(IMessage message, Command command) {
-        Message.send(message.getChannel(), message.getAuthor().getConnectedVoiceChannels().get(0).getName()
+        Message.send(message.getChannel(), message.getAuthor().getVoiceStateForGuild(message.getGuild()).getChannel().getName()
                 + " est complet.");
     }
 }
