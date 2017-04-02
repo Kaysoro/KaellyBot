@@ -19,7 +19,8 @@ public class NickNameChangeListener {
 
         @EventSubscriber
         public void onReady(NicknameChangedEvent event) {
-            if (! event.getOldNickname().get().equals(event.getNewNickname().get())) {
+            if (event.getOldNickname().isPresent() && event.getNewNickname().isPresent()
+                    && ! event.getOldNickname().get().equals(event.getNewNickname().get())) {
                 User user = User.getUsers().get(event.getGuild().getID()).get(event.getUser().getID());
                 user.setName(event.getNewNickname().get());
                 LOG.info("L'utilisateur " + user.getId() + " - " + event.getOldNickname().get() + " s'est renommé en "
