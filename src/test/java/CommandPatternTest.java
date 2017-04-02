@@ -114,4 +114,15 @@ public class CommandPatternTest extends TestCase {
         assertTrue(pattern.matcher(Constants.prefixCommand + "music -shuffle").find());
         assertTrue(pattern.matcher(Constants.prefixCommand + "music -leave").find());
     }
+
+    public void testNSFWAuthorizationCommand(){
+        Pattern pattern = new NSFWCommand().getPattern();
+
+        assertTrue(pattern.matcher(Constants.prefixCommand + "nsfw true").find());
+        assertTrue(pattern.matcher(Constants.prefixCommand + "nsfw on").find());
+        assertTrue(pattern.matcher(Constants.prefixCommand + "nsfw 0").find());
+        assertTrue(pattern.matcher(Constants.prefixCommand + "nsfw false").find());
+        assertTrue(pattern.matcher(Constants.prefixCommand + "nsfw off").find());
+        assertTrue(pattern.matcher(Constants.prefixCommand + "nsfw 1").find());
+    }
 }
