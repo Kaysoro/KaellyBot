@@ -67,8 +67,9 @@ public class CommandPatternTest extends TestCase {
         Pattern pattern = new MapCommand().getPattern();
 
         assertTrue(pattern.matcher(Constants.prefixCommand + "map").find());
-        assertTrue(pattern.matcher(Constants.prefixCommand + "map un deux trois").find());
-        assertTrue(pattern.matcher(Constants.prefixCommand + "map un deûx trôis").find());
+        assertTrue(pattern.matcher(Constants.prefixCommand + "map I II III").find());
+        assertTrue(pattern.matcher(Constants.prefixCommand + "map 1 2 3").find());
+        assertFalse(pattern.matcher(Constants.prefixCommand + "map un deûx trôis").find());
     }
 
     public void testParrotCommand(){
