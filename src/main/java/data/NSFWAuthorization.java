@@ -10,23 +10,25 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by steve on 12/01/2017.
  */
 public class NSFWAuthorization {
     private final static Logger LOG = LoggerFactory.getLogger(NSFWAuthorization.class);
-    private static List<NSFWAuthorization> nsfwChannels;
+    protected static Map<String, NSFWAuthorization> nsfwChannels;
     private String channelId;
 
     public NSFWAuthorization(String channelId) {
         this.channelId = channelId;
     }
 
-    public static List<NSFWAuthorization> getNSFWChannels(){
+    public static Map<String, NSFWAuthorization> getNSFWChannels(){
         if (nsfwChannels == null) {
-            nsfwChannels = new ArrayList<>();
+            nsfwChannels = new HashMap<>();
 
             Connexion connexion = Connexion.getInstance();
             Connection connection = connexion.getConnection();
@@ -37,7 +39,7 @@ public class NSFWAuthorization {
 
                 while (resultSet.next()){
                     IChannel chan = ClientConfig.CLIENT().getChannelByID(resultSet.getString("id_chan"));
-                    nsfwChannels.add(new NSFWAuthorization(chan.getID()));
+                    nsfwChannels.put(chan.getID(), new NSFWAuthorization(chan.getID()));
                 }
             } catch (SQLException e) {
                 Reporter.report(e);
@@ -48,8 +50,8 @@ public class NSFWAuthorization {
     }
 
     public void addToDatabase(){
-        if (! getNSFWChannels().contains(this)) {
-            getNSFWChannels().add(this);
+        if (! getNSFWChannels().containsKey(getChannelId())) {
+            getNSFWChannels().put(getChannelId(), this);
             Connexion connexion = Connexion.getInstance();
             Connection connection = connexion.getConnection();
 

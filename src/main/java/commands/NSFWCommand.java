@@ -34,15 +34,7 @@ public class NSFWCommand extends AbstractCommand{
                 String value = m.group(2);
 
                 if (value.matches("\\s+true") || value.matches("\\s+0") || value.matches("\\s+on")){
-                    boolean found = false;
-
-                    for(NSFWAuthorization nsfw : NSFWAuthorization.getNSFWChannels())
-                        if (nsfw.getChannelId().equals(message.getChannel().getID())){
-                            found = true;
-                            break;
-                        }
-
-                    if (!found) {
+                    if (! NSFWAuthorization.getNSFWChannels().containsKey(message.getChannel().getID())) {
                         new NSFWAuthorization(message.getChannel().getID()).addToDatabase();
                         Message.send(message.getChannel(), "Les commandes NSFW peuvent être utilisées ici.");
                     }
@@ -50,16 +42,11 @@ public class NSFWCommand extends AbstractCommand{
                         new NSFWFoundException().throwException(message, this);
                 }
                 else {
-                    boolean found = false;
-                    for(NSFWAuthorization nsfw : NSFWAuthorization.getNSFWChannels())
-                        if (nsfw.getChannelId().equals(message.getChannel().getID())){
-                            found = true;
-                            nsfw.removeToDatabase();
-                            Message.send(message.getChannel(), "Les commandes NSFW ne sont plus autorisées ici.");
-                            break;
-                        }
-
-                    if (!found)
+                    if (NSFWAuthorization.getNSFWChannels().containsKey(message.getChannel().getID())) {
+                        NSFWAuthorization.getNSFWChannels().get(message.getChannel().getID()).removeToDatabase();
+                        Message.send(message.getChannel(), "Les commandes NSFW ne sont plus autorisées ici.");
+                    }
+                    else
                         new NSFWNotFoundException().throwException(message, this);
                 }
             }
