@@ -140,6 +140,11 @@ public class JobCommand extends AbstractCommand{
     }
 
     @Override
+    public boolean isUsableInMP() {
+        return false;
+    }
+
+    @Override
     public String help() {
         return "**" + Constants.prefixCommand + "job** renvoit l'annuaire des artisans d'un métier.";
     }

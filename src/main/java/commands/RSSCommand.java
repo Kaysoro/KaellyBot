@@ -75,6 +75,11 @@ public class RSSCommand extends AbstractCommand{
     }
 
     @Override
+    public boolean isUsableInMP() {
+        return false;
+    }
+
+    @Override
     public String help() {
         return "**" + Constants.prefixCommand + "rss** gère le flux RSS Dofus par channel; nécessite un niveau d'administration 2 (Modérateur) minimum.";
     }

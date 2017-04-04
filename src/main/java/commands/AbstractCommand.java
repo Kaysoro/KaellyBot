@@ -1,5 +1,6 @@
 package commands;
 
+import exceptions.NotUsableInMPException;
 import sx.blah.discord.handle.obj.IMessage;
 
 import java.util.regex.Matcher;
@@ -23,7 +24,11 @@ public abstract class AbstractCommand implements Command {
     @Override
     public boolean request(IMessage message) {
         m =  pattern.matcher(message.getContent());
-        return (m.find());
+        boolean isFound = m.find();
+        if (isFound && message.getChannel().isPrivate() && ! isUsableInMP())
+            new NotUsableInMPException().throwException(message, this);
+
+        return isFound && ((message.getChannel().isPrivate() && isUsableInMP()) || ! message.getChannel().isPrivate());
     }
 
     @Override

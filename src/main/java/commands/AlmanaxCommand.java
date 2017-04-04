@@ -69,6 +69,11 @@ public class AlmanaxCommand extends AbstractCommand{
     }
 
     @Override
+    public boolean isUsableInMP() {
+        return true;
+    }
+
+    @Override
     public String help() {
         return "**" + Constants.prefixCommand + "almanax** donne le bonus et l'offrande d'une date particulière.";
     }

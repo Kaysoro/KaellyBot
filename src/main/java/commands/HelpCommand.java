@@ -45,6 +45,11 @@ public class HelpCommand extends AbstractCommand{
         }
 
     @Override
+    public boolean isUsableInMP() {
+        return true;
+    }
+
+    @Override
     public String help() {
         return "**" + Constants.prefixCommand + "help** explique le fonctionnement de chaque commande de " + Constants.name + ".";
     }

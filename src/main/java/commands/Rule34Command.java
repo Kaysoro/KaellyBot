@@ -73,6 +73,11 @@ public class Rule34Command extends AbstractCommand{
     }
 
     @Override
+    public boolean isUsableInMP() {
+        return false;
+    }
+
+    @Override
     public String help() {
         return "**" + Constants.prefixCommand + "rule34** est une commande NSFW. Elle poste du contenu sexuellement explicite.";
     }
