@@ -133,4 +133,13 @@ public class CommandPatternTest extends TestCase {
         assertTrue(pattern.matcher(Constants.prefixCommand + "rule34").find());
         assertTrue(pattern.matcher(Constants.prefixCommand + "rule34 dofus").find());
     }
+
+    public void testRandomCommand(){
+        Pattern pattern = new RandomCommand().getPattern();
+
+        assertTrue(pattern.matcher(Constants.prefixCommand + "rdm").find());
+        assertTrue(pattern.matcher(Constants.prefixCommand + "rdm 200").find());
+        assertTrue(pattern.matcher(Constants.prefixCommand + "rdm un deûx trôis").find());
+        assertFalse(pattern.matcher(Constants.prefixCommand + "rdm ").find());
+    }
 }
