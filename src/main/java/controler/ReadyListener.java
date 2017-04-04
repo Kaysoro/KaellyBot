@@ -19,8 +19,11 @@ public class ReadyListener {
         LOG.info(Constants.name + "Bot connecté !");
 
         LOG.info("Check des guildes");
-        for(IGuild guild : ClientConfig.CLIENT().getGuilds())
+        for(IGuild guild : ClientConfig.CLIENT().getGuilds()) {
             new Guild(guild.getID(), guild.getName()).addToDatabase();
+            if (! guild.getName().equals(Guild.getGuilds().get(guild.getID())))
+                Guild.getGuilds().get(guild.getID()).setName(guild.getName());
+        }
 
         LOG.info("Check des utilisateurs");
         for(IGuild guild : ClientConfig.CLIENT().getGuilds())

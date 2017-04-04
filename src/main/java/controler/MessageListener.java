@@ -22,22 +22,8 @@ public class MessageListener {
         public void onReady(MessageReceivedEvent event) {
 
             // If the author is a bot, message get ignored
-            if (! event.getMessage().getAuthor().isBot()) {
-                String authorId = event.getMessage().getAuthor().getID();
-                String authorName = event.getMessage().getAuthor().getDisplayName(event.getMessage().getGuild());
-                String guildId = event.getMessage().getGuild().getID();
-                String guildName = event.getMessage().getGuild().getName();
-
-                if (!Guild.getGuilds().get(guildId).getName().equals(guildName))
-                    // GuildName from database is deprecated : it have to be updated.
-                    Guild.getGuilds().get(guildId).setName(guildName);
-
-                if (!User.getUsers().get(guildId).get(authorId).getName().equals(authorName))
-                    // AuthorName from database is deprecated : it have to be updated.
-                    User.getUsers().get(guildId).get(authorId).setName(authorName);
-
+            if (! event.getMessage().getAuthor().isBot())
                 for(Command command : Command.commands)
                     command.request(event.getMessage());
             }
-        }
 }

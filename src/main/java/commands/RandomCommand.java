@@ -43,15 +43,14 @@ public class RandomCommand extends AbstractCommand{
 
     @Override
     public String help() {
-        return "**" + Constants.prefixCommand + "rdm** sélectionne au hasard une valeur entre 0 et 1 ou bien parmi celles"
-                + " spécifiées en paramètre.";
+        return "**" + Constants.prefixCommand + "rdm** tire au hasard une valeur au hasard.";
     }
 
     @Override
     public String helpDetailed() {
         return help()
-                + "\n`" + Constants.prefixCommand + "rdm` : sélectionne une valeur entre Vrai et Faux."
-                + "\n`" + Constants.prefixCommand + "rdm `*`nombre`* : sélectionne une valeur entre 0 et *nombre*."
-                + "\n`" + Constants.prefixCommand + "rdm `*`valeur1 valeur2 ...`* : sélectionne une valeur parmi celles spécifiées en paramètre.\n";
+                + "\n`" + Constants.prefixCommand + "rdm` : tire une valeur entre Vrai et Faux."
+                + "\n`" + Constants.prefixCommand + "rdm `*`nombre`* : tire une valeur entre 0 et *nombre*."
+                + "\n`" + Constants.prefixCommand + "rdm `*`valeur1 valeur2 ...`* : tire une valeur parmi celles spécifiées en paramètre.\n";
     }
 }
