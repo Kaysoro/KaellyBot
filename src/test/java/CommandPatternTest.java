@@ -40,6 +40,7 @@ public class CommandPatternTest extends TestCase {
         assertTrue(pattern.matcher(Constants.prefixCommand + "help help").find());
         assertTrue(pattern.matcher(Constants.prefixCommand + "help hélp").find());
         assertTrue(pattern.matcher(Constants.prefixCommand + "help !help").find());
+        assertTrue(pattern.matcher(Constants.prefixCommand + "help !help2").find());
     }
 
     public void testItemCommand(){
