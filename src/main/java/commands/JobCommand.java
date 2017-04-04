@@ -31,20 +31,27 @@ public class JobCommand extends AbstractCommand{
 
     public JobCommand(){
         super(Pattern.compile("job"),
-        Pattern.compile("^(" + Constants.prefixCommand + "job)\\s+(\\p{L}+|-all)(\\s+\\d{1,3})?$"));
+        Pattern.compile("^(" + Constants.prefixCommand + "job)(\\s+(\\p{L}+|-all)(\\s+\\d{1,3})?)?$"));
     }
 
     @Override
     public boolean request(IMessage message) {
         if (super.request(message)) {
-            if (!m.group(2).equals("-all")) {
-                List<String> jobs = getJob(m.group(2));
+            if (m.group(2) == null){
+                StringBuilder st = new StringBuilder("Voici la liste des métiers du jeu Dofus :\n```");
+                for(String job : Job.getJobs())
+                    st.append("\n- " + job);
+                st.append("```");
+                Message.send(message.getChannel(), st.toString());
+            }
+            else if (!m.group(3).equals("-all")) {
+                List<String> jobs = getJob(m.group(3));
 
                 if (jobs.size() == 1) {
-                    if (m.group(3) != null) { // setting data
+                    if (m.group(4) != null) { // setting data
                         User author = User.getUsers().get(message.getGuild().getID())
                                 .get(message.getAuthor().getID());
-                        int level = Integer.parseInt(m.group(3).replaceAll("\\W+", ""));
+                        int level = Integer.parseInt(m.group(4).replaceAll("\\W+", ""));
                         if (!author.getJobs().containsKey(jobs.get(0)))
                             new Job(jobs.get(0), level, author).addToDatabase();
                         else
@@ -100,10 +107,10 @@ public class JobCommand extends AbstractCommand{
                 else
                     new JobNotFoundException().throwException(message, this);
             }
-            else if (m.group(3) != null){ // add all jobs for the user
+            else if (m.group(4) != null){ // add all jobs for the user
                 User author = User.getUsers().get(message.getGuild().getID())
                         .get(message.getAuthor().getID());
-                int level = Integer.parseInt(m.group(3).replaceAll("\\W+", ""));
+                int level = Integer.parseInt(m.group(4).replaceAll("\\W+", ""));
 
                 for(String job : Job.getJobs()) {
                     if (!author.getJobs().containsKey(job))
@@ -152,10 +159,11 @@ public class JobCommand extends AbstractCommand{
     @Override
     public String helpDetailed() {
         return help()
+                + "\n`" + Constants.prefixCommand + "job` : renvoit la liste des métiers du jeu Dofus."
                 + "\n`" + Constants.prefixCommand + "job `*`métier`* : renvoit l'annuaire des artisans pour ce métier."
                 + "\n`" + Constants.prefixCommand + "job `*`métier niveau`* : vous ajoute à l'annuaire du métier correspondant." +
-                "Si vous indiquez 0, vous êtes supprimé de l'annuaire pour ce métier."
+                " Si vous indiquez 0, vous êtes supprimé de l'annuaire pour ce métier."
                 + "\n`" + Constants.prefixCommand + "job -all `*`niveau`* : vous ajoute à l'annuaire pour tous les métiers correspondants." +
-                "Si vous indiquez 0, vous êtes supprimé de chaque annuaire.\n";
+                " Si vous indiquez 0, vous êtes supprimé de chaque annuaire.\n";
     }
 }
