@@ -22,6 +22,7 @@ public class Main {
         Command.commands.add(new PortalCommand());
         Command.commands.add(new RightCommand());
         Command.commands.add(new RSSCommand());
+        Command.commands.add(new Rule34Command());
     }
 
     public static void main(String[] args) {

@@ -125,4 +125,11 @@ public class CommandPatternTest extends TestCase {
         assertTrue(pattern.matcher(Constants.prefixCommand + "nsfw off").find());
         assertTrue(pattern.matcher(Constants.prefixCommand + "nsfw 1").find());
     }
+
+    public void testRule34Command(){
+        Pattern pattern = new Rule34Command().getPattern();
+
+        assertTrue(pattern.matcher(Constants.prefixCommand + "rule34").find());
+        assertTrue(pattern.matcher(Constants.prefixCommand + "rule34 dofus").find());
+    }
 }
