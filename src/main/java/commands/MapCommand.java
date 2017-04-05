@@ -2,7 +2,6 @@ package commands;
 
 import data.Constants;
 import discord.Message;
-import exceptions.BadUseCommandException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sx.blah.discord.handle.obj.IMessage;
@@ -15,18 +14,20 @@ import java.util.regex.Pattern;
 public class MapCommand extends AbstractCommand{
 
     private final static Logger LOG = LoggerFactory.getLogger(MapCommand.class);
-    private final static String I = "";
-    private final static String II = "";
-    private final static String III = "";
-    private final static String IV = "";
-    private final static String V = "";
-    private final static String VI = "";
-    private final static String VII = "";
-    private final static String VIII = "";
-    private final static String IX = "";
-    private final static String X = "";
-    private final static String XI = "";
-    private final static String XII = "";
+    private final static String[] urls = new String[]{
+            "https://image.noelshack.com/fichiers/2017/14/1491433376-i.png"
+            , "https://image.noelshack.com/fichiers/2017/14/1491433376-ii.png"
+            , "https://image.noelshack.com/fichiers/2017/14/1491433375-iii.png"
+            , "https://image.noelshack.com/fichiers/2017/14/1491433376-iv.png"
+            , "https://image.noelshack.com/fichiers/2017/14/1491433376-v.png"
+            , "https://image.noelshack.com/fichiers/2017/14/1491433377-vi.png"
+            , "https://image.noelshack.com/fichiers/2017/14/1491433378-vii.png"
+            , "https://image.noelshack.com/fichiers/2017/14/1491433378-viii.png"
+            , "https://image.noelshack.com/fichiers/2017/14/1491433376-ix.png"
+            , "https://image.noelshack.com/fichiers/2017/14/1491433379-x.png"
+            , "https://image.noelshack.com/fichiers/2017/14/1491433381-xi.png"
+            , "https://image.noelshack.com/fichiers/2017/14/1491433381-xii.png"
+    };
 
     public MapCommand(){
         super(Pattern.compile("map"),
@@ -55,9 +56,10 @@ public class MapCommand extends AbstractCommand{
                 maps = text.split("\\s+");
             }
 
+            int random = new Random().nextInt(maps.length);
             Message.send(message.getChannel(), "Le combat aura lieu sur la carte "
-                    + maps[new Random().nextInt(maps.length)] + " !"
-                    + "\n"); //TODO URL
+                    + maps[random] + " !"
+                    + "\n" + urls[random]);
         }
         return false;
     }
