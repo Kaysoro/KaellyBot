@@ -1,5 +1,7 @@
 package commands;
 
+import data.Constants;
+import exceptions.BadUseCommandException;
 import exceptions.NotUsableInMPException;
 import sx.blah.discord.handle.obj.IMessage;
 
@@ -27,7 +29,8 @@ public abstract class AbstractCommand implements Command {
         boolean isFound = m.find();
         if (isFound && message.getChannel().isPrivate() && ! isUsableInMP())
             new NotUsableInMPException().throwException(message, this);
-
+        else if (! isFound && message.getContent().startsWith(Constants.prefixCommand + name.pattern()))
+            new BadUseCommandException().throwException(message, this);
         return isFound && ((message.getChannel().isPrivate() && isUsableInMP()) || ! message.getChannel().isPrivate());
     }
 
