@@ -36,6 +36,8 @@ public class ReadyListener {
 
                     new User(user.getID(), user.getDisplayName(guild), level, Guild.getGuilds().get(guild.getID()))
                             .addToDatabase();
+                if (! user.getDisplayName(guild).equals(User.getUsers().get(guild.getID()).get(user.getID()).getName()))
+                    User.getUsers().get(guild.getID()).get(user.getID()).setName(user.getDisplayName(guild));
                 }
 
         LOG.info("Ajout des différents listeners");
