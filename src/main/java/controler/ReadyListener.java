@@ -1,5 +1,6 @@
 package controler;
 
+import commands.HelpCommand;
 import data.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,6 +54,9 @@ public class ReadyListener {
         ClientConfig.CLIENT().getDispatcher().registerListener(new TrackStartListener());
         ClientConfig.CLIENT().getDispatcher().registerListener(new TrackQueueListener());
         ClientConfig.CLIENT().getDispatcher().registerListener(new TrackFinishListener());
+
+        // Joue à...
+        ClientConfig.CLIENT().changePlayingText(Constants.prefixCommand + new HelpCommand().getName().pattern());
 
         LOG.info("Ecoute des messages...");
         ClientConfig.CLIENT().getDispatcher().registerListener(new MessageListener());
