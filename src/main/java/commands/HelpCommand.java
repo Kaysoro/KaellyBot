@@ -26,11 +26,13 @@ public class HelpCommand extends AbstractCommand{
             StringBuilder st = new StringBuilder();
             boolean argumentFound = m.group(2) != null && m.group(2).replaceAll("^\\s+", "").length() > 0;
             for(Command command : commands)
-                if (! argumentFound)
-                    st.append(command.help()).append("\n");
-                else if (command.getName().matcher(m.group(2)).find()){
-                    st.append(command.helpDetailed());
-                    break;
+                if (command.isPublic()){
+                    if (! argumentFound)
+                        st.append(command.help()).append("\n");
+                    else if (command.getName().matcher(m.group(2)).find()) {
+                        st.append(command.helpDetailed());
+                        break;
+                    }
                 }
 
             if (argumentFound && st.length() == 0)
@@ -46,6 +48,11 @@ public class HelpCommand extends AbstractCommand{
 
     @Override
     public boolean isUsableInMP() {
+        return true;
+    }
+
+    @Override
+    public boolean isPublic() {
         return true;
     }
 

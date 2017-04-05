@@ -47,6 +47,11 @@ public class RandomCommand extends AbstractCommand{
     }
 
     @Override
+    public boolean isPublic() {
+        return true;
+    }
+
+    @Override
     public String help() {
         return "**" + Constants.prefixCommand + "rdm** tire au hasard une valeur spécifiée ou non.";
     }

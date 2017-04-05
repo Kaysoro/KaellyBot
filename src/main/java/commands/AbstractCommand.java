@@ -27,10 +27,14 @@ public abstract class AbstractCommand implements Command {
     public boolean request(IMessage message) {
         m =  pattern.matcher(message.getContent());
         boolean isFound = m.find();
-        if (isFound && message.getChannel().isPrivate() && ! isUsableInMP())
-            new NotUsableInMPException().throwException(message, this);
-        else if (! isFound && message.getContent().startsWith(Constants.prefixCommand + name.pattern()))
-            new BadUseCommandException().throwException(message, this);
+        if (isPublic()) {
+            if (isFound && message.getChannel().isPrivate() && !isUsableInMP())
+                new NotUsableInMPException().throwException(message, this);
+            else if (!isFound && message.getContent().startsWith(Constants.prefixCommand + name.pattern()))
+                new BadUseCommandException().throwException(message, this);
+        }
+        else if (! isPublic() && ! message.getAuthor().getID().equals(Constants.author))
+            return false;
         return isFound && ((message.getChannel().isPrivate() && isUsableInMP()) || ! message.getChannel().isPrivate());
     }
 

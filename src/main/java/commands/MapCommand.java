@@ -68,6 +68,11 @@ public class MapCommand extends AbstractCommand{
     }
 
     @Override
+    public boolean isPublic() {
+        return true;
+    }
+
+    @Override
     public String help() {
         return "**" + Constants.prefixCommand + "map** tire au hasard une carte du Goultarminator ou bien parmi celles"
                 + " spécifiées en paramètre.";

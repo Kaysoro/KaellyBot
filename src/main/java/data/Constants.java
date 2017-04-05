@@ -13,7 +13,7 @@ public class Constants {
     /**
      * Author
      */
-    public final static String author = "Kaysoro";
+    public final static String author = "162842827183751169";
 
     /**
      * URL for github KaellyBot repository

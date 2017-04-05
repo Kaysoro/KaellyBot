@@ -35,6 +35,11 @@ public class ParrotCommand extends AbstractCommand{
     }
 
     @Override
+    public boolean isPublic() {
+        return true;
+    }
+
+    @Override
     public String help() {
         return "**" + Constants.prefixCommand + "parrot** renvoit le message envoyé en argument, tel un perroquet.";
     }

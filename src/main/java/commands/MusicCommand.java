@@ -117,6 +117,11 @@ public class MusicCommand extends AbstractCommand{
     }
 
     @Override
+    public boolean isPublic() {
+        return true;
+    }
+
+    @Override
     public String help() {
         return "**" + Constants.prefixCommand + "music** permet d'écouter de la musique provenant de Youtube dans un canal vocal.";
     }

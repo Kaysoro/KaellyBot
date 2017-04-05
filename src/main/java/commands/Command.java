@@ -15,6 +15,7 @@ public interface Command {
     public Pattern getPattern();
     public boolean request(IMessage message);
     public boolean isUsableInMP();
+    public boolean isPublic();
     public String help();
     public String helpDetailed();
 }
