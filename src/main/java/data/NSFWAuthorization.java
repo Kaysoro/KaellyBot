@@ -69,7 +69,7 @@ public class NSFWAuthorization {
     }
 
     public void removeToDatabase() {
-        getNSFWChannels().remove(this);
+        getNSFWChannels().remove(getChannelId());
 
         Connexion connexion = Connexion.getInstance();
         Connection connection = connexion.getConnection();
