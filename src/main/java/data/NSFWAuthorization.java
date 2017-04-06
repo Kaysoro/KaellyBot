@@ -39,7 +39,10 @@ public class NSFWAuthorization {
 
                 while (resultSet.next()){
                     IChannel chan = ClientConfig.CLIENT().getChannelByID(resultSet.getString("id_chan"));
-                    nsfwChannels.put(chan.getID(), new NSFWAuthorization(chan.getID()));
+                    if (chan != null)
+                        nsfwChannels.put(chan.getID(), new NSFWAuthorization(chan.getID()));
+                    else
+                        new NSFWAuthorization(resultSet.getString("id_chan")).removeToDatabase();
                 }
             } catch (SQLException e) {
                 Reporter.report(e);

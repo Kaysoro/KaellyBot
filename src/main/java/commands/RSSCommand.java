@@ -4,7 +4,6 @@ import data.Constants;
 import data.RSSFinder;
 import data.User;
 import discord.Message;
-import exceptions.InDeveloppmentException;
 import exceptions.NotEnoughRightsException;
 import exceptions.RSSFoundException;
 import exceptions.RSSNotFoundException;
@@ -38,13 +37,13 @@ public class RSSCommand extends AbstractCommand{
                     boolean found = false;
 
                     for(RSSFinder finder : RSSFinder.getRSSFinders())
-                        if (finder.getChan() == message.getChannel()){
+                        if (finder.getChan().equals(message.getChannel().getID())){
                             found = true;
                             break;
                         }
 
                     if (!found) {
-                        new RSSFinder(message.getChannel()).addToDatabase();
+                        new RSSFinder(message.getChannel().getID()).addToDatabase();
                         Message.send(message.getChannel(), "Les news de dofus.com seront automatiquement postées ici.");
                     }
                     else
@@ -54,7 +53,7 @@ public class RSSCommand extends AbstractCommand{
                 else {
                     boolean found = false;
                     for(RSSFinder finder : RSSFinder.getRSSFinders())
-                        if (finder.getChan() == message.getChannel()){
+                        if (finder.getChan().equals(message.getChannel().getID())){
                             found = true;
                             finder.removeToDatabase();
                             Message.send(message.getChannel(), "Les news de dofus.com ne sont plus postées ici.");
