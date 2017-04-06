@@ -20,7 +20,7 @@ public class NSFWCommand extends AbstractCommand{
 
     public NSFWCommand(){
         super(Pattern.compile("nsfw"),
-        Pattern.compile("^(" + Constants.prefixCommand + "nsfw)(\\s+true|\\s+false|\\s+0|\\s+1|\\s+on|\\s+off)?$"));
+        Pattern.compile("^(" + Constants.prefixCommand + "nsfw)(\\s+true|\\s+false|\\s+0|\\s+1|\\s+on|\\s+off)$"));
     }
 
     @Override
@@ -50,6 +50,8 @@ public class NSFWCommand extends AbstractCommand{
                         new NSFWNotFoundException().throwException(message, this);
                 }
             }
+            else
+                new NotEnoughRightsException().throwException(message, this);
         }
         return false;
     }

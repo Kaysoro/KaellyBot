@@ -126,6 +126,7 @@ public class CommandPatternTest extends TestCase {
         assertTrue(pattern.matcher(Constants.prefixCommand + "nsfw false").find());
         assertTrue(pattern.matcher(Constants.prefixCommand + "nsfw off").find());
         assertTrue(pattern.matcher(Constants.prefixCommand + "nsfw 1").find());
+        assertFalse(pattern.matcher(Constants.prefixCommand + "nsfw").find());
     }
 
     public void testRule34Command(){
