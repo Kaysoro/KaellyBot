@@ -19,12 +19,12 @@ public class Reporter {
     private IChannel channel;
 
     private Reporter(){
-        IUser user = ClientConfig.CLIENT().getUserByID(Constants.chanReportID);
+        IUser user = ClientConfig.DISCORD().getUserByID(Constants.chanReportID);
 
         if (user != null)
             channel = user.getOrCreatePMChannel();
         else
-            channel = ClientConfig.CLIENT().getChannelByID(Constants.chanReportID);
+            channel = ClientConfig.DISCORD().getChannelByID(Constants.chanReportID);
 
         if (channel == null)
             LOG.warn("Reporter ID is not defined.");
@@ -40,7 +40,7 @@ public class Reporter {
         if (channel != null)
             try {
                 RequestBuffer.request(() -> {
-                    new MessageBuilder(ClientConfig.CLIENT())
+                    new MessageBuilder(ClientConfig.DISCORD())
                             .withChannel(channel)
                             .withContent(e.toString())
                             .build();

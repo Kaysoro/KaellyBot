@@ -102,7 +102,7 @@ public class RSSFinder {
                 ResultSet resultSet = query.executeQuery();
 
                 while (resultSet.next()){
-                    IChannel chan = ClientConfig.CLIENT().getChannelByID(resultSet.getString("id_chan"));
+                    IChannel chan = ClientConfig.DISCORD().getChannelByID(resultSet.getString("id_chan"));
                     long lastUpdate = resultSet.getLong("last_update");
 
                     if (chan != null)
@@ -131,7 +131,7 @@ public class RSSFinder {
 
                             for (RSS rss : rssFeeds)
                                 if (rss.getDate() > finder.getLastRSS()) {
-                                    Message.send(ClientConfig.CLIENT().getChannelByID(finder.getChan()), rss.toStringDiscord());
+                                    Message.send(ClientConfig.DISCORD().getChannelByID(finder.getChan()), rss.toStringDiscord());
                                     lastRSS = rss.getDate();
                                 }
 

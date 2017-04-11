@@ -20,14 +20,14 @@ public class ReadyListener {
         LOG.info(Constants.name + "Bot connecté !");
 
         LOG.info("Check des guildes");
-        for(IGuild guild : ClientConfig.CLIENT().getGuilds()) {
+        for(IGuild guild : ClientConfig.DISCORD().getGuilds()) {
             new Guild(guild.getID(), guild.getName()).addToDatabase();
             if (! guild.getName().equals(Guild.getGuilds().get(guild.getID())))
                 Guild.getGuilds().get(guild.getID()).setName(guild.getName());
         }
 
         LOG.info("Check des utilisateurs");
-        for(IGuild guild : ClientConfig.CLIENT().getGuilds())
+        for(IGuild guild : ClientConfig.DISCORD().getGuilds())
             for(IUser user : guild.getUsers()){
                     int level;
                     if (user.getID().equals(guild.getOwnerID()))
@@ -42,24 +42,24 @@ public class ReadyListener {
                 }
 
         LOG.info("Ajout des différents listeners");
-        ClientConfig.CLIENT().getDispatcher().registerListener(new GuildCreateListener());
-        ClientConfig.CLIENT().getDispatcher().registerListener(new GuildLeaveListener());
-        ClientConfig.CLIENT().getDispatcher().registerListener(new GuildTransferOwnershipListener());
-        ClientConfig.CLIENT().getDispatcher().registerListener(new GuildUpdateListener());
-        ClientConfig.CLIENT().getDispatcher().registerListener(new NickNameChangeListener());
-        ClientConfig.CLIENT().getDispatcher().registerListener(new UserBanListener());
-        ClientConfig.CLIENT().getDispatcher().registerListener(new UserJoinListener());
-        ClientConfig.CLIENT().getDispatcher().registerListener(new UserLeaveListener());
+        ClientConfig.DISCORD().getDispatcher().registerListener(new GuildCreateListener());
+        ClientConfig.DISCORD().getDispatcher().registerListener(new GuildLeaveListener());
+        ClientConfig.DISCORD().getDispatcher().registerListener(new GuildTransferOwnershipListener());
+        ClientConfig.DISCORD().getDispatcher().registerListener(new GuildUpdateListener());
+        ClientConfig.DISCORD().getDispatcher().registerListener(new NickNameChangeListener());
+        ClientConfig.DISCORD().getDispatcher().registerListener(new UserBanListener());
+        ClientConfig.DISCORD().getDispatcher().registerListener(new UserJoinListener());
+        ClientConfig.DISCORD().getDispatcher().registerListener(new UserLeaveListener());
 
-        ClientConfig.CLIENT().getDispatcher().registerListener(new TrackStartListener());
-        ClientConfig.CLIENT().getDispatcher().registerListener(new TrackQueueListener());
-        ClientConfig.CLIENT().getDispatcher().registerListener(new TrackFinishListener());
+        ClientConfig.DISCORD().getDispatcher().registerListener(new TrackStartListener());
+        ClientConfig.DISCORD().getDispatcher().registerListener(new TrackQueueListener());
+        ClientConfig.DISCORD().getDispatcher().registerListener(new TrackFinishListener());
 
         // Joue à...
-        ClientConfig.CLIENT().changePlayingText(Constants.prefixCommand + new HelpCommand().getName().pattern());
+        ClientConfig.DISCORD().changePlayingText(Constants.prefixCommand + new HelpCommand().getName().pattern());
 
         LOG.info("Ecoute des messages...");
-        ClientConfig.CLIENT().getDispatcher().registerListener(new MessageListener());
+        ClientConfig.DISCORD().getDispatcher().registerListener(new MessageListener());
 
         LOG.info("Ecoute des flux RSS du site Dofus...");
         RSSFinder.start();

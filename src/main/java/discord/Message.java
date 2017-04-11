@@ -2,7 +2,6 @@ package discord;
 
 import data.ClientConfig;
 import data.Constants;
-import exceptions.Reporter;
 import org.slf4j.LoggerFactory;
 import sx.blah.discord.handle.obj.IChannel;
 import sx.blah.discord.util.DiscordException;
@@ -18,7 +17,7 @@ public class Message {
     public static void send(IChannel channel, String content){
         RequestBuffer.request(() -> {
             try {
-                new MessageBuilder(ClientConfig.CLIENT())
+                new MessageBuilder(ClientConfig.DISCORD())
                         .withChannel(channel)
                         .withContent(content)
                         .build();

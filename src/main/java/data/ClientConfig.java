@@ -5,6 +5,10 @@ import org.slf4j.LoggerFactory;
 import sx.blah.discord.api.ClientBuilder;
 import sx.blah.discord.api.IDiscordClient;
 import sx.blah.discord.util.DiscordException;
+import twitter4j.TwitterStream;
+import twitter4j.TwitterStreamFactory;
+import twitter4j.conf.Configuration;
+import twitter4j.conf.ConfigurationBuilder;
 
 import java.io.*;
 import java.net.URLDecoder;
@@ -18,7 +22,8 @@ public class ClientConfig {
     private static ClientConfig instance = null;
     private final static Logger LOG = LoggerFactory.getLogger(ClientConfig.class);
     private final static String FILENAME = "\\config.properties";
-    private IDiscordClient CLIENT;
+    private IDiscordClient DISCORD;
+    private TwitterStream TWITTER;
 
     private ClientConfig(){
         super();
@@ -30,17 +35,26 @@ public class ClientConfig {
             prop.load(file);
             file.close();
 
-            String token = prop.getProperty("discord.token");
-            CLIENT = new ClientBuilder().withToken(token).login();
+            try {
+                DISCORD = new ClientBuilder().withToken(prop.getProperty("discord.token")).login();
+            } catch(DiscordException e){
+                    LOG.error("Impossible de se connecter à Discord : verifiez votre token dans "
+                            + FILENAME + " ainsi que votre connexion.");
+            }
+
+            ConfigurationBuilder cb = new ConfigurationBuilder();
+            cb.setDebugEnabled(true)
+                    .setOAuthConsumerKey(prop.getProperty("twitter.consumer_key"))
+                    .setOAuthConsumerSecret(prop.getProperty("twitter.consumer_secret"))
+                    .setOAuthAccessToken(prop.getProperty("twitter.access_token"))
+                    .setOAuthAccessTokenSecret(prop.getProperty("twitter.access_token_secret"));
+            TWITTER = new TwitterStreamFactory(cb.build()).getInstance();
 
             } catch(FileNotFoundException e){
             LOG.error("Fichier de configuration non trouvé.");
             } catch (IOException e) {
             LOG.error("IOException rencontré : " + e.getMessage());
-            } catch(DiscordException e){
-            LOG.error("Impossible de se connecter à Discord : verifiez votre token dans "
-                    + FILENAME + " ainsi que votre connexion.");
-        }
+            }
     }
 
     public static ClientConfig getInstance(){
@@ -61,7 +75,10 @@ public class ClientConfig {
         return ret;
     }
 
-    public static IDiscordClient CLIENT() {
-        return getInstance().CLIENT;
+    public static TwitterStream TWITTER() {
+        return getInstance().TWITTER;
+    }
+    public static IDiscordClient DISCORD() {
+        return getInstance().DISCORD;
     }
 }

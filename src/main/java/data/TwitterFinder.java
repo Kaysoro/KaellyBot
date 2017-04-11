@@ -15,50 +15,50 @@ import java.util.Map;
 /**
  * Created by steve on 12/01/2017.
  */
-public class NSFWAuthorization {
-    private final static Logger LOG = LoggerFactory.getLogger(NSFWAuthorization.class);
-    protected static Map<String, NSFWAuthorization> nsfwChannels;
+public class TwitterFinder {
+    private final static Logger LOG = LoggerFactory.getLogger(TwitterFinder.class);
+    protected static Map<String, TwitterFinder> twitterChannels;
     private String channelId;
 
-    public NSFWAuthorization(String channelId) {
+    public TwitterFinder(String channelId) {
         this.channelId = channelId;
     }
 
-    public static Map<String, NSFWAuthorization> getNSFWChannels(){
-        if (nsfwChannels == null) {
-            nsfwChannels = new HashMap<>();
+    public static Map<String, TwitterFinder> getTwitterChannels(){
+        if (twitterChannels == null) {
+            twitterChannels = new HashMap<>();
 
             Connexion connexion = Connexion.getInstance();
             Connection connection = connexion.getConnection();
 
             try {
-                PreparedStatement query = connection.prepareStatement("SELECT id_chan FROM NSFW_Authorization");
+                PreparedStatement query = connection.prepareStatement("SELECT id_chan FROM Twitter");
                 ResultSet resultSet = query.executeQuery();
 
                 while (resultSet.next()){
                     IChannel chan = ClientConfig.DISCORD().getChannelByID(resultSet.getString("id_chan"));
                     if (chan != null)
-                        nsfwChannels.put(chan.getID(), new NSFWAuthorization(chan.getID()));
+                        twitterChannels.put(chan.getID(), new TwitterFinder(chan.getID()));
                     else
-                        new NSFWAuthorization(resultSet.getString("id_chan")).removeToDatabase();
+                        new TwitterFinder(resultSet.getString("id_chan")).removeToDatabase();
                 }
             } catch (SQLException e) {
                 Reporter.report(e);
                 LOG.error(e.getMessage());
             }
         }
-        return nsfwChannels;
+        return twitterChannels;
     }
 
     public void addToDatabase(){
-        if (! getNSFWChannels().containsKey(getChannelId())) {
-            getNSFWChannels().put(getChannelId(), this);
+        if (! getTwitterChannels().containsKey(getChannelId())) {
+            getTwitterChannels().put(getChannelId(), this);
             Connexion connexion = Connexion.getInstance();
             Connection connection = connexion.getConnection();
 
             try {
                 PreparedStatement preparedStatement = connection.prepareStatement(
-                        "INSERT INTO NSFW_Authorization(id_chan) VALUES(?);");
+                        "INSERT INTO Twitter(id_chan) VALUES(?);");
                 preparedStatement.setString(1, getChannelId());
 
                 preparedStatement.executeUpdate();
@@ -70,13 +70,13 @@ public class NSFWAuthorization {
     }
 
     public void removeToDatabase() {
-        getNSFWChannels().remove(getChannelId());
+        getTwitterChannels().remove(getChannelId());
 
         Connexion connexion = Connexion.getInstance();
         Connection connection = connexion.getConnection();
 
         try {
-            PreparedStatement request = connection.prepareStatement("DELETE FROM NSFW_Authorization WHERE id_chan = ?;");
+            PreparedStatement request = connection.prepareStatement("DELETE FROM Twitter WHERE id_chan = ?;");
             request.setString(1, getChannelId());
             request.executeUpdate();
 

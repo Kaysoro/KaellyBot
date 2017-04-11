@@ -71,7 +71,7 @@ public class MusicCommand extends AbstractCommand{
             new NotInVocalChannelException().throwException(message, this);
         else {
             IVoiceChannel voice = message.getAuthor().getVoiceStateForGuild(message.getGuild()).getChannel();
-            if (!voice.getModifiedPermissions(ClientConfig.CLIENT().getOurUser()).contains(Permissions.VOICE_CONNECT))
+            if (!voice.getModifiedPermissions(ClientConfig.DISCORD().getOurUser()).contains(Permissions.VOICE_CONNECT))
                 new NoVoiceConnectPermissionException().throwException(message, this);
             else if (voice.getConnectedUsers().size() >= voice.getUserLimit() && voice.getUserLimit() != 0)
                 new VoiceChannelLimitException().throwException(message, this);
@@ -88,7 +88,7 @@ public class MusicCommand extends AbstractCommand{
     }
 
     private void leave(IMessage message) {
-        IVoiceChannel voice = ClientConfig.CLIENT().getOurUser().getVoiceStateForGuild(message.getGuild()).getChannel();
+        IVoiceChannel voice = ClientConfig.DISCORD().getOurUser().getVoiceStateForGuild(message.getGuild()).getChannel();
         if (voice != null) {
             voice.leave();
             Message.send(VoiceManager.getLastChannel().get(message.getGuild()), "Déconnecté de **" + voice.getName() + "**.");

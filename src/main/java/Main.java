@@ -29,7 +29,7 @@ public class Main {
 
     public static void main(String[] args) {
         initCommands();
-        IDiscordClient client = ClientConfig.CLIENT();
+        IDiscordClient client = ClientConfig.DISCORD();
         client.getDispatcher().registerListener(new ReadyListener());
     }
 }

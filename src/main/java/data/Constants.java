@@ -43,6 +43,11 @@ public class Constants {
     public final static String dofusFeedURL = "http://www.dofus.com/fr/rss/news.xml";
 
     /**
+     * Official Dofus account on Twitter
+     */
+    public final static String dofusTwitter = "@DOFUSfr";
+
+    /**
      * Character limit for nickname discord
      */
     public final static int nicknameLimit = 32;
