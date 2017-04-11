@@ -9,13 +9,6 @@ import java.util.regex.Pattern;
  */
 public class CommandPatternTest extends TestCase {
 
-    public void testRSSCommand(){
-        Pattern pattern = new RSSCommand().getPattern();
-
-        assertTrue(pattern.matcher(Constants.prefixCommand + "rss").find());
-        assertTrue(pattern.matcher(Constants.prefixCommand + "rss -rm").find());
-    }
-
     public void testAlmanaxCommand(){
         Pattern pattern = new AlmanaxCommand().getPattern();
 
@@ -127,6 +120,30 @@ public class CommandPatternTest extends TestCase {
         assertTrue(pattern.matcher(Constants.prefixCommand + "nsfw off").find());
         assertTrue(pattern.matcher(Constants.prefixCommand + "nsfw 1").find());
         assertFalse(pattern.matcher(Constants.prefixCommand + "nsfw").find());
+    }
+
+    public void testTwitterCommand(){
+        Pattern pattern = new TwitterCommand().getPattern();
+
+        assertTrue(pattern.matcher(Constants.prefixCommand + "twitter true").find());
+        assertTrue(pattern.matcher(Constants.prefixCommand + "twitter on").find());
+        assertTrue(pattern.matcher(Constants.prefixCommand + "twitter 0").find());
+        assertTrue(pattern.matcher(Constants.prefixCommand + "twitter false").find());
+        assertTrue(pattern.matcher(Constants.prefixCommand + "twitter off").find());
+        assertTrue(pattern.matcher(Constants.prefixCommand + "twitter 1").find());
+        assertFalse(pattern.matcher(Constants.prefixCommand + "twitter").find());
+    }
+
+    public void testRSSCommand(){
+        Pattern pattern = new RSSCommand().getPattern();
+
+        assertTrue(pattern.matcher(Constants.prefixCommand + "rss true").find());
+        assertTrue(pattern.matcher(Constants.prefixCommand + "rss on").find());
+        assertTrue(pattern.matcher(Constants.prefixCommand + "rss 0").find());
+        assertTrue(pattern.matcher(Constants.prefixCommand + "rss false").find());
+        assertTrue(pattern.matcher(Constants.prefixCommand + "rss off").find());
+        assertTrue(pattern.matcher(Constants.prefixCommand + "rss 1").find());
+        assertFalse(pattern.matcher(Constants.prefixCommand + "rss").find());
     }
 
     public void testRule34Command(){

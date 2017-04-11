@@ -22,7 +22,7 @@ public class RSSCommand extends AbstractCommand{
 
     public RSSCommand(){
         super(Pattern.compile("rss"),
-        Pattern.compile("^(" + Constants.prefixCommand + "rss)(\\s+-rm)?$"));
+        Pattern.compile("^(" + Constants.prefixCommand + "rss)(\\s+true|\\s+false|\\s+0|\\s+1|\\s+on|\\s+off)$"));
     }
 
     @Override
@@ -33,7 +33,9 @@ public class RSSCommand extends AbstractCommand{
             if (User.getUsers().get(message.getGuild().getID())
                     .get(message.getAuthor().getID()).getRights() >= User.RIGHT_MODERATOR) {
 
-                if (m.group(2) == null) {
+                String value = m.group(2);
+
+                if (value.matches("\\s+true") || value.matches("\\s+0") || value.matches("\\s+on")){
                     boolean found = false;
 
                     for(RSSFinder finder : RSSFinder.getRSSFinders())
@@ -48,7 +50,6 @@ public class RSSCommand extends AbstractCommand{
                     }
                     else
                         new RSSFoundException().throwException(message, this);
-
                 }
                 else {
                     boolean found = false;
@@ -63,12 +64,8 @@ public class RSSCommand extends AbstractCommand{
                     if (!found)
                         new RSSNotFoundException().throwException(message, this);
                 }
-
-                return true;
-            } else {
+            } else
                 new NotEnoughRightsException().throwException(message, this);
-                return false;
-            }
         }
         return false;
     }
@@ -91,8 +88,7 @@ public class RSSCommand extends AbstractCommand{
     @Override
     public String helpDetailed() {
         return help()
-                + "\n`" + Constants.prefixCommand + "rss` : écoute le flux RSS de Dofus.com dans le channel et poste dedans"
-                + " s'il y a des news."
-                + "\n`" + Constants.prefixCommand + "rss -rm` : supprime le flux RSS rattaché au channel.\n";
+                + "\n`" + Constants.prefixCommand + "rss true` : poste les news à partir du flux RSS de Dofus.com. Fonctionne aussi avec \"on\" et \"0\"."
+                + "\n`" + Constants.prefixCommand + "rss false` : ne poste plus les flux RSS sur le channel. Fonctionne aussi avec \"off\" et \"1\".\n";
     }
 }

@@ -24,6 +24,7 @@ public class Main {
         Command.commands.add(new RightCommand());
         Command.commands.add(new RSSCommand());
         Command.commands.add(new Rule34Command());
+        Command.commands.add(new TwitterCommand());
     }
 
     public static void main(String[] args) {
