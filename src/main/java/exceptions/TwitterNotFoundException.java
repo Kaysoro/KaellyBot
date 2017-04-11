@@ -16,6 +16,6 @@ public class TwitterNotFoundException implements Exception {
 
     @Override
     public void throwException(IMessage message, Command command) {
-        Message.send(message.getChannel(), "Les tweets de " + Constants.dofusTwitter + " ne sont pas autorisées ici.");
+        Message.send(message.getChannel(), "Les tweets de @Dofusfr ne sont pas postés ici.");
     }
 }

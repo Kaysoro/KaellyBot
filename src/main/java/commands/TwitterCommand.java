@@ -36,8 +36,7 @@ public class TwitterCommand extends AbstractCommand{
                 if (value.matches("\\s+true") || value.matches("\\s+0") || value.matches("\\s+on")){
                     if (! TwitterFinder.getTwitterChannels().containsKey(message.getChannel().getID())) {
                         new TwitterFinder(message.getChannel().getID()).addToDatabase();
-                        Message.send(message.getChannel(), "Les tweets de " + Constants.dofusTwitter
-                                + " sont postés ici.");
+                        Message.send(message.getChannel(), "Les tweets de @Dofusfr seront postés ici.");
                     }
                     else
                         new TwitterFoundException().throwException(message, this);
@@ -45,8 +44,7 @@ public class TwitterCommand extends AbstractCommand{
                 else {
                     if (TwitterFinder.getTwitterChannels().containsKey(message.getChannel().getID())) {
                         TwitterFinder.getTwitterChannels().get(message.getChannel().getID()).removeToDatabase();
-                        Message.send(message.getChannel(), "Les tweets de " + Constants.dofusTwitter
-                                + " ne sont plus autorisées ici.");
+                        Message.send(message.getChannel(), "Les tweets de @Dofusfr ne seront plus postés ici.");
                     }
                     else
                         new TwitterNotFoundException().throwException(message, this);
@@ -70,13 +68,13 @@ public class TwitterCommand extends AbstractCommand{
 
     @Override
     public String help() {
-        return "**" + Constants.prefixCommand + "twitter** poste les tweets de DofusFR sur un channel; nécessite un niveau d'administration 2 (Modérateur) minimum.";
+        return "**" + Constants.prefixCommand + "twitter** poste les tweets de Dofusfr sur un channel; nécessite un niveau d'administration 2 (Modérateur) minimum.";
     }
 
     @Override
     public String helpDetailed() {
         return help()
-                + "\n`" + Constants.prefixCommand + "twitter true` : poste les tweets de DofusFR. Fonctionne aussi avec \"on\" et \"0\"."
+                + "\n`" + Constants.prefixCommand + "twitter true` : poste les tweets de Dofusfr. Fonctionne aussi avec \"on\" et \"0\"."
                 + "\n`" + Constants.prefixCommand + "twitter false` : ne poste plus les tweets sur le channel. Fonctionne aussi avec \"off\" et \"1\".\n";
     }
 }

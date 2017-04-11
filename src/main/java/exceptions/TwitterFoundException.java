@@ -16,6 +16,6 @@ public class TwitterFoundException implements Exception {
 
     @Override
     public void throwException(IMessage message, Command command) {
-        Message.send(message.getChannel(), "Les tweets de " + Constants.dofusTwitter + " sont déjà postées ici.");
+        Message.send(message.getChannel(), "Les tweets de @Dofusfr sont déjà postés ici.");
     }
 }

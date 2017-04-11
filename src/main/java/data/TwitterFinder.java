@@ -1,9 +1,13 @@
 package data;
 
+import discord.Message;
 import exceptions.Reporter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sx.blah.discord.handle.obj.IChannel;
+import twitter4j.FilterQuery;
+import twitter4j.Status;
+import twitter4j.StatusAdapter;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -15,13 +19,31 @@ import java.util.Map;
 /**
  * Created by steve on 12/01/2017.
  */
-public class TwitterFinder {
+public class TwitterFinder extends StatusAdapter{
     private final static Logger LOG = LoggerFactory.getLogger(TwitterFinder.class);
     protected static Map<String, TwitterFinder> twitterChannels;
     private String channelId;
 
     public TwitterFinder(String channelId) {
         this.channelId = channelId;
+
+        ClientConfig.TWITTER().addListener(this);
+
+        FilterQuery query = new FilterQuery();
+        query.follow(new long[] {Constants.dofusTwitter});
+        ClientConfig.TWITTER().filter(query);
+    }
+
+    @Override
+    public void onStatus(Status status) {
+        // In case if channel didn't exist anymore and it is not removed at time
+        if (getTwitterChannels().containsKey(getChannelId())){
+            //TODO do better message (embed ?)
+            if (status.getUser().getId() == Constants.dofusTwitter)
+                Message.send(ClientConfig.DISCORD().getChannelByID(getChannelId()),
+                        "**" + status.getUser().getName() + "** a dit sur Twitter :\n"
+                         + "```" + status.getText() + "```");
+        }
     }
 
     public static Map<String, TwitterFinder> getTwitterChannels(){

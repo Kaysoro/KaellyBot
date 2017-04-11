@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 import sx.blah.discord.api.ClientBuilder;
 import sx.blah.discord.api.IDiscordClient;
 import sx.blah.discord.util.DiscordException;
+import twitter4j.FilterQuery;
 import twitter4j.TwitterStream;
 import twitter4j.TwitterStreamFactory;
 import twitter4j.conf.Configuration;
@@ -43,11 +44,12 @@ public class ClientConfig {
             }
 
             ConfigurationBuilder cb = new ConfigurationBuilder();
-            cb.setDebugEnabled(true)
+            cb.setDebugEnabled(false)
                     .setOAuthConsumerKey(prop.getProperty("twitter.consumer_key"))
                     .setOAuthConsumerSecret(prop.getProperty("twitter.consumer_secret"))
                     .setOAuthAccessToken(prop.getProperty("twitter.access_token"))
                     .setOAuthAccessTokenSecret(prop.getProperty("twitter.access_token_secret"));
+
             TWITTER = new TwitterStreamFactory(cb.build()).getInstance();
 
             } catch(FileNotFoundException e){

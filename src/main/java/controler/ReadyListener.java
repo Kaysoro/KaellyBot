@@ -58,10 +58,13 @@ public class ReadyListener {
         // Joue à...
         ClientConfig.DISCORD().changePlayingText(Constants.prefixCommand + new HelpCommand().getName().pattern());
 
-        LOG.info("Ecoute des messages...");
-        ClientConfig.DISCORD().getDispatcher().registerListener(new MessageListener());
-
         LOG.info("Ecoute des flux RSS du site Dofus...");
         RSSFinder.start();
+
+        LOG.info("Connexion à l'API Twitter...");
+        TwitterFinder.getTwitterChannels();
+
+        LOG.info("Ecoute des messages...");
+        ClientConfig.DISCORD().getDispatcher().registerListener(new MessageListener());
     }
 }
