@@ -40,11 +40,15 @@ public class TwitterFinder extends StatusAdapter{
         // In case if channel didn't exist anymore and it is not removed at time
         if (getTwitterChannels().containsKey(getChannelId())){
             if (status.getUser().getId() == Constants.dofusTwitter) {
-                EmbedObject.AuthorObject author = new EmbedObject.AuthorObject("@" + status.getUser().getName(),
-                        null, status.getUser().getMiniProfileImageURL(), null);
+                EmbedObject.AuthorObject author = new EmbedObject.AuthorObject("@" + status.getUser().getScreenName(),
+                        "https://twitter.com/" + status.getUser().getScreenName(),
+                        status.getUser().getMiniProfileImageURL(), null);
+
                 EmbedObject embedTweet = new EmbedObject("Tweet", null, status.getText(),
-                        null, null, 1942002, null, null,
+                        "https://twitter.com/" + status.getUser().getScreenName() + "/status/" + status.getId(),
+                        null, 1942002, null, null,
                         null, null,null, author, null);
+
                 Message.sendEmbed(ClientConfig.DISCORD().getChannelByID(getChannelId()), embedTweet);
             }
         }
