@@ -55,9 +55,9 @@ public class Rule34Command extends AbstractCommand{
                         String link = "https:" + doc.getElementsByTagName("posts").item(0).getChildNodes()
                                 .item(0).getAttributes().getNamedItem("file_url").getNodeValue();
 
-                        Message.send(message.getChannel(), link);
+                        Message.sendText(message.getChannel(), link);
                     } else
-                        Message.send(message.getChannel(), "Aucune image ne correspond à `"
+                        Message.sendText(message.getChannel(), "Aucune image ne correspond à `"
                                 + m.group(2).trim() + "`.");
 
                 } catch (Exception e) {
@@ -66,7 +66,7 @@ public class Rule34Command extends AbstractCommand{
                 }
             }
             else
-                Message.send(message.getChannel(), message.getChannel().getName()
+                Message.sendText(message.getChannel(), message.getChannel().getName()
                         + " n'autorise pas du contenu NSFW. *!help nsfw* pour plus d'informations.");
         }
         return false;

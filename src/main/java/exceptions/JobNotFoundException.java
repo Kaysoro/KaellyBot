@@ -15,6 +15,6 @@ public class JobNotFoundException implements Exception {
 
     @Override
     public void throwException(IMessage message, Command command) {
-        Message.send(message.getChannel(), "Aucun métier trouvé, recommencez en étant plus précis.");
+        Message.sendText(message.getChannel(), "Aucun métier trouvé, recommencez en étant plus précis.");
     }
 }

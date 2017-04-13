@@ -36,7 +36,7 @@ public class TwitterCommand extends AbstractCommand{
                 if (value.matches("\\s+true") || value.matches("\\s+0") || value.matches("\\s+on")){
                     if (! TwitterFinder.getTwitterChannels().containsKey(message.getChannel().getID())) {
                         new TwitterFinder(message.getChannel().getID()).addToDatabase();
-                        Message.send(message.getChannel(), "Les tweets de @Dofusfr seront postés ici.");
+                        Message.sendText(message.getChannel(), "Les tweets de @Dofusfr seront postés ici.");
                     }
                     else
                         new TwitterFoundException().throwException(message, this);
@@ -44,7 +44,7 @@ public class TwitterCommand extends AbstractCommand{
                 else {
                     if (TwitterFinder.getTwitterChannels().containsKey(message.getChannel().getID())) {
                         TwitterFinder.getTwitterChannels().get(message.getChannel().getID()).removeToDatabase();
-                        Message.send(message.getChannel(), "Les tweets de @Dofusfr ne seront plus postés ici.");
+                        Message.sendText(message.getChannel(), "Les tweets de @Dofusfr ne seront plus postés ici.");
                     }
                     else
                         new TwitterNotFoundException().throwException(message, this);

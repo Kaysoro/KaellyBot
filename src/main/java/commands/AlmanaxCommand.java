@@ -57,7 +57,7 @@ public class AlmanaxCommand extends AbstractCommand{
                 if (m.group(2) == null || m.group(2).matches("\\W+-o"))
                     st.append(almanax.getOffrande()).append("\n");
 
-                Message.send(message.getChannel(), st.toString());
+                Message.sendText(message.getChannel(), st.toString());
                 return false;
             }
             else {

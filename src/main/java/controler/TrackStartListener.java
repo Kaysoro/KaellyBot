@@ -16,6 +16,6 @@ public class TrackStartListener {
     @EventSubscriber
     public void onTrackStart(TrackStartEvent event) {
         IGuild guild = event.getPlayer().getGuild();
-        Message.send(VoiceManager.getLastChannel().get(guild), "Lecture de **" + getTrackTitle(event.getTrack()) + "**");
+        Message.sendText(VoiceManager.getLastChannel().get(guild), "Lecture de **" + getTrackTitle(event.getTrack()) + "**");
     }
 }

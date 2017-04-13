@@ -57,12 +57,12 @@ public class RightCommand extends AbstractCommand{
                                     author.getRights() >= target.getRights())
                                     target.changeRight(level);
                                 else
-                                    Message.send(message.getChannel(), "Les droits d'administration de "
+                                    Message.sendText(message.getChannel(), "Les droits d'administration de "
                                     + target.getName() + " n'ont pu être changés.\n");
                             }
                         }
 
-                        Message.send(message.getChannel(), "Droits d'administration des membres du groupe *"
+                        Message.sendText(message.getChannel(), "Droits d'administration des membres du groupe *"
                                 + role.getName() + "* mis au niveau " + level + ".");
                     }
                     else if (idDecorated.matches("<@!?\\d+>")){ // Manage users
@@ -79,7 +79,7 @@ public class RightCommand extends AbstractCommand{
                         }
 
                         target.changeRight(level);
-                        Message.send(message.getChannel(), "Droits d'administration de *"
+                        Message.sendText(message.getChannel(), "Droits d'administration de *"
                                 + target.getName() + "* mis au niveau " + target.getRights() + ".");
                     }
                 } // Not an admin or a moderator
@@ -95,7 +95,7 @@ public class RightCommand extends AbstractCommand{
 
                     if (idDecorated.matches("<@!?\\d+>")){
                         User target = User.getUsers().get(message.getGuild().getID()).get(id);
-                        Message.send(message.getChannel(), "*" + target.getName()
+                        Message.sendText(message.getChannel(), "*" + target.getName()
                                 + "* a des droits d'administration de niveau "
                                 + target.getRights() + ".");
                     }
@@ -103,7 +103,7 @@ public class RightCommand extends AbstractCommand{
                         new NoRightsForRolesException().throwException(message, this);
                 }
                 else
-                    Message.send(message.getChannel(), "Tu as les droits d'administration de niveau "
+                    Message.sendText(message.getChannel(), "Tu as les droits d'administration de niveau "
                             + author.getRights() + ".");
             }
         }

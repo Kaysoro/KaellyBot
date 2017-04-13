@@ -15,6 +15,6 @@ public class NoRightsForRolesException implements Exception {
 
     @Override
     public void throwException(IMessage message, Command command) {
-        Message.send(message.getChannel(), "Les roles ne possèdent pas de droits d'administration rattachés.");
+        Message.sendText(message.getChannel(), "Les roles ne possèdent pas de droits d'administration rattachés.");
     }
 }

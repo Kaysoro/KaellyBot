@@ -15,6 +15,6 @@ public class LevelNotFoundException implements Exception {
 
     @Override
     public void throwException(IMessage message, Command command) {
-        Message.send(message.getChannel(), "Aucun niveau trouvé, recommencez en l'indiquant.");
+        Message.sendText(message.getChannel(), "Aucun niveau trouvé, recommencez en l'indiquant.");
     }
 }

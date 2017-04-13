@@ -36,14 +36,14 @@ public class PortalCommand extends AbstractCommand{
                 //TODO update from website
 
                 new InDeveloppmentException().throwException(message, this);
-                //Message.send(message.getChannel(), "Téléchargement des positions des dimensions divines terminé.");
+                //Message.sendText(message.getChannel(), "Téléchargement des positions des dimensions divines terminé.");
             }
             else if (m.group(2) == null && m.group(3) == null && m.group(7) == null) { // No dimension precised
                 StringBuilder st = new StringBuilder();
                 for(Portal pos : Guild.getGuilds().get(message.getGuild().getID()).getPortals())
                         st.append(pos);
 
-                Message.send(message.getChannel(), st.toString());
+                Message.sendText(message.getChannel(), st.toString());
             }
             else {
                 List<Portal> portals = new ArrayList<Portal>();
@@ -59,7 +59,7 @@ public class PortalCommand extends AbstractCommand{
                           portals.get(0).setUtilisation(Integer.parseInt(m.group(7).replaceAll("\\s", "")));
                     }
 
-                    Message.send(message.getChannel(), portals.get(0).toString());
+                    Message.sendText(message.getChannel(), portals.get(0).toString());
                 }
                 else if(portals.size() > 1)
                     new TooMuchPossibilitiesException().throwException(message, this);

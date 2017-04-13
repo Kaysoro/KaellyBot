@@ -15,6 +15,6 @@ public class AutoChangeRightsException implements Exception {
 
     @Override
     public void throwException(IMessage message, Command command) {
-        Message.send(message.getChannel(), "Vous ne pouvez pas changer vos propres droits d'administration.");
+        Message.sendText(message.getChannel(), "Vous ne pouvez pas changer vos propres droits d'administration.");
     }
 }

@@ -40,7 +40,7 @@ public class TwitterFinder extends StatusAdapter{
         if (getTwitterChannels().containsKey(getChannelId())){
             //TODO do better message (embed ?)
             if (status.getUser().getId() == Constants.dofusTwitter)
-                Message.send(ClientConfig.DISCORD().getChannelByID(getChannelId()),
+                Message.sendText(ClientConfig.DISCORD().getChannelByID(getChannelId()),
                         "**" + status.getUser().getName() + "** a dit sur Twitter :\n"
                          + "```" + status.getText() + "```");
         }

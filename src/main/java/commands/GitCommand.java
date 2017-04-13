@@ -24,7 +24,7 @@ public class GitCommand extends AbstractCommand{
     public boolean request(IMessage message) {
         if (super.request(message)){
 
-            Message.send(message.getChannel(), "Le code source de " + Constants.name + " se trouve sur " + Constants.git
+            Message.sendText(message.getChannel(), "Le code source de " + Constants.name + " se trouve sur " + Constants.git
                     + " ! N'hésitez pas à réagir à ce propos :)");
             return true;
         }

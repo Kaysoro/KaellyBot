@@ -15,6 +15,6 @@ public class MalformedMusicURLException implements Exception {
 
     @Override
     public void throwException(IMessage message, Command command) {
-        Message.send(message.getChannel(), "L'URL de la musique est malformé.");
+        Message.sendText(message.getChannel(), "L'URL de la musique est malformé.");
     }
 }

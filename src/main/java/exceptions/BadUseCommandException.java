@@ -17,7 +17,7 @@ public class BadUseCommandException implements Exception {
 
     @Override
     public void throwException(IMessage message, Command command) {
-        Message.send(message.getChannel(), message.getAuthor() + ", " + Constants.prefixCommand
+        Message.sendText(message.getChannel(), message.getAuthor() + ", " + Constants.prefixCommand
                 + command.getName() + " ne s'utilise pas comme ça. Tape `"
                 + Constants.prefixCommand + new HelpCommand().getName()
                 + " " + command.getName() + "` pour en savoir plus.");

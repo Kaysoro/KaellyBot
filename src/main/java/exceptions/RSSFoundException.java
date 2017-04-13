@@ -15,6 +15,6 @@ public class RSSFoundException implements Exception {
 
     @Override
     public void throwException(IMessage message, Command command) {
-        Message.send(message.getChannel(), "Les news de dofus.com sont déjà postées ici.");
+        Message.sendText(message.getChannel(), "Les news de dofus.com sont déjà postées ici.");
     }
 }

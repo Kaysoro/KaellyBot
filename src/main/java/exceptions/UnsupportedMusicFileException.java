@@ -15,6 +15,6 @@ public class UnsupportedMusicFileException implements Exception {
 
     @Override
     public void throwException(IMessage message, Command command) {
-        Message.send(message.getChannel(), "Ce type de fichier n'est pas supporté.");
+        Message.sendText(message.getChannel(), "Ce type de fichier n'est pas supporté.");
     }
 }

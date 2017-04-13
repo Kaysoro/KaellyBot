@@ -15,6 +15,6 @@ public class TooMuchPossibilitiesException implements Exception {
 
     @Override
     public void throwException(IMessage message, Command command) {
-        Message.send(message.getChannel(), "Plusieurs correspondances trouvées, recommencez en étant plus précis.");
+        Message.sendText(message.getChannel(), "Plusieurs correspondances trouvées, recommencez en étant plus précis.");
     }
 }

@@ -15,6 +15,6 @@ public class AlmanaxNotFoundException implements Exception {
 
     @Override
     public void throwException(IMessage message, Command command) {
-        Message.send(message.getChannel(), "Impossible de trouver des informations sur l'almanax désiré.");
+        Message.sendText(message.getChannel(), "Impossible de trouver des informations sur l'almanax désiré.");
     }
 }

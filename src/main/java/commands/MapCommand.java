@@ -57,7 +57,7 @@ public class MapCommand extends AbstractCommand{
             }
 
             int random = new Random().nextInt(maps.length);
-            Message.send(message.getChannel(), "Le combat aura lieu sur la carte "
+            Message.sendText(message.getChannel(), "Le combat aura lieu sur la carte "
                     + maps[random] + " !"
                     + "\n" + urls[random]);
         }

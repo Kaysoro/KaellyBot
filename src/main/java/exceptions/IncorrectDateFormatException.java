@@ -15,6 +15,6 @@ public class IncorrectDateFormatException implements Exception {
 
     @Override
     public void throwException(IMessage message, Command command) {
-        Message.send(message.getChannel(), "La date spécifiée ne correspond pas au format dd/mm/aaaa.");
+        Message.sendText(message.getChannel(), "La date spécifiée ne correspond pas au format dd/mm/aaaa.");
     }
 }

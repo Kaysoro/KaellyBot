@@ -1,7 +1,6 @@
 package exceptions;
 
 import commands.Command;
-import data.Constants;
 import discord.Message;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,6 +15,6 @@ public class TwitterNotFoundException implements Exception {
 
     @Override
     public void throwException(IMessage message, Command command) {
-        Message.send(message.getChannel(), "Les tweets de @Dofusfr ne sont pas postés ici.");
+        Message.sendText(message.getChannel(), "Les tweets de @Dofusfr ne sont pas postés ici.");
     }
 }

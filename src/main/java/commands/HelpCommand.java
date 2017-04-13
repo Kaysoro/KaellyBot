@@ -40,7 +40,7 @@ public class HelpCommand extends AbstractCommand{
                         .append(m.group(2).replaceAll("^\\W+", ""))
                         .append("*.");
 
-                Message.send(message.getChannel(), st.toString());
+                Message.sendText(message.getChannel(), st.toString());
                 return true;
             }
             return false;

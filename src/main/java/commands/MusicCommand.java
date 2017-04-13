@@ -36,7 +36,7 @@ public class MusicCommand extends AbstractCommand{
     public boolean request(IMessage message) {
         if (super.request(message)) {
             if (m.group(2) == null && m.group(3) != null){ // Add music in the queue
-                Message.send(message.getChannel(), "Musique ajouté à la liste de lecture.");
+                Message.sendText(message.getChannel(), "Musique ajouté à la liste de lecture.");
                 queueUrl(message, m.group(3).replaceAll("\\s+", ""));
             }
             else if(m.group(2) != null && m.group(3) == null){ // Music command
@@ -79,7 +79,7 @@ public class MusicCommand extends AbstractCommand{
                 try {
                     voice.join();
                     VoiceManager.getLastChannel().put(message.getGuild(), message.getChannel());
-                    Message.send(message.getChannel(), "Connecté à **" + voice.getName() + "**.");
+                    Message.sendText(message.getChannel(), "Connecté à **" + voice.getName() + "**.");
                 } catch (MissingPermissionsException e) {
                     new NoVoiceConnectPermissionException().throwException(message, this);
                 }
@@ -91,7 +91,7 @@ public class MusicCommand extends AbstractCommand{
         IVoiceChannel voice = ClientConfig.DISCORD().getOurUser().getVoiceStateForGuild(message.getGuild()).getChannel();
         if (voice != null) {
             voice.leave();
-            Message.send(VoiceManager.getLastChannel().get(message.getGuild()), "Déconnecté de **" + voice.getName() + "**.");
+            Message.sendText(VoiceManager.getLastChannel().get(message.getGuild()), "Déconnecté de **" + voice.getName() + "**.");
             VoiceManager.getLastChannel().remove(message.getGuild());
         }
     }

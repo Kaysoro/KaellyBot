@@ -15,6 +15,6 @@ public class NotInVocalChannelException implements Exception {
 
     @Override
     public void throwException(IMessage message, Command command) {
-        Message.send(message.getChannel(), "Vous n'êtes pas dans un salon vocal.");
+        Message.sendText(message.getChannel(), "Vous n'êtes pas dans un salon vocal.");
     }
 }

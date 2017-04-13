@@ -1,17 +1,14 @@
 package commands;
 
 import data.Constants;
-import data.Guild;
 import data.Job;
 import data.User;
 import discord.Message;
-import exceptions.InDeveloppmentException;
 import exceptions.JobNotFoundException;
 import exceptions.LevelNotFoundException;
 import exceptions.TooMuchPossibilitiesException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import sx.blah.discord.Discord4J;
 import sx.blah.discord.handle.obj.IMessage;
 import sx.blah.discord.handle.obj.IUser;
 
@@ -42,7 +39,7 @@ public class JobCommand extends AbstractCommand{
                 for(String job : Job.getJobs())
                     st.append("\n- " + job);
                 st.append("```");
-                Message.send(message.getChannel(), st.toString());
+                Message.sendText(message.getChannel(), st.toString());
             }
             else if (!m.group(3).equals("-all")) {
                 List<String> jobs = getJob(m.group(3));
@@ -58,11 +55,11 @@ public class JobCommand extends AbstractCommand{
                             author.getJobs().get(jobs.get(0)).setLevel(level);
 
                         if (author.getJob(jobs.get(0)) > 0)
-                            Message.send(message.getChannel(), author.getName()
+                            Message.sendText(message.getChannel(), author.getName()
                                     + " est inscrit dans l'annuaire en tant que " + jobs.get(0)
                                     + " niv. " + author.getJob(jobs.get(0)) + ".");
                         else
-                            Message.send(message.getChannel(), author.getName()
+                            Message.sendText(message.getChannel(), author.getName()
                                     + " n'est plus inscrit dans l'annuaire en tant que " + jobs.get(0) + ".");
                     } else { // Consultation
                         Map<String, User> users = User.getUsers().get(message.getGuild().getID());
@@ -100,7 +97,7 @@ public class JobCommand extends AbstractCommand{
                         } else
                             st.append("Aucun ").append(jobs.get(0)).append(" n'est inscrit à l'annuaire.");
 
-                        Message.send(message.getChannel(), st.toString());
+                        Message.sendText(message.getChannel(), st.toString());
                     }
                 } else if (jobs.size() > 1)
                     new TooMuchPossibilitiesException().throwException(message, this);
@@ -119,10 +116,10 @@ public class JobCommand extends AbstractCommand{
                         author.getJobs().get(job).setLevel(level);
                 }
                 if (level > 0)
-                    Message.send(message.getChannel(), author.getName()
+                    Message.sendText(message.getChannel(), author.getName()
                             + " est inscrit dans tous les annuaires.");
                 else
-                    Message.send(message.getChannel(), author.getName()
+                    Message.sendText(message.getChannel(), author.getName()
                             + " n'est plus inscrit des annuaires.");
             }
             else

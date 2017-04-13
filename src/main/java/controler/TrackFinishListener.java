@@ -16,6 +16,6 @@ public class TrackFinishListener {
         IGuild guild = event.getPlayer().getGuild();
 
         if (event.getNewTrack() == null)
-            Message.send(VoiceManager.getLastChannel().get(guild), "La liste de lecture est vide.");
+            Message.sendText(VoiceManager.getLastChannel().get(guild), "La liste de lecture est vide.");
     }
 }

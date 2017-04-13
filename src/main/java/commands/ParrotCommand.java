@@ -23,7 +23,7 @@ public class ParrotCommand extends AbstractCommand{
     @Override
     public boolean request(IMessage message) {
         if (super.request(message)) {
-            Message.send(message.getChannel(), m.group(2));
+            Message.sendText(message.getChannel(), m.group(2));
             return true;
         }
         return false;

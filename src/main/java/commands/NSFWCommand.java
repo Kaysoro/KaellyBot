@@ -36,7 +36,7 @@ public class NSFWCommand extends AbstractCommand{
                 if (value.matches("\\s+true") || value.matches("\\s+0") || value.matches("\\s+on")){
                     if (! NSFWAuthorization.getNSFWChannels().containsKey(message.getChannel().getID())) {
                         new NSFWAuthorization(message.getChannel().getID()).addToDatabase();
-                        Message.send(message.getChannel(), "Les commandes NSFW peuvent être utilisées ici.");
+                        Message.sendText(message.getChannel(), "Les commandes NSFW peuvent être utilisées ici.");
                     }
                     else
                         new NSFWFoundException().throwException(message, this);
@@ -44,7 +44,7 @@ public class NSFWCommand extends AbstractCommand{
                 else {
                     if (NSFWAuthorization.getNSFWChannels().containsKey(message.getChannel().getID())) {
                         NSFWAuthorization.getNSFWChannels().get(message.getChannel().getID()).removeToDatabase();
-                        Message.send(message.getChannel(), "Les commandes NSFW ne sont plus autorisées ici.");
+                        Message.sendText(message.getChannel(), "Les commandes NSFW ne sont plus autorisées ici.");
                     }
                     else
                         new NSFWNotFoundException().throwException(message, this);

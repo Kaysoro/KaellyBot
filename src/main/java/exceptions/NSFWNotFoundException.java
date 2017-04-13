@@ -15,6 +15,6 @@ public class NSFWNotFoundException implements Exception {
 
     @Override
     public void throwException(IMessage message, Command command) {
-        Message.send(message.getChannel(), "Les commandes NSFW ne sont pas autorisées ici.");
+        Message.sendText(message.getChannel(), "Les commandes NSFW ne sont pas autorisées ici.");
     }
 }

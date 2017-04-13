@@ -15,7 +15,7 @@ public class InDeveloppmentException implements Exception {
 
     @Override
     public void throwException(IMessage message, Command command) {
-        Message.send(message.getChannel(), "Cette commande est en cours de développement et n'est donc "
+        Message.sendText(message.getChannel(), "Cette commande est en cours de développement et n'est donc "
                 + "pas disponible pour le moment.");
     }
 }

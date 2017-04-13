@@ -26,16 +26,16 @@ public class RandomCommand extends AbstractCommand{
         if (super.request(message)) {
             if (m.group(2) == null) {
                 boolean value = new Random().nextBoolean();
-                Message.send(message.getChannel(), value ? "Vrai" : "Faux" + " !");
+                Message.sendText(message.getChannel(), value ? "Vrai" : "Faux" + " !");
             }
             else if (m.group(2).matches("\\s+\\d+")){
                 int limit = Integer.parseInt(m.group(2).trim());
-                Message.send(message.getChannel(), new Random().nextInt(limit) + " !");
+                Message.sendText(message.getChannel(), new Random().nextInt(limit) + " !");
             }
             else {
                 String value = m.group(2).trim();
                 String[] values = value.split("\\s+");
-                Message.send(message.getChannel(), values[new Random().nextInt(values.length)] + " !");
+                Message.sendText(message.getChannel(), values[new Random().nextInt(values.length)] + " !");
             }
         }
         return false;

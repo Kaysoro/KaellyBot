@@ -15,6 +15,6 @@ public class NotUsableInMPException implements Exception {
 
     @Override
     public void throwException(IMessage message, Command command) {
-        Message.send(message.getChannel(), "Impossible d'utiliser `" + command.getName().pattern() + "` sur un channel privé.");
+        Message.sendText(message.getChannel(), "Impossible d'utiliser `" + command.getName().pattern() + "` sur un channel privé.");
     }
 }

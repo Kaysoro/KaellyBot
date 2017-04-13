@@ -15,7 +15,7 @@ public class NotEnoughRightsException implements Exception {
 
     @Override
     public void throwException(IMessage message, Command command) {
-        Message.send(message.getChannel(), "Vous ne possédez pas les droits suffisants pour cette action : il faut être " +
+        Message.sendText(message.getChannel(), "Vous ne possédez pas les droits suffisants pour cette action : il faut être " +
                 "modérateur ou administrateur pour cela.");
     }
 }
