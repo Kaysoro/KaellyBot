@@ -4,6 +4,7 @@ import discord.Message;
 import exceptions.Reporter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import sx.blah.discord.api.internal.json.objects.EmbedObject;
 import sx.blah.discord.handle.obj.IChannel;
 import twitter4j.FilterQuery;
 import twitter4j.Status;
@@ -38,11 +39,14 @@ public class TwitterFinder extends StatusAdapter{
     public void onStatus(Status status) {
         // In case if channel didn't exist anymore and it is not removed at time
         if (getTwitterChannels().containsKey(getChannelId())){
-            //TODO do better message (embed ?)
-            if (status.getUser().getId() == Constants.dofusTwitter)
-                Message.sendText(ClientConfig.DISCORD().getChannelByID(getChannelId()),
-                        "**" + status.getUser().getName() + "** a dit sur Twitter :\n"
-                         + "```" + status.getText() + "```");
+            if (status.getUser().getId() == Constants.dofusTwitter) {
+                EmbedObject.AuthorObject author = new EmbedObject.AuthorObject("@" + status.getUser().getName(),
+                        null, status.getUser().getMiniProfileImageURL(), null);
+                EmbedObject embedTweet = new EmbedObject("Tweet", null, status.getText(),
+                        null, null, 1942002, null, null,
+                        null, null,null, author, null);
+                Message.sendEmbed(ClientConfig.DISCORD().getChannelByID(getChannelId()), embedTweet);
+            }
         }
     }
 
