@@ -24,21 +24,14 @@ public class PortalCommand extends AbstractCommand{
 
     public PortalCommand(){
         super(Pattern.compile("pos"),
-                Pattern.compile("^(" + Constants.prefixCommand + "pos)(\\s+-reset|\\s+-update)?(\\s+\\p{L}+)?(\\s+\\[?(-?\\d{1,2})\\s*[,|\\s]\\s*(-?\\d{1,2})\\]?)?(\\s+\\d{1,3})?$"));
+                Pattern.compile("^(" + Constants.prefixCommand + "pos)(\\s+-reset)?(\\s+\\p{L}+)?(\\s+\\[?(-?\\d{1,2})\\s*[,|\\s]\\s*(-?\\d{1,2})\\]?)?(\\s+\\d{1,3})?$"));
     }
 
     @Override
     public boolean request(IMessage message) {
         if (super.request(message)) {
 
-            if (m.group(2) != null && m.group(2).matches("\\s+-update")) { // Update
-                LOG.info("Gathering data from websites ...");
-                //TODO update from website
-
-                new InDeveloppmentException().throwException(message, this);
-                //Message.sendText(message.getChannel(), "Téléchargement des positions des dimensions divines terminé.");
-            }
-            else if (m.group(2) == null && m.group(3) == null && m.group(7) == null) { // No dimension precised
+            if (m.group(2) == null && m.group(3) == null && m.group(7) == null) { // No dimension precised
                 StringBuilder st = new StringBuilder();
                 for(Portal pos : Guild.getGuilds().get(message.getGuild().getID()).getPortals())
                         st.append(pos);
@@ -107,7 +100,6 @@ public class PortalCommand extends AbstractCommand{
                 + "\n`" + Constants.prefixCommand + "pos `*`dimension`*` [POS, POS]` : met à jour la position du portail de la dimension spécifiée."
                 + "\n`" + Constants.prefixCommand + "pos `*`dimension`*` [POS, POS] `*`nombre d'uti.`* : met à jour la position et le nombre d'utilisation"
                 + " de la dimension spécifiée."
-                + "\n`" + Constants.prefixCommand + "pos -reset `*`dimension`* : supprime les informations de la dimension spécifiée."
-                + "\n`" + Constants.prefixCommand + "pos -update` : télécharge les positions des portails de diverses sites web.\n";
+                + "\n`" + Constants.prefixCommand + "pos -reset `*`dimension`* : supprime les informations de la dimension spécifiée.\n";
     }
 }
