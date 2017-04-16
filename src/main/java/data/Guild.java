@@ -22,10 +22,12 @@ public class Guild {
     private String id;
     private String name;
     private List<Portal> portals;
+    private boolean isPlayingMusic;
 
     public Guild(String id, String name){
         this.id = id;
         this.name = name;
+        isPlayingMusic = false;
 
         portals = Portal.getPortals(this);
     }
@@ -140,5 +142,13 @@ public class Guild {
 
     public List<Portal> getPortals(){
         return portals;
+    }
+
+    public boolean isPlayingMusic() {
+        return isPlayingMusic;
+    }
+
+    public void setPlayingMusic(boolean playingMusic) {
+        isPlayingMusic = playingMusic;
     }
 }

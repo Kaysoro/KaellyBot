@@ -4,7 +4,6 @@ import data.Constants;
 import data.Guild;
 import data.Portal;
 import discord.Message;
-import exceptions.InDeveloppmentException;
 import exceptions.PortalNotFoundException;
 import exceptions.TooMuchPossibilitiesException;
 import org.slf4j.Logger;

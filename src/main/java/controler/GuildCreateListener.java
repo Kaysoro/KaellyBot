@@ -23,20 +23,22 @@ public class GuildCreateListener {
         @EventSubscriber
         public void onReady(GuildCreateEvent event) {
 
-            Guild guild = new Guild(event.getGuild().getID(), event.getGuild().getName());
-            guild.addToDatabase();
+            if(Guild.getGuilds().containsKey(event.getGuild().getID())) {
+                Guild guild = new Guild(event.getGuild().getID(), event.getGuild().getName());
+                guild.addToDatabase();
 
-            for(IUser user : event.getGuild().getUsers()){
-                int level;
-                if (user.getID().equals(event.getGuild().getOwnerID()))
-                    level = User.RIGHT_ADMIN;
-                else
-                    level = User.RIGHT_INVITE;
+                for (IUser user : event.getGuild().getUsers()) {
+                    int level;
+                    if (user.getID().equals(event.getGuild().getOwnerID()))
+                        level = User.RIGHT_ADMIN;
+                    else
+                        level = User.RIGHT_INVITE;
 
-                new User(user.getID(), user.getDisplayName(event.getGuild()), level, guild)
-                        .addToDatabase();
+                    new User(user.getID(), user.getDisplayName(event.getGuild()), level, guild)
+                            .addToDatabase();
+                }
+
+                LOG.info("La guilde " + guild.getId() + " - " + guild.getName() + " a ajouté " + Constants.name);
             }
-
-            LOG.info("La guilde " + guild.getId() + " - " + guild.getName() + " a ajouté " + Constants.name);
         }
 }

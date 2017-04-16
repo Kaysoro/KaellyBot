@@ -1,5 +1,6 @@
 package controler;
 
+import data.Guild;
 import data.VoiceManager;
 import discord.Message;
 import sx.blah.discord.api.events.EventSubscriber;
@@ -16,6 +17,9 @@ public class TrackStartListener {
     @EventSubscriber
     public void onTrackStart(TrackStartEvent event) {
         IGuild guild = event.getPlayer().getGuild();
-        Message.sendText(VoiceManager.getLastChannel().get(guild), "Lecture de **" + getTrackTitle(event.getTrack()) + "**");
+        if (VoiceManager.getLastChannel().containsKey(guild)) {
+            Guild.getGuilds().get(guild.getID()).setPlayingMusic(true);
+            Message.sendText(VoiceManager.getLastChannel().get(guild), "Lecture de **" + getTrackTitle(event.getTrack()) + "**");
+        }
     }
 }
