@@ -28,22 +28,22 @@ public class NSFWCommand extends AbstractCommand{
         if (super.request(message)) {
 
             //On check si la personne a bien les droits pour exécuter cette commande
-            if (User.getUsers().get(message.getGuild().getID())
-                    .get(message.getAuthor().getID()).getRights() >= User.RIGHT_MODERATOR) {
+            if (User.getUsers().get(message.getGuild().getStringID())
+                    .get(message.getAuthor().getStringID()).getRights() >= User.RIGHT_MODERATOR) {
 
                 String value = m.group(2);
 
                 if (value.matches("\\s+true") || value.matches("\\s+0") || value.matches("\\s+on")){
-                    if (! NSFWAuthorization.getNSFWChannels().containsKey(message.getChannel().getID())) {
-                        new NSFWAuthorization(message.getChannel().getID()).addToDatabase();
+                    if (! NSFWAuthorization.getNSFWChannels().containsKey(message.getChannel().getStringID())) {
+                        new NSFWAuthorization(message.getChannel().getStringID()).addToDatabase();
                         Message.sendText(message.getChannel(), "Les commandes NSFW peuvent être utilisées ici.");
                     }
                     else
                         new NSFWFoundException().throwException(message, this);
                 }
                 else {
-                    if (NSFWAuthorization.getNSFWChannels().containsKey(message.getChannel().getID())) {
-                        NSFWAuthorization.getNSFWChannels().get(message.getChannel().getID()).removeToDatabase();
+                    if (NSFWAuthorization.getNSFWChannels().containsKey(message.getChannel().getStringID())) {
+                        NSFWAuthorization.getNSFWChannels().get(message.getChannel().getStringID()).removeToDatabase();
                         Message.sendText(message.getChannel(), "Les commandes NSFW ne sont plus autorisées ici.");
                     }
                     else

@@ -13,6 +13,8 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import static java.lang.Thread.sleep;
+
 /**
  * Created by steve on 12/01/2017.
  */
@@ -106,7 +108,7 @@ public class RSSFinder {
                     long lastUpdate = resultSet.getLong("last_update");
 
                     if (chan != null)
-                        rssFinders.add(new RSSFinder(chan.getID(), lastUpdate));
+                        rssFinders.add(new RSSFinder(chan.getStringID(), lastUpdate));
                     else
                         new RSSFinder(resultSet.getString("id_chan")).removeToDatabase();
                 }
@@ -122,8 +124,7 @@ public class RSSFinder {
     public static void start(){
         if (!isStarted) {
             isStarted = true;
-            new Thread() {
-                public void run() {
+            new Thread(() -> {
                     while(true) {
                         List<RSS> rssFeeds = RSS.getRSSFeeds();
                         for (RSSFinder finder : getRSSFinders()) {
@@ -146,8 +147,7 @@ public class RSSFinder {
                             LOG.error(e.getMessage());
                         }
                     }
-                }
-            }.start();
+            }).start();
         }
     }
 

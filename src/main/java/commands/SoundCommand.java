@@ -15,6 +15,7 @@ import sx.blah.discord.util.audio.AudioPlayer;
 import javax.sound.sampled.UnsupportedAudioFileException;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
@@ -43,7 +44,7 @@ public class SoundCommand extends AbstractCommand{
 
             if (voice == null)
                 new NotInVocalChannelException().throwException(message, this);
-            else if (Guild.getGuilds().get(message.getGuild().getID()).isPlayingMusic())
+            else if (Guild.getGuilds().get(message.getGuild().getStringID()).isPlayingMusic())
                 new PlayingMusicException().throwException(message, this);
 
             else {
@@ -82,8 +83,14 @@ public class SoundCommand extends AbstractCommand{
 
     private List<File> getSounds(){
         if (sounds == null) {
-            File file = new File(getClass().getResource("../sounds").getPath());
-            sounds = Arrays.asList(file.listFiles());
+            System.out.println(getClass().getClassLoader().getResource("./sounds"));
+            System.out.println(getClass().getClassLoader().getResource("."));
+            File file = new File(getClass().getResource("./sounds").getPath());
+
+            if (file.listFiles() == null)
+                sounds = new ArrayList<>();
+            else
+                sounds = Arrays.asList(file.listFiles());
         }
 
         return sounds;

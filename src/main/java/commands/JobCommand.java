@@ -14,7 +14,6 @@ import sx.blah.discord.handle.obj.IUser;
 
 import java.text.Normalizer;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -37,7 +36,7 @@ public class JobCommand extends AbstractCommand{
             if (m.group(2) == null){
                 StringBuilder st = new StringBuilder("Voici la liste des métiers du jeu Dofus :\n```");
                 for(String job : Job.getJobs())
-                    st.append("\n- " + job);
+                    st.append("\n- ").append(job);
                 st.append("```");
                 Message.sendText(message.getChannel(), st.toString());
             }
@@ -46,8 +45,8 @@ public class JobCommand extends AbstractCommand{
 
                 if (jobs.size() == 1) {
                     if (m.group(4) != null) { // setting data
-                        User author = User.getUsers().get(message.getGuild().getID())
-                                .get(message.getAuthor().getID());
+                        User author = User.getUsers().get(message.getGuild().getStringID())
+                                .get(message.getAuthor().getStringID());
                         int level = Integer.parseInt(m.group(4).replaceAll("\\W+", ""));
                         if (!author.getJobs().containsKey(jobs.get(0)))
                             new Job(jobs.get(0), level, author).addToDatabase();
@@ -62,21 +61,19 @@ public class JobCommand extends AbstractCommand{
                             Message.sendText(message.getChannel(), author.getName()
                                     + " n'est plus inscrit dans l'annuaire en tant que " + jobs.get(0) + ".");
                     } else { // Consultation
-                        Map<String, User> users = User.getUsers().get(message.getGuild().getID());
-                        List<User> artisans = new ArrayList<User>();
+                        Map<String, User> users = User.getUsers().get(message.getGuild().getStringID());
+                        List<User> artisans = new ArrayList<>();
 
                         for (IUser iUser : message.getGuild().getUsers())
-                            if (users.get(iUser.getID()).getJob(jobs.get(0)) > 0)
-                                artisans.add(users.get(iUser.getID()));
+                            if (users.get(iUser.getStringID()).getJob(jobs.get(0)) > 0)
+                                artisans.add(users.get(iUser.getStringID()));
 
-                        artisans.sort(new Comparator<User>() {
-                            @Override
-                            public int compare(User o1, User o2) {
+                        artisans.sort((User o1, User o2)->{
                                 if (o2.getJob(jobs.get(0)) != o1.getJob(jobs.get(0)))
                                     return o2.getJob(jobs.get(0)) - o1.getJob(jobs.get(0));
                                 return o1.getName().compareTo(o2.getName());
                             }
-                        });
+                        );
 
                         StringBuilder st = new StringBuilder();
 
@@ -105,8 +102,8 @@ public class JobCommand extends AbstractCommand{
                     new JobNotFoundException().throwException(message, this);
             }
             else if (m.group(4) != null){ // add all jobs for the user
-                User author = User.getUsers().get(message.getGuild().getID())
-                        .get(message.getAuthor().getID());
+                User author = User.getUsers().get(message.getGuild().getStringID())
+                        .get(message.getAuthor().getStringID());
                 int level = Integer.parseInt(m.group(4).replaceAll("\\W+", ""));
 
                 for(String job : Job.getJobs()) {
@@ -129,11 +126,11 @@ public class JobCommand extends AbstractCommand{
         return false;
     }
 
-    public List<String> getJob(String nameProposed){
+    private List<String> getJob(String nameProposed){
         nameProposed = Normalizer.normalize(nameProposed, Normalizer.Form.NFD)
                 .replaceAll("\\p{InCombiningDiacriticalMarks}+", "").toLowerCase();
         nameProposed = nameProposed.replaceAll("\\W+", "");
-        List<String> jobs = new ArrayList<String>();
+        List<String> jobs = new ArrayList<>();
 
         for(String job : Job.getJobs())
             if (Normalizer.normalize(job, Normalizer.Form.NFD)

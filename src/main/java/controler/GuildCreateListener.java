@@ -23,18 +23,18 @@ public class GuildCreateListener {
         @EventSubscriber
         public void onReady(GuildCreateEvent event) {
 
-            if(Guild.getGuilds().containsKey(event.getGuild().getID())) {
-                Guild guild = new Guild(event.getGuild().getID(), event.getGuild().getName());
+            if(Guild.getGuilds().containsKey(event.getGuild().getStringID())) {
+                Guild guild = new Guild(event.getGuild().getStringID(), event.getGuild().getName());
                 guild.addToDatabase();
 
                 for (IUser user : event.getGuild().getUsers()) {
                     int level;
-                    if (user.getID().equals(event.getGuild().getOwnerID()))
+                    if (user.getStringID().equals(event.getGuild().getOwnerID()))
                         level = User.RIGHT_ADMIN;
                     else
                         level = User.RIGHT_INVITE;
 
-                    new User(user.getID(), user.getDisplayName(event.getGuild()), level, guild)
+                    new User(user.getStringID(), user.getDisplayName(event.getGuild()), level, guild)
                             .addToDatabase();
                 }
 

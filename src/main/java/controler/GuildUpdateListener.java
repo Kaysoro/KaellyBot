@@ -15,7 +15,7 @@ public class GuildUpdateListener {
     @EventSubscriber
     public void onReady(GuildUpdateEvent event) {
         if (! event.getOldGuild().getName().equals(event.getNewGuild().getName())){
-            Guild.getGuilds().get(event.getNewGuild().getID()).setName(event.getNewGuild().getName());
+            Guild.getGuilds().get(event.getNewGuild().getStringID()).setName(event.getNewGuild().getName());
             LOG.info("'" + event.getOldGuild().getName() + "' renommé en '" + event.getNewGuild().getName() + "'");
         }
     }

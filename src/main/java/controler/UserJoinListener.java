@@ -21,9 +21,9 @@ public class UserJoinListener {
         @EventSubscriber
         public void onReady(UserJoinEvent event) {
 
-            String id = event.getUser().getID();
+            String id = event.getUser().getStringID();
             String name = event.getUser().getDisplayName(event.getGuild());
-            String guildId = event.getGuild().getID();
+            String guildId = event.getGuild().getStringID();
 
             User user = new User(id, name, Guild.getGuilds().get(guildId));
             user.addToDatabase();

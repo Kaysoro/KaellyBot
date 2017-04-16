@@ -30,8 +30,8 @@ public class RSSCommand extends AbstractCommand{
         if (super.request(message)) {
 
             //On check si la personne a bien les droits pour exécuter cette commande
-            if (User.getUsers().get(message.getGuild().getID())
-                    .get(message.getAuthor().getID()).getRights() >= User.RIGHT_MODERATOR) {
+            if (User.getUsers().get(message.getGuild().getStringID())
+                    .get(message.getAuthor().getStringID()).getRights() >= User.RIGHT_MODERATOR) {
 
                 String value = m.group(2);
 
@@ -39,13 +39,13 @@ public class RSSCommand extends AbstractCommand{
                     boolean found = false;
 
                     for(RSSFinder finder : RSSFinder.getRSSFinders())
-                        if (finder.getChan().equals(message.getChannel().getID())){
+                        if (finder.getChan().equals(message.getChannel().getStringID())){
                             found = true;
                             break;
                         }
 
                     if (!found) {
-                        new RSSFinder(message.getChannel().getID()).addToDatabase();
+                        new RSSFinder(message.getChannel().getStringID()).addToDatabase();
                         Message.sendText(message.getChannel(), "Les news de dofus.com seront automatiquement postées ici.");
                     }
                     else
@@ -54,7 +54,7 @@ public class RSSCommand extends AbstractCommand{
                 else {
                     boolean found = false;
                     for(RSSFinder finder : RSSFinder.getRSSFinders())
-                        if (finder.getChan().equals(message.getChannel().getID())){
+                        if (finder.getChan().equals(message.getChannel().getStringID())){
                             found = true;
                             finder.removeToDatabase();
                             Message.sendText(message.getChannel(), "Les news de dofus.com ne sont plus postées ici.");

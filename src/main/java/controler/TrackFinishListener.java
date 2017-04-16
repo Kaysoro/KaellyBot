@@ -21,7 +21,7 @@ public class TrackFinishListener {
             if (VoiceManager.getLastChannel().containsKey(guild)) {
 
                 Message.sendText(VoiceManager.getLastChannel().get(guild), "La liste de lecture est vide.");
-                Guild.getGuilds().get(guild.getID()).setPlayingMusic(false);
+                Guild.getGuilds().get(guild.getStringID()).setPlayingMusic(false);
             }
             else
                 ClientConfig.DISCORD().getOurUser()

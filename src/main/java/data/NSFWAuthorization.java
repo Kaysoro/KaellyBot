@@ -38,7 +38,7 @@ public class NSFWAuthorization {
                 while (resultSet.next()){
                     IChannel chan = ClientConfig.DISCORD().getChannelByID(resultSet.getString("id_chan"));
                     if (chan != null)
-                        nsfwChannels.put(chan.getID(), new NSFWAuthorization(chan.getID()));
+                        nsfwChannels.put(chan.getStringID(), new NSFWAuthorization(chan.getStringID()));
                     else
                         new NSFWAuthorization(resultSet.getString("id_chan")).removeToDatabase();
                 }

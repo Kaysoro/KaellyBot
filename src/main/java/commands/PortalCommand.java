@@ -32,15 +32,15 @@ public class PortalCommand extends AbstractCommand{
 
             if (m.group(2) == null && m.group(3) == null && m.group(7) == null) { // No dimension precised
                 StringBuilder st = new StringBuilder();
-                for(Portal pos : Guild.getGuilds().get(message.getGuild().getID()).getPortals())
+                for(Portal pos : Guild.getGuilds().get(message.getGuild().getStringID()).getPortals())
                         st.append(pos);
 
                 Message.sendText(message.getChannel(), st.toString());
             }
             else {
-                List<Portal> portals = new ArrayList<Portal>();
+                List<Portal> portals = new ArrayList<>();
                 if (m.group(3) != null)
-                    portals = getPortal(m.group(3), Guild.getGuilds().get(message.getGuild().getID()));
+                    portals = getPortal(m.group(3), Guild.getGuilds().get(message.getGuild().getStringID()));
                 if (portals.size() == 1) {
                     if (m.group(2) != null && m.group(2).matches("\\s+-reset"))
                         portals.get(0).setCoordonate(null);
@@ -66,7 +66,7 @@ public class PortalCommand extends AbstractCommand{
         nameProposed = Normalizer.normalize(nameProposed, Normalizer.Form.NFD)
                 .replaceAll("\\p{InCombiningDiacriticalMarks}+", "").toLowerCase();
         nameProposed = nameProposed.replaceAll("\\W+", "");
-        List<Portal> portals = new ArrayList<Portal>();
+        List<Portal> portals = new ArrayList<>();
 
         for(Portal portal : guild.getPortals())
             if (Normalizer.normalize(portal.getName(), Normalizer.Form.NFD)

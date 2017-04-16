@@ -31,7 +31,7 @@ public class RightCommand extends AbstractCommand{
     public boolean request(IMessage message) {
         if (super.request(message)) {
 
-            User author = User.getUsers().get(message.getGuild().getID()).get(message.getAuthor().getID());
+            User author = User.getUsers().get(message.getGuild().getStringID()).get(message.getAuthor().getStringID());
 
             if (m.group(3) != null) { // Level precised : editing
 
@@ -50,7 +50,7 @@ public class RightCommand extends AbstractCommand{
 
                         for(IUser user : message.getGuild().getUsers()){
 
-                            User target = User.getUsers().get(message.getGuild().getID()).get(user.getID());
+                            User target = User.getUsers().get(message.getGuild().getStringID()).get(user.getStringID());
 
                             if (user.getRolesForGuild(message.getGuild()).contains(role)){
                                 if ((! target.getId().equals(author.getId())) &&
@@ -66,9 +66,9 @@ public class RightCommand extends AbstractCommand{
                                 + role.getName() + "* mis au niveau " + level + ".");
                     }
                     else if (idDecorated.matches("<@!?\\d+>")){ // Manage users
-                        User target = User.getUsers().get(message.getGuild().getID()).get(id);
+                        User target = User.getUsers().get(message.getGuild().getStringID()).get(id);
 
-                        if (id.equals(message.getAuthor().getID())) {
+                        if (id.equals(message.getAuthor().getStringID())) {
                             new AutoChangeRightsException().throwException(message, this);
                             return false;
                         }
@@ -94,7 +94,7 @@ public class RightCommand extends AbstractCommand{
                     String id = idDecorated.replaceAll("\\W", "");
 
                     if (idDecorated.matches("<@!?\\d+>")){
-                        User target = User.getUsers().get(message.getGuild().getID()).get(id);
+                        User target = User.getUsers().get(message.getGuild().getStringID()).get(id);
                         Message.sendText(message.getChannel(), "*" + target.getName()
                                 + "* a des droits d'administration de niveau "
                                 + target.getRights() + ".");

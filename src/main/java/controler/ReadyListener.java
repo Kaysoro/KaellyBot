@@ -21,24 +21,24 @@ public class ReadyListener {
 
         LOG.info("Check des guildes");
         for(IGuild guild : ClientConfig.DISCORD().getGuilds()) {
-            new Guild(guild.getID(), guild.getName()).addToDatabase();
-            if (! guild.getName().equals(Guild.getGuilds().get(guild.getID())))
-                Guild.getGuilds().get(guild.getID()).setName(guild.getName());
+            new Guild(guild.getStringID(), guild.getName()).addToDatabase();
+            if (! guild.getName().equals(Guild.getGuilds().get(guild.getStringID()).getName()))
+                Guild.getGuilds().get(guild.getStringID()).setName(guild.getName());
         }
 
         LOG.info("Check des utilisateurs");
         for(IGuild guild : ClientConfig.DISCORD().getGuilds())
             for(IUser user : guild.getUsers()){
                     int level;
-                    if (user.getID().equals(guild.getOwnerID()))
+                    if (user.getStringID().equals(guild.getOwnerID()))
                         level = User.RIGHT_ADMIN;
                     else
                         level = User.RIGHT_INVITE;
 
-                    new User(user.getID(), user.getDisplayName(guild), level, Guild.getGuilds().get(guild.getID()))
+                    new User(user.getStringID(), user.getDisplayName(guild), level, Guild.getGuilds().get(guild.getStringID()))
                             .addToDatabase();
-                if (! user.getDisplayName(guild).equals(User.getUsers().get(guild.getID()).get(user.getID()).getName()))
-                    User.getUsers().get(guild.getID()).get(user.getID()).setName(user.getDisplayName(guild));
+                if (! user.getDisplayName(guild).equals(User.getUsers().get(guild.getStringID()).get(user.getStringID()).getName()))
+                    User.getUsers().get(guild.getStringID()).get(user.getStringID()).setName(user.getDisplayName(guild));
                 }
 
         LOG.info("Ajout des différents listeners");

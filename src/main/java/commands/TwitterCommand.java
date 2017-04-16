@@ -28,22 +28,22 @@ public class TwitterCommand extends AbstractCommand{
         if (super.request(message)) {
 
             //On check si la personne a bien les droits pour exécuter cette commande
-            if (User.getUsers().get(message.getGuild().getID())
-                    .get(message.getAuthor().getID()).getRights() >= User.RIGHT_MODERATOR) {
+            if (User.getUsers().get(message.getGuild().getStringID())
+                    .get(message.getAuthor().getStringID()).getRights() >= User.RIGHT_MODERATOR) {
 
                 String value = m.group(2);
 
                 if (value.matches("\\s+true") || value.matches("\\s+0") || value.matches("\\s+on")){
-                    if (! TwitterFinder.getTwitterChannels().containsKey(message.getChannel().getID())) {
-                        new TwitterFinder(message.getChannel().getID()).addToDatabase();
+                    if (! TwitterFinder.getTwitterChannels().containsKey(message.getChannel().getStringID())) {
+                        new TwitterFinder(message.getChannel().getStringID()).addToDatabase();
                         Message.sendText(message.getChannel(), "Les tweets de @Dofusfr seront postés ici.");
                     }
                     else
                         new TwitterFoundException().throwException(message, this);
                 }
                 else {
-                    if (TwitterFinder.getTwitterChannels().containsKey(message.getChannel().getID())) {
-                        TwitterFinder.getTwitterChannels().get(message.getChannel().getID()).removeToDatabase();
+                    if (TwitterFinder.getTwitterChannels().containsKey(message.getChannel().getStringID())) {
+                        TwitterFinder.getTwitterChannels().get(message.getChannel().getStringID()).removeToDatabase();
                         Message.sendText(message.getChannel(), "Les tweets de @Dofusfr ne seront plus postés ici.");
                     }
                     else

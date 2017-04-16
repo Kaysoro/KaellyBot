@@ -32,7 +32,7 @@ public class Rule34Command extends AbstractCommand{
     public boolean request(IMessage message) {
         if (super.request(message)) {
 
-            if (NSFWAuthorization.getNSFWChannels().containsKey(message.getChannel().getID())) {
+            if (NSFWAuthorization.getNSFWChannels().containsKey(message.getChannel().getStringID())) {
                 String url = URL;
 
                 if (m.group(2) != null)

@@ -20,9 +20,9 @@ public class GuildLeaveListener {
 
         @EventSubscriber
         public void onReady(GuildLeaveEvent event) {
-            Guild.getGuilds().get(event.getGuild().getID()).removeToDatabase();
+            Guild.getGuilds().get(event.getGuild().getStringID()).removeToDatabase();
 
-            LOG.info("La guilde " + event.getGuild().getID() + " - " + event.getGuild().getName()
+            LOG.info("La guilde " + event.getGuild().getStringID() + " - " + event.getGuild().getName()
                     + " a supprimé " + Constants.name);
         }
 }

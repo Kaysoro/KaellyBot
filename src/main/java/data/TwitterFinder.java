@@ -31,7 +31,7 @@ public class TwitterFinder extends StatusAdapter{
         ClientConfig.TWITTER().addListener(this);
 
         FilterQuery query = new FilterQuery();
-        query.follow(new long[] {Constants.dofusTwitter});
+        query.follow(Constants.dofusTwitter);
         ClientConfig.TWITTER().filter(query);
     }
 
@@ -68,7 +68,7 @@ public class TwitterFinder extends StatusAdapter{
                 while (resultSet.next()){
                     IChannel chan = ClientConfig.DISCORD().getChannelByID(resultSet.getString("id_chan"));
                     if (chan != null)
-                        twitterChannels.put(chan.getID(), new TwitterFinder(chan.getID()));
+                        twitterChannels.put(chan.getStringID(), new TwitterFinder(chan.getStringID()));
                     else
                         new TwitterFinder(resultSet.getString("id_chan")).removeToDatabase();
                 }

@@ -18,7 +18,7 @@ public class TrackStartListener {
     public void onTrackStart(TrackStartEvent event) {
         IGuild guild = event.getPlayer().getGuild();
         if (VoiceManager.getLastChannel().containsKey(guild)) {
-            Guild.getGuilds().get(guild.getID()).setPlayingMusic(true);
+            Guild.getGuilds().get(guild.getStringID()).setPlayingMusic(true);
             Message.sendText(VoiceManager.getLastChannel().get(guild), "Lecture de **" + getTrackTitle(event.getTrack()) + "**");
         }
     }

@@ -33,9 +33,9 @@ public abstract class AbstractCommand implements Command {
             else if (!isFound && message.getContent().startsWith(Constants.prefixCommand + name.pattern()))
                 new BadUseCommandException().throwException(message, this);
         }
-        else if (! isPublic() && ! message.getAuthor().getID().equals(Constants.author))
+        else if (! isPublic() && ! message.getAuthor().getStringID().equals(Constants.author))
             return false;
-        return isFound && ((message.getChannel().isPrivate() && isUsableInMP()) || ! message.getChannel().isPrivate());
+        return isFound && (isUsableInMP() || ! message.getChannel().isPrivate());
     }
 
     @Override
