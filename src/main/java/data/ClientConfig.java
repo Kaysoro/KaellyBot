@@ -65,7 +65,7 @@ public class ClientConfig {
         return instance;
     }
 
-    private static File locationFile()
+    public static File locationFile()
     {
         String path = System.getProperty("user.dir");
 
