@@ -37,7 +37,10 @@ public class ClientConfig {
             file.close();
 
             try {
-                DISCORD = new ClientBuilder().withToken(prop.getProperty("discord.token")).login();
+                DISCORD = new ClientBuilder()
+                        .withToken(prop.getProperty("discord.token"))
+                        .withRecommendedShardCount()
+                        .login();
             } catch(DiscordException e){
                     LOG.error("Impossible de se connecter à Discord : verifiez votre token dans "
                             + FILENAME + " ainsi que votre connexion.");
