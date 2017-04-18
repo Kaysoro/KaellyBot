@@ -55,16 +55,32 @@ public class SoundCommand extends AbstractCommand{
                     new VoiceChannelLimitException().throwException(message, this);
                 else {
                     try {
-                        voice.join();
-
                         if(m.group(2) != null){ // Specific sound
-                            //TODO
-                            new InDeveloppmentException().throwException(message, this);
+                            String value = m.group(2).trim().toLowerCase();
+                            List<File> files = new ArrayList<>();
+                            for(File file : getSounds())
+                                if (file.getName().toLowerCase().startsWith(value))
+                                    files.add(file);
+
+                            if (! files.isEmpty()){
+                                File file = files.get(new Random().nextInt(files.size()));
+                                try {
+                                    voice.join();
+                                    setTrackTitle(AudioPlayer.
+                                            getAudioPlayerForGuild(message.getGuild()).queue(file), file.toString());
+                                } catch (IOException | UnsupportedAudioFileException e) {
+                                    Reporter.report(e);
+                                    LOG.error(e.getMessage());
+                                }
+                            }
+                            else
+                                new SoundNotFoundException().throwException(message, this);
                         }
                         else { // random sound
 
                             File file = getSounds().get(new Random().nextInt(getSounds().size()));
                             try {
+                                voice.join();
                                 setTrackTitle(AudioPlayer.
                                         getAudioPlayerForGuild(message.getGuild()).queue(file), file.toString());
                             } catch (IOException | UnsupportedAudioFileException e) {
@@ -117,7 +133,7 @@ public class SoundCommand extends AbstractCommand{
         StringBuilder st = new StringBuilder();
 
         for(File f : getSounds())
-            st.append("*").append(f.getName().replaceFirst("[.][^.]+$", "")).append("*, ");
+            st.append("*").append(f.getName().toLowerCase().replaceFirst("[.][^.]+$", "")).append("*, ");
         st.delete(st.length() - 2, st.length()).append(".");
         return help()
                 + "\n`" + Constants.prefixCommand + "sound` : joue un son au hasard parmi la liste suivante : " + st.toString()

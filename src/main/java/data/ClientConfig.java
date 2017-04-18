@@ -58,13 +58,17 @@ public class ClientConfig {
 
                 TWITTER = new TwitterStreamFactory(cb.build()).getInstance();
             }
-            else
+            else {
                 LOG.warn("Un ou plusieurs tokens associés à Twitter sont manquants. TwitterFinder est par conséquent désactivé");
+                TWITTER = null;
+            }
 
             } catch(FileNotFoundException e){
-            LOG.error("Fichier de configuration non trouvé.");
+                LOG.error("Fichier de configuration non trouvé.");
+                TWITTER = null;
             } catch (IOException e) {
-            LOG.error("IOException rencontré : " + e.getMessage());
+                LOG.error("IOException rencontré : " + e.getMessage());
+                TWITTER = null;
             }
     }
 

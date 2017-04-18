@@ -16,7 +16,9 @@ public class TrackQueueListener {
     @EventSubscriber
     public void onTrackQueue(TrackQueueEvent event) {
         IGuild guild = event.getPlayer().getGuild();
-        Message.sendText(VoiceManager.getLastChannel().get(guild),
-                "**" + getTrackTitle(event.getTrack()) + "** est ajouté à la liste de lecture.");
+        if (VoiceManager.getLastChannel().containsKey(guild)) {
+            Message.sendText(VoiceManager.getLastChannel().get(guild),
+                    "**" + getTrackTitle(event.getTrack()) + "** est ajouté à la liste de lecture.");
+        }
     }
 }
