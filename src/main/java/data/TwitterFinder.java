@@ -28,11 +28,13 @@ public class TwitterFinder extends StatusAdapter{
     public TwitterFinder(String channelId) {
         this.channelId = channelId;
 
-        ClientConfig.TWITTER().addListener(this);
+        if (ClientConfig.TWITTER() != null) {
+            ClientConfig.TWITTER().addListener(this);
 
-        FilterQuery query = new FilterQuery();
-        query.follow(Constants.dofusTwitter);
-        ClientConfig.TWITTER().filter(query);
+            FilterQuery query = new FilterQuery();
+            query.follow(Constants.dofusTwitter);
+            ClientConfig.TWITTER().filter(query);
+        }
     }
 
     @Override

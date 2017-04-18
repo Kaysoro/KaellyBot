@@ -47,13 +47,19 @@ public class ClientConfig {
             }
 
             ConfigurationBuilder cb = new ConfigurationBuilder();
-            cb.setDebugEnabled(false)
-                    .setOAuthConsumerKey(prop.getProperty("twitter.consumer_key"))
-                    .setOAuthConsumerSecret(prop.getProperty("twitter.consumer_secret"))
-                    .setOAuthAccessToken(prop.getProperty("twitter.access_token"))
-                    .setOAuthAccessTokenSecret(prop.getProperty("twitter.access_token_secret"));
 
-            TWITTER = new TwitterStreamFactory(cb.build()).getInstance();
+            if (! prop.get("twitter.consumer_key").equals("") && ! prop.get("twitter.consumer_secret").equals("")
+            && ! prop.get("twitter.access_token").equals("") && ! prop.get("twitter.access_token_secret").equals("")) {
+                cb.setDebugEnabled(false)
+                        .setOAuthConsumerKey(prop.getProperty("twitter.consumer_key"))
+                        .setOAuthConsumerSecret(prop.getProperty("twitter.consumer_secret"))
+                        .setOAuthAccessToken(prop.getProperty("twitter.access_token"))
+                        .setOAuthAccessTokenSecret(prop.getProperty("twitter.access_token_secret"));
+
+                TWITTER = new TwitterStreamFactory(cb.build()).getInstance();
+            }
+            else
+                LOG.warn("Un ou plusieurs tokens associés à Twitter sont manquants. TwitterFinder est par conséquent désactivé");
 
             } catch(FileNotFoundException e){
             LOG.error("Fichier de configuration non trouvé.");
