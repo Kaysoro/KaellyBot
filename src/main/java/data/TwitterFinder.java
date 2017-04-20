@@ -4,8 +4,8 @@ import discord.Message;
 import exceptions.Reporter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import sx.blah.discord.api.internal.json.objects.EmbedObject;
 import sx.blah.discord.handle.obj.IChannel;
+import sx.blah.discord.util.EmbedBuilder;
 import twitter4j.FilterQuery;
 import twitter4j.Status;
 import twitter4j.StatusAdapter;
@@ -41,17 +41,20 @@ public class TwitterFinder extends StatusAdapter{
     public void onStatus(Status status) {
         // In case if channel didn't exist anymore and it is not removed at time
         if (getTwitterChannels().containsKey(getChannelId())){
-            if (status.getUser().getId() == Constants.dofusTwitter) {
-                EmbedObject.AuthorObject author = new EmbedObject.AuthorObject("@" + status.getUser().getScreenName(),
-                        "https://twitter.com/" + status.getUser().getScreenName(),
-                        status.getUser().getMiniProfileImageURL(), null);
+            if (status.getUser().getId() == Constants.dofusTwitter && status.getInReplyToScreenName() == null) {
+                EmbedBuilder builder = new EmbedBuilder();
 
-                EmbedObject embedTweet = new EmbedObject("Tweet", null, status.getText(),
-                        "https://twitter.com/" + status.getUser().getScreenName() + "/status/" + status.getId(),
-                        null, 1942002, null, null,
-                        null, null,null, author, null);
+                builder.withAuthorName("@" + status.getUser().getScreenName());
+                builder.withAuthorIcon(status.getUser().getMiniProfileImageURL());
+                builder.withAuthorUrl("https://twitter.com/" + status.getUser().getScreenName());
 
-                Message.sendEmbed(ClientConfig.DISCORD().getChannelByID(getChannelId()), embedTweet);
+                builder.withTitle("Tweet");
+                builder.withUrl("https://twitter.com/" + status.getUser().getScreenName() + "/status/" + status.getId());
+                builder.withColor(1942002);
+                builder.withDescription(status.getText());
+                builder.withThumbnail(Constants.twitterIcon);
+
+                Message.sendEmbed(ClientConfig.DISCORD().getChannelByID(getChannelId()), builder.build());
             }
         }
     }

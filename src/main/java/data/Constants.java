@@ -52,10 +52,11 @@ public class Constants {
      */
     public final static String dofusCharacterPageURL = "http://www.dofus.com/fr/mmorpg/communaute/annuaires/pages-persos";
 
+    public final static String twitterIcon = "https://upload.wikimedia.org/wikipedia/fr/thumb/c/c8/Twitter_Bird.svg/langfr-20px-Twitter_Bird.svg.png";
     /**
      * Official Dofus account on Twitter
      */
-    public final static long dofusTwitter = 72272795L;
+    public final static long dofusTwitter = 841964764733575168L;
 
     /**
      * Character limit for nickname discord
