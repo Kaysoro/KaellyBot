@@ -43,6 +43,16 @@ public class Constants {
     public final static String dofusFeedURL = "http://www.dofus.com/fr/rss/news.xml";
 
     /**
+     * Official Dofus URL
+     */
+    public final static String dofusURL = "http://www.dofus.com";
+
+    /**
+     * Official Dofus URL for character page
+     */
+    public final static String dofusCharacterPageURL = "http://www.dofus.com/fr/mmorpg/communaute/annuaires/pages-persos";
+
+    /**
      * Official Dofus account on Twitter
      */
     public final static long dofusTwitter = 72272795L;

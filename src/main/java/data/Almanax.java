@@ -32,7 +32,7 @@ public class Almanax {
         this.day = day;
     }
 
-    public static Almanax get(String date) {
+    public static Almanax get(String date) throws Exception {
 
         if (! getCalendar().containsKey(date)){
             // We have to search on the official website
@@ -98,7 +98,7 @@ public class Almanax {
         }
     }
 
-    private static Almanax gatheringOnlineData(String date){
+    private static Almanax gatheringOnlineData(String date) throws Exception {
         try {
             LOG.info("connecting to " + Constants.almanaxURL + date + " ...");
             Document doc = Jsoup.parse(new URL(Constants.almanaxURL + date).openStream(), "UTF-8",

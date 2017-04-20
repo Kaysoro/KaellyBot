@@ -14,6 +14,8 @@ import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Created by steve on 12/01/2017.
@@ -42,11 +44,27 @@ public class RSS implements Comparable<RSS>{
             for(SyndEntry entry : feed.getEntries())
                 rss.add(new RSS(entry.getTitle(), entry.getLink(), entry.getPublishedDate().getTime()));
 
-        } catch (FeedException | IOException e) {
+        } catch (FeedException e){
             Reporter.report(e);
             LOG.error(e.getMessage());
+        } catch(IOException e){
+            // First we try parsing the exception message to see if it contains the response code
+            Matcher exMsgStatusCodeMatcher = Pattern.compile("^Server returned HTTP response code: (\\d+)")
+                    .matcher(e.getMessage());
+            if(exMsgStatusCodeMatcher.find()) {
+                LOG.warn(e.getMessage());
+                int statusCode = Integer.parseInt(exMsgStatusCodeMatcher.group(1));
+                if (statusCode >= 500 && statusCode < 600)
+                    LOG.warn(e.getMessage());
+                else {
+                    Reporter.report(e);
+                    LOG.error(e.getMessage());
+                }
+            } else {
+                Reporter.report(e);
+                LOG.error(e.getMessage());
+            }
         }
-
         Collections.sort(rss);
         return rss;
     }

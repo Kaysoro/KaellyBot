@@ -3,12 +3,13 @@ package commands;
 import data.Almanax;
 import data.Constants;
 import discord.Message;
-import exceptions.AlmanaxNotFoundException;
-import exceptions.IncorrectDateFormatException;
+import exceptions.*;
+import org.jsoup.HttpStatusException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sx.blah.discord.handle.obj.IMessage;
 
+import java.lang.Exception;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -36,7 +37,7 @@ public class AlmanaxCommand extends AbstractCommand{
 
             Date date = new Date();
 
-            if (m.group(3) != null){
+            if (m.group(3) != null) {
                 try {
                     date = discordToBot.parse(m.group(3));
                 } catch (ParseException e) {
@@ -45,24 +46,38 @@ public class AlmanaxCommand extends AbstractCommand{
                 }
             }
 
-            Almanax almanax = Almanax.get(botToAlmanax.format(date));
+            try {
+                Almanax almanax = Almanax.get(botToAlmanax.format(date));
 
-            if (almanax != null) {
-                StringBuilder st = new StringBuilder("**Almanax du ")
-                        .append(discordToBot.format(date))
-                        .append(" :**\n");
+                if (almanax != null) {
+                    StringBuilder st = new StringBuilder("**Almanax du ")
+                            .append(discordToBot.format(date))
+                            .append(" :**\n");
 
-                if (m.group(2) == null || m.group(2).matches("\\W+-b"))
-                    st.append(almanax.getBonus()).append("\n");
-                if (m.group(2) == null || m.group(2).matches("\\W+-o"))
-                    st.append(almanax.getOffrande()).append("\n");
+                    if (m.group(2) == null || m.group(2).matches("\\W+-b"))
+                        st.append(almanax.getBonus()).append("\n");
+                    if (m.group(2) == null || m.group(2).matches("\\W+-o"))
+                        st.append(almanax.getOffrande()).append("\n");
 
-                Message.sendText(message.getChannel(), st.toString());
-                return false;
-            }
-            else {
-                new AlmanaxNotFoundException().throwException(message, this);
-                return false;
+                    Message.sendText(message.getChannel(), st.toString());
+                    return false;
+                } else {
+                    new AlmanaxNotFoundException().throwException(message, this);
+                    return false;
+                }
+            } catch (HttpStatusException e) {
+                if (e.getStatusCode() >= 500 && e.getStatusCode() < 600) {
+                    LOG.warn(e.getMessage());
+                    new DofusWebsiteInaccessibleException().throwException(message, this);
+                } else {
+                    LOG.error(e.getMessage());
+                    Reporter.report(e);
+                    new UnknownErrorException().throwException(message, this);
+                }
+            } catch (Exception e) {
+                LOG.error(e.getMessage());
+                Reporter.report(e);
+                new UnknownErrorException().throwException(message, this);
             }
         }
         return false;

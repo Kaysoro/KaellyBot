@@ -16,12 +16,10 @@ import java.util.regex.Pattern;
 public class ItemCommand extends AbstractCommand{
 
     private final static Logger LOG = LoggerFactory.getLogger(ItemCommand.class);
-    private List<ItemDofus> items;
 
     public ItemCommand(){
         super(Pattern.compile("item"),
         Pattern.compile("^(" + Constants.prefixCommand + "item)\\s+(.*)$"));
-        items = ItemDofus.getItems();
     }
 
     @Override
@@ -56,6 +54,6 @@ public class ItemCommand extends AbstractCommand{
     public String helpDetailed() {
         return help()
                 + "\n`" + Constants.prefixCommand + "item `*`item`* : renvoit les statistiques de l'item spécifié :"
-                + " son nom peut être approximatif.\n";
+                + " son nom doit être exact.\n";
     }
 }
