@@ -26,6 +26,7 @@ public class Main {
         Command.commands.add(new Rule34Command());
         Command.commands.add(new SoundCommand());
         Command.commands.add(new TwitterCommand());
+        Command.commands.add(new WhoisCommand());
     }
 
     public static void main(String[] args) {

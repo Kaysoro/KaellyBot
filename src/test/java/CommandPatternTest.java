@@ -62,6 +62,8 @@ public class CommandPatternTest extends TestCase {
         assertTrue(pattern.matcher(Constants.prefixCommand + "map").find());
         assertTrue(pattern.matcher(Constants.prefixCommand + "map I II III").find());
         assertTrue(pattern.matcher(Constants.prefixCommand + "map 1 2 3").find());
+        assertTrue(pattern.matcher(Constants.prefixCommand + "map i ii iii").find());
+        assertTrue(pattern.matcher(Constants.prefixCommand + "map 1 ii III").find());
         assertFalse(pattern.matcher(Constants.prefixCommand + "map un deûx trôis").find());
     }
 
@@ -166,5 +168,14 @@ public class CommandPatternTest extends TestCase {
         assertTrue(pattern.matcher(Constants.prefixCommand + "rdm 200").find());
         assertTrue(pattern.matcher(Constants.prefixCommand + "rdm un deûx trôis").find());
         assertFalse(pattern.matcher(Constants.prefixCommand + "rdm ").find());
+    }
+
+    public void testWhoisCommand(){
+        Pattern pattern = new WhoisCommand().getPattern();
+
+        assertTrue(pattern.matcher(Constants.prefixCommand + "whois test").find());
+        assertTrue(pattern.matcher(Constants.prefixCommand + "whois test-test").find());
+        assertTrue(pattern.matcher(Constants.prefixCommand + "whois test-test server").find());
+        assertFalse(pattern.matcher(Constants.prefixCommand + "whois").find());
     }
 }
