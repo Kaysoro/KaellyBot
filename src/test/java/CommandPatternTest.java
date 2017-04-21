@@ -176,6 +176,7 @@ public class CommandPatternTest extends TestCase {
         assertTrue(pattern.matcher(Constants.prefixCommand + "whois test").find());
         assertTrue(pattern.matcher(Constants.prefixCommand + "whois test-test").find());
         assertTrue(pattern.matcher(Constants.prefixCommand + "whois test-test server").find());
+        assertTrue(pattern.matcher(Constants.prefixCommand + "whois test-test EL server").find());
         assertFalse(pattern.matcher(Constants.prefixCommand + "whois").find());
     }
 }

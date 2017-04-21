@@ -40,7 +40,7 @@ public class WhoisCommand extends AbstractCommand{
 
     public WhoisCommand(){
         super(Pattern.compile("whois"),
-                Pattern.compile("^(" + Constants.prefixCommand + "whois)(\\s+[\\p{L}|-]+)(\\s+[\\p{L}]+)?$"));
+                Pattern.compile("^(" + Constants.prefixCommand + "whois)(\\s+[\\p{L}|-]+)(\\s+.+)?$"));
     }
 
     @Override
@@ -89,7 +89,7 @@ public class WhoisCommand extends AbstractCommand{
                         }
 
                     if (result.size() == 1)
-                        if (! result.get(0).endsWith("indisponible")) {
+                        if (! result.get(0).endsWith("indisponible")) { // TODO
                             CharacterPage characPage = CharacterPage.getCharacterPage("http://www.dofus.com" + result.get(0));
                             Message.sendEmbed(message.getChannel(), characPage.getEmbedObject());
                         }
