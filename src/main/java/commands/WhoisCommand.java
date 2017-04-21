@@ -15,10 +15,12 @@ import org.slf4j.LoggerFactory;
 import sx.blah.discord.handle.obj.IMessage;
 
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.lang.Exception;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
@@ -86,10 +88,13 @@ public class WhoisCommand extends AbstractCommand{
                             servers.add(element.child(element.children().size() - 2).text());
                         }
 
-                    if (result.size() == 1) {
-                        CharacterPage characPage = CharacterPage.getCharacterPage("http://www.dofus.com" + result.get(0));
-                        Message.sendEmbed(message.getChannel(), characPage.getEmbedObject());
-                    }
+                    if (result.size() == 1)
+                        if (! result.get(0).endsWith("indisponible")) {
+                            CharacterPage characPage = CharacterPage.getCharacterPage("http://www.dofus.com" + result.get(0));
+                            Message.sendEmbed(message.getChannel(), characPage.getEmbedObject());
+                        }
+                        else
+                            new CharacterTooOldException().throwException(message, this);
                     else if (result.size() > 1)
                         new TooMuchCharactersException().throwException(message, this, servers);
                     else
@@ -97,18 +102,27 @@ public class WhoisCommand extends AbstractCommand{
                 }
                 else
                     new CharacterNotFoundException().throwException(message, this);
-            } catch (HttpStatusException e) {
-                if (e.getStatusCode() >= 500 && e.getStatusCode() < 600) {
-                    LOG.warn(e.getMessage());
-                    new DofusWebsiteInaccessibleException().throwException(message, this);
-                } else {
-                    LOG.error(e.getMessage());
-                    Reporter.report(e);
-                    new UnknownErrorException().throwException(message, this);
-                }
             } catch (FileNotFoundException e){
                 new CharacterPageNotFoundException().throwException(message, this);
-            } catch (Exception e) {
+            } catch(IOException e){
+                // First we try parsing the exception message to see if it contains the response code
+                Matcher exMsgStatusCodeMatcher = Pattern.compile("^Server returned HTTP response code: (\\d+)")
+                        .matcher(e.getMessage());
+                if(exMsgStatusCodeMatcher.find()) {
+                    int statusCode = Integer.parseInt(exMsgStatusCodeMatcher.group(1));
+                    if (statusCode >= 500 && statusCode < 600) {
+                        LOG.warn(e.getMessage());
+                        new DofusWebsiteInaccessibleException().throwException(message, this);
+                    }
+                    else {
+                        Reporter.report(e);
+                        LOG.error(e.getMessage());
+                    }
+                } else {
+                    Reporter.report(e);
+                    LOG.error(e.getMessage());
+                }
+            }  catch (Exception e) {
                 LOG.error(e.getMessage());
                 Reporter.report(e);
                 new UnknownErrorException().throwException(message, this);

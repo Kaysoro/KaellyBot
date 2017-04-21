@@ -52,7 +52,6 @@ public class RSS implements Comparable<RSS>{
             Matcher exMsgStatusCodeMatcher = Pattern.compile("^Server returned HTTP response code: (\\d+)")
                     .matcher(e.getMessage());
             if(exMsgStatusCodeMatcher.find()) {
-                LOG.warn(e.getMessage());
                 int statusCode = Integer.parseInt(exMsgStatusCodeMatcher.group(1));
                 if (statusCode >= 500 && statusCode < 600)
                     LOG.warn(e.getMessage());
