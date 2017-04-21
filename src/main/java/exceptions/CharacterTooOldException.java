@@ -15,6 +15,7 @@ public class CharacterTooOldException implements Exception {
 
     @Override
     public void throwException(IMessage message, Command command) {
-        Message.sendText(message.getChannel(), "Le personnage recherché ne s'est pas connecté depuis plus de 6 mois. Page perso désactivé.");
+        Message.sendText(message.getChannel(), "Le personnage recherché ne s'est pas connecté depuis plus "
+                + "de 6 mois : sa page personelle est désactivée.");
     }
 }

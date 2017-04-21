@@ -5,6 +5,7 @@ import data.Constants;
 import data.ServerDofus;
 import discord.Message;
 import exceptions.*;
+import org.jsoup.Connection;
 import org.jsoup.HttpStatusException;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -88,13 +89,17 @@ public class WhoisCommand extends AbstractCommand{
                             servers.add(element.child(element.children().size() - 2).text());
                         }
 
-                    if (result.size() == 1)
-                        if (! result.get(0).endsWith("indisponible")) { // TODO
-                            CharacterPage characPage = CharacterPage.getCharacterPage("http://www.dofus.com" + result.get(0));
+                    if (result.size() == 1) {
+
+                        Connection.Response response = Jsoup.connect(Constants.dofusURL + result.get(0))
+                                .followRedirects(true).execute();
+
+                        if (!response.url().getPath().endsWith("indisponible")) {
+                            CharacterPage characPage = CharacterPage.getCharacterPage(Constants.dofusURL + result.get(0));
                             Message.sendEmbed(message.getChannel(), characPage.getEmbedObject());
-                        }
-                        else
+                        } else
                             new CharacterTooOldException().throwException(message, this);
+                    }
                     else if (result.size() > 1)
                         new TooMuchCharactersException().throwException(message, this, servers);
                     else
