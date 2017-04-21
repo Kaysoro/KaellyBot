@@ -13,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sx.blah.discord.handle.obj.IMessage;
 
+import java.io.FileNotFoundException;
 import java.lang.Exception;
 import java.net.URL;
 import java.util.ArrayList;
@@ -63,32 +64,36 @@ public class WhoisCommand extends AbstractCommand{
                 if (!elems.isEmpty()) {
                     // on boucle jusqu'à temps de trouver le bon personnage (ie le plus proche du nom donnée)
                     List<String> result = new ArrayList<>();
+                    List<String> servers = new ArrayList<>();
 
                     for (Element element : elems)
-                        if (pseudo.equals(element.child(1).text().trim().toLowerCase()))
+                        if (pseudo.equals(element.child(1).text().trim().toLowerCase())) {
                             result.add(element.child(1).select("a").attr("href"));
+                            servers.add(element.child(element.children().size() - 2).text());
+                        }
 
                     if (result.size() == 1) {
                         CharacterPage characPage = CharacterPage.getCharacterPage("http://www.dofus.com" + result.get(0));
                         Message.sendEmbed(message.getChannel(), characPage.getEmbedObject());
                     }
                     else if (result.size() > 1)
-                        new TooMuchPossibilitiesException().throwException(message, this);
+                        new TooMuchCharactersException().throwException(message, this, servers);
                     else
                         new CharacterNotFoundException().throwException(message, this);
                 }
                 else
                     new CharacterNotFoundException().throwException(message, this);
             } catch (HttpStatusException e) {
-                if (e.getStatusCode() >= 500 && e.getStatusCode() < 600){
+                if (e.getStatusCode() >= 500 && e.getStatusCode() < 600) {
                     LOG.warn(e.getMessage());
                     new DofusWebsiteInaccessibleException().throwException(message, this);
-                }
-                else {
+                } else {
                     LOG.error(e.getMessage());
                     Reporter.report(e);
                     new UnknownErrorException().throwException(message, this);
                 }
+            } catch (FileNotFoundException e){
+                new CharacterPageNotFoundException().throwException(message, this);
             } catch (Exception e) {
                 LOG.error(e.getMessage());
                 Reporter.report(e);

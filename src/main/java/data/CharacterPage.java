@@ -81,7 +81,7 @@ public class CharacterPage {
         bigSkinURL = bigSkinURL.substring(bigSkinURL.indexOf("http://"), bigSkinURL.indexOf(")"));
         String littleSkinURL = doc.getElementsByClass("ak-entitylook").last().toString();
         littleSkinURL = littleSkinURL.substring(littleSkinURL.indexOf("http://"), littleSkinURL.indexOf(")"));
-        String pseudo = doc.getElementsByClass("ak-character-ornament").first().text();
+        String pseudo = doc.getElementsByClass("ak-return-link").first().text();
         String level = doc.getElementsByClass("ak-directories-level").first().text();
         String classe = doc.getElementsByClass("ak-directories-breed").first().text();
         String server = doc.getElementsByClass("ak-directories-server-name").first().text();
