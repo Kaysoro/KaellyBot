@@ -2,6 +2,7 @@ package commands;
 
 import data.CharacterPage;
 import data.Constants;
+import data.ServerDofus;
 import discord.Message;
 import exceptions.*;
 import org.jsoup.HttpStatusException;
@@ -50,9 +51,22 @@ public class WhoisCommand extends AbstractCommand{
                     .append("?").append(forPseudo).append(pseudo);
 
             if (m.group(3) != null){
-                String server = m.group(3).trim().toLowerCase();
-                // Mapping serveurs dofus TODO
-                url.append("&").append(forServer).append(server);
+                String serverName = m.group(3).trim().toLowerCase();
+                List<ServerDofus> result = new ArrayList<>();
+
+                for(ServerDofus server : ServerDofus.getServersDofus())
+                    if (server.getName().toLowerCase().startsWith(serverName))
+                        result.add(server);
+
+                if (result.size() == 1)
+                    url.append("&").append(forServer).append(result.get(0).getId());
+                else {
+                    if (! result.isEmpty())
+                        new TooMuchServersException().throwException(message, this);
+                    else
+                        new ServerNotFoundException().throwException(message, this);
+                    return false;
+                }
             }
 
             try
