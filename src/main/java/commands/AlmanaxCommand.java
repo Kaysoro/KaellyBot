@@ -9,12 +9,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sx.blah.discord.handle.obj.IMessage;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.lang.Exception;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
@@ -65,16 +68,27 @@ public class AlmanaxCommand extends AbstractCommand{
                     new AlmanaxNotFoundException().throwException(message, this);
                     return false;
                 }
-            } catch (HttpStatusException e) {
-                if (e.getStatusCode() >= 500 && e.getStatusCode() < 600) {
-                    LOG.warn(e.getMessage());
-                    new DofusWebsiteInaccessibleException().throwException(message, this);
+            } catch (FileNotFoundException | HttpStatusException e){
+                new CharacterPageNotFoundException().throwException(message, this);
+            } catch(IOException e){
+                // First we try parsing the exception message to see if it contains the response code
+                Matcher exMsgStatusCodeMatcher = Pattern.compile("^Server returned HTTP response code: (\\d+)")
+                        .matcher(e.getMessage());
+                if(exMsgStatusCodeMatcher.find()) {
+                    int statusCode = Integer.parseInt(exMsgStatusCodeMatcher.group(1));
+                    if (statusCode >= 500 && statusCode < 600) {
+                        LOG.warn(e.getMessage());
+                        new DofusWebsiteInaccessibleException().throwException(message, this);
+                    }
+                    else {
+                        Reporter.report(e);
+                        LOG.error(e.getMessage());
+                    }
                 } else {
-                    LOG.error(e.getMessage());
                     Reporter.report(e);
-                    new UnknownErrorException().throwException(message, this);
+                    LOG.error(e.getMessage());
                 }
-            } catch (Exception e) {
+            }  catch (Exception e) {
                 LOG.error(e.getMessage());
                 Reporter.report(e);
                 new UnknownErrorException().throwException(message, this);

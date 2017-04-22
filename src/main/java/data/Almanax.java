@@ -6,6 +6,8 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
 import java.net.URL;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -32,7 +34,7 @@ public class Almanax {
         this.day = day;
     }
 
-    public static Almanax get(String date) throws Exception {
+    public static Almanax get(String date) throws IOException {
 
         if (! getCalendar().containsKey(date)){
             // We have to search on the official website
@@ -98,25 +100,18 @@ public class Almanax {
         }
     }
 
-    private static Almanax gatheringOnlineData(String date) throws Exception {
-        try {
-            LOG.info("connecting to " + Constants.almanaxURL + date + " ...");
-            Document doc = Jsoup.parse(new URL(Constants.almanaxURL + date).openStream(), "UTF-8",
-                    Constants.almanaxURL + date);
+    private static Almanax gatheringOnlineData(String date) throws IOException {
+        LOG.info("connecting to " + Constants.almanaxURL + date + " ...");
+        Document doc = Jsoup.parse(new URL(Constants.almanaxURL + date).openStream(), "UTF-8",
+                Constants.almanaxURL + date);
 
-            Element elem = doc.select("div.more").first();
-            String offrande = elem.select("p.fleft").first().text();
+        Element elem = doc.select("div.more").first();
+        String offrande = elem.select("p.fleft").first().text();
 
-            elem.children().get(elem.children().size() - 1).remove();
-            String bonus = elem.text();
+        elem.children().get(elem.children().size() - 1).remove();
+        String bonus = elem.text();
 
-            return new Almanax(bonus, offrande, date);
-
-        } catch (Exception e) {
-            Reporter.report(e);
-            LOG.error(e.getMessage());
-            return null;
-        }
+        return new Almanax(bonus, offrande, date);
     }
 
     public String getBonus(){

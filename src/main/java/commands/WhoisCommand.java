@@ -107,7 +107,7 @@ public class WhoisCommand extends AbstractCommand{
                 }
                 else
                     new CharacterNotFoundException().throwException(message, this);
-            } catch (FileNotFoundException e){
+            } catch (FileNotFoundException | HttpStatusException e){
                 new CharacterPageNotFoundException().throwException(message, this);
             } catch(IOException e){
                 // First we try parsing the exception message to see if it contains the response code

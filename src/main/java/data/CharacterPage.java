@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import sx.blah.discord.api.internal.json.objects.EmbedObject;
 import sx.blah.discord.util.EmbedBuilder;
 
+import java.io.IOException;
 import java.net.URL;
 import java.util.Random;
 
@@ -75,7 +76,7 @@ public class CharacterPage {
         return builder.build();
     }
 
-    public static CharacterPage getCharacterPage(String url) throws Exception {
+    public static CharacterPage getCharacterPage(String url) throws IOException {
         Document doc = Jsoup.parse(new URL(url).openStream(), "UTF-8", url);
         String bigSkinURL = doc.getElementsByClass("ak-entitylook").first().attr("style");
         bigSkinURL = bigSkinURL.substring(bigSkinURL.indexOf("http://"), bigSkinURL.indexOf(")"));
