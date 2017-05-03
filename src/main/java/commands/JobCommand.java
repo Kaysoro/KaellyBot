@@ -27,7 +27,7 @@ public class JobCommand extends AbstractCommand{
 
     public JobCommand(){
         super(Pattern.compile("job"),
-        Pattern.compile("^(" + Constants.prefixCommand + "job)(\\s+(\\p{L}+|-all)(\\s+\\d{1,3})?)?$"));
+        Pattern.compile("^(" + Constants.prefixCommand + "job)(\\s+([\\p{L}+|\\W+]+|-all)(\\s+\\d{1,3})?)?$"));
     }
 
     @Override
@@ -41,6 +41,7 @@ public class JobCommand extends AbstractCommand{
                 Message.sendText(message.getChannel(), st.toString());
             }
             else if (!m.group(3).equals("-all")) {
+                System.out.println("'" + m.group(3) + "'");
                 List<String> jobs = getJob(m.group(3));
 
                 if (jobs.size() == 1) {
@@ -135,7 +136,7 @@ public class JobCommand extends AbstractCommand{
         for(String job : Job.getJobs())
             if (Normalizer.normalize(job, Normalizer.Form.NFD)
                     .replaceAll("\\p{InCombiningDiacriticalMarks}+", "")
-                    .toLowerCase().startsWith(nameProposed))
+                    .toLowerCase().replaceAll("\\W+", "").startsWith(nameProposed))
                 jobs.add(job);
         return jobs;
     }
