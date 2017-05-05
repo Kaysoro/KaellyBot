@@ -39,13 +39,13 @@ public class RSSCommand extends AbstractCommand{
                     boolean found = false;
 
                     for(RSSFinder finder : RSSFinder.getRSSFinders())
-                        if (finder.getChan().equals(message.getChannel().getStringID())){
+                        if (finder.getChan() == message.getChannel().getLongID()){
                             found = true;
                             break;
                         }
 
                     if (!found) {
-                        new RSSFinder(message.getChannel().getStringID()).addToDatabase();
+                        new RSSFinder(message.getChannel().getLongID()).addToDatabase();
                         Message.sendText(message.getChannel(), "Les news de dofus.com seront automatiquement postées ici.");
                     }
                     else
@@ -54,7 +54,7 @@ public class RSSCommand extends AbstractCommand{
                 else {
                     boolean found = false;
                     for(RSSFinder finder : RSSFinder.getRSSFinders())
-                        if (finder.getChan().equals(message.getChannel().getStringID())){
+                        if (finder.getChan() == message.getChannel().getLongID()){
                             found = true;
                             finder.removeToDatabase();
                             Message.sendText(message.getChannel(), "Les news de dofus.com ne sont plus postées ici.");

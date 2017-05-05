@@ -63,7 +63,7 @@ public class Guild {
         portals = Portal.getPortals(this);
 
         if (! User.getUsers().containsKey(id))
-            User.getUsers().put(id, new HashMap<String, User>());
+            User.getUsers().put(id, new HashMap<>());
     }
 
     public void removeToDatabase() {
@@ -108,7 +108,7 @@ public class Guild {
 
     public static Map<String, Guild> getGuilds(){
         if (guilds == null){
-            guilds = new HashMap<String, Guild>();
+            guilds = new HashMap<>();
             String id;
             String name;
 

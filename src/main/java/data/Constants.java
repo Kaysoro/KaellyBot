@@ -71,5 +71,5 @@ public class Constants {
     /**
      * User or channel dedicated to receive error logs.
      */
-    public final static String chanReportID = "162842827183751169";
+    public final static long chanReportID = 162842827183751169L;
 }

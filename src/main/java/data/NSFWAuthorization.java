@@ -36,7 +36,7 @@ public class NSFWAuthorization {
                 ResultSet resultSet = query.executeQuery();
 
                 while (resultSet.next()){
-                    IChannel chan = ClientConfig.DISCORD().getChannelByID(resultSet.getString("id_chan"));
+                    IChannel chan = ClientConfig.DISCORD().getChannelByID(Long.parseLong(resultSet.getString("id_chan")));
                     if (chan != null)
                         nsfwChannels.put(chan.getStringID(), new NSFWAuthorization(chan.getStringID()));
                     else

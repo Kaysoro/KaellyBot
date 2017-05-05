@@ -90,7 +90,7 @@ public class Job {
     }
 
     public static Map<String, Job> getJobs(User user){
-        Map<String, Job> jobs = new HashMap<String, Job>();
+        Map<String, Job> jobs = new HashMap<>();
 
         Connexion connexion = Connexion.getInstance();
         Connection connection = connexion.getConnection();
@@ -121,7 +121,7 @@ public class Job {
 
     public static List<String> getJobs(){
         if (jobs == null){
-            jobs = new ArrayList<String>();
+            jobs = new ArrayList<>();
 
             Connexion connexion = Connexion.getInstance();
             Connection connection = connexion.getConnection();

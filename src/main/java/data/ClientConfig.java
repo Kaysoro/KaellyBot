@@ -5,10 +5,8 @@ import org.slf4j.LoggerFactory;
 import sx.blah.discord.api.ClientBuilder;
 import sx.blah.discord.api.IDiscordClient;
 import sx.blah.discord.util.DiscordException;
-import twitter4j.FilterQuery;
 import twitter4j.TwitterStream;
 import twitter4j.TwitterStreamFactory;
-import twitter4j.conf.Configuration;
 import twitter4j.conf.ConfigurationBuilder;
 
 import java.io.*;
@@ -86,8 +84,8 @@ public class ClientConfig {
             path = URLDecoder.decode(path, "UTF-8"); } catch (UnsupportedEncodingException e) {
             LOG.error(e.getMessage());
         }
-        File ret = new File(path);
-        return ret;
+
+        return new File(path);
     }
 
     public static TwitterStream TWITTER() {

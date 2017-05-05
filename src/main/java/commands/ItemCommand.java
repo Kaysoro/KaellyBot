@@ -1,13 +1,11 @@
 package commands;
 
 import data.Constants;
-import data.ItemDofus;
 import exceptions.InDeveloppmentException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sx.blah.discord.handle.obj.IMessage;
 
-import java.util.List;
 import java.util.regex.Pattern;
 
 /**

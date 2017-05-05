@@ -27,7 +27,7 @@ public class JobCommand extends AbstractCommand{
 
     public JobCommand(){
         super(Pattern.compile("job"),
-        Pattern.compile("^(" + Constants.prefixCommand + "job)(\\s+([\\p{L}+|\\W+]+|-all)(\\s+\\d{1,3})?)?$"));
+        Pattern.compile("^(" + Constants.prefixCommand + "job)(\\s+([\\p{L}|\\W]+|-all)(\\s+\\d{1,3})?)?$"));
     }
 
     @Override

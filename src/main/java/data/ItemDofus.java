@@ -17,7 +17,7 @@ public class ItemDofus {
     public static List<ItemDofus> getItems(){
         if (items == null){
             System.out.println("Chargement des items de la base de données");
-            items = new ArrayList<ItemDofus>();
+            items = new ArrayList<>();
             //TODO
             System.out.println("Chargement effectuée avec succès");
         }

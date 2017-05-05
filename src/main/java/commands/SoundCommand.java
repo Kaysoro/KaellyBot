@@ -102,7 +102,7 @@ public class SoundCommand extends AbstractCommand{
     private List<File> getSounds(){
         if (sounds == null) {
             File file = new File(ClientConfig.locationFile().getPath() + "\\sounds");
-            FilenameFilter filter = (File dir, String name) -> { return name.toLowerCase().endsWith(".mp3"); };
+            FilenameFilter filter = (File dir, String name) -> name.toLowerCase().endsWith(".mp3");
 
             if (file.listFiles(filter) == null)
                 sounds = new ArrayList<>();

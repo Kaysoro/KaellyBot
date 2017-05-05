@@ -47,7 +47,7 @@ public class Portal {
 
     public static List<String> getPortals(){
         if (portals == null){
-            portals = new ArrayList<String>();
+            portals = new ArrayList<>();
 
             Connexion connexion = Connexion.getInstance();
             Connection connection = connexion.getConnection();
@@ -68,7 +68,7 @@ public class Portal {
     }
 
     public static List<Portal> getPortals(Guild g){
-        List<Portal> portals = new ArrayList<Portal>();
+        List<Portal> portals = new ArrayList<>();
 
         Connexion connexion = Connexion.getInstance();
         Connection connection = connexion.getConnection();

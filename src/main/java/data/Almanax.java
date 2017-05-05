@@ -39,9 +39,7 @@ public class Almanax {
         if (! getCalendar().containsKey(date)){
             // We have to search on the official website
             Almanax almanax = gatheringOnlineData(date);
-
-            if (almanax != null)
-                almanax.addToDatabase();
+            almanax.addToDatabase();
             return almanax;
         }
 
@@ -50,7 +48,7 @@ public class Almanax {
 
     public static Map<String, Almanax> getCalendar(){
         if (calendar == null) {
-            calendar = new HashMap<String, Almanax>();
+            calendar = new HashMap<>();
 
             String date;
             String offrande;

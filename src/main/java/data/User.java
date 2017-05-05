@@ -42,7 +42,7 @@ public class User {
 
     public void addToDatabase() {
         if (!getUsers().containsKey(guild.getId())) {
-            getUsers().put(guild.getId(), new HashMap<String, User>());
+            getUsers().put(guild.getId(), new HashMap<>());
         }
 
         if (! getUsers().get(guild.getId()).containsKey(id)){
@@ -136,7 +136,7 @@ public class User {
 
     public static Map<String, Map<String, User>> getUsers(){
         if (users == null){
-            users = new HashMap<String, Map<String, User>>();
+            users = new HashMap<>();
 
             String id;
             String name;
@@ -157,7 +157,7 @@ public class User {
                     guildId = Guild.getGuilds().get(resultSet.getString("id_guild"));
 
                     if (!users.containsKey(guildId.getId()))
-                        users.put(guildId.getId(), new HashMap<String, User>());
+                        users.put(guildId.getId(), new HashMap<>());
                     users.get(guildId.getId()).put(id, new User(id, name, right, guildId));
                 }
             } catch (SQLException e) {

@@ -46,7 +46,7 @@ public class RightCommand extends AbstractCommand{
 
                 if (author.getRights() >= User.RIGHT_MODERATOR) {
                     if (idDecorated.matches("<@&\\d+>")){ // Manage Groups
-                        IRole role = message.getGuild().getRoleByID(id);
+                        IRole role = message.getGuild().getRoleByID(Long.parseLong(id));
 
                         for(IUser user : message.getGuild().getUsers()){
 

@@ -34,16 +34,16 @@ public class TwitterCommand extends AbstractCommand{
                 String value = m.group(2);
 
                 if (value.matches("\\s+true") || value.matches("\\s+0") || value.matches("\\s+on")){
-                    if (! TwitterFinder.getTwitterChannels().containsKey(message.getChannel().getStringID())) {
-                        new TwitterFinder(message.getChannel().getStringID()).addToDatabase();
+                    if (! TwitterFinder.getTwitterChannels().containsKey(message.getChannel().getLongID())) {
+                        new TwitterFinder(message.getChannel().getLongID()).addToDatabase();
                         Message.sendText(message.getChannel(), "Les tweets de @Dofusfr seront postés ici.");
                     }
                     else
                         new TwitterFoundException().throwException(message, this);
                 }
                 else {
-                    if (TwitterFinder.getTwitterChannels().containsKey(message.getChannel().getStringID())) {
-                        TwitterFinder.getTwitterChannels().get(message.getChannel().getStringID()).removeToDatabase();
+                    if (TwitterFinder.getTwitterChannels().containsKey(message.getChannel().getLongID())) {
+                        TwitterFinder.getTwitterChannels().get(message.getChannel().getLongID()).removeToDatabase();
                         Message.sendText(message.getChannel(), "Les tweets de @Dofusfr ne seront plus postés ici.");
                     }
                     else

@@ -30,7 +30,7 @@ public class ReadyListener {
         for(IGuild guild : ClientConfig.DISCORD().getGuilds())
             for(IUser user : guild.getUsers()){
                     int level;
-                    if (user.getStringID().equals(guild.getOwnerID()))
+                    if (user.getLongID() == guild.getOwnerLongID())
                         level = User.RIGHT_ADMIN;
                     else
                         level = User.RIGHT_INVITE;

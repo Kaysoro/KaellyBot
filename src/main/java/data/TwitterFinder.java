@@ -22,10 +22,10 @@ import java.util.Map;
  */
 public class TwitterFinder extends StatusAdapter{
     private final static Logger LOG = LoggerFactory.getLogger(TwitterFinder.class);
-    protected static Map<String, TwitterFinder> twitterChannels;
-    private String channelId;
+    protected static Map<Long, TwitterFinder> twitterChannels;
+    private long channelId;
 
-    public TwitterFinder(String channelId) {
+    public TwitterFinder(long channelId) {
         this.channelId = channelId;
 
         if (ClientConfig.TWITTER() != null) {
@@ -59,7 +59,7 @@ public class TwitterFinder extends StatusAdapter{
         }
     }
 
-    public static Map<String, TwitterFinder> getTwitterChannels(){
+    public static Map<Long, TwitterFinder> getTwitterChannels(){
         if (twitterChannels == null) {
             twitterChannels = new HashMap<>();
 
@@ -71,11 +71,11 @@ public class TwitterFinder extends StatusAdapter{
                 ResultSet resultSet = query.executeQuery();
 
                 while (resultSet.next()){
-                    IChannel chan = ClientConfig.DISCORD().getChannelByID(resultSet.getString("id_chan"));
+                    IChannel chan = ClientConfig.DISCORD().getChannelByID(Long.parseLong(resultSet.getString("id_chan")));
                     if (chan != null)
-                        twitterChannels.put(chan.getStringID(), new TwitterFinder(chan.getStringID()));
+                        twitterChannels.put(chan.getLongID(), new TwitterFinder(chan.getLongID()));
                     else
-                        new TwitterFinder(resultSet.getString("id_chan")).removeToDatabase();
+                        new TwitterFinder(Long.parseLong(resultSet.getString("id_chan"))).removeToDatabase();
                 }
             } catch (SQLException e) {
                 Reporter.report(e);
@@ -94,7 +94,7 @@ public class TwitterFinder extends StatusAdapter{
             try {
                 PreparedStatement preparedStatement = connection.prepareStatement(
                         "INSERT INTO Twitter(id_chan) VALUES(?);");
-                preparedStatement.setString(1, getChannelId());
+                preparedStatement.setString(1, String.valueOf(getChannelId()));
 
                 preparedStatement.executeUpdate();
             } catch (SQLException e) {
@@ -112,7 +112,7 @@ public class TwitterFinder extends StatusAdapter{
 
         try {
             PreparedStatement request = connection.prepareStatement("DELETE FROM Twitter WHERE id_chan = ?;");
-            request.setString(1, getChannelId());
+            request.setString(1, String.valueOf(getChannelId()));
             request.executeUpdate();
 
         } catch (SQLException e) {
@@ -121,7 +121,7 @@ public class TwitterFinder extends StatusAdapter{
         }
     }
 
-    public String getChannelId(){
+    public Long getChannelId(){
         return channelId;
     }
 }
