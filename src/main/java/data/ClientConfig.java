@@ -29,7 +29,10 @@ public class ClientConfig {
         Properties prop = new Properties();
 
         try {
-            FileInputStream file = new FileInputStream(locationFile() + FILENAME);
+            String config = System.getProperty("user.dir") + File.separator + FILENAME;
+            config = URLDecoder.decode(config, "UTF-8");
+
+            FileInputStream file = new FileInputStream(config);
 
             prop.load(file);
             file.close();
@@ -64,6 +67,8 @@ public class ClientConfig {
             } catch(FileNotFoundException e){
                 LOG.error("Fichier de configuration non trouvé.");
                 TWITTER = null;
+            } catch (UnsupportedEncodingException e) {
+                LOG.error(e.getMessage());
             } catch (IOException e) {
                 LOG.error("IOException rencontré : " + e.getMessage());
                 TWITTER = null;
@@ -74,18 +79,6 @@ public class ClientConfig {
         if (instance == null)
             instance = new ClientConfig();
         return instance;
-    }
-
-    public static File locationFile()
-    {
-        String path = System.getProperty("user.dir");
-
-        try {
-            path = URLDecoder.decode(path, "UTF-8"); } catch (UnsupportedEncodingException e) {
-            LOG.error(e.getMessage());
-        }
-
-        return new File(path);
     }
 
     public static TwitterStream TWITTER() {

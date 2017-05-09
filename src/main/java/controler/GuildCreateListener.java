@@ -29,7 +29,7 @@ public class GuildCreateListener {
 
                 for (IUser user : event.getGuild().getUsers()) {
                     int level;
-                    if (user.getStringID().equals(event.getGuild().getOwnerID()))
+                    if (user.getLongID() == event.getGuild().getOwnerLongID())
                         level = User.RIGHT_ADMIN;
                     else
                         level = User.RIGHT_INVITE;
