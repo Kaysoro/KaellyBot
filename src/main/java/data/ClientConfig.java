@@ -20,7 +20,7 @@ public class ClientConfig {
     
     private static ClientConfig instance = null;
     private final static Logger LOG = LoggerFactory.getLogger(ClientConfig.class);
-    private final static String FILENAME = "\\config.properties";
+    private final static String FILENAME = "config.properties";
     private IDiscordClient DISCORD;
     private TwitterStream TWITTER;
 
