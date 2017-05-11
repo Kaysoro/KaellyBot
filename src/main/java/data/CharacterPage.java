@@ -99,13 +99,13 @@ public class CharacterPage {
 
         if (!elem.isEmpty()) {
             guildName = elem.first().text();
-            guildUrl = Constants.dofusURL + elem.first().select("a").attr("href");
+            guildUrl = Constants.officialURL + elem.first().select("a").attr("href");
 
             elem = doc.getElementsByClass("ak-infos-alliancename");
 
             if (!elem.isEmpty()) {
                 alliName = elem.first().text();
-                alliUrl = Constants.dofusURL + elem.first().select("a").attr("href");
+                alliUrl = Constants.officialURL + elem.first().select("a").attr("href");
             }
         }
 

@@ -16,6 +16,6 @@ public class DofusWebsiteInaccessibleException implements Exception {
 
     @Override
     public void throwException(IMessage message, Command command) {
-        Message.sendText(message.getChannel(), Constants.dofusURL + " est inaccessible pour le moment.");
+        Message.sendText(message.getChannel(), Constants.officialURL + " est inaccessible pour le moment.");
     }
 }

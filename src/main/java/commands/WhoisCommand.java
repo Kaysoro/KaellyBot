@@ -54,7 +54,7 @@ public class WhoisCommand extends AbstractCommand{
 
             StringBuilder url = null;
             try {
-                url = new StringBuilder(Constants.dofusCharacterPageURL)
+                url = new StringBuilder(Constants.officialURL + Constants.characterPageURL)
                         .append("?").append(forPseudo).append(URLEncoder.encode(pseudo, "UTF-8"));
                 LOG.info(url.toString());
             } catch (UnsupportedEncodingException e) {
@@ -100,11 +100,11 @@ public class WhoisCommand extends AbstractCommand{
 
                     if (result.size() == 1) {
 
-                        Connection.Response response = Jsoup.connect(Constants.dofusURL + result.get(0))
+                        Connection.Response response = Jsoup.connect(Constants.officialURL + result.get(0))
                                 .followRedirects(true).execute();
 
                         if (!response.url().getPath().endsWith("indisponible")) {
-                            CharacterPage characPage = CharacterPage.getCharacterPage(Constants.dofusURL + result.get(0));
+                            CharacterPage characPage = CharacterPage.getCharacterPage(Constants.officialURL + result.get(0));
                             Message.sendEmbed(message.getChannel(), characPage.getEmbedObject());
                         } else
                             new CharacterTooOldException().throwException(message, this);

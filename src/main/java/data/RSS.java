@@ -39,7 +39,7 @@ public class RSS implements Comparable<RSS>{
 
         try {
             SyndFeedInput input = new SyndFeedInput();
-            SyndFeed feed = input.build(new XmlReader(new URL(Constants.dofusFeedURL)));
+            SyndFeed feed = input.build(new XmlReader(new URL(Constants.officialURL + Constants.feedURL)));
 
             for(SyndEntry entry : feed.getEntries())
                 rss.add(new RSS(entry.getTitle(), entry.getLink(), entry.getPublishedDate().getTime()));

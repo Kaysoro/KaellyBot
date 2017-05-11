@@ -33,6 +33,11 @@ public class Constants {
     public final static String prefixCommand = "!";
 
     /**
+     * Official Ankama Game URL
+     */
+    public final static String officialURL = "http://www.dofus.com";
+
+    /**
      * Official Dofus URL for almanax
      */
     public final static String almanaxURL = "http://www.krosmoz.com/fr/almanax/";
@@ -40,17 +45,12 @@ public class Constants {
     /**
      * Official Dofus URL for news feed
      */
-    public final static String dofusFeedURL = "http://www.dofus.com/fr/rss/news.xml";
-
-    /**
-     * Official Dofus URL
-     */
-    public final static String dofusURL = "http://www.dofus.com";
+    public final static String feedURL = "/fr/rss/news.xml";
 
     /**
      * Official Dofus URL for character page
      */
-    public final static String dofusCharacterPageURL = "http://www.dofus.com/fr/mmorpg/communaute/annuaires/pages-persos";
+    public final static String characterPageURL = "/fr/mmorpg/communaute/annuaires/pages-persos";
 
     public final static String twitterIcon = "https://upload.wikimedia.org/wikipedia/fr/thumb/c/c8/Twitter_Bird.svg/langfr-20px-Twitter_Bird.svg.png";
     /**
