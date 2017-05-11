@@ -17,8 +17,10 @@ import sx.blah.discord.handle.obj.IMessage;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.lang.Exception;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -50,8 +52,15 @@ public class WhoisCommand extends AbstractCommand{
 
             String pseudo = m.group(2).trim().toLowerCase();
 
-            StringBuilder url = new StringBuilder(Constants.dofusCharacterPageURL)
-                    .append("?").append(forPseudo).append(pseudo);
+            StringBuilder url = null;
+            try {
+                url = new StringBuilder(Constants.dofusCharacterPageURL)
+                        .append("?").append(forPseudo).append(URLEncoder.encode(pseudo, "UTF-8"));
+                LOG.info(url.toString());
+            } catch (UnsupportedEncodingException e) {
+                LOG.error(e.getMessage());
+                new UnknownErrorException().throwException(message, this);
+            }
 
             if (m.group(3) != null){
                 String serverName = m.group(3).trim().toLowerCase();
