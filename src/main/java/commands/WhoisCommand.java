@@ -23,7 +23,6 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
@@ -56,10 +55,10 @@ public class WhoisCommand extends AbstractCommand{
             try {
                 url = new StringBuilder(Constants.officialURL + Constants.characterPageURL)
                         .append("?").append(forPseudo).append(URLEncoder.encode(pseudo, "UTF-8"));
-                LOG.info(url.toString());
+
             } catch (UnsupportedEncodingException e) {
-                LOG.error(e.getMessage());
-                new UnknownErrorException().throwException(message, this);
+                ExceptionManager.manageException(e, message, this);
+                return false;
             }
 
             if (m.group(3) != null){
@@ -119,27 +118,9 @@ public class WhoisCommand extends AbstractCommand{
             } catch (FileNotFoundException | HttpStatusException e){
                 new CharacterPageNotFoundException().throwException(message, this);
             } catch(IOException e){
-                // First we try parsing the exception message to see if it contains the response code
-                Matcher exMsgStatusCodeMatcher = Pattern.compile("^Server returned HTTP response code: (\\d+)")
-                        .matcher(e.getMessage());
-                if(exMsgStatusCodeMatcher.find()) {
-                    int statusCode = Integer.parseInt(exMsgStatusCodeMatcher.group(1));
-                    if (statusCode >= 500 && statusCode < 600) {
-                        LOG.warn(e.getMessage());
-                        new DofusWebsiteInaccessibleException().throwException(message, this);
-                    }
-                    else {
-                        Reporter.report(e);
-                        LOG.error(e.getMessage());
-                    }
-                } else {
-                    Reporter.report(e);
-                    LOG.error(e.getMessage());
-                }
+                ExceptionManager.manageIOException(e, message, this);
             }  catch (Exception e) {
-                LOG.error(e.getMessage());
-                Reporter.report(e);
-                new UnknownErrorException().throwException(message, this);
+                ExceptionManager.manageException(e, message, this);
             }
         }
         return false;

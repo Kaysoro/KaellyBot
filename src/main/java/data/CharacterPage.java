@@ -15,7 +15,7 @@ import java.util.Random;
 /**
  * Created by steve on 20/04/2017.
  */
-public class CharacterPage {
+public class CharacterPage implements Embedded {
 
     private final static Logger LOG = LoggerFactory.getLogger(CharacterPage.class);
 
@@ -33,7 +33,7 @@ public class CharacterPage {
     private String bigSkinURL;
     private String url;
 
-    public CharacterPage(String pseudo, String level, String classe, String server,
+    private CharacterPage(String pseudo, String level, String classe, String server,
                          String score, String progression,
                          String guildName, String guildUrl, String alliName, String alliUrl,
                          String littleSkinURL, String bigSkinURL, String url) {
@@ -52,6 +52,7 @@ public class CharacterPage {
         this.url = url;
     }
 
+    @Override
     public EmbedObject getEmbedObject(){
         EmbedBuilder builder = new EmbedBuilder();
 
