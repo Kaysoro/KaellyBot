@@ -15,9 +15,9 @@ import java.util.Random;
 /**
  * Created by steve on 20/04/2017.
  */
-public class CharacterPage implements Embedded {
+public class Character implements Embedded {
 
-    private final static Logger LOG = LoggerFactory.getLogger(CharacterPage.class);
+    private final static Logger LOG = LoggerFactory.getLogger(Character.class);
 
     private String pseudo;
     private String level;
@@ -33,10 +33,10 @@ public class CharacterPage implements Embedded {
     private String bigSkinURL;
     private String url;
 
-    private CharacterPage(String pseudo, String level, String classe, String server,
-                         String score, String progression,
-                         String guildName, String guildUrl, String alliName, String alliUrl,
-                         String littleSkinURL, String bigSkinURL, String url) {
+    private Character(String pseudo, String level, String classe, String server,
+                      String score, String progression,
+                      String guildName, String guildUrl, String alliName, String alliUrl,
+                      String littleSkinURL, String bigSkinURL, String url) {
         this.pseudo = pseudo;
         this.level = level;
         this.classe = classe;
@@ -77,7 +77,7 @@ public class CharacterPage implements Embedded {
         return builder.build();
     }
 
-    public static CharacterPage getCharacterPage(String url) throws IOException {
+    public static Character getCharacter(String url) throws IOException {
         Document doc = Jsoup.parse(new URL(url).openStream(), "UTF-8", url);
         String bigSkinURL = doc.getElementsByClass("ak-entitylook").first().attr("style");
         bigSkinURL = bigSkinURL.substring(bigSkinURL.indexOf("http://"), bigSkinURL.indexOf(")"));
@@ -110,7 +110,7 @@ public class CharacterPage implements Embedded {
             }
         }
 
-        return new CharacterPage(pseudo, level, classe, server, score, progression,
+        return new Character(pseudo, level, classe, server, score, progression,
                 guildName, guildUrl, alliName, alliUrl, littleSkinURL, bigSkinURL, url);
     }
 }

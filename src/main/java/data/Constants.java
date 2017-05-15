@@ -52,6 +52,19 @@ public class Constants {
      */
     public final static String characterPageURL = "/fr/mmorpg/communaute/annuaires/pages-persos";
 
+    /**
+     * Official Dofus URL for Weapon page
+     */
+    public final static String weaponPageURL = "/fr/mmorpg/encyclopedie/armes";
+
+    /**
+     * Official Dofus URL for Equipement page
+     */
+    public final static String equipementPageURL = "/fr/mmorpg/encyclopedie/equipements";
+
+    /**
+     * Twitter Icon from Wikipedia
+     */
     public final static String twitterIcon = "https://upload.wikimedia.org/wikipedia/fr/thumb/c/c8/Twitter_Bird.svg/langfr-20px-Twitter_Bird.svg.png";
     /**
      * Official Dofus account on Twitter

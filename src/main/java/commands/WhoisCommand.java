@@ -1,6 +1,6 @@
 package commands;
 
-import data.CharacterPage;
+import data.Character;
 import data.Constants;
 import data.ServerDofus;
 import discord.Message;
@@ -103,7 +103,7 @@ public class WhoisCommand extends AbstractCommand{
                                 .followRedirects(true).execute();
 
                         if (!response.url().getPath().endsWith("indisponible")) {
-                            CharacterPage characPage = CharacterPage.getCharacterPage(Constants.officialURL + result.get(0));
+                            Character characPage = Character.getCharacter(Constants.officialURL + result.get(0));
                             Message.sendEmbed(message.getChannel(), characPage.getEmbedObject());
                         } else
                             new CharacterTooOldException().throwException(message, this);
