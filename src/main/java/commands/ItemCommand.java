@@ -1,11 +1,28 @@
 package commands;
 
 import data.Constants;
-import exceptions.InDeveloppmentException;
+import data.Embedded;
+import data.Item;
+import discord.Message;
+import exceptions.ExceptionManager;
+import exceptions.ItemNotFoundException;
+import org.apache.commons.lang3.tuple.Pair;
+import org.jsoup.HttpStatusException;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sx.blah.discord.handle.obj.IMessage;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URL;
+import java.net.URLEncoder;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Pattern;
 
 /**
@@ -14,6 +31,7 @@ import java.util.regex.Pattern;
 public class ItemCommand extends AbstractCommand{
 
     private final static Logger LOG = LoggerFactory.getLogger(ItemCommand.class);
+    private final static String forName = "text=";
 
     public ItemCommand(){
         super(Pattern.compile("item"),
@@ -24,13 +42,70 @@ public class ItemCommand extends AbstractCommand{
     public boolean request(IMessage message) {
         if (super.request(message)){
 
-            //TODO
+            String name = m.group(2).trim().toLowerCase();
 
-            new InDeveloppmentException().throwException(message, this);
+            StringBuilder urlEquipement = null;
+            StringBuilder urlWeapon = null;
+            try {
+                urlEquipement = new StringBuilder(Constants.officialURL + Constants.equipementPageURL)
+                        .append("?").append(forName).append(URLEncoder.encode(name, "UTF-8"));
+                urlWeapon = new StringBuilder(Constants.officialURL + Constants.weaponPageURL)
+                        .append("?").append(forName).append(URLEncoder.encode(name, "UTF-8"));
+
+            } catch (UnsupportedEncodingException e) {
+                ExceptionManager.manageException(e, message, this);
+                return false;
+            }
+
+            List<Pair<String, String>> items = getListItemFrom(urlEquipement, message);
+            if (items == null) items = new ArrayList<>();
+            items.addAll(getListItemFrom(urlWeapon, message));
+
+            // If there still a problem
+            if (items == null) return false;
+
+            try {
+                if (items.size() == 1) { // We have found it !
+                    Embedded item = Item.getItem(Constants.officialURL + items.get(0).getRight());
+                    Message.sendEmbed(message.getChannel(), item.getEmbedObject());
+                } else if (items.size() > 1) {
+                    // We are looking for a specific item. If not found, exception thrown
+                    //TODO
+                } else // empty
+                    new ItemNotFoundException().throwException(message, this);
+            } catch(IOException e){
+                ExceptionManager.manageIOException(e, message, this);
+            }
+
             return true;
         }
 
         return false;
+    }
+
+    private List<Pair<String, String>> getListItemFrom(StringBuilder url, IMessage message){
+        List<Pair<String, String>> result = new ArrayList<>();
+        try {
+            Document doc = Jsoup.parse(new URL(url.toString()).openStream(), "UTF-8", url.toString());
+            Elements elems = doc.getElementsByClass("ak-bg-odd");
+            elems.addAll(doc.getElementsByClass("ak-bg-even"));
+
+            for (Element element : elems)
+                result.add(Pair.of(element.child(1).text(),
+                        element.child(1).select("a").attr("href")));
+
+        } catch (FileNotFoundException | HttpStatusException e){
+            new ItemNotFoundException().throwException(message, this);
+            return null;
+        } catch(IOException e){
+            ExceptionManager.manageIOException(e, message, this);
+            return null;
+        }  catch (Exception e) {
+            ExceptionManager.manageException(e, message, this);
+            return null;
+        }
+
+        return result;
     }
 
     @Override
@@ -52,6 +127,6 @@ public class ItemCommand extends AbstractCommand{
     public String helpDetailed() {
         return help()
                 + "\n`" + Constants.prefixCommand + "item `*`item`* : renvoit les statistiques de l'item spécifié :"
-                + " son nom doit être exact.\n";
+                + " son nom peut être approximatif s'il est suffisemment précis.\n";
     }
 }

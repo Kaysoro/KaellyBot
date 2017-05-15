@@ -13,7 +13,7 @@ public class Main {
         Command.commands.add(new AlmanaxCommand());
         Command.commands.add(new GitCommand());
         Command.commands.add(new HelpCommand());
-        //Command.commands.add(new ItemCommand());
+        Command.commands.add(new ItemCommand());
         Command.commands.add(new JobCommand());
         Command.commands.add(new MapCommand());
         //Command.commands.add(new MusicCommand()); Commande instable pour le moment
