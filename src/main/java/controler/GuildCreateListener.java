@@ -1,13 +1,16 @@
 package controler;
 
+import data.ClientConfig;
 import data.Constants;
 import data.Guild;
 import data.User;
+import discord.Message;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sx.blah.discord.api.events.EventSubscriber;
 import sx.blah.discord.handle.impl.events.guild.GuildCreateEvent;
 import sx.blah.discord.handle.obj.IUser;
+import sx.blah.discord.handle.obj.Permissions;
 
 /**
  * Created by steve on 14/07/2016.
@@ -23,22 +26,24 @@ public class GuildCreateListener {
         @EventSubscriber
         public void onReady(GuildCreateEvent event) {
 
-            if(Guild.getGuilds().containsKey(event.getGuild().getStringID())) {
+            if(!Guild.getGuilds().containsKey(event.getGuild().getStringID())) {
                 Guild guild = new Guild(event.getGuild().getStringID(), event.getGuild().getName());
                 guild.addToDatabase();
 
                 for (IUser user : event.getGuild().getUsers()) {
-                    int level;
-                    if (user.getLongID() == event.getGuild().getOwnerLongID())
-                        level = User.RIGHT_ADMIN;
-                    else
-                        level = User.RIGHT_INVITE;
-
-                    new User(user.getStringID(), user.getDisplayName(event.getGuild()), level, guild)
+                    new User(user.getStringID(), user.getDisplayName(event.getGuild()), User.RIGHT_INVITE, guild)
                             .addToDatabase();
                 }
 
+                User.getUsers().get(guild.getId()).get(event.getGuild().getOwner().getStringID()).changeRight(User.RIGHT_ADMIN);
+
                 LOG.info("La guilde " + guild.getId() + " - " + guild.getName() + " a ajouté " + Constants.name);
+
+                if(event.getGuild().getGeneralChannel().getModifiedPermissions(ClientConfig.DISCORD().getOurUser()).contains(Permissions.SEND_MESSAGES))
+                    Message.sendText(event.getGuild().getGeneralChannel(),Constants.msgJoinGuild);
+                else
+                    Message.sendText(event.getGuild().getOwner().getOrCreatePMChannel(), Constants.msgJoinGuild);
+
             }
         }
 }

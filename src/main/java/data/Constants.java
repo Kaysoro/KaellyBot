@@ -1,5 +1,8 @@
 package data;
 
+import commands.Command;
+import commands.HelpCommand;
+
 /**
  * Created by steve on 28/07/2016.
  */
@@ -85,4 +88,9 @@ public class Constants {
      * User or channel dedicated to receive error logs.
      */
     public final static long chanReportID = 162842827183751169L;
+
+    /**
+     * Message sent when joining a new guild
+     */
+    public final static String msgJoinGuild = "Bonjour je m'appelle "+name+" et je suis un bot dédié au jeu dofus. Pour avoir plus d'informations sur l'ensemble de mes commandes, tapez ```" + prefixCommand + new HelpCommand().getName().toString() + "```\n:blush:";
 }
