@@ -6,6 +6,7 @@ import data.Item;
 import discord.Message;
 import exceptions.ExceptionManager;
 import exceptions.ItemNotFoundException;
+import exceptions.TooMuchPossibilitiesException;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jsoup.HttpStatusException;
 import org.jsoup.Jsoup;
@@ -70,7 +71,20 @@ public class ItemCommand extends AbstractCommand{
                     Message.sendEmbed(message.getChannel(), item.getEmbedObject());
                 } else if (items.size() > 1) {
                     // We are looking for a specific item. If not found, exception thrown
-                    //TODO
+                    Pair<String, String> result = null;
+                    for (Pair<String, String> pair : items)
+                        if (name.equals(pair.getLeft().trim().toLowerCase())) {
+                            result = pair;
+                            break;
+                        }
+
+                    if (result != null){
+                        Embedded item = Item.getItem(Constants.officialURL + result.getRight());
+                        Message.sendEmbed(message.getChannel(), item.getEmbedObject());
+                    }
+                    else
+                        new TooMuchPossibilitiesException().throwException(message, this);
+
                 } else // empty
                     new ItemNotFoundException().throwException(message, this);
             } catch(IOException e){

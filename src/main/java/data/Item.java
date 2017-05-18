@@ -77,25 +77,49 @@ public class Item implements Embedded {
 
         String name = doc.getElementsByClass("ak-return-link").first().text();
         String level = doc.getElementsByClass("ak-encyclo-detail-level").first().text();
-        String description = doc.getElementsByClass("ak-panel-content").get(2).text(); // TODO to correct
-        String type = doc.getElementsByClass("ak-encyclo-detail-type").last().text(); //TODO to correct
+        String description = doc.getElementsByClass("ak-panel-content").get(3).text();
+        String type = doc.getElementsByClass("ak-encyclo-detail-type").last().children().last().text();
         String skinURL = doc.getElementsByClass("ak-encyclo-detail-illu").first()
                 .children().first().attr("src");
 
-        Elements lines = doc.getElementsByClass("ak-panel-content").get(4)
+        Elements lines = doc.getElementsByClass("ak-panel-content").get(5)
                 .getElementsByClass("ak-title");
 
         StringBuilder tmp = new StringBuilder();
         for(Element line : lines)
             tmp.append(line.text()).append("\n");
-        String effects = tmp.toString(); // TODO to correct
+        String effects = tmp.toString();
 
-
-        // Optional TODO
+        // Optional
         String caracteristics = null;
         String conditions = null;
         String panoplie = null;
         String panoplieURL = null;
+
+        Elements titles = doc.getElementsByClass("ak-panel-title");
+
+        for(Element title : titles){
+            if (title.text().equals("Caractéristiques")){
+                lines = doc.getElementsByClass("ak-panel-content").get(6)
+                        .getElementsByClass("ak-title");
+                tmp = new StringBuilder();
+                for(Element line : lines)
+                    tmp.append(line.text()).append("\n");
+                caracteristics = tmp.toString();
+            }
+            else if (title.text().equals("Conditions")){
+                lines = doc.getElementsByClass("ak-panel-content").get(caracteristics != null ? 7 : 6)
+                        .getElementsByClass("ak-title");
+                tmp = new StringBuilder();
+                for(Element line : lines)
+                    tmp.append(line.text()).append("\n");
+                conditions = tmp.toString();
+            }
+            else if(title.text().contains(name + " fait partie de")){
+                panoplie = title.getElementsByTag("a").first().text();
+                panoplieURL = Constants.officialURL + title.getElementsByTag("a").first().attr("href");
+            }
+        }
 
         return new Item(name, type, level, description, effects, skinURL, url,
                 caracteristics, conditions, panoplie, panoplieURL);
