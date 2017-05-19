@@ -30,19 +30,24 @@ public class GuildCreateListener {
                 Guild guild = new Guild(event.getGuild().getStringID(), event.getGuild().getName());
                 guild.addToDatabase();
 
-                for (IUser user : event.getGuild().getUsers()) {
+                for (IUser user : event.getGuild().getUsers())
                     new User(user.getStringID(), user.getDisplayName(event.getGuild()), User.RIGHT_INVITE, guild)
                             .addToDatabase();
-                }
 
-                User.getUsers().get(guild.getId()).get(event.getGuild().getOwner().getStringID()).changeRight(User.RIGHT_ADMIN);
+                User.getUsers().get(guild.getId()).get(event.getGuild().getOwner().getStringID())
+                        .changeRight(User.RIGHT_ADMIN);
 
                 LOG.info("La guilde " + guild.getId() + " - " + guild.getName() + " a ajouté " + Constants.name);
 
-                if(event.getGuild().getGeneralChannel().getModifiedPermissions(ClientConfig.DISCORD().getOurUser()).contains(Permissions.SEND_MESSAGES))
-                    Message.sendText(event.getGuild().getGeneralChannel(),Constants.msgJoinGuild);
+                String customMessage = Constants.msgJoinGuild;
+                customMessage = customMessage.replaceAll("\\{0\\}", event.getGuild().getOwner().mention());
+                customMessage = customMessage.replaceAll("\\{1\\}", event.getGuild().getName());
+
+                if(event.getGuild().getGeneralChannel().getModifiedPermissions(ClientConfig.DISCORD().getOurUser())
+                        .contains(Permissions.SEND_MESSAGES))
+                    Message.sendText(event.getGuild().getGeneralChannel(), customMessage);
                 else
-                    Message.sendText(event.getGuild().getOwner().getOrCreatePMChannel(), Constants.msgJoinGuild);
+                    Message.sendText(event.getGuild().getOwner().getOrCreatePMChannel(), customMessage);
 
             }
         }

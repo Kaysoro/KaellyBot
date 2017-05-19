@@ -36,6 +36,11 @@ public class Constants {
     public final static String prefixCommand = "!";
 
     /**
+     * Game desserved
+     */
+    public final static String game = "Dofus";
+
+    /**
      * Official Ankama Game URL
      */
     public final static String officialURL = "http://www.dofus.com";
@@ -92,5 +97,14 @@ public class Constants {
     /**
      * Message sent when joining a new guild
      */
-    public final static String msgJoinGuild = "Bonjour je m'appelle "+name+" et je suis un bot dédié au jeu dofus. Pour avoir plus d'informations sur l'ensemble de mes commandes, tapez ```" + prefixCommand + new HelpCommand().getName().toString() + "```\n:blush:";
+    public final static String msgJoinGuild = "Salut et merci pour l'invitation ! Moi c'est " + name
+            + ", je suis un robot dédié au jeu dofus; j'ai quelques commandes dans ma manche qui "
+            + "peuvent t'intéresser et qui me permettent d'afficher des item du jeu, des pages personnelles de joueurs,"
+            + "gérer un annuaire de vos métiers ou encore des positions de portails !"
+            + "\nTu veux en savoir plus ? Ecris `" + prefixCommand + new HelpCommand().getName().toString()
+            + "` pour avoir la liste complète ! :blush:"
+            + "\n\n{0}, en tant qu'administrateur de {1}, tu possèdes un ensemble de droits plus poussées "
+            + "et tu peux par exemple autoriser ou non dans un des canals la réception des tweets émis par le "
+            + "compte officiel " + Constants.game + "."
+            + "\n\nC'est pas génial tout ça ? J'espère que nous allons bien nous amuser tous ensemble ! :smile:";
 }
