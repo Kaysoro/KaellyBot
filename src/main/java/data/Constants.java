@@ -99,7 +99,7 @@ public class Constants {
      */
     public final static String msgJoinGuild = "Salut et merci pour l'invitation ! Moi c'est " + name
             + ", je suis un robot dédié au jeu dofus; j'ai quelques commandes dans ma manche qui "
-            + "peuvent t'intéresser et qui me permettent d'afficher des item du jeu, des pages personnelles de joueurs,"
+            + "peuvent t'intéresser et qui me permettent d'afficher des item du jeu, des pages personnelles de joueurs, "
             + "gérer un annuaire de vos métiers ou encore des positions de portails !"
             + "\nTu veux en savoir plus ? Ecris `" + prefixCommand + new HelpCommand().getName().toString()
             + "` pour avoir la liste complète ! :blush:"

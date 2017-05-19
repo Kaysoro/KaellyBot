@@ -6,6 +6,7 @@ import data.Item;
 import discord.Message;
 import exceptions.ExceptionManager;
 import exceptions.ItemNotFoundException;
+import exceptions.TooMuchItemsException;
 import exceptions.TooMuchPossibilitiesException;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jsoup.HttpStatusException;
@@ -83,7 +84,7 @@ public class ItemCommand extends AbstractCommand{
                         Message.sendEmbed(message.getChannel(), item.getEmbedObject());
                     }
                     else
-                        new TooMuchPossibilitiesException().throwException(message, this);
+                        new TooMuchItemsException().throwException(message, this, items);
 
                 } else // empty
                     new ItemNotFoundException().throwException(message, this);
