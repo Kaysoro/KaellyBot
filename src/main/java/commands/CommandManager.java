@@ -21,54 +21,74 @@ public class CommandManager {
         mapCommands = new HashMap<>();
         commands = new ArrayList<>();
 
+        cmd = new AdminCommand();
+        mapCommands.put(cmd.getName().pattern(), cmd);
+        commands.add(cmd);
+
         cmd = new AlmanaxCommand();
         mapCommands.put(cmd.getName().pattern(), cmd);
         commands.add(cmd);
+
         cmd = new GitCommand();
         mapCommands.put(cmd.getName().pattern(), cmd);
         commands.add(cmd);
+
         cmd = new HelpCommand();
         mapCommands.put(cmd.getName().pattern(), cmd);
         commands.add(cmd);
+
         cmd = new ItemCommand();
         mapCommands.put(cmd.getName().pattern(), cmd);
         commands.add(cmd);
+
         cmd = new JobCommand();
         mapCommands.put(cmd.getName().pattern(), cmd);
         commands.add(cmd);
+
         cmd = new MapCommand();
         mapCommands.put(cmd.getName().pattern(), cmd);
         commands.add(cmd);
+
         cmd = new MusicCommand();
         mapCommands.put(cmd.getName().pattern(), cmd);
         commands.add(cmd);
+
         cmd = new NSFWCommand();
         mapCommands.put(cmd.getName().pattern(), cmd);
         commands.add(cmd);
+
         cmd = new ParrotCommand();
         mapCommands.put(cmd.getName().pattern(), cmd);
         commands.add(cmd);
+
         cmd = new PortalCommand();
         mapCommands.put(cmd.getName().pattern(), cmd);
         commands.add(cmd);
+
         cmd = new RandomCommand();
         mapCommands.put(cmd.getName().pattern(), cmd);
         commands.add(cmd);
+
         cmd = new RightCommand();
         mapCommands.put(cmd.getName().pattern(), cmd);
         commands.add(cmd);
+
         cmd = new RSSCommand();
         mapCommands.put(cmd.getName().pattern(), cmd);
         commands.add(cmd);
+
         cmd = new Rule34Command();
         mapCommands.put(cmd.getName().pattern(), cmd);
         commands.add(cmd);
+
         cmd = new SoundCommand();
         mapCommands.put(cmd.getName().pattern(), cmd);
         commands.add(cmd);
+
         cmd = new TwitterCommand();
         mapCommands.put(cmd.getName().pattern(), cmd);
         commands.add(cmd);
+
         cmd = new WhoisCommand();
         mapCommands.put(cmd.getName().pattern(), cmd);
         commands.add(cmd);

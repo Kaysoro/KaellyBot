@@ -26,7 +26,7 @@ public class HelpCommand extends AbstractCommand{
             StringBuilder st = new StringBuilder();
             boolean argumentFound = m.group(2) != null && m.group(2).replaceAll("^\\s+", "").length() > 0;
             for(Command command : CommandManager.getCommands())
-                if (command.isPublic()){
+                if (command.isPublic() && ! command.isAdmin()){
                     if (! argumentFound)
                         st.append(command.help()).append("\n");
                     else if (command.getName().matcher(m.group(2)).find()) {

@@ -63,7 +63,7 @@ public abstract class AbstractCommand implements Command {
     public boolean isPublic(){ return isPublic; }
 
     @Override
-    public boolean isUsableInMP(){ return isUsableInMP(); }
+    public boolean isUsableInMP(){ return isUsableInMP; }
 
     @Override
     public void setUsableInMP(boolean isUsableInMP) {
