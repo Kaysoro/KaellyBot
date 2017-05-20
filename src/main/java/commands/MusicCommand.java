@@ -30,6 +30,7 @@ public class MusicCommand extends AbstractCommand{
         super(Pattern.compile("music"),
         Pattern.compile("^(" + Constants.prefixCommand
                 + "music)(\\s+-join|\\s+-play|\\s+-pause|\\s+-skip|\\s+-shuffle|\\s+-leave)?(\\s+http.+)?$"));
+        setPublic(false);
     }
 
     @Override
@@ -114,11 +115,6 @@ public class MusicCommand extends AbstractCommand{
     @Override
     public boolean isUsableInMP() {
         return false;
-    }
-
-    @Override
-    public boolean isPublic() {
-        return true;
     }
 
     @Override

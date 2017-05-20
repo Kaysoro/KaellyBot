@@ -78,11 +78,6 @@ public class Rule34Command extends AbstractCommand{
     }
 
     @Override
-    public boolean isPublic() {
-        return true;
-    }
-
-    @Override
     public String help() {
         return "**" + Constants.prefixCommand + "rule34** est une commande NSFW. Elle poste du contenu sexuellement explicite.";
     }

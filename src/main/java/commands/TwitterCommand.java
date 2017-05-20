@@ -62,11 +62,6 @@ public class TwitterCommand extends AbstractCommand{
     }
 
     @Override
-    public boolean isPublic() {
-        return true;
-    }
-
-    @Override
     public String help() {
         return "**" + Constants.prefixCommand + "twitter** poste les tweets de Dofusfr sur un channel; nécessite un niveau d'administration 2 (Modérateur) minimum.";
     }

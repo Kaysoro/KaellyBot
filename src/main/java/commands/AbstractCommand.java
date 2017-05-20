@@ -16,11 +16,13 @@ public abstract class AbstractCommand implements Command {
     protected Pattern name;
     protected Pattern pattern;
     protected Matcher m;
+    protected boolean isPublic;
 
-    public AbstractCommand(Pattern name, Pattern pattern){
+    protected AbstractCommand(Pattern name, Pattern pattern){
         super();
         this.name = name;
         this.pattern = pattern;
+        this.isPublic = true;
     }
 
     @Override
@@ -47,4 +49,12 @@ public abstract class AbstractCommand implements Command {
     public Pattern getPattern() {
         return pattern;
     }
+
+    @Override
+    public void setPublic(boolean isPublic){
+        this.isPublic = isPublic;
+    }
+
+    @Override
+    public boolean isPublic(){ return isPublic; }
 }

@@ -119,11 +119,6 @@ public class SoundCommand extends AbstractCommand{
     }
 
     @Override
-    public boolean isPublic() {
-        return true;
-    }
-
-    @Override
     public String help() {
         return "**" + Constants.prefixCommand + "sound** joue un son en vous rejoignant succintement dans votre canal vocal.";
     }

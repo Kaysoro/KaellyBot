@@ -21,7 +21,7 @@ public class MessageListener {
 
             // If the author is a bot, message get ignored
             if (! event.getMessage().getAuthor().isBot())
-                for(Command command : Command.commands)
+                for(Command command : CommandManager.getCommands())
                     command.request(event.getMessage());
-            }
+        }
 }

@@ -117,11 +117,6 @@ public class RightCommand extends AbstractCommand{
     }
 
     @Override
-    public boolean isPublic() {
-        return true;
-    }
-
-    @Override
     public String help() {
         return "**" + Constants.prefixCommand + "right** permet de changer les droits de quelqu'un d'autre tant qu'il n'est pas plus"
                 + " haut que le sien. Nécessite un niveau d'administration 2 (Modérateur) minimum."

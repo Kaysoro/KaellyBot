@@ -62,11 +62,6 @@ public class NSFWCommand extends AbstractCommand{
     }
 
     @Override
-    public boolean isPublic() {
-        return true;
-    }
-
-    @Override
     public String help() {
         return "**" + Constants.prefixCommand + "nsfw** gère les commandes NSFW sur un channel; nécessite un niveau d'administration 2 (Modérateur) minimum.";
     }

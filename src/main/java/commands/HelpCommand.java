@@ -25,7 +25,7 @@ public class HelpCommand extends AbstractCommand{
 
             StringBuilder st = new StringBuilder();
             boolean argumentFound = m.group(2) != null && m.group(2).replaceAll("^\\s+", "").length() > 0;
-            for(Command command : commands)
+            for(Command command : CommandManager.getCommands())
                 if (command.isPublic()){
                     if (! argumentFound)
                         st.append(command.help()).append("\n");
@@ -48,11 +48,6 @@ public class HelpCommand extends AbstractCommand{
 
     @Override
     public boolean isUsableInMP() {
-        return true;
-    }
-
-    @Override
-    public boolean isPublic() {
         return true;
     }
 
