@@ -36,6 +36,7 @@ public class SoundCommand extends AbstractCommand{
         super(Pattern.compile("sound"),
         Pattern.compile("^(" + Constants.prefixCommand
                 + "sound)(\\s+.+)?$"));
+        setUsableInMP(false);
     }
 
     @Override
@@ -111,11 +112,6 @@ public class SoundCommand extends AbstractCommand{
         }
 
         return sounds;
-    }
-
-    @Override
-    public boolean isUsableInMP() {
-        return false;
     }
 
     @Override

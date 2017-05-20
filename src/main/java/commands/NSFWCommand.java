@@ -21,6 +21,7 @@ public class NSFWCommand extends AbstractCommand{
     public NSFWCommand(){
         super(Pattern.compile("nsfw"),
         Pattern.compile("^(" + Constants.prefixCommand + "nsfw)(\\s+true|\\s+false|\\s+0|\\s+1|\\s+on|\\s+off)$"));
+        setUsableInMP(false);
     }
 
     @Override
@@ -53,11 +54,6 @@ public class NSFWCommand extends AbstractCommand{
             else
                 new NotEnoughRightsException().throwException(message, this);
         }
-        return false;
-    }
-
-    @Override
-    public boolean isUsableInMP() {
         return false;
     }
 

@@ -17,25 +17,29 @@ public abstract class AbstractCommand implements Command {
     protected Pattern pattern;
     protected Matcher m;
     protected boolean isPublic;
+    protected boolean isUsableInMP;
+    protected boolean isAdmin;
 
     protected AbstractCommand(Pattern name, Pattern pattern){
         super();
         this.name = name;
         this.pattern = pattern;
         this.isPublic = true;
+        this.isUsableInMP = true;
+        this.isAdmin = false;
     }
 
     @Override
     public boolean request(IMessage message) {
         m =  pattern.matcher(message.getContent());
         boolean isFound = m.find();
-        if (isPublic()) {
+        if (isPublic() && ! isAdmin()) {
             if (isFound && message.getChannel().isPrivate() && !isUsableInMP())
                 new NotUsableInMPException().throwException(message, this);
             else if (!isFound && message.getContent().startsWith(Constants.prefixCommand + name.pattern()))
                 new BadUseCommandException().throwException(message, this);
         }
-        else if (! isPublic() && ! message.getAuthor().getStringID().equals(Constants.author))
+        else if ((! isPublic() || isAdmin()) && ! message.getAuthor().getStringID().equals(Constants.author))
             return false;
         return isFound && (isUsableInMP() || ! message.getChannel().isPrivate());
     }
@@ -57,4 +61,22 @@ public abstract class AbstractCommand implements Command {
 
     @Override
     public boolean isPublic(){ return isPublic; }
+
+    @Override
+    public boolean isUsableInMP(){ return isUsableInMP(); }
+
+    @Override
+    public void setUsableInMP(boolean isUsableInMP) {
+        this.isUsableInMP = isUsableInMP;
+    }
+
+    @Override
+    public boolean isAdmin() {
+        return isAdmin;
+    }
+
+    @Override
+    public void setAdmin(boolean isAdmin) {
+        this.isAdmin = isAdmin;
+    }
 }

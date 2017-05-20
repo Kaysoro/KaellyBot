@@ -132,11 +132,6 @@ public class ItemCommand extends AbstractCommand{
     }
 
     @Override
-    public boolean isUsableInMP() {
-        return true;
-    }
-
-    @Override
     public String help() {
         return "**" + Constants.prefixCommand + "item** renvoit les statistiques d'un item du jeu Dofus.";
     }

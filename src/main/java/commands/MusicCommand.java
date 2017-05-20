@@ -31,6 +31,7 @@ public class MusicCommand extends AbstractCommand{
         Pattern.compile("^(" + Constants.prefixCommand
                 + "music)(\\s+-join|\\s+-play|\\s+-pause|\\s+-skip|\\s+-shuffle|\\s+-leave)?(\\s+http.+)?$"));
         setPublic(false);
+        setUsableInMP(false);
     }
 
     @Override
@@ -110,11 +111,6 @@ public class MusicCommand extends AbstractCommand{
         } catch (UnsupportedAudioFileException e) {
             new UnsupportedMusicFileException().throwException(message, this);
         }
-    }
-
-    @Override
-    public boolean isUsableInMP() {
-        return false;
     }
 
     @Override

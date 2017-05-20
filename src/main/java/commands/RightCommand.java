@@ -25,6 +25,7 @@ public class RightCommand extends AbstractCommand{
     public RightCommand(){
         super(Pattern.compile("right"),
         Pattern.compile("^(" + Constants.prefixCommand + "right)(\\s+<@[!|&]?\\d+>)?(\\s+\\d)?$"));
+        setUsableInMP(false);
     }
 
     @Override
@@ -109,11 +110,6 @@ public class RightCommand extends AbstractCommand{
         }
 
         return true;
-    }
-
-    @Override
-    public boolean isUsableInMP() {
-        return false;
     }
 
     @Override

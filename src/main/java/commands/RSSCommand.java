@@ -23,6 +23,7 @@ public class RSSCommand extends AbstractCommand{
     public RSSCommand(){
         super(Pattern.compile("rss"),
         Pattern.compile("^(" + Constants.prefixCommand + "rss)(\\s+true|\\s+false|\\s+0|\\s+1|\\s+on|\\s+off)$"));
+        setUsableInMP(false);
     }
 
     @Override
@@ -67,11 +68,6 @@ public class RSSCommand extends AbstractCommand{
             } else
                 new NotEnoughRightsException().throwException(message, this);
         }
-        return false;
-    }
-
-    @Override
-    public boolean isUsableInMP() {
         return false;
     }
 

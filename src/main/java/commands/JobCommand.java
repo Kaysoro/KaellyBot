@@ -28,6 +28,7 @@ public class JobCommand extends AbstractCommand{
     public JobCommand(){
         super(Pattern.compile("job"),
         Pattern.compile("^(" + Constants.prefixCommand + "job)(\\s+([\\p{L}|\\W]+|-all)(\\s+\\d{1,3})?)?$"));
+        setUsableInMP(false);
     }
 
     @Override
@@ -139,11 +140,6 @@ public class JobCommand extends AbstractCommand{
                     .toLowerCase().replaceAll("\\W+", "").startsWith(nameProposed))
                 jobs.add(job);
         return jobs;
-    }
-
-    @Override
-    public boolean isUsableInMP() {
-        return false;
     }
 
     @Override

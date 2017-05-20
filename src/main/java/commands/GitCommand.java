@@ -33,11 +33,6 @@ public class GitCommand extends AbstractCommand{
     }
 
     @Override
-    public boolean isUsableInMP() {
-        return true;
-    }
-
-    @Override
     public String help() {
         return "**" + Constants.prefixCommand + "git** donne le lien du code source de " + Constants.name + ".";
     }

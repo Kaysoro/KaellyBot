@@ -24,6 +24,7 @@ public class PortalCommand extends AbstractCommand{
     public PortalCommand(){
         super(Pattern.compile("pos"),
                 Pattern.compile("^(" + Constants.prefixCommand + "pos)(\\s+-reset)?(\\s+\\p{L}+)?(\\s+\\[?(-?\\d{1,2})\\s*[,|\\s]\\s*(-?\\d{1,2})\\]?)?(\\s+\\d{1,3})?$"));
+        setUsableInMP(false);
     }
 
     @Override
@@ -74,11 +75,6 @@ public class PortalCommand extends AbstractCommand{
                     .toLowerCase().startsWith(nameProposed))
                     portals.add(portal);
         return portals;
-    }
-
-    @Override
-    public boolean isUsableInMP() {
-        return false;
     }
 
     @Override

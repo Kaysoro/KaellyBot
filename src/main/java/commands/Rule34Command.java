@@ -26,6 +26,7 @@ public class Rule34Command extends AbstractCommand{
     public Rule34Command(){
         super(Pattern.compile("rule34"),
               Pattern.compile("^(" + Constants.prefixCommand + "rule34)(\\s+.+)?$"));
+        setUsableInMP(false);
     }
 
     @Override
@@ -69,11 +70,6 @@ public class Rule34Command extends AbstractCommand{
                 Message.sendText(message.getChannel(), message.getChannel().getName()
                         + " n'autorise pas du contenu NSFW. *!help nsfw* pour plus d'informations.");
         }
-        return false;
-    }
-
-    @Override
-    public boolean isUsableInMP() {
         return false;
     }
 

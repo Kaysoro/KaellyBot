@@ -127,11 +127,6 @@ public class WhoisCommand extends AbstractCommand{
     }
 
     @Override
-    public boolean isUsableInMP() {
-        return true;
-    }
-
-    @Override
     public String help() {
         return "**" + Constants.prefixCommand + "whois** donne la page personnelle d'un personnage.";
     }
