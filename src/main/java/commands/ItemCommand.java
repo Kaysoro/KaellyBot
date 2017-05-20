@@ -7,7 +7,6 @@ import discord.Message;
 import exceptions.ExceptionManager;
 import exceptions.ItemNotFoundException;
 import exceptions.TooMuchItemsException;
-import exceptions.TooMuchPossibilitiesException;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jsoup.HttpStatusException;
 import org.jsoup.Jsoup;
@@ -34,10 +33,15 @@ public class ItemCommand extends AbstractCommand{
 
     private final static Logger LOG = LoggerFactory.getLogger(ItemCommand.class);
     private final static String forName = "text=";
+    private final static String forLevelMin = "&object_level_min=";
+    private final static String levelMin = "50";
+    private final static String forLevelMax = "&object_level_max=";
+    private final static String levelMax = "200";
+    private final static String and = "&EFFECTMAIN_and_or=AND";
 
     public ItemCommand(){
         super(Pattern.compile("item"),
-        Pattern.compile("^(" + Constants.prefixCommand + "item)\\s+(.*)$"));
+                Pattern.compile("^(" + Constants.prefixCommand + "item)\\s+(.*)$"));
     }
 
     @Override
@@ -50,9 +54,13 @@ public class ItemCommand extends AbstractCommand{
             StringBuilder urlWeapon = null;
             try {
                 urlEquipement = new StringBuilder(Constants.officialURL + Constants.equipementPageURL)
-                        .append("?").append(forName).append(URLEncoder.encode(name, "UTF-8"));
+                        .append("?").append(forName).append(URLEncoder.encode(name, "UTF-8"))
+                        .append(and).append(forLevelMin).append(levelMin)
+                        .append(forLevelMax).append(levelMax).append(and);
                 urlWeapon = new StringBuilder(Constants.officialURL + Constants.weaponPageURL)
-                        .append("?").append(forName).append(URLEncoder.encode(name, "UTF-8"));
+                        .append("?").append(forName).append(URLEncoder.encode(name, "UTF-8"))
+                        .append(and).append(forLevelMin).append(levelMin)
+                        .append(forLevelMax).append(levelMax).append(and);
 
             } catch (UnsupportedEncodingException e) {
                 ExceptionManager.manageException(e, message, this);
@@ -142,6 +150,7 @@ public class ItemCommand extends AbstractCommand{
     public String helpDetailed() {
         return help()
                 + "\n`" + Constants.prefixCommand + "item `*`item`* : renvoit les statistiques de l'item spécifié :"
-                + " son nom peut être approximatif s'il est suffisemment précis.\n";
+                + " son nom peut être approximatif s'il est suffisemment précis. A noter que les items inférieurs"
+                + " au niveau " + levelMin + " sont exclus.\n";
     }
 }
