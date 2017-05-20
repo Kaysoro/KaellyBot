@@ -29,9 +29,10 @@ public class Item implements Embedded {
     private String conditions;
     private String panoplie;
     private String panoplieURL;
+    private String recipe;
 
     private Item(String name, String type, String level, String description, String effects, String skinURL, String url,
-                 String caracteristics, String conditions, String panoplie, String panoplieURL) {
+                 String caracteristics, String conditions, String panoplie, String panoplieURL, String recipe) {
         this.name = name;
         this.type = type;
         this.level = level;
@@ -43,6 +44,7 @@ public class Item implements Embedded {
         this.conditions = conditions;
         this.panoplie = panoplie;
         this.panoplieURL = panoplieURL;
+        this.recipe = recipe;
     }
 
     @Override
@@ -68,6 +70,9 @@ public class Item implements Embedded {
 
         if (panoplie != null && panoplieURL != null)
             builder.appendField(":link: Panoplie", "[" + panoplie + "](" + panoplieURL + ")", true);
+
+        if (recipe != null)
+            builder.appendField(":hammer_pick: Recette", recipe, true);
 
         return builder.build();
     }
@@ -95,12 +100,13 @@ public class Item implements Embedded {
         String conditions = null;
         String panoplie = null;
         String panoplieURL = null;
+        String recipe = null;
 
         Elements titles = doc.getElementsByClass("ak-panel-title");
-
+        int next = 0;
         for(Element title : titles){
             if (title.text().equals("Caractéristiques")){
-                lines = doc.getElementsByClass("ak-panel-content").get(6)
+                lines = doc.getElementsByClass("ak-panel-content").get(6 + next++)
                         .getElementsByClass("ak-title");
                 tmp = new StringBuilder();
                 for(Element line : lines)
@@ -108,7 +114,7 @@ public class Item implements Embedded {
                 caracteristics = tmp.toString();
             }
             else if (title.text().equals("Conditions")){
-                lines = doc.getElementsByClass("ak-panel-content").get(caracteristics != null ? 7 : 6)
+                lines = doc.getElementsByClass("ak-panel-content").get(6 + next++)
                         .getElementsByClass("ak-title");
                 tmp = new StringBuilder();
                 for(Element line : lines)
@@ -119,10 +125,22 @@ public class Item implements Embedded {
                 panoplie = title.getElementsByTag("a").first().text();
                 panoplieURL = Constants.officialURL + title.getElementsByTag("a").first().attr("href");
             }
+            else if(title.text().equals("Recette")){
+                lines = doc.getElementsByClass("ak-panel-content").get(6 + next++)
+                        .getElementsByClass("ak-column");
+                tmp = new StringBuilder();
+                for(Element line : lines)
+                    tmp.append(line.getElementsByClass("ak-front").text()).append(" [")
+                            .append(line.getElementsByClass("ak-title").first().text()).append("](")
+                            .append(Constants.officialURL)
+                            .append(line.getElementsByClass("ak-title").first().children().first()
+                                    .attr("href")).append(")\n");
+                recipe = tmp.toString();
+            }
         }
 
         return new Item(name, type, level, description, effects, skinURL, url,
-                caracteristics, conditions, panoplie, panoplieURL);
+                caracteristics, conditions, panoplie, panoplieURL, recipe);
     }
 }
 
