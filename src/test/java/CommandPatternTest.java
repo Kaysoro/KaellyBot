@@ -112,18 +112,6 @@ public class CommandPatternTest extends TestCase {
         assertTrue(pattern.matcher(Constants.prefixCommand + "music -leave").find());
     }
 
-    public void testNSFWAuthorizationCommand(){
-        Pattern pattern = new NSFWCommand().getPattern();
-
-        assertTrue(pattern.matcher(Constants.prefixCommand + "nsfw true").find());
-        assertTrue(pattern.matcher(Constants.prefixCommand + "nsfw on").find());
-        assertTrue(pattern.matcher(Constants.prefixCommand + "nsfw 0").find());
-        assertTrue(pattern.matcher(Constants.prefixCommand + "nsfw false").find());
-        assertTrue(pattern.matcher(Constants.prefixCommand + "nsfw off").find());
-        assertTrue(pattern.matcher(Constants.prefixCommand + "nsfw 1").find());
-        assertFalse(pattern.matcher(Constants.prefixCommand + "nsfw").find());
-    }
-
     public void testTwitterCommand(){
         Pattern pattern = new TwitterCommand().getPattern();
 
@@ -151,7 +139,7 @@ public class CommandPatternTest extends TestCase {
     public void testRule34Command(){
         Pattern pattern = new Rule34Command().getPattern();
 
-        assertTrue(pattern.matcher(Constants.prefixCommand + "rule34").find());
+        assertFalse(pattern.matcher(Constants.prefixCommand + "rule34").find());
         assertTrue(pattern.matcher(Constants.prefixCommand + "rule34 dofus").find());
     }
 

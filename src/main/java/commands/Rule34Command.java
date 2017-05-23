@@ -1,9 +1,10 @@
 package commands;
 
 import data.Constants;
-import data.NSFWAuthorization;
 import discord.Message;
+import exceptions.NSFWNotAuthorizedException;
 import exceptions.Reporter;
+import exceptions.UnknownErrorException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -25,7 +26,7 @@ public class Rule34Command extends AbstractCommand{
 
     public Rule34Command(){
         super(Pattern.compile("rule34"),
-              Pattern.compile("^(" + Constants.prefixCommand + "rule34)(\\s+.+)?$"));
+              Pattern.compile("^(" + Constants.prefixCommand + "rule34)(\\s+.+)$"));
         setUsableInMP(false);
     }
 
@@ -33,7 +34,7 @@ public class Rule34Command extends AbstractCommand{
     public boolean request(IMessage message) {
         if (super.request(message)) {
 
-            if (NSFWAuthorization.getNSFWChannels().containsKey(message.getChannel().getStringID())) {
+            if (message.getChannel().isNSFW()) {
                 String url = URL;
 
                 if (m.group(2) != null)
@@ -62,13 +63,13 @@ public class Rule34Command extends AbstractCommand{
                                 + m.group(2).trim() + "`.");
 
                 } catch (Exception e) {
+                    new UnknownErrorException().throwException(message, this);
                     Reporter.report(e);
                     LOG.error(e.getMessage());
                 }
             }
             else
-                Message.sendText(message.getChannel(), message.getChannel().getName()
-                        + " n'autorise pas du contenu NSFW. *!help nsfw* pour plus d'informations.");
+                new NSFWNotAuthorizedException().throwException(message, this);
         }
         return false;
     }
@@ -81,7 +82,7 @@ public class Rule34Command extends AbstractCommand{
     @Override
     public String helpDetailed() {
         return help()
-                + "\n`" + Constants.prefixCommand + "rule34` : poste une image NSFW au hasard."
+                //+ "\n`" + Constants.prefixCommand + "rule34` : poste une image NSFW au hasard."
                 + "\n`" + Constants.prefixCommand + "rule34 `*`tag1 tag2 ...`* : poste une image NSFW en rapport avec les tag précisés.\n";
     }
 }

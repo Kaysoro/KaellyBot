@@ -53,10 +53,6 @@ public class CommandManager {
         mapCommands.put(cmd.getName().pattern(), cmd);
         commands.add(cmd);
 
-        cmd = new NSFWCommand();
-        mapCommands.put(cmd.getName().pattern(), cmd);
-        commands.add(cmd);
-
         cmd = new ParrotCommand();
         mapCommands.put(cmd.getName().pattern(), cmd);
         commands.add(cmd);

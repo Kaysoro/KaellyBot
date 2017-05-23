@@ -15,6 +15,6 @@ public class UnknownErrorException implements Exception {
 
     @Override
     public void throwException(IMessage message, Command command) {
-        Message.sendText(message.getChannel(), " a rencontré une erreur.");
+        Message.sendText(message.getChannel(), "J'ai rencontré une erreur.");
     }
 }
