@@ -41,6 +41,7 @@ public class CommandManager {
         // Admin commands
         addCommand(new AdminCommand());
         addCommand(new AnnounceCommand());
+        addCommand(new TalkCommand());
     }
 
     public static CommandManager getInstance(){

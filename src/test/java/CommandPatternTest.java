@@ -189,4 +189,12 @@ public class CommandPatternTest extends TestCase {
         assertTrue(pattern.matcher(Constants.prefixCommand + "announce -confirm test").find());
         assertFalse(pattern.matcher(Constants.prefixCommand + "announce").find());
     }
+
+    public void testTalkCommand(){
+        Pattern pattern = new TalkCommand().getPattern();
+
+        assertTrue(pattern.matcher(Constants.prefixCommand + "talk test").find());
+        assertTrue(pattern.matcher(Constants.prefixCommand + "talk 5681 test").find());
+        assertFalse(pattern.matcher(Constants.prefixCommand + "talk").find());
+    }
 }
