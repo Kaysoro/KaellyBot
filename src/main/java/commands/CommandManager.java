@@ -17,84 +17,35 @@ public class CommandManager {
 
     private CommandManager(){
         super();
-        Command cmd;
         mapCommands = new HashMap<>();
         commands = new ArrayList<>();
 
-        cmd = new AdminCommand();
-        mapCommands.put(cmd.getName().pattern(), cmd);
-        commands.add(cmd);
+        // Basics commands
+        addCommand(new AlmanaxCommand());
+        addCommand(new GitCommand());
+        addCommand(new HelpCommand());
+        addCommand(new ItemCommand());
+        addCommand(new JobCommand());
+        addCommand(new MapCommand());
+        addCommand(new MusicCommand());
+        addCommand(new ParrotCommand());
+        addCommand(new PortalCommand());
+        addCommand(new RandomCommand());
+        addCommand(new RightCommand());
+        addCommand(new RSSCommand());
+        addCommand(new Rule34Command());
+        addCommand(new SoundCommand());
+        addCommand(new TwitterCommand());
+        addCommand(new WhoisCommand());
 
-        cmd = new AlmanaxCommand();
-        mapCommands.put(cmd.getName().pattern(), cmd);
-        commands.add(cmd);
-
-        cmd = new GitCommand();
-        mapCommands.put(cmd.getName().pattern(), cmd);
-        commands.add(cmd);
-
-        cmd = new HelpCommand();
-        mapCommands.put(cmd.getName().pattern(), cmd);
-        commands.add(cmd);
-
-        cmd = new ItemCommand();
-        mapCommands.put(cmd.getName().pattern(), cmd);
-        commands.add(cmd);
-
-        cmd = new JobCommand();
-        mapCommands.put(cmd.getName().pattern(), cmd);
-        commands.add(cmd);
-
-        cmd = new MapCommand();
-        mapCommands.put(cmd.getName().pattern(), cmd);
-        commands.add(cmd);
-
-        cmd = new MusicCommand();
-        mapCommands.put(cmd.getName().pattern(), cmd);
-        commands.add(cmd);
-
-        cmd = new ParrotCommand();
-        mapCommands.put(cmd.getName().pattern(), cmd);
-        commands.add(cmd);
-
-        cmd = new PortalCommand();
-        mapCommands.put(cmd.getName().pattern(), cmd);
-        commands.add(cmd);
-
-        cmd = new RandomCommand();
-        mapCommands.put(cmd.getName().pattern(), cmd);
-        commands.add(cmd);
-
-        cmd = new RightCommand();
-        mapCommands.put(cmd.getName().pattern(), cmd);
-        commands.add(cmd);
-
-        cmd = new RSSCommand();
-        mapCommands.put(cmd.getName().pattern(), cmd);
-        commands.add(cmd);
-
-        cmd = new Rule34Command();
-        mapCommands.put(cmd.getName().pattern(), cmd);
-        commands.add(cmd);
-
-        cmd = new SoundCommand();
-        mapCommands.put(cmd.getName().pattern(), cmd);
-        commands.add(cmd);
-
-        cmd = new TwitterCommand();
-        mapCommands.put(cmd.getName().pattern(), cmd);
-        commands.add(cmd);
-
-        cmd = new WhoisCommand();
-        mapCommands.put(cmd.getName().pattern(), cmd);
-        commands.add(cmd);
+        // Admin commands
+        addCommand(new AdminCommand());
+        addCommand(new AnnounceCommand());
     }
 
     public static CommandManager getInstance(){
-        if (instance == null){
+        if (instance == null)
             instance = new CommandManager();
-        }
-
         return instance;
     }
 
@@ -104,5 +55,10 @@ public class CommandManager {
 
     public Command getCommand(String name){
         return mapCommands.get(name);
+    }
+
+    private void addCommand(Command command){
+        commands.add(command);
+        mapCommands.put(command.getName().pattern(), command);
     }
 }

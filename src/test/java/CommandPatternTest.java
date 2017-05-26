@@ -9,6 +9,8 @@ import java.util.regex.Pattern;
  */
 public class CommandPatternTest extends TestCase {
 
+    // BASIC COMMANDS
+
     public void testAlmanaxCommand(){
         Pattern pattern = new AlmanaxCommand().getPattern();
 
@@ -167,5 +169,24 @@ public class CommandPatternTest extends TestCase {
         assertTrue(pattern.matcher(Constants.prefixCommand + "whois test-test server").find());
         assertTrue(pattern.matcher(Constants.prefixCommand + "whois test-test EL server").find());
         assertFalse(pattern.matcher(Constants.prefixCommand + "whois").find());
+    }
+
+    // ADMIN COMMANDS
+    public void testAdminCommand(){
+        Pattern pattern = new AdminCommand().getPattern();
+
+        assertTrue(pattern.matcher(Constants.prefixCommand + "admin").find());
+        assertTrue(pattern.matcher(Constants.prefixCommand + "admin help").find());
+        assertTrue(pattern.matcher(Constants.prefixCommand + "admin hélp").find());
+        assertTrue(pattern.matcher(Constants.prefixCommand + "admin !help").find());
+        assertTrue(pattern.matcher(Constants.prefixCommand + "admin !help2").find());
+    }
+
+    public void testAnnounceCommand(){
+        Pattern pattern = new AnnounceCommand().getPattern();
+
+        assertTrue(pattern.matcher(Constants.prefixCommand + "announce test").find());
+        assertTrue(pattern.matcher(Constants.prefixCommand + "announce -confirm test").find());
+        assertFalse(pattern.matcher(Constants.prefixCommand + "announce").find());
     }
 }
