@@ -24,28 +24,25 @@ public class AdminCommand extends AbstractCommand{
     @Override
     public boolean request(IMessage message) {
         if (super.request(message)) {
-
-            if (message.getAuthor().getStringID().equals(Constants.author)) {
-                StringBuilder st = new StringBuilder();
-                boolean argumentFound = m.group(2) != null && m.group(2).replaceAll("^\\s+", "").length() > 0;
-                for (Command command : CommandManager.getCommands())
-                    if (command.isAdmin()) {
-                        if (!argumentFound)
-                            st.append(command.help()).append("\n");
-                        else if (command.getName().matcher(m.group(2)).find()) {
-                            st.append(command.helpDetailed());
-                            break;
-                        }
+            StringBuilder st = new StringBuilder();
+            boolean argumentFound = m.group(2) != null && m.group(2).replaceAll("^\\s+", "").length() > 0;
+            for (Command command : CommandManager.getCommands())
+                if (command.isAdmin()) {
+                    if (!argumentFound)
+                        st.append(command.help()).append("\n");
+                    else if (command.getName().matcher(m.group(2)).find()) {
+                        st.append(command.helpDetailed());
+                        break;
                     }
+                }
 
-                if (argumentFound && st.length() == 0)
-                    st.append("Aucune commande ne répond au nom de *")
-                            .append(m.group(2).replaceAll("^\\W+", ""))
-                            .append("*.");
+            if (argumentFound && st.length() == 0)
+                st.append("Aucune commande ne répond au nom de *")
+                        .append(m.group(2).replaceAll("^\\W+", ""))
+                        .append("*.");
 
-                Message.sendText(message.getChannel(), st.toString());
-                return true;
-            }
+            Message.sendText(message.getChannel(), st.toString());
+            return true;
         }
         return false;
     }
