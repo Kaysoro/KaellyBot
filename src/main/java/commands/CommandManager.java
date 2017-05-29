@@ -22,13 +22,12 @@ public class CommandManager {
 
         // Basics commands
         addCommand(new AlmanaxCommand());
-        addCommand(new GitCommand());
+        addCommand(new AboutCommand());
         addCommand(new HelpCommand());
         addCommand(new ItemCommand());
         addCommand(new JobCommand());
         addCommand(new MapCommand());
         addCommand(new MusicCommand());
-        addCommand(new ParrotCommand());
         addCommand(new PortalCommand());
         addCommand(new RandomCommand());
         addCommand(new RightCommand());

@@ -22,10 +22,10 @@ public class CommandPatternTest extends TestCase {
         assertTrue(pattern.matcher(Constants.prefixCommand + "almanax -o 20/02/2016").find());
     }
 
-    public void testGitCommand(){
-        Pattern pattern = new GitCommand().getPattern();
+    public void testAboutCommand(){
+        Pattern pattern = new AboutCommand().getPattern();
 
-        assertTrue(pattern.matcher(Constants.prefixCommand + "git").find());
+        assertTrue(pattern.matcher(Constants.prefixCommand + "about").find());
     }
 
     public void testHelpCommand(){
@@ -68,13 +68,6 @@ public class CommandPatternTest extends TestCase {
         assertTrue(pattern.matcher(Constants.prefixCommand + "map i ii iii").find());
         assertTrue(pattern.matcher(Constants.prefixCommand + "map 1 ii III").find());
         assertFalse(pattern.matcher(Constants.prefixCommand + "map un deûx trôis").find());
-    }
-
-    public void testParrotCommand(){
-        Pattern pattern = new ParrotCommand().getPattern();
-
-        assertTrue(pattern.matcher(Constants.prefixCommand + "parrot test").find());
-        assertFalse(pattern.matcher(Constants.prefixCommand + "parrot").find());
     }
 
     public void testPortalCommand(){
