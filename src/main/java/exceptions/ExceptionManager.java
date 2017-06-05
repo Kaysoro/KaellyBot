@@ -24,7 +24,7 @@ public abstract class ExceptionManager {
             int statusCode = Integer.parseInt(exMsgStatusCodeMatcher.group(1));
             if (statusCode >= 500 && statusCode < 600) {
                 LOG.warn(e.getMessage());
-                new DofusWebsiteInaccessibleException().throwException(message, command);
+                new DofusWebsiteInaccessibleDiscordException().throwException(message, command);
             }
             else {
                 Reporter.report(e);
@@ -39,6 +39,6 @@ public abstract class ExceptionManager {
     public static void manageException(java.lang.Exception e, IMessage message, Command command){
         LOG.error(e.getMessage());
         Reporter.report(e);
-        new UnknownErrorException().throwException(message, command);
+        new UnknownErrorDiscordException().throwException(message, command);
     }
 }

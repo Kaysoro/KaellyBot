@@ -5,8 +5,8 @@ import data.Embedded;
 import data.Item;
 import discord.Message;
 import exceptions.ExceptionManager;
-import exceptions.ItemNotFoundException;
-import exceptions.TooMuchItemsException;
+import exceptions.ItemNotFoundDiscordException;
+import exceptions.TooMuchItemsDiscordException;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jsoup.HttpStatusException;
 import org.jsoup.Jsoup;
@@ -92,10 +92,10 @@ public class ItemCommand extends AbstractCommand{
                         Message.sendEmbed(message.getChannel(), item.getEmbedObject());
                     }
                     else
-                        new TooMuchItemsException().throwException(message, this, items);
+                        new TooMuchItemsDiscordException().throwException(message, this, items);
 
                 } else // empty
-                    new ItemNotFoundException().throwException(message, this);
+                    new ItemNotFoundDiscordException().throwException(message, this);
             } catch(IOException e){
                 ExceptionManager.manageIOException(e, message, this);
             }
@@ -118,7 +118,7 @@ public class ItemCommand extends AbstractCommand{
                         element.child(1).select("a").attr("href")));
 
         } catch (FileNotFoundException | HttpStatusException e){
-            new ItemNotFoundException().throwException(message, this);
+            new ItemNotFoundDiscordException().throwException(message, this);
             return null;
         } catch(IOException e){
             ExceptionManager.manageIOException(e, message, this);

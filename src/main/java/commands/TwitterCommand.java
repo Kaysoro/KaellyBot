@@ -40,7 +40,7 @@ public class TwitterCommand extends AbstractCommand{
                         Message.sendText(message.getChannel(), "Les tweets de @Dofusfr seront postés ici.");
                     }
                     else
-                        new TwitterFoundException().throwException(message, this);
+                        new TwitterFoundDiscordException().throwException(message, this);
                 }
                 else {
                     if (TwitterFinder.getTwitterChannels().containsKey(message.getChannel().getLongID())) {
@@ -48,11 +48,11 @@ public class TwitterCommand extends AbstractCommand{
                         Message.sendText(message.getChannel(), "Les tweets de @Dofusfr ne seront plus postés ici.");
                     }
                     else
-                        new TwitterNotFoundException().throwException(message, this);
+                        new TwitterNotFoundDiscordException().throwException(message, this);
                 }
             }
             else
-                new NotEnoughRightsException().throwException(message, this);
+                new NotEnoughRightsDiscordException().throwException(message, this);
         }
         return false;
     }

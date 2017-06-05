@@ -15,11 +15,7 @@ public class CommandPatternTest extends TestCase {
         Pattern pattern = new AlmanaxCommand().getPattern();
 
         assertTrue(pattern.matcher(Constants.prefixCommand + "almanax").find());
-        assertTrue(pattern.matcher(Constants.prefixCommand + "almanax -b").find());
-        assertTrue(pattern.matcher(Constants.prefixCommand + "almanax -o").find());
         assertTrue(pattern.matcher(Constants.prefixCommand + "almanax 20/02/2016").find());
-        assertTrue(pattern.matcher(Constants.prefixCommand + "almanax -b 20/02/2016").find());
-        assertTrue(pattern.matcher(Constants.prefixCommand + "almanax -o 20/02/2016").find());
     }
 
     public void testAboutCommand(){

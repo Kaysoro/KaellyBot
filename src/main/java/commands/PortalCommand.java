@@ -4,8 +4,8 @@ import data.Constants;
 import data.Guild;
 import data.Portal;
 import discord.Message;
-import exceptions.PortalNotFoundException;
-import exceptions.TooMuchPossibilitiesException;
+import exceptions.PortalNotFoundDiscordException;
+import exceptions.TooMuchPossibilitiesDiscordException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sx.blah.discord.handle.obj.IMessage;
@@ -55,9 +55,9 @@ public class PortalCommand extends AbstractCommand{
                     Message.sendText(message.getChannel(), portals.get(0).toString());
                 }
                 else if(portals.size() > 1)
-                    new TooMuchPossibilitiesException().throwException(message, this);
+                    new TooMuchPossibilitiesDiscordException().throwException(message, this);
                 else
-                    new PortalNotFoundException().throwException(message, this);
+                    new PortalNotFoundDiscordException().throwException(message, this);
             }
         }
         return false;

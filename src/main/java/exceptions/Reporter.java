@@ -36,22 +36,27 @@ public class Reporter {
         return instance;
     }
 
-    public void send(java.lang.Exception e) {
-        if (channel != null)
+    public void send(Exception e) {
+        if (channel != null) {
+            StringBuilder st = new StringBuilder(e.toString());
+
+            for(int i = 0; i < e.getStackTrace().length; i++)
+                st.append("\n").append(e.getStackTrace()[i]);
             try {
                 RequestBuffer.request(() -> {
                     new MessageBuilder(ClientConfig.DISCORD())
                             .withChannel(channel)
-                            .withContent(e.toString())
+                            .withContent(st.toString())
                             .build();
                     return null;
                 });
-            } catch (java.lang.Exception e1) {
+            } catch (Exception e1) {
                 LoggerFactory.getLogger(Reporter.class).error(e1.getMessage());
             }
+        }
     }
 
-    public static void report(java.lang.Exception e){
+    public static void report(Exception e){
         Reporter.getInstance().send(e);
     }
 }

@@ -3,12 +3,11 @@ package commands;
 import data.ClientConfig;
 import data.Constants;
 import discord.Message;
-import exceptions.ChannelNotFoundException;
-import exceptions.NoSendTextPermissionException;
+import exceptions.ChannelNotFoundDiscordException;
+import exceptions.NoSendTextPermissionDiscordException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sx.blah.discord.handle.obj.IChannel;
-import sx.blah.discord.handle.obj.IGuild;
 import sx.blah.discord.handle.obj.IMessage;
 import sx.blah.discord.handle.obj.Permissions;
 
@@ -41,14 +40,14 @@ public class TalkCommand extends AbstractCommand{
             }
 
             if (lastChan == null){
-                new ChannelNotFoundException().throwException(message, this);
+                new ChannelNotFoundDiscordException().throwException(message, this);
                 return false;
             }
 
             if (lastChan.getModifiedPermissions(ClientConfig.DISCORD().getOurUser()).contains(Permissions.SEND_MESSAGES))
                 Message.sendText(lastChan, text);
             else
-                new NoSendTextPermissionException().throwException(message, this);
+                new NoSendTextPermissionDiscordException().throwException(message, this);
 
             return true;
         }

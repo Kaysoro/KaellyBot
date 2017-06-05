@@ -2,9 +2,9 @@ package commands;
 
 import data.Constants;
 import discord.Message;
-import exceptions.NSFWNotAuthorizedException;
+import exceptions.NSFWNotAuthorizedDiscordException;
 import exceptions.Reporter;
-import exceptions.UnknownErrorException;
+import exceptions.UnknownErrorDiscordException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -63,13 +63,13 @@ public class Rule34Command extends AbstractCommand{
                                 + m.group(2).trim() + "`.");
 
                 } catch (Exception e) {
-                    new UnknownErrorException().throwException(message, this);
+                    new UnknownErrorDiscordException().throwException(message, this);
                     Reporter.report(e);
                     LOG.error(e.getMessage());
                 }
             }
             else
-                new NSFWNotAuthorizedException().throwException(message, this);
+                new NSFWNotAuthorizedDiscordException().throwException(message, this);
         }
         return false;
     }

@@ -92,7 +92,7 @@ public class Constants {
     /**
      * User or channel dedicated to receive error logs.
      */
-    public final static long chanReportID = 162842827183751169L;
+    public final static long chanReportID = 321197720629149698L;
 
     /**
      * Message sent when joining a new guild

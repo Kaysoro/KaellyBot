@@ -62,7 +62,7 @@ public class MusicCommand extends AbstractCommand{
                 }
             }
             else
-                new BadUseCommandException().throwException(message, this);
+                new BadUseCommandDiscordException().throwException(message, this);
         }
 
         return true;
@@ -70,20 +70,20 @@ public class MusicCommand extends AbstractCommand{
 
     private void join(IMessage message) {
         if (message.getAuthor().getVoiceStateForGuild(message.getGuild()).getChannel() == null)
-            new NotInVocalChannelException().throwException(message, this);
+            new NotInVocalChannelDiscordException().throwException(message, this);
         else {
             IVoiceChannel voice = message.getAuthor().getVoiceStateForGuild(message.getGuild()).getChannel();
             if (!voice.getModifiedPermissions(ClientConfig.DISCORD().getOurUser()).contains(Permissions.VOICE_CONNECT))
-                new NoVoiceConnectPermissionException().throwException(message, this);
+                new NoVoiceConnectPermissionDiscordException().throwException(message, this);
             else if (voice.getConnectedUsers().size() >= voice.getUserLimit() && voice.getUserLimit() != 0)
-                new VoiceChannelLimitException().throwException(message, this);
+                new VoiceChannelLimitDiscordException().throwException(message, this);
             else {
                 try {
                     voice.join();
                     VoiceManager.getLastChannel().put(message.getGuild(), message.getChannel());
                     Message.sendText(message.getChannel(), "Connecté à **" + voice.getName() + "**.");
                 } catch (MissingPermissionsException e) {
-                    new NoVoiceConnectPermissionException().throwException(message, this);
+                    new NoVoiceConnectPermissionDiscordException().throwException(message, this);
                 }
             }
         }
@@ -103,13 +103,13 @@ public class MusicCommand extends AbstractCommand{
             URL u = new URL(url);
             setTrackTitle(AudioPlayer.getAudioPlayerForGuild(message.getGuild()).queue(u), u.getFile());
         } catch (MalformedURLException e) {
-            new MalformedMusicURLException().throwException(message, this);
+            new MalformedMusicURLDiscordException().throwException(message, this);
         } catch (IOException e) {
             LOG.error(e.getMessage());
             Reporter.report(e);
-            new UnknownErrorException().throwException(message, this);
+            new UnknownErrorDiscordException().throwException(message, this);
         } catch (UnsupportedAudioFileException e) {
-            new UnsupportedMusicFileException().throwException(message, this);
+            new UnsupportedMusicFileDiscordException().throwException(message, this);
         }
     }
 

@@ -3,10 +3,10 @@ package commands;
 import data.Constants;
 import data.User;
 import discord.Message;
-import exceptions.AutoChangeRightsException;
-import exceptions.BadUseCommandException;
-import exceptions.NoRightsForRolesException;
-import exceptions.NotEnoughRightsException;
+import exceptions.AutoChangeRightsDiscordException;
+import exceptions.BadUseCommandDiscordException;
+import exceptions.NoRightsForRolesDiscordException;
+import exceptions.NotEnoughRightsDiscordException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sx.blah.discord.handle.obj.IMessage;
@@ -37,7 +37,7 @@ public class RightCommand extends AbstractCommand{
             if (m.group(3) != null) { // Level precised : editing
 
                 if (m.group(2) == null){
-                    new BadUseCommandException().throwException(message, this);
+                    new BadUseCommandDiscordException().throwException(message, this);
                     return false;
                 }
 
@@ -70,12 +70,12 @@ public class RightCommand extends AbstractCommand{
                         User target = User.getUsers().get(message.getGuild().getStringID()).get(id);
 
                         if (id.equals(message.getAuthor().getStringID())) {
-                            new AutoChangeRightsException().throwException(message, this);
+                            new AutoChangeRightsDiscordException().throwException(message, this);
                             return false;
                         }
 
                         if (author.getRights() < target.getRights()) {
-                            new NotEnoughRightsException().throwException(message, this);
+                            new NotEnoughRightsDiscordException().throwException(message, this);
                             return false;
                         }
 
@@ -85,7 +85,7 @@ public class RightCommand extends AbstractCommand{
                     }
                 } // Not an admin or a moderator
                 else {
-                    new NotEnoughRightsException().throwException(message, this);
+                    new NotEnoughRightsDiscordException().throwException(message, this);
                     return false;
                 }
             } else { // Level is not precised : consulting
@@ -101,7 +101,7 @@ public class RightCommand extends AbstractCommand{
                                 + target.getRights() + ".");
                     }
                     else
-                        new NoRightsForRolesException().throwException(message, this);
+                        new NoRightsForRolesDiscordException().throwException(message, this);
                 }
                 else
                     Message.sendText(message.getChannel(), "Tu as les droits d'administration de niveau "

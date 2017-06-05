@@ -4,9 +4,9 @@ import data.Constants;
 import data.RSSFinder;
 import data.User;
 import discord.Message;
-import exceptions.NotEnoughRightsException;
-import exceptions.RSSFoundException;
-import exceptions.RSSNotFoundException;
+import exceptions.NotEnoughRightsDiscordException;
+import exceptions.RSSFoundDiscordException;
+import exceptions.RSSNotFoundDiscordException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sx.blah.discord.handle.obj.IMessage;
@@ -50,7 +50,7 @@ public class RSSCommand extends AbstractCommand{
                         Message.sendText(message.getChannel(), "Les news de dofus.com seront automatiquement postées ici.");
                     }
                     else
-                        new RSSFoundException().throwException(message, this);
+                        new RSSFoundDiscordException().throwException(message, this);
                 }
                 else {
                     boolean found = false;
@@ -63,10 +63,10 @@ public class RSSCommand extends AbstractCommand{
                         }
 
                     if (!found)
-                        new RSSNotFoundException().throwException(message, this);
+                        new RSSNotFoundDiscordException().throwException(message, this);
                 }
             } else
-                new NotEnoughRightsException().throwException(message, this);
+                new NotEnoughRightsDiscordException().throwException(message, this);
         }
         return false;
     }

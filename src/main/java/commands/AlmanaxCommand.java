@@ -31,7 +31,7 @@ public class AlmanaxCommand extends AbstractCommand{
 
     public AlmanaxCommand(){
         super(Pattern.compile("almanax"),
-                Pattern.compile("^(" + Constants.prefixCommand + "almanax)(\\s+-[b|o])?(\\s+\\d{2}/\\d{2}/\\d{4})?$"));
+                Pattern.compile("^(" + Constants.prefixCommand + "almanax)(\\s+\\d{2}/\\d{2}/\\d{4})?$"));
     }
 
     @Override
@@ -40,11 +40,11 @@ public class AlmanaxCommand extends AbstractCommand{
 
             Date date = new Date();
 
-            if (m.group(3) != null) {
+            if (m.group(2) != null) {
                 try {
-                    date = discordToBot.parse(m.group(3));
+                    date = discordToBot.parse(m.group(2));
                 } catch (ParseException e) {
-                    new IncorrectDateFormatException().throwException(message, this);
+                    new IncorrectDateFormatDiscordException().throwException(message, this);
                     return false;
                 }
             }
@@ -54,22 +54,18 @@ public class AlmanaxCommand extends AbstractCommand{
 
                 if (almanax != null) {
                     StringBuilder st = new StringBuilder("**Almanax du ")
-                            .append(discordToBot.format(date))
-                            .append(" :**\n");
-
-                    if (m.group(2) == null || m.group(2).matches("\\W+-b"))
-                        st.append(almanax.getBonus()).append("\n");
-                    if (m.group(2) == null || m.group(2).matches("\\W+-o"))
-                        st.append(almanax.getOffrande()).append("\n");
+                            .append(discordToBot.format(date)).append(" :**\n")
+                            .append(almanax.getBonus()).append("\n")
+                            .append(almanax.getOffrande()).append("\n");
 
                     Message.sendText(message.getChannel(), st.toString());
                     return false;
                 } else {
-                    new AlmanaxNotFoundException().throwException(message, this);
+                    new AlmanaxNotFoundDiscordException().throwException(message, this);
                     return false;
                 }
             } catch (FileNotFoundException | HttpStatusException e){
-                new CharacterPageNotFoundException().throwException(message, this);
+                new CharacterPageNotFoundDiscordException().throwException(message, this);
             } catch(IOException e){
                 // First we try parsing the exception message to see if it contains the response code
                 Matcher exMsgStatusCodeMatcher = Pattern.compile("^Server returned HTTP response code: (\\d+)")
@@ -78,7 +74,7 @@ public class AlmanaxCommand extends AbstractCommand{
                     int statusCode = Integer.parseInt(exMsgStatusCodeMatcher.group(1));
                     if (statusCode >= 500 && statusCode < 600) {
                         LOG.warn(e.getMessage());
-                        new DofusWebsiteInaccessibleException().throwException(message, this);
+                        new DofusWebsiteInaccessibleDiscordException().throwException(message, this);
                     }
                     else {
                         Reporter.report(e);
@@ -91,7 +87,7 @@ public class AlmanaxCommand extends AbstractCommand{
             }  catch (Exception e) {
                 LOG.error(e.getMessage());
                 Reporter.report(e);
-                new UnknownErrorException().throwException(message, this);
+                new UnknownErrorDiscordException().throwException(message, this);
             }
         }
         return false;
@@ -106,10 +102,6 @@ public class AlmanaxCommand extends AbstractCommand{
     public String helpDetailed() {
         return help()
                 + "\n`" + Constants.prefixCommand + "almanax` : donne le bonus et l'offrande du jour actuel."
-                + "\n`" + Constants.prefixCommand + "almanax -b` : donne uniquement le bonus du jour actuel."
-                + "\n`" + Constants.prefixCommand + "almanax -o` : donne uniquement l'offrande du jour actuel."
-                + "\n`" + Constants.prefixCommand + "almanax `*`jj/mm/aaaa`* : donne le bonus et l'offrande du jour spécifié."
-                + "\n`" + Constants.prefixCommand + "almanax -b `*`jj/mm/aaaa`* : donne uniquement le bonus du jour spécifié."
-                + "\n`" + Constants.prefixCommand + "almanax -o `*`jj/mm/aaaa`* : donne uniquement l'offrande du jour spécifié.\n";
+                + "\n`" + Constants.prefixCommand + "almanax `*`jj/mm/aaaa`* : donne le bonus et l'offrande du jour spécifié.\n";
     }
 }

@@ -45,15 +45,15 @@ public class SoundCommand extends AbstractCommand{
             IVoiceChannel voice = message.getAuthor().getVoiceStateForGuild(message.getGuild()).getChannel();
 
             if (voice == null)
-                new NotInVocalChannelException().throwException(message, this);
+                new NotInVocalChannelDiscordException().throwException(message, this);
             else if (Guild.getGuilds().get(message.getGuild().getStringID()).isPlayingMusic())
-                new PlayingMusicException().throwException(message, this);
+                new PlayingMusicDiscordException().throwException(message, this);
 
             else {
                 if (!voice.getModifiedPermissions(ClientConfig.DISCORD().getOurUser()).contains(Permissions.VOICE_CONNECT))
-                    new NoVoiceConnectPermissionException().throwException(message, this);
+                    new NoVoiceConnectPermissionDiscordException().throwException(message, this);
                 else if (voice.getConnectedUsers().size() >= voice.getUserLimit() && voice.getUserLimit() != 0)
-                    new VoiceChannelLimitException().throwException(message, this);
+                    new VoiceChannelLimitDiscordException().throwException(message, this);
                 else {
                     try {
                         if(m.group(2) != null){ // Specific sound
@@ -75,7 +75,7 @@ public class SoundCommand extends AbstractCommand{
                                 }
                             }
                             else
-                                new SoundNotFoundException().throwException(message, this);
+                                new SoundNotFoundDiscordException().throwException(message, this);
                         }
                         else { // random sound
 
@@ -91,7 +91,7 @@ public class SoundCommand extends AbstractCommand{
                         }
 
                     } catch (MissingPermissionsException e) {
-                        new NoVoiceConnectPermissionException().throwException(message, this);
+                        new NoVoiceConnectPermissionDiscordException().throwException(message, this);
                     }
                 }
             }

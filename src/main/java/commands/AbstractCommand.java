@@ -1,8 +1,8 @@
 package commands;
 
 import data.Constants;
-import exceptions.BadUseCommandException;
-import exceptions.NotUsableInMPException;
+import exceptions.BadUseCommandDiscordException;
+import exceptions.NotUsableInMPDiscordException;
 import sx.blah.discord.handle.obj.IMessage;
 
 import java.util.regex.Matcher;
@@ -35,9 +35,9 @@ public abstract class AbstractCommand implements Command {
         boolean isFound = m.find();
         if (isPublic() && ! isAdmin()) {
             if (isFound && message.getChannel().isPrivate() && !isUsableInMP())
-                new NotUsableInMPException().throwException(message, this);
+                new NotUsableInMPDiscordException().throwException(message, this);
             else if (!isFound && message.getContent().startsWith(Constants.prefixCommand + name.pattern()))
-                new BadUseCommandException().throwException(message, this);
+                new BadUseCommandDiscordException().throwException(message, this);
         }
         else if ((! isPublic() || isAdmin()) && ! message.getAuthor().getStringID().equals(Constants.author))
             return false;

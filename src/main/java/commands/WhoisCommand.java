@@ -73,9 +73,9 @@ public class WhoisCommand extends AbstractCommand{
                     url.append("&").append(forServer).append(result.get(0).getId());
                 else {
                     if (! result.isEmpty())
-                        new TooMuchServersException().throwException(message, this);
+                        new TooMuchServersDiscordException().throwException(message, this);
                     else
-                        new ServerNotFoundException().throwException(message, this);
+                        new ServerNotFoundDiscordException().throwException(message, this);
                     return false;
                 }
             }
@@ -106,17 +106,17 @@ public class WhoisCommand extends AbstractCommand{
                             Character characPage = Character.getCharacter(Constants.officialURL + result.get(0));
                             Message.sendEmbed(message.getChannel(), characPage.getEmbedObject());
                         } else
-                            new CharacterTooOldException().throwException(message, this);
+                            new CharacterTooOldDiscordException().throwException(message, this);
                     }
                     else if (result.size() > 1)
-                        new TooMuchCharactersException().throwException(message, this, servers);
+                        new TooMuchCharactersDiscordException().throwException(message, this, servers);
                     else
-                        new CharacterNotFoundException().throwException(message, this);
+                        new CharacterNotFoundDiscordException().throwException(message, this);
                 }
                 else
-                    new CharacterNotFoundException().throwException(message, this);
+                    new CharacterNotFoundDiscordException().throwException(message, this);
             } catch (FileNotFoundException | HttpStatusException e){
-                new CharacterPageNotFoundException().throwException(message, this);
+                new CharacterPageNotFoundDiscordException().throwException(message, this);
             } catch(IOException e){
                 ExceptionManager.manageIOException(e, message, this);
             }  catch (Exception e) {

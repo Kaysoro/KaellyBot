@@ -4,9 +4,9 @@ import data.Constants;
 import data.Job;
 import data.User;
 import discord.Message;
-import exceptions.JobNotFoundException;
-import exceptions.LevelNotFoundException;
-import exceptions.TooMuchPossibilitiesException;
+import exceptions.JobNotFoundDiscordException;
+import exceptions.LevelNotFoundDiscordException;
+import exceptions.TooMuchPossibilitiesDiscordException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sx.blah.discord.handle.obj.IMessage;
@@ -99,9 +99,9 @@ public class JobCommand extends AbstractCommand{
                         Message.sendText(message.getChannel(), st.toString());
                     }
                 } else if (jobs.size() > 1)
-                    new TooMuchPossibilitiesException().throwException(message, this);
+                    new TooMuchPossibilitiesDiscordException().throwException(message, this);
                 else
-                    new JobNotFoundException().throwException(message, this);
+                    new JobNotFoundDiscordException().throwException(message, this);
             }
             else if (m.group(4) != null){ // add all jobs for the user
                 User author = User.getUsers().get(message.getGuild().getStringID())
@@ -122,7 +122,7 @@ public class JobCommand extends AbstractCommand{
                             + " n'est plus inscrit des annuaires.");
             }
             else
-                new LevelNotFoundException().throwException(message, this);
+                new LevelNotFoundDiscordException().throwException(message, this);
         }
 
         return false;
