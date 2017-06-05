@@ -14,7 +14,7 @@ public class RSSNotFoundDiscordException implements DiscordException {
     private final static Logger LOG = LoggerFactory.getLogger(RSSNotFoundDiscordException.class);
 
     @Override
-    public void throwException(IMessage message, Command command) {
+    public void throwException(IMessage message, Command command, Object... arguments) {
         Message.sendText(message.getChannel(), "Les news de dofus.com ne sont pas postées ici.");
     }
 }

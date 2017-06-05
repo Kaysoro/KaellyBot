@@ -14,7 +14,7 @@ public class UnknownErrorDiscordException implements DiscordException {
     private final static Logger LOG = LoggerFactory.getLogger(UnknownErrorDiscordException.class);
 
     @Override
-    public void throwException(IMessage message, Command command) {
+    public void throwException(IMessage message, Command command, Object... arguments) {
         Message.sendText(message.getChannel(), "J'ai rencontré une erreur.");
     }
 }

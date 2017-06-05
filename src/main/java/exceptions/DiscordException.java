@@ -8,5 +8,5 @@ import sx.blah.discord.handle.obj.IMessage;
  */
 public interface DiscordException {
 
-    public void throwException(IMessage message, Command command);
+    void throwException(IMessage message, Command command, Object... arguments);
 }

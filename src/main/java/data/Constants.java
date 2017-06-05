@@ -1,6 +1,5 @@
 package data;
 
-import commands.Command;
 import commands.HelpCommand;
 
 /**

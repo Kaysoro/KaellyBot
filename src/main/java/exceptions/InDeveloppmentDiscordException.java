@@ -14,7 +14,7 @@ public class InDeveloppmentDiscordException implements DiscordException {
     private final static Logger LOG = LoggerFactory.getLogger(InDeveloppmentDiscordException.class);
 
     @Override
-    public void throwException(IMessage message, Command command) {
+    public void throwException(IMessage message, Command command, Object... arguments) {
         Message.sendText(message.getChannel(), "Cette commande est en cours de développement et n'est donc "
                 + "pas disponible pour le moment.");
     }

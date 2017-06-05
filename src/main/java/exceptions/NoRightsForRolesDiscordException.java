@@ -14,7 +14,7 @@ public class NoRightsForRolesDiscordException implements DiscordException {
     private final static Logger LOG = LoggerFactory.getLogger(NoRightsForRolesDiscordException.class);
 
     @Override
-    public void throwException(IMessage message, Command command) {
+    public void throwException(IMessage message, Command command, Object... arguments) {
         Message.sendText(message.getChannel(), "Les roles ne possèdent pas de droits d'administration rattachés.");
     }
 }

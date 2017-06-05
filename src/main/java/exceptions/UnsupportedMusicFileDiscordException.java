@@ -14,7 +14,7 @@ public class UnsupportedMusicFileDiscordException implements DiscordException {
     private final static Logger LOG = LoggerFactory.getLogger(UnsupportedMusicFileDiscordException.class);
 
     @Override
-    public void throwException(IMessage message, Command command) {
+    public void throwException(IMessage message, Command command, Object... arguments) {
         Message.sendText(message.getChannel(), "Ce type de fichier n'est pas supporté.");
     }
 }

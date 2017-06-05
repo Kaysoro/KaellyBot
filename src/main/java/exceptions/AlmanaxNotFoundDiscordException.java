@@ -14,7 +14,7 @@ public class AlmanaxNotFoundDiscordException implements DiscordException {
     private final static Logger LOG = LoggerFactory.getLogger(AlmanaxNotFoundDiscordException.class);
 
     @Override
-    public void throwException(IMessage message, Command command) {
+    public void throwException(IMessage message, Command command, Object... arguments) {
         Message.sendText(message.getChannel(), "Impossible de trouver des informations sur l'almanax désiré.");
     }
 }

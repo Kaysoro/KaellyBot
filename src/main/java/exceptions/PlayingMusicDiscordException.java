@@ -14,7 +14,7 @@ public class PlayingMusicDiscordException implements DiscordException {
     private final static Logger LOG = LoggerFactory.getLogger(PlayingMusicDiscordException.class);
 
     @Override
-    public void throwException(IMessage message, Command command) {
+    public void throwException(IMessage message, Command command, Object... arguments) {
         Message.sendText(message.getChannel(), "Je suis déjà occupé à jouer de la musique, désolé.");
     }
 }

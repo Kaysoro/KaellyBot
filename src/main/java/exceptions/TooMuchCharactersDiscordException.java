@@ -16,15 +16,18 @@ public class TooMuchCharactersDiscordException implements DiscordException {
     private final static Logger LOG = LoggerFactory.getLogger(TooMuchCharactersDiscordException.class);
 
     @Override
-    public void throwException(IMessage message, Command command) {
-        Message.sendText(message.getChannel(), "Plusieurs personnages de même nom trouvés sur des serveurs différents.");
-    }
-
-    public void throwException(IMessage message, Command command, List<String> servers) {
+    public void throwException(IMessage message, Command command, Object... arguments) {
         StringBuilder st = new StringBuilder("Plusieurs personnages de même nom trouvés sur les serveurs suivants : ");
-        for(String server : servers)
-            st.append(server).append(", ");
-        st.delete(st.length() - 2, st.length()).append(".");
+
+        if (arguments.length > 0) {
+            List<String> servers = (List<String>) arguments[0];
+            for (String server : servers)
+                st.append(server).append(", ");
+            st.delete(st.length() - 2, st.length()).append(".");
+        }
+        else
+            st.delete(st.length() - 3, st.length()).append(".");
+
         Message.sendText(message.getChannel(), st.toString());
     }
 }

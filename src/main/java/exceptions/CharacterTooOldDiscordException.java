@@ -14,7 +14,7 @@ public class CharacterTooOldDiscordException implements DiscordException {
     private final static Logger LOG = LoggerFactory.getLogger(CharacterTooOldDiscordException.class);
 
     @Override
-    public void throwException(IMessage message, Command command) {
+    public void throwException(IMessage message, Command command, Object... arguments) {
         Message.sendText(message.getChannel(), "Le personnage recherché ne s'est pas connecté depuis plus "
                 + "de 6 mois : sa page personelle est désactivée.");
     }

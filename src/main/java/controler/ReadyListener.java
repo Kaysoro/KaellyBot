@@ -55,7 +55,7 @@ public class ReadyListener {
                 ClientConfig.DISCORD().getDispatcher().dispatch(new GuildCreateEvent(guild));
 
         // Check des guildes éventuellement supprimé durant l'absence
-        List<String> ids =  new ArrayList<String>(Guild.getGuilds().keySet());
+        List<String> ids =  new ArrayList<>(Guild.getGuilds().keySet());
 
         for(String guildID : ids)
             if (ClientConfig.DISCORD().getGuildByID(Long.parseLong(guildID)) == null) {

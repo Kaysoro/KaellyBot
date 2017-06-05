@@ -14,7 +14,7 @@ public class NoVoiceConnectPermissionDiscordException implements DiscordExceptio
     private final static Logger LOG = LoggerFactory.getLogger(NoVoiceConnectPermissionDiscordException.class);
 
     @Override
-    public void throwException(IMessage message, Command command) {
+    public void throwException(IMessage message, Command command, Object... arguments) {
         Message.sendText(message.getChannel(), "Je n'ai pas le droit de rejoindre " + message.getAuthor()
                 .getVoiceStateForGuild(message.getGuild()).getChannel().getName() + ".");
     }

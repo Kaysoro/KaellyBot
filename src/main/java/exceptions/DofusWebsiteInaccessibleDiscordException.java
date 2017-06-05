@@ -15,7 +15,7 @@ public class DofusWebsiteInaccessibleDiscordException implements DiscordExceptio
     private final static Logger LOG = LoggerFactory.getLogger(DofusWebsiteInaccessibleDiscordException.class);
 
     @Override
-    public void throwException(IMessage message, Command command) {
+    public void throwException(IMessage message, Command command, Object... arguments) {
         Message.sendText(message.getChannel(), Constants.officialURL + " est inaccessible pour le moment.");
     }
 }

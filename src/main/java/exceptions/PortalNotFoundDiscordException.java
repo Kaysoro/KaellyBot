@@ -14,7 +14,7 @@ public class PortalNotFoundDiscordException implements DiscordException {
     private final static Logger LOG = LoggerFactory.getLogger(PortalNotFoundDiscordException.class);
 
     @Override
-    public void throwException(IMessage message, Command command) {
+    public void throwException(IMessage message, Command command, Object... arguments) {
         Message.sendText(message.getChannel(), "Aucun portail trouvé, recommencez en étant plus précis.");
     }
 }

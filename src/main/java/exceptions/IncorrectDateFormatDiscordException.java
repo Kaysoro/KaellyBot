@@ -14,7 +14,7 @@ public class IncorrectDateFormatDiscordException implements DiscordException {
     private final static Logger LOG = LoggerFactory.getLogger(IncorrectDateFormatDiscordException.class);
 
     @Override
-    public void throwException(IMessage message, Command command) {
+    public void throwException(IMessage message, Command command, Object... arguments) {
         Message.sendText(message.getChannel(), "La date spécifiée ne correspond pas au format dd/mm/aaaa.");
     }
 }

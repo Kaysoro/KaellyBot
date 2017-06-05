@@ -14,7 +14,7 @@ public class CharacterPageNotFoundDiscordException implements DiscordException {
     private final static Logger LOG = LoggerFactory.getLogger(CharacterPageNotFoundDiscordException.class);
 
     @Override
-    public void throwException(IMessage message, Command command) {
+    public void throwException(IMessage message, Command command, Object... arguments) {
         Message.sendText(message.getChannel(), "La page perso du personnage est inaccessible.");
     }
 }

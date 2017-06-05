@@ -14,7 +14,7 @@ public class VoiceChannelLimitDiscordException implements DiscordException {
     private final static Logger LOG = LoggerFactory.getLogger(VoiceChannelLimitDiscordException.class);
 
     @Override
-    public void throwException(IMessage message, Command command) {
+    public void throwException(IMessage message, Command command, Object... arguments) {
         Message.sendText(message.getChannel(), message.getAuthor().getVoiceStateForGuild(message.getGuild()).getChannel().getName()
                 + " est complet.");
     }

@@ -16,7 +16,7 @@ public class BadUseCommandDiscordException implements DiscordException {
     private final static Logger LOG = LoggerFactory.getLogger(BadUseCommandDiscordException.class);
 
     @Override
-    public void throwException(IMessage message, Command command) {
+    public void throwException(IMessage message, Command command, Object... arguments) {
         Message.sendText(message.getChannel(), message.getAuthor() + ", " + Constants.prefixCommand
                 + command.getName() + " ne s'utilise pas comme ça. Tape `"
                 + Constants.prefixCommand + new HelpCommand().getName()

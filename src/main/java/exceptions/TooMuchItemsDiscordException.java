@@ -17,15 +17,17 @@ public class TooMuchItemsDiscordException implements DiscordException {
     private final static Logger LOG = LoggerFactory.getLogger(TooMuchItemsDiscordException.class);
 
     @Override
-    public void throwException(IMessage message, Command command) {
-        Message.sendText(message.getChannel(), "Plusieurs items de nom similaires trouvés.");
-    }
-
-    public void throwException(IMessage message, Command command, List<Pair<String, String>> items) {
+    public void throwException(IMessage message, Command command, Object... arguments) {
         StringBuilder st = new StringBuilder("Plusieurs items de nom similaires trouvés : ");
-        for(Pair<String, String> item : items)
-            st.append(item.getLeft()).append(", ");
-        st.delete(st.length() - 2, st.length()).append(".");
+
+        if (arguments.length > 0) {
+            List<Pair<String, String>> items = (List<Pair<String, String>>) arguments[0];
+            for (Pair<String, String> item : items)
+                st.append(item.getLeft()).append(", ");
+            st.delete(st.length() - 2, st.length()).append(".");
+        }
+        else
+            st.delete(st.length() - 3, st.length()).append(".");
         Message.sendText(message.getChannel(), st.toString());
     }
 }
