@@ -53,12 +53,7 @@ public class AlmanaxCommand extends AbstractCommand{
                 Almanax almanax = Almanax.get(botToAlmanax.format(date));
 
                 if (almanax != null) {
-                    StringBuilder st = new StringBuilder("**Almanax du ")
-                            .append(discordToBot.format(date)).append(" :**\n")
-                            .append(almanax.getBonus()).append("\n")
-                            .append(almanax.getOffrande()).append("\n");
-
-                    Message.sendText(message.getChannel(), st.toString());
+                    Message.sendEmbed(message.getChannel(), almanax.getEmbedObject());
                     return false;
                 } else {
                     new AlmanaxNotFoundDiscordException().throwException(message, this);

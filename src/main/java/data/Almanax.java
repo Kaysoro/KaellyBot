@@ -1,101 +1,56 @@
 package data;
 
-import exceptions.Reporter;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import sx.blah.discord.api.internal.json.objects.EmbedObject;
+import sx.blah.discord.util.EmbedBuilder;
 
 import java.io.IOException;
 import java.net.URL;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Random;
 
 /**
  * Created by steve on 06/11/2016.
  */
-public class Almanax {
+public class Almanax implements Embedded{
 
     private final static Logger LOG = LoggerFactory.getLogger(Almanax.class);
-    private static Map<String, Almanax> calendar;
 
     private String bonus;
     private String offrande;
     private String day;
+    private String quest;
+    private String ressourceURL;
 
-    private Almanax(String bonus, String offrande, String day) {
+    private Almanax(String bonus, String offrande, String day, String quest, String ressourceURL) {
         this.bonus = bonus;
         this.offrande = offrande;
         this.day = day;
+        this.quest = quest;
+        this.ressourceURL = ressourceURL;
+    }
+
+    @Override
+    public EmbedObject getEmbedObject() {
+        EmbedBuilder builder = new EmbedBuilder();
+
+        builder.withTitle("Almanax du " + day);
+        builder.withUrl(Constants.almanaxURL + day);
+        builder.withDescription(quest);
+
+        builder.withColor(new Random().nextInt(16777216));
+        builder.withImage(ressourceURL);
+
+        builder.appendField(":cyclone: Bonus : ", bonus, true);
+        builder.appendField(":moneybag: Offrande : ", offrande, true);
+
+        return builder.build();
     }
 
     public static Almanax get(String date) throws IOException {
-
-        if (! getCalendar().containsKey(date)){
-            // We have to search on the official website
-            Almanax almanax = gatheringOnlineData(date);
-            almanax.addToDatabase();
-            return almanax;
-        }
-
-        return getCalendar().get(date);
-    }
-
-    public static Map<String, Almanax> getCalendar(){
-        if (calendar == null) {
-            calendar = new HashMap<>();
-
-            String date;
-            String offrande;
-            String bonus;
-
-            Connexion connexion = Connexion.getInstance();
-            Connection connection = connexion.getConnection();
-
-            try {
-                PreparedStatement query = connection.prepareStatement("SELECT date, offrande, bonus FROM Almanax");
-                ResultSet resultSet = query.executeQuery();
-
-                while (resultSet.next()) {
-                    date = resultSet.getString("date");
-                    offrande = resultSet.getString("offrande");
-                    bonus = resultSet.getString("bonus");
-                    calendar.put(date, new Almanax(date, offrande, bonus));
-                }
-            } catch (SQLException e) {
-                Reporter.report(e);
-                LOG.error(e.getMessage());
-            }
-        }
-
-        return calendar;
-    }
-
-    private void addToDatabase() {
-        if (! getCalendar().containsKey(day)) {
-            getCalendar().put(day, this);
-
-            Connexion connexion = Connexion.getInstance();
-            Connection connection = connexion.getConnection();
-
-            try {
-                PreparedStatement request = connection.prepareStatement("INSERT INTO"
-                        + " Almanax(date, offrande, bonus) VALUES (?, ?, ?);");
-                request.setString(1, day);
-                request.setString(2, offrande);
-                request.setString(3, bonus);
-                request.executeUpdate();
-
-            } catch (SQLException e) {
-                Reporter.report(e);
-                LOG.error(e.getMessage());
-            }
-        }
+        return gatheringOnlineData(date);
     }
 
     private static Almanax gatheringOnlineData(String date) throws IOException {
@@ -103,20 +58,11 @@ public class Almanax {
         Document doc = Jsoup.parse(new URL(Constants.almanaxURL + date).openStream(), "UTF-8",
                 Constants.almanaxURL + date);
 
-        Element elem = doc.select("div.more").first();
-        String offrande = elem.select("p.fleft").first().text();
+        String bonus = doc.getElementsByClass("more").first().text();
+        String quest = doc.getElementsByClass("more-infos").first().child(0).text();
+        String ressourceURL = doc.getElementsByClass("more-infos-content").first().children().attr("src");
+        String offrande = doc.getElementsByClass("fleft").get(3).text();
 
-        elem.children().get(elem.children().size() - 1).remove();
-        String bonus = elem.text();
-
-        return new Almanax(bonus, offrande, date);
-    }
-
-    public String getBonus(){
-        return "*Bonus* : " + bonus;
-    }
-
-    public String getOffrande(){
-        return "*Offrande* : " + offrande;
+        return new Almanax(bonus, offrande, date, quest, ressourceURL);
     }
 }
