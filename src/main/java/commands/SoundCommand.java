@@ -16,10 +16,7 @@ import javax.sound.sampled.UnsupportedAudioFileException;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 import java.util.regex.Pattern;
 
 import static data.VoiceManager.setTrackTitle;
@@ -65,14 +62,7 @@ public class SoundCommand extends AbstractCommand{
 
                             if (! files.isEmpty()){
                                 File file = files.get(new Random().nextInt(files.size()));
-                                try {
-                                    voice.join();
-                                    setTrackTitle(AudioPlayer.
-                                            getAudioPlayerForGuild(message.getGuild()).queue(file), file.toString());
-                                } catch (IOException | UnsupportedAudioFileException e) {
-                                    Reporter.report(e);
-                                    LOG.error(e.getMessage());
-                                }
+                                playSound(voice, message, file);
                             }
                             else
                                 new SoundNotFoundDiscordException().throwException(message, this);
@@ -80,14 +70,7 @@ public class SoundCommand extends AbstractCommand{
                         else { // random sound
 
                             File file = getSounds().get(new Random().nextInt(getSounds().size()));
-                            try {
-                                voice.join();
-                                setTrackTitle(AudioPlayer.
-                                        getAudioPlayerForGuild(message.getGuild()).queue(file), file.toString());
-                            } catch (IOException | UnsupportedAudioFileException e) {
-                                Reporter.report(e);
-                                LOG.error(e.getMessage());
-                            }
+                            playSound(voice, message, file);
                         }
 
                     } catch (MissingPermissionsException e) {
@@ -100,6 +83,17 @@ public class SoundCommand extends AbstractCommand{
         return true;
     }
 
+    private void playSound(IVoiceChannel voice, IMessage message, File file) {
+        try {
+            voice.join();
+            setTrackTitle(AudioPlayer.
+                    getAudioPlayerForGuild(message.getGuild()).queue(file), file.toString());
+        } catch (IOException | UnsupportedAudioFileException e) {
+            Reporter.report(e);
+            LOG.error(e.getMessage());
+        }
+    }
+
     private List<File> getSounds(){
         if (sounds == null) {
             File file = new File(System.getProperty("user.dir") + File.separator + "sounds");
@@ -110,7 +104,7 @@ public class SoundCommand extends AbstractCommand{
             else
                 sounds = Arrays.asList(file.listFiles(filter));
         }
-
+        Collections.sort(sounds);
         return sounds;
     }
 
@@ -121,13 +115,24 @@ public class SoundCommand extends AbstractCommand{
 
     @Override
     public String helpDetailed() {
-        StringBuilder st = new StringBuilder();
+        StringBuilder st = new StringBuilder("\n```");
 
-        for(File f : getSounds())
-            st.append("*").append(f.getName().toLowerCase().replaceFirst("[.][^.]+$", "")).append("*, ");
-        st.delete(st.length() - 2, st.length()).append(".");
+        List<File> sounds = getSounds();
+        long sizemax = 0;
+
+        for(File f : sounds)
+            if (f.getName().replaceFirst("[.][^.]+$", "").length() > sizemax)
+                sizemax = f.getName().replaceFirst("[.][^.]+$", "").length();
+
+        for(File f : sounds) {
+            st.append(f.getName().replaceFirst("[.][^.]+$", ""));
+            for(int i = 0 ; i < sizemax-f.getName().replaceFirst("[.][^.]+$", "").length() ; i++)
+                st.append(" ");
+            st.append("\t");
+        }
+        st.append("```");
         return help()
                 + "\n`" + Constants.prefixCommand + "sound` : joue un son au hasard parmi la liste suivante : " + st.toString()
-                + "\n`" + Constants.prefixCommand + "sound *sound`* : joue le son passé en paramètre.\n";
+                + "\n`" + Constants.prefixCommand + "sound *sound*` : joue le son passé en paramètre.\n";
     }
 }
