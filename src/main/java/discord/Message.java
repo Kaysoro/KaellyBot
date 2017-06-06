@@ -2,6 +2,7 @@ package discord;
 
 import data.ClientConfig;
 import data.Constants;
+import exceptions.MissingPermissionDiscordException;
 import exceptions.Reporter;
 import org.slf4j.LoggerFactory;
 import sx.blah.discord.api.internal.json.objects.EmbedObject;
@@ -27,7 +28,10 @@ public class Message {
                 LoggerFactory.getLogger(Message.class).error(e.getErrorMessage());
                 Reporter.report(e);
             } catch(MissingPermissionsException e){
-                LoggerFactory.getLogger(Message.class).warn(Constants.name + " n'a pas les permissions pour appliquer cette requête.");
+                LoggerFactory.getLogger(Message.class).warn(Constants.name
+                        + " n'a pas les permissions pour appliquer cette requête.");
+                new MissingPermissionDiscordException()
+                        .throwException(channel.getMessageHistory().getLatestMessage(), null, e);
             } catch(Exception e){
                 LoggerFactory.getLogger(Message.class).error(e.getMessage());
                 Reporter.report(e);
@@ -50,7 +54,10 @@ public class Message {
                 LoggerFactory.getLogger(Message.class).error(e.getErrorMessage());
                 Reporter.report(e);
             } catch(MissingPermissionsException e){
-                LoggerFactory.getLogger(Message.class).warn(Constants.name + " n'a pas les permissions pour appliquer cette requête.");
+                LoggerFactory.getLogger(Message.class).warn(Constants.name
+                        + " n'a pas les permissions pour appliquer cette requête.");
+                new MissingPermissionDiscordException()
+                        .throwException(channel.getMessageHistory().getLatestMessage(), null, e);
             } catch(Exception e){
                 LoggerFactory.getLogger(Message.class).error(e.getMessage());
                 Reporter.report(e);
