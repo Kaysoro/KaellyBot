@@ -23,10 +23,21 @@ public class Guild {
     private String name;
     private List<Portal> portals;
     private boolean isPlayingMusic;
+    private String prefixe;
 
     public Guild(String id, String name){
         this.id = id;
         this.name = name;
+        isPlayingMusic = false;
+        prefixe = Constants.prefixCommand;
+
+        portals = Portal.getPortals(this);
+    }
+
+    private Guild(String id, String name, String prefixe){
+        this.id = id;
+        this.name = name;
+        this.prefixe = prefixe;
         isPlayingMusic = false;
 
         portals = Portal.getPortals(this);
@@ -41,9 +52,10 @@ public class Guild {
 
             try {
                 PreparedStatement request = connection.prepareStatement("INSERT INTO"
-                        + " Guild(id, name) VALUES (?, ?);");
+                        + " Guild(id, name, prefixe) VALUES (?, ?, ?);");
                 request.setString(1, id);
                 request.setString(2, name);
+                request.setString(3, prefixe);
                 request.executeUpdate();
 
                 for(String portal : Portal.getPortals()) {
@@ -106,23 +118,43 @@ public class Guild {
         }
     }
 
+    public void setPrefixe(String prefixe){
+        this.prefixe = prefixe;
+
+        Connexion connexion = Connexion.getInstance();
+        Connection connection = connexion.getConnection();
+
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(
+                    "UPDATE Guild SET prefixe = ? WHERE id = ?;");
+            preparedStatement.setString(1, prefixe);
+            preparedStatement.setString(2, id);
+            preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            Reporter.report(e);
+            LOG.error(e.getMessage());
+        }
+    }
+
     public static Map<String, Guild> getGuilds(){
         if (guilds == null){
             guilds = new HashMap<>();
             String id;
             String name;
+            String prefixe;
 
             Connexion connexion = Connexion.getInstance();
             Connection connection = connexion.getConnection();
 
             try {
-                PreparedStatement query = connection.prepareStatement("SELECT id, name FROM Guild");
+                PreparedStatement query = connection.prepareStatement("SELECT id, name, prefixe FROM Guild");
                 ResultSet resultSet = query.executeQuery();
 
                 while (resultSet.next()) {
                     id = resultSet.getString("id");
                     name = resultSet.getString("name");
-                    guilds.put(id, new Guild(id, name));
+                    prefixe = resultSet.getString("prefixe");
+                    guilds.put(id, new Guild(id, name, prefixe));
                 }
             } catch (SQLException e) {
                 Reporter.report(e);
@@ -139,6 +171,8 @@ public class Guild {
     public String getName(){
         return name;
     }
+
+    public String getPrefixe(){ return prefixe; }
 
     public List<Portal> getPortals(){
         return portals;
