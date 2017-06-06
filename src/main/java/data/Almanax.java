@@ -58,7 +58,8 @@ public class Almanax implements Embedded{
         Document doc = Jsoup.parse(new URL(Constants.almanaxURL + date).openStream(), "UTF-8",
                 Constants.almanaxURL + date);
 
-        String bonus = doc.getElementsByClass("more").first().text();
+        String bonus = doc.getElementsByClass("more").first()
+                .clone().getElementsByClass("more-infos").empty().parents().first().text();
         String quest = doc.getElementsByClass("more-infos").first().child(0).text();
         String ressourceURL = doc.getElementsByClass("more-infos-content").first().children().attr("src");
         String offrande = doc.getElementsByClass("fleft").get(3).text();

@@ -16,7 +16,7 @@ public abstract class ExceptionManager {
 
     private static Logger LOG = LoggerFactory.getLogger(ExceptionManager.class);
 
-    public static void manageIOException(java.lang.Exception e, IMessage message, Command command){
+    public static void manageIOException(Exception e, IMessage message, Command command){
         // First we try parsing the exception message to see if it contains the response code
         Matcher exMsgStatusCodeMatcher = Pattern.compile("^Server returned HTTP response code: (\\d+)")
                 .matcher(e.getMessage());
@@ -29,14 +29,16 @@ public abstract class ExceptionManager {
             else {
                 Reporter.report(e);
                 LOG.error(e.getMessage());
+                new UnknownErrorDiscordException().throwException(message, command);
             }
         } else {
             Reporter.report(e);
             LOG.error(e.getMessage());
+            new UnknownErrorDiscordException().throwException(message, command);
         }
     }
 
-    public static void manageException(java.lang.Exception e, IMessage message, Command command){
+    public static void manageException(Exception e, IMessage message, Command command){
         LOG.error(e.getMessage());
         Reporter.report(e);
         new UnknownErrorDiscordException().throwException(message, command);

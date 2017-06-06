@@ -17,7 +17,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
@@ -60,29 +59,11 @@ public class AlmanaxCommand extends AbstractCommand{
                     return false;
                 }
             } catch (FileNotFoundException | HttpStatusException e){
-                new CharacterPageNotFoundDiscordException().throwException(message, this);
+                new DofusWebsiteInaccessibleDiscordException().throwException(message, this);
             } catch(IOException e){
-                // First we try parsing the exception message to see if it contains the response code
-                Matcher exMsgStatusCodeMatcher = Pattern.compile("^Server returned HTTP response code: (\\d+)")
-                        .matcher(e.getMessage());
-                if(exMsgStatusCodeMatcher.find()) {
-                    int statusCode = Integer.parseInt(exMsgStatusCodeMatcher.group(1));
-                    if (statusCode >= 500 && statusCode < 600) {
-                        LOG.warn(e.getMessage());
-                        new DofusWebsiteInaccessibleDiscordException().throwException(message, this);
-                    }
-                    else {
-                        Reporter.report(e);
-                        LOG.error(e.getMessage());
-                    }
-                } else {
-                    Reporter.report(e);
-                    LOG.error(e.getMessage());
-                }
+                ExceptionManager.manageIOException(e, message, this);
             }  catch (Exception e) {
-                LOG.error(e.getMessage());
-                Reporter.report(e);
-                new UnknownErrorDiscordException().throwException(message, this);
+                ExceptionManager.manageException(e, message, this);
             }
         }
         return false;
