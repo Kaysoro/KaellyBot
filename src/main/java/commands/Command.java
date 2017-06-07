@@ -1,14 +1,16 @@
 package commands;
 
 import sx.blah.discord.handle.obj.IMessage;
-import java.util.regex.Pattern;
+
+import java.util.regex.Matcher;
 
 /**
  * Created by steve on 14/07/2016.
  */
 public interface Command {
-    Pattern getName();
-    Pattern getPattern();
+    String getName();
+    String getPattern();
+    Matcher getMatcher(IMessage message);
     boolean request(IMessage message);
 
     /**
@@ -48,12 +50,14 @@ public interface Command {
     void setAdmin(boolean isAdmin);
 
     /**
+     * @param prefixe Prefixe for command
      * @return Short description of the command
      */
-    String help();
+    String help(String prefixe);
 
     /**
+     * @param prefixe Prefixe for command
      * @return Detailed description of the command
      */
-    String helpDetailed();
+    String helpDetailed(String prefixe);
 }

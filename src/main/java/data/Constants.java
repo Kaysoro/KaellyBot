@@ -84,6 +84,11 @@ public class Constants {
     public final static int nicknameLimit = 32;
 
     /**
+     * Character limit for prefixe discord
+     */
+    public final static int prefixeLimit = 3;
+
+    /**
      * Youtube URL for music, without the code
      */
     public final static String youtubeURL = "https://www.youtube.com/watch?v=";
@@ -104,6 +109,20 @@ public class Constants {
             + "` pour avoir la liste complète ! :blush:"
             + "\n\n{0}, en tant qu'administrateur de {1}, tu possèdes un ensemble de droits plus poussées "
             + "et tu peux par exemple autoriser ou non dans un des canals la réception des tweets émis par le "
-            + "compte officiel " + Constants.game + "."
+            + "compte officiel " + game + "."
             + "\n\nC'est pas génial tout ça ? J'espère que nous allons bien nous amuser tous ensemble ! :smile:";
+
+    /**
+     * Discord invite link
+     */
+    public final static String discordInvite = "https://discord.gg/VsrbrYC";
+
+    /**
+     * Message for about Kaelly command
+     */
+    public final static String about = name + " est destinée à fournir des commandes utiles à la "
+            + "communauté de dofus !\nL'intégralité de son code est libre d'accès et est disponible ici : "
+            + git + "\nSi vous avez des questions, des suggestions ou que vous souhaitez juste "
+            + "passer un coucou, rejoignez le discord de " + name
+            + " : " + discordInvite + "\nPromis, on ne mord pas ! :yum:";
 }

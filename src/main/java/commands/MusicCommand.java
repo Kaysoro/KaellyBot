@@ -15,7 +15,7 @@ import javax.sound.sampled.UnsupportedAudioFileException;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.regex.Pattern;
+import java.util.regex.Matcher;
 
 import static data.VoiceManager.setTrackTitle;
 
@@ -27,9 +27,7 @@ public class MusicCommand extends AbstractCommand{
     private final static Logger LOG = LoggerFactory.getLogger(MusicCommand.class);
 
     public MusicCommand(){
-        super(Pattern.compile("music"),
-        Pattern.compile("^(" + Constants.prefixCommand
-                + "music)(\\s+-join|\\s+-play|\\s+-pause|\\s+-skip|\\s+-shuffle|\\s+-leave)?(\\s+http.+)?$"));
+        super("music","(\\s+-join|\\s+-play|\\s+-pause|\\s+-skip|\\s+-shuffle|\\s+-leave)?(\\s+http.+)?");
         setPublic(false);
         setUsableInMP(false);
     }
@@ -37,27 +35,29 @@ public class MusicCommand extends AbstractCommand{
     @Override
     public boolean request(IMessage message) {
         if (super.request(message)) {
-            if (m.group(2) == null && m.group(3) != null){ // Add music in the queue
+            Matcher m = getMatcher(message);
+            m.find();
+            if (m.group(1) == null && m.group(2) != null){ // Add music in the queue
                 Message.sendText(message.getChannel(), "Musique ajouté à la liste de lecture.");
-                queueUrl(message, m.group(3).replaceAll("\\s+", ""));
+                queueUrl(message, m.group(2).replaceAll("\\s+", ""));
             }
-            else if(m.group(2) != null && m.group(3) == null){ // Music command
-                if (m.group(2).matches("\\s+-join")){
+            else if(m.group(1) != null && m.group(2) == null){ // Music command
+                if (m.group(1).matches("\\s+-join")){
                     join(message);
                 }
-                else if (m.group(2).matches("\\s+-play")){
+                else if (m.group(1).matches("\\s+-play")){
                     AudioPlayer.getAudioPlayerForGuild(message.getGuild()).setPaused(false);
                 }
-                else if (m.group(2).matches("\\s+-pause")){
+                else if (m.group(1).matches("\\s+-pause")){
                     AudioPlayer.getAudioPlayerForGuild(message.getGuild()).setPaused(true);
                 }
-                else if (m.group(2).matches("\\s+-skip")){
+                else if (m.group(1).matches("\\s+-skip")){
                     AudioPlayer.getAudioPlayerForGuild(message.getGuild()).skip();
                 }
-                else if (m.group(2).matches("\\s+-shuffle")){
+                else if (m.group(1).matches("\\s+-shuffle")){
                     AudioPlayer.getAudioPlayerForGuild(message.getGuild()).shuffle();
                 }
-                else if (m.group(2).matches("\\s+-leave")){
+                else if (m.group(1).matches("\\s+-leave")){
                     leave(message);
                 }
             }
@@ -114,19 +114,19 @@ public class MusicCommand extends AbstractCommand{
     }
 
     @Override
-    public String help() {
-        return "**" + Constants.prefixCommand + "music** permet d'écouter de la musique provenant de Youtube dans un canal vocal.";
+    public String help(String prefixe) {
+        return "**" + prefixe + name + "** permet d'écouter de la musique provenant de Youtube dans un canal vocal.";
     }
 
     @Override
-    public String helpDetailed() {
-        return help()
-                + "\n`" + Constants.prefixCommand + "music -join` : rejoint le canal vocal dans lequel vous êtes."
-                + "\n`" + Constants.prefixCommand + "music `*`" + Constants.youtubeURL + "yourVideo`* : ajoute la vidéo youtube à la liste de lecture."
-                + "\n`" + Constants.prefixCommand + "music -play` : joue la musique actuelle."
-                + "\n`" + Constants.prefixCommand + "music -pause` : arrête la musique actuelle."
-                + "\n`" + Constants.prefixCommand + "music -skip` : passe à la musique suivante."
-                + "\n`" + Constants.prefixCommand + "music -shuffle` : mélange la liste de lecture."
-                + "\n`" + Constants.prefixCommand + "music -leave` : quitte le canal vocal.\n";
+    public String helpDetailed(String prefixe) {
+        return help(prefixe)
+                + "\n`" + prefixe + name + " -join` : rejoint le canal vocal dans lequel vous êtes."
+                + "\n`" + prefixe + name + " `*`" + Constants.youtubeURL + "yourVideo`* : ajoute la vidéo youtube à la liste de lecture."
+                + "\n`" + prefixe + name + " -play` : joue la musique actuelle."
+                + "\n`" + prefixe + name + " -pause` : arrête la musique actuelle."
+                + "\n`" + prefixe + name + " -skip` : passe à la musique suivante."
+                + "\n`" + prefixe + name + " -shuffle` : mélange la liste de lecture."
+                + "\n`" + prefixe + name + " -leave` : quitte le canal vocal.\n";
     }
 }

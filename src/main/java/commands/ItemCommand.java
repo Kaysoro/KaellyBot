@@ -24,7 +24,7 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Pattern;
+import java.util.regex.Matcher;
 
 /**
  * Created by steve on 14/07/2016.
@@ -40,15 +40,15 @@ public class ItemCommand extends AbstractCommand{
     private final static String and = "&EFFECTMAIN_and_or=AND";
 
     public ItemCommand(){
-        super(Pattern.compile("item"),
-                Pattern.compile("^(" + Constants.prefixCommand + "item)\\s+(.*)$"));
+        super("item", "\\s+(.*)");
     }
 
     @Override
     public boolean request(IMessage message) {
         if (super.request(message)){
-
-            String name = m.group(2).trim().toLowerCase();
+            Matcher m = getMatcher(message);
+            m.find();
+            String name = m.group(1).trim().toLowerCase();
 
             StringBuilder urlEquipement = null;
             StringBuilder urlWeapon = null;
@@ -132,14 +132,14 @@ public class ItemCommand extends AbstractCommand{
     }
 
     @Override
-    public String help() {
-        return "**" + Constants.prefixCommand + "item** renvoit les statistiques d'un item du jeu Dofus.";
+    public String help(String prefixe) {
+        return "**" + prefixe + name + "** renvoit les statistiques d'un item du jeu Dofus.";
     }
 
     @Override
-    public String helpDetailed() {
-        return help()
-                + "\n`" + Constants.prefixCommand + "item `*`item`* : renvoit les statistiques de l'item spécifié :"
+    public String helpDetailed(String prefixe) {
+        return help(prefixe)
+                + "\n`" + prefixe + name + " `*`item`* : renvoit les statistiques de l'item spécifié :"
                 + " son nom peut être approximatif s'il est suffisemment précis. A noter que les items inférieurs"
                 + " au niveau " + levelMin + " sont exclus.\n";
     }

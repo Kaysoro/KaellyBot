@@ -1,7 +1,6 @@
 package commands;
 
 import data.ClientConfig;
-import data.Constants;
 import data.Guild;
 import exceptions.*;
 import org.slf4j.Logger;
@@ -17,7 +16,7 @@ import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.*;
-import java.util.regex.Pattern;
+import java.util.regex.Matcher;
 
 import static data.VoiceManager.setTrackTitle;
 
@@ -30,9 +29,7 @@ public class SoundCommand extends AbstractCommand{
     private static List<File> sounds;
 
     public SoundCommand(){
-        super(Pattern.compile("sound"),
-        Pattern.compile("^(" + Constants.prefixCommand
-                + "sound)(\\s+.+)?$"));
+        super("sound","(\\s+.+)?");
         setUsableInMP(false);
     }
 
@@ -53,8 +50,10 @@ public class SoundCommand extends AbstractCommand{
                     new VoiceChannelLimitDiscordException().throwException(message, this);
                 else {
                     try {
-                        if(m.group(2) != null){ // Specific sound
-                            String value = m.group(2).trim().toLowerCase();
+                        Matcher m = getMatcher(message);
+                        m.find();
+                        if(m.group(1) != null){ // Specific sound
+                            String value = m.group(1).trim().toLowerCase();
                             List<File> files = new ArrayList<>();
                             for(File file : getSounds())
                                 if (file.getName().toLowerCase().startsWith(value))
@@ -109,12 +108,12 @@ public class SoundCommand extends AbstractCommand{
     }
 
     @Override
-    public String help() {
-        return "**" + Constants.prefixCommand + "sound** joue un son en vous rejoignant succintement dans votre canal vocal.";
+    public String help(String prefixe) {
+        return "**" + prefixe + name + "** joue un son en vous rejoignant succintement dans votre canal vocal.";
     }
 
     @Override
-    public String helpDetailed() {
+    public String helpDetailed(String prefixe) {
         StringBuilder st = new StringBuilder("\n```");
 
         List<File> sounds = getSounds();
@@ -131,8 +130,8 @@ public class SoundCommand extends AbstractCommand{
             st.append("\t");
         }
         st.append("```");
-        return help()
-                + "\n`" + Constants.prefixCommand + "sound` : joue un son au hasard parmi la liste suivante : " + st.toString()
-                + "\n`" + Constants.prefixCommand + "sound *sound*` : joue le son passé en paramètre.\n";
+        return help(prefixe)
+                + "\n`" + prefixe + name + "` : joue un son au hasard parmi la liste suivante : " + st.toString()
+                + "\n`" + prefixe + name + " `*`sound`* : joue le son passé en paramètre.\n";
     }
 }

@@ -23,7 +23,7 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Pattern;
+import java.util.regex.Matcher;
 
 /**
  * Created by steve on 14/07/2016.
@@ -41,15 +41,16 @@ public class WhoisCommand extends AbstractCommand{
     private final static String forGuild = "guild_id[]=";
 
     public WhoisCommand(){
-        super(Pattern.compile("whois"),
-                Pattern.compile("^(" + Constants.prefixCommand + "whois)(\\s+[\\p{L}|-]+)(\\s+.+)?$"));
+        super("whois","(\\s+[\\p{L}|-]+)(\\s+.+)?");
     }
 
     @Override
     public boolean request(IMessage message) {
         if (super.request(message)) {
 
-            String pseudo = m.group(2).trim().toLowerCase();
+            Matcher m = getMatcher(message);
+            m.find();
+            String pseudo = m.group(1).trim().toLowerCase();
 
             StringBuilder url = null;
             try {
@@ -61,8 +62,8 @@ public class WhoisCommand extends AbstractCommand{
                 return false;
             }
 
-            if (m.group(3) != null){
-                String serverName = m.group(3).trim().toLowerCase();
+            if (m.group(2) != null){
+                String serverName = m.group(2).trim().toLowerCase();
                 List<ServerDofus> result = new ArrayList<>();
 
                 for(ServerDofus server : ServerDofus.getServersDofus())
@@ -127,14 +128,14 @@ public class WhoisCommand extends AbstractCommand{
     }
 
     @Override
-    public String help() {
-        return "**" + Constants.prefixCommand + "whois** donne la page personnelle d'un personnage.";
+    public String help(String prefixe) {
+        return "**" + prefixe + name + "** donne la page personnelle d'un personnage.";
     }
 
     @Override
-    public String helpDetailed() {
-        return help()
-                + "\n`" + Constants.prefixCommand + "whois *pseudo`* : donne la page personnelle associée au pseudo. Celui-ci doit être exact."
-                + "\n`" + Constants.prefixCommand + "whois *pseudo serveur`* : est à utiliser lorsque le pseudo ne suffit pas pour déterminer la fiche d'un personnage.\n";
+    public String helpDetailed(String prefixe) {
+        return help(prefixe)
+                + "\n`" + prefixe + name + " *pseudo`* : donne la page personnelle associée au pseudo. Celui-ci doit être exact."
+                + "\n`" + prefixe + name + " *pseudo serveur`* : est à utiliser lorsque le pseudo ne suffit pas pour déterminer la fiche d'un personnage.\n";
     }
 }
