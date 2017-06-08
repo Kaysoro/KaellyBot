@@ -57,7 +57,7 @@ public class Rule34Command extends AbstractCommand{
                         Message.sendText(message.getChannel(), link);
                     } else
                         Message.sendText(message.getChannel(), "Aucune image ne correspond à `"
-                                + m.group(2).trim() + "`.");
+                                + m.group(1).trim() + "`.");
 
                 } catch (Exception e) {
                     new UnknownErrorDiscordException().throwException(message, this);
