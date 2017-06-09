@@ -30,7 +30,7 @@ public class PrefixeCommand extends AbstractCommand{
 
             User author = User.getUsers().get(message.getGuild().getStringID()).get(message.getAuthor().getStringID());
 
-            if (author.getRights() >= User.RIGHT_ADMIN) {
+            if (author.getRights() >= User.RIGHT_MODERATOR) {
                 Matcher m = getMatcher(message);
                 m.find();
                 String newPrefixe = m.group(1).trim();
@@ -39,6 +39,9 @@ public class PrefixeCommand extends AbstractCommand{
                     Guild.getGuilds().get(message.getGuild().getStringID()).setPrefixe(newPrefixe);
                     Message.sendText(message.getChannel(), "Changement réussi. Pour invoquer une commande, "
                             + "il faudra désormais utiliser le préfixe *" + newPrefixe + "*.");
+                    Message.sendText(message.getGuild().getOwner().getOrCreatePMChannel(), "RÉCAPITULATIF : "
+                            + "pour invoquer une commande, il faudra désormais utiliser le préfixe *" + newPrefixe
+                            + "* sur *" + message.getGuild().getName() + "*.");
                     return true;
                 }
                 else
@@ -52,7 +55,7 @@ public class PrefixeCommand extends AbstractCommand{
 
     @Override
     public String help(String prefixe) {
-        return "**" + prefixe + name + "** change le préfixe utilisé pour invoquer une commande. Niveau administrateur uniquement.";
+        return "**" + prefixe + name + "** change le préfixe utilisé pour invoquer une commande. Niveau modérateur minimum requis.";
     }
 
     @Override
