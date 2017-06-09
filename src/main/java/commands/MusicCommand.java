@@ -73,7 +73,9 @@ public class MusicCommand extends AbstractCommand{
             new NotInVocalChannelDiscordException().throwException(message, this);
         else {
             IVoiceChannel voice = message.getAuthor().getVoiceStateForGuild(message.getGuild()).getChannel();
-            if (!voice.getModifiedPermissions(ClientConfig.DISCORD().getOurUser()).contains(Permissions.VOICE_CONNECT))
+            if (!voice.getModifiedPermissions(ClientConfig.DISCORD().getOurUser()).contains(Permissions.VOICE_CONNECT)
+                    && ! ClientConfig.DISCORD().getOurUser().getPermissionsForGuild(message.getGuild())
+                    .contains(Permissions.VOICE_CONNECT))
                 new NoVoiceConnectPermissionDiscordException().throwException(message, this);
             else if (voice.getConnectedUsers().size() >= voice.getUserLimit() && voice.getUserLimit() != 0)
                 new VoiceChannelLimitDiscordException().throwException(message, this);
