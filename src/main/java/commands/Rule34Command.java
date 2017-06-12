@@ -61,7 +61,7 @@ public class Rule34Command extends AbstractCommand{
 
                 } catch (Exception e) {
                     new UnknownErrorDiscordException().throwException(message, this);
-                    Reporter.report(e);
+                    Reporter.report(e, message.getContent());
                     LOG.error(e.getMessage());
                 }
             }

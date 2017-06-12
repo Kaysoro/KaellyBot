@@ -33,14 +33,14 @@ public abstract class ExceptionManager {
             }
         } else {
             Reporter.report(e);
-            LOG.error(e.getMessage());
+            LOG.error(e.getMessage(), message.getContent());
             new UnknownErrorDiscordException().throwException(message, command);
         }
     }
 
     public static void manageException(Exception e, IMessage message, Command command){
         LOG.error(e.getMessage());
-        Reporter.report(e);
+        Reporter.report(e, message.getContent());
         new UnknownErrorDiscordException().throwException(message, command);
     }
 }

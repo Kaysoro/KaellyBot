@@ -36,12 +36,16 @@ public class Reporter {
         return instance;
     }
 
-    public void send(Exception e) {
+    public void send(Exception e, Object... others) {
         if (channel != null) {
             StringBuilder st = new StringBuilder(e.toString());
 
             for(int i = 0; i < e.getStackTrace().length; i++)
                 st.append("\n").append(e.getStackTrace()[i]);
+
+            for(int i = 0; i < others.length; i++)
+                st.append("[").append(others[i].toString()).append("]");
+
             try {
                 RequestBuffer.request(() -> {
                     new MessageBuilder(ClientConfig.DISCORD())
@@ -56,7 +60,7 @@ public class Reporter {
         }
     }
 
-    public static void report(Exception e){
-        Reporter.getInstance().send(e);
+    public static void report(Exception e, Object... others){
+        Reporter.getInstance().send(e, others);
     }
 }

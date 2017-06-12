@@ -108,7 +108,7 @@ public class MusicCommand extends AbstractCommand{
             new MalformedMusicURLDiscordException().throwException(message, this);
         } catch (IOException e) {
             LOG.error(e.getMessage());
-            Reporter.report(e);
+            Reporter.report(e, message.getContent());
             new UnknownErrorDiscordException().throwException(message, this);
         } catch (UnsupportedAudioFileException e) {
             new UnsupportedMusicFileDiscordException().throwException(message, this);

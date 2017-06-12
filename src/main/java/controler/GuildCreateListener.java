@@ -49,6 +49,10 @@ public class GuildCreateListener {
                 else
                     Message.sendText(event.getGuild().getOwner().getOrCreatePMChannel(), customMessage);
 
+                Message.sendText(ClientConfig.DISCORD().getChannelByID(Constants.chanReportID),
+                        "[NEW] **" + guild.getName() + "**, +" + event.getGuild().getUsers().size()
+                                +  " utilisateurs");
+
             }
         }
 }

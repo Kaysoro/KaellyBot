@@ -1,7 +1,9 @@
 package controler;
 
+import data.ClientConfig;
 import data.Constants;
 import data.Guild;
+import discord.Message;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sx.blah.discord.api.events.EventSubscriber;
@@ -24,5 +26,9 @@ public class GuildLeaveListener {
 
             LOG.info("La guilde " + event.getGuild().getStringID() + " - " + event.getGuild().getName()
                     + " a supprimé " + Constants.name);
+
+            Message.sendText(ClientConfig.DISCORD().getChannelByID(Constants.chanReportID),
+                    "[LOSE] **" + event.getGuild().getName() + "**, -" + event.getGuild().getUsers().size()
+                            +  " utilisateurs");
         }
 }
