@@ -150,7 +150,7 @@ public class JobCommand extends AbstractCommand{
     @Override
     public String helpDetailed() {
         return help()
-                + "\n`" + Constants.prefixCommand + "job` : renvoit la liste des métiers du jeu Dofus."
+                + "\n`" + Constants.prefixCommand + "job` : renvoie la liste des métiers du jeu Dofus."
                 + "\n`" + Constants.prefixCommand + "job `*`métier`* : renvoit l'annuaire des artisans pour ce métier."
                 + "\n`" + Constants.prefixCommand + "job `*`métier niveau`* : vous ajoute à l'annuaire du métier correspondant." +
                 " Si vous indiquez 0, vous êtes supprimé de l'annuaire pour ce métier."
