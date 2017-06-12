@@ -5,8 +5,8 @@ KaellyBOT est destinée à fournir des commandes utiles à la communauté de DOF
 
 ## Commandes
 
-La commande `!help` explique chaque commande.
-La commande `!help command` explique de façon détaillée la commande spécifiée.
+La commande `!help` explique chaque commande.  
+La commande `!help command` explique de façon détaillée la commande spécifiée.  
 
 ### Almanax
 
