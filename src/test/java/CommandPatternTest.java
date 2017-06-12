@@ -12,20 +12,23 @@ public class CommandPatternTest extends TestCase {
     // BASIC COMMANDS
 
     public void testAlmanaxCommand(){
-        Pattern pattern = new AlmanaxCommand().getPattern();
+        Command cmd = new AlmanaxCommand();
+        Pattern pattern = Pattern.compile("^" + Constants.prefixCommand + cmd.getName() + cmd.getPattern() + "$");
 
         assertTrue(pattern.matcher(Constants.prefixCommand + "almanax").find());
         assertTrue(pattern.matcher(Constants.prefixCommand + "almanax 20/02/2016").find());
     }
 
     public void testAboutCommand(){
-        Pattern pattern = new AboutCommand().getPattern();
+        Command cmd = new AboutCommand();
+        Pattern pattern = Pattern.compile("^" + Constants.prefixCommand + cmd.getName() + cmd.getPattern() + "$");
 
         assertTrue(pattern.matcher(Constants.prefixCommand + "about").find());
     }
 
     public void testHelpCommand(){
-        Pattern pattern = new HelpCommand().getPattern();
+        Command cmd = new HelpCommand();
+        Pattern pattern = Pattern.compile("^" + Constants.prefixCommand + cmd.getName() + cmd.getPattern() + "$");
 
         assertTrue(pattern.matcher(Constants.prefixCommand + "help").find());
         assertTrue(pattern.matcher(Constants.prefixCommand + "help help").find());
@@ -35,7 +38,8 @@ public class CommandPatternTest extends TestCase {
     }
 
     public void testItemCommand(){
-        Pattern pattern = new ItemCommand().getPattern();
+        Command cmd = new ItemCommand();
+        Pattern pattern = Pattern.compile("^" + Constants.prefixCommand + cmd.getName() + cmd.getPattern() + "$");
 
         assertTrue(pattern.matcher(Constants.prefixCommand + "item test").find());
         assertTrue(pattern.matcher(Constants.prefixCommand + "item tést test").find());
@@ -43,7 +47,8 @@ public class CommandPatternTest extends TestCase {
     }
 
     public void testJobCommand(){
-        Pattern pattern = new JobCommand().getPattern();
+        Command cmd = new JobCommand();
+        Pattern pattern = Pattern.compile("^" + Constants.prefixCommand + cmd.getName() + cmd.getPattern() + "$");
 
         assertTrue(pattern.matcher(Constants.prefixCommand + "job job").find());
         assertTrue(pattern.matcher(Constants.prefixCommand + "job job 1").find());
@@ -56,7 +61,8 @@ public class CommandPatternTest extends TestCase {
     }
 
     public void testMapCommand(){
-        Pattern pattern = new MapCommand().getPattern();
+        Command cmd = new MapCommand();
+        Pattern pattern = Pattern.compile("^" + Constants.prefixCommand + cmd.getName() + cmd.getPattern() + "$");
 
         assertTrue(pattern.matcher(Constants.prefixCommand + "map").find());
         assertTrue(pattern.matcher(Constants.prefixCommand + "map I II III").find());
@@ -67,7 +73,8 @@ public class CommandPatternTest extends TestCase {
     }
 
     public void testPortalCommand(){
-        Pattern pattern = new PortalCommand().getPattern();
+        Command cmd = new PortalCommand();
+        Pattern pattern = Pattern.compile("^" + Constants.prefixCommand + cmd.getName() + cmd.getPattern() + "$");
 
         assertTrue(pattern.matcher(Constants.prefixCommand + "pos").find());
         assertTrue(pattern.matcher(Constants.prefixCommand + "pos dimension").find());
@@ -81,7 +88,8 @@ public class CommandPatternTest extends TestCase {
     }
 
     public void testRightCommand(){
-        Pattern pattern = new RightCommand().getPattern();
+        Command cmd = new RightCommand();
+        Pattern pattern = Pattern.compile("^" + Constants.prefixCommand + cmd.getName() + cmd.getPattern() + "$");
 
         assertTrue(pattern.matcher(Constants.prefixCommand + "right").find());
         assertTrue(pattern.matcher(Constants.prefixCommand + "right <@!1234>").find());
@@ -92,7 +100,8 @@ public class CommandPatternTest extends TestCase {
     }
 
     public void testMusicCommand(){
-        Pattern pattern = new MusicCommand().getPattern();
+        Command cmd = new MusicCommand();
+        Pattern pattern = Pattern.compile("^" + Constants.prefixCommand + cmd.getName() + cmd.getPattern() + "$");
 
         assertTrue(pattern.matcher(Constants.prefixCommand + "music https://www.youtube.com/watch?v=dQw4w9WgXcQ").find());
         assertTrue(pattern.matcher(Constants.prefixCommand + "music -join").find());
@@ -104,7 +113,8 @@ public class CommandPatternTest extends TestCase {
     }
 
     public void testTwitterCommand(){
-        Pattern pattern = new TwitterCommand().getPattern();
+        Command cmd = new TwitterCommand();
+        Pattern pattern = Pattern.compile("^" + Constants.prefixCommand + cmd.getName() + cmd.getPattern() + "$");
 
         assertTrue(pattern.matcher(Constants.prefixCommand + "twitter true").find());
         assertTrue(pattern.matcher(Constants.prefixCommand + "twitter on").find());
@@ -116,7 +126,8 @@ public class CommandPatternTest extends TestCase {
     }
 
     public void testRSSCommand(){
-        Pattern pattern = new RSSCommand().getPattern();
+        Command cmd = new RSSCommand();
+        Pattern pattern = Pattern.compile("^" + Constants.prefixCommand + cmd.getName() + cmd.getPattern() + "$");
 
         assertTrue(pattern.matcher(Constants.prefixCommand + "rss true").find());
         assertTrue(pattern.matcher(Constants.prefixCommand + "rss on").find());
@@ -128,21 +139,24 @@ public class CommandPatternTest extends TestCase {
     }
 
     public void testRule34Command(){
-        Pattern pattern = new Rule34Command().getPattern();
+        Command cmd = new Rule34Command();
+        Pattern pattern = Pattern.compile("^" + Constants.prefixCommand + cmd.getName() + cmd.getPattern() + "$");
 
         assertFalse(pattern.matcher(Constants.prefixCommand + "rule34").find());
         assertTrue(pattern.matcher(Constants.prefixCommand + "rule34 dofus").find());
     }
 
     public void testSoundCommand(){
-        Pattern pattern = new SoundCommand().getPattern();
+        Command cmd = new SoundCommand();
+        Pattern pattern = Pattern.compile("^" + Constants.prefixCommand + cmd.getName() + cmd.getPattern() + "$");
 
         assertTrue(pattern.matcher(Constants.prefixCommand + "sound").find());
         assertTrue(pattern.matcher(Constants.prefixCommand + "sound dofus").find());
     }
 
     public void testRandomCommand(){
-        Pattern pattern = new RandomCommand().getPattern();
+        Command cmd = new RandomCommand();
+        Pattern pattern = Pattern.compile("^" + Constants.prefixCommand + cmd.getName() + cmd.getPattern() + "$");
 
         assertTrue(pattern.matcher(Constants.prefixCommand + "rdm").find());
         assertTrue(pattern.matcher(Constants.prefixCommand + "rdm 200").find());
@@ -151,7 +165,8 @@ public class CommandPatternTest extends TestCase {
     }
 
     public void testWhoisCommand(){
-        Pattern pattern = new WhoisCommand().getPattern();
+        Command cmd = new WhoisCommand();
+        Pattern pattern = Pattern.compile("^" + Constants.prefixCommand + cmd.getName() + cmd.getPattern() + "$");
 
         assertTrue(pattern.matcher(Constants.prefixCommand + "whois test").find());
         assertTrue(pattern.matcher(Constants.prefixCommand + "whois test-test").find());
@@ -160,9 +175,19 @@ public class CommandPatternTest extends TestCase {
         assertFalse(pattern.matcher(Constants.prefixCommand + "whois").find());
     }
 
+    public void testPrefixeCommand(){
+        Command cmd = new PrefixeCommand();
+        Pattern pattern = Pattern.compile("^" + Constants.prefixCommand + cmd.getName() + cmd.getPattern() + "$");
+
+        assertFalse(pattern.matcher(Constants.prefixCommand + "prefixe").find());
+        assertTrue(pattern.matcher(Constants.prefixCommand + "prefixe test").find());
+        assertTrue(pattern.matcher(Constants.prefixCommand + "prefixe !&").find());
+    }
+
     // ADMIN COMMANDS
     public void testAdminCommand(){
-        Pattern pattern = new AdminCommand().getPattern();
+        Command cmd = new AdminCommand();
+        Pattern pattern = Pattern.compile("^" + Constants.prefixCommand + cmd.getName() + cmd.getPattern() + "$");
 
         assertTrue(pattern.matcher(Constants.prefixCommand + "admin").find());
         assertTrue(pattern.matcher(Constants.prefixCommand + "admin help").find());
@@ -172,7 +197,8 @@ public class CommandPatternTest extends TestCase {
     }
 
     public void testAnnounceCommand(){
-        Pattern pattern = new AnnounceCommand().getPattern();
+        Command cmd = new AnnounceCommand();
+        Pattern pattern = Pattern.compile("^" + Constants.prefixCommand + cmd.getName() + cmd.getPattern() + "$");
 
         assertTrue(pattern.matcher(Constants.prefixCommand + "announce test").find());
         assertTrue(pattern.matcher(Constants.prefixCommand + "announce -confirm test").find());
@@ -180,7 +206,8 @@ public class CommandPatternTest extends TestCase {
     }
 
     public void testTalkCommand(){
-        Pattern pattern = new TalkCommand().getPattern();
+        Command cmd = new TalkCommand();
+        Pattern pattern = Pattern.compile("^" + Constants.prefixCommand + cmd.getName() + cmd.getPattern() + "$");
 
         assertTrue(pattern.matcher(Constants.prefixCommand + "talk test").find());
         assertTrue(pattern.matcher(Constants.prefixCommand + "talk 5681 test").find());

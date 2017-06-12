@@ -84,6 +84,11 @@ public class Constants {
     public final static int nicknameLimit = 32;
 
     /**
+     * Character limit for prefixe discord
+     */
+    public final static int prefixeLimit = 3;
+
+    /**
      * Youtube URL for music, without the code
      */
     public final static String youtubeURL = "https://www.youtube.com/watch?v=";
@@ -98,12 +103,26 @@ public class Constants {
      */
     public final static String msgJoinGuild = "Salut et merci pour l'invitation ! Moi c'est " + name
             + ", je suis un robot dédié au jeu dofus; j'ai quelques commandes dans ma manche qui "
-            + "peuvent t'intéresser et qui me permettent d'afficher des item du jeu, des pages personnelles de joueurs, "
+            + "peuvent t'intéresser et qui me permettent d'afficher des items du jeu, des pages personnelles de joueurs, "
             + "gérer un annuaire de vos métiers ou encore des positions de portails !"
             + "\nTu veux en savoir plus ? Ecris `" + prefixCommand + new HelpCommand().getName().toString()
             + "` pour avoir la liste complète ! :blush:"
-            + "\n\n{0}, en tant qu'administrateur de {1}, tu possèdes un ensemble de droits plus poussées "
-            + "et tu peux par exemple autoriser ou non dans un des canals la réception des tweets émis par le "
-            + "compte officiel " + Constants.game + "."
+            + "\n\n{0}, en tant qu'administrateur de {1}, tu possèdes un ensemble de droits plus poussés "
+            + "et tu peux par exemple autoriser ou non dans un des salons la réception des tweets émis par le "
+            + "compte officiel " + game + "."
             + "\n\nC'est pas génial tout ça ? J'espère que nous allons bien nous amuser tous ensemble ! :smile:";
+
+    /**
+     * Discord invite link
+     */
+    public final static String discordInvite = "https://discord.gg/VsrbrYC";
+
+    /**
+     * Message for about Kaelly command
+     */
+    public final static String about = name + " est destinée à fournir des commandes utiles à la "
+            + "communauté de dofus !\nL'intégralité de son code est libre d'accès et est disponible ici : "
+            + git + "\nSi vous avez des questions, des suggestions ou que vous souhaitez juste "
+            + "passer un coucou, rejoignez le discord de " + name
+            + " : " + discordInvite + "\nPromis, on ne mord pas ! :yum:";
 }

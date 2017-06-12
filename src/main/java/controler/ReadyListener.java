@@ -1,6 +1,5 @@
 package controler;
 
-import commands.HelpCommand;
 import data.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -65,7 +64,7 @@ public class ReadyListener {
             }
 
         // Joue à...
-        ClientConfig.DISCORD().changePlayingText(Constants.prefixCommand + new HelpCommand().getName().pattern());
+        ClientConfig.DISCORD().changePlayingText(Constants.discordInvite);
 
         LOG.info("Ecoute des flux RSS du site Dofus...");
         RSSFinder.start();

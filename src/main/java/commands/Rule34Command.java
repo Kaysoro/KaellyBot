@@ -1,6 +1,5 @@
 package commands;
 
-import data.Constants;
 import discord.Message;
 import exceptions.NSFWNotAuthorizedDiscordException;
 import exceptions.Reporter;
@@ -14,7 +13,7 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import java.net.URL;
 import java.util.Random;
-import java.util.regex.Pattern;
+import java.util.regex.Matcher;
 
 /**
  * Created by steve on 14/07/2016.
@@ -25,8 +24,7 @@ public class Rule34Command extends AbstractCommand{
     protected static String URL = "https://rule34.xxx/index.php?page=dapi&s=post&q=index&limit=1";
 
     public Rule34Command(){
-        super(Pattern.compile("rule34"),
-              Pattern.compile("^(" + Constants.prefixCommand + "rule34)(\\s+.+)$"));
+        super("rule34", "(\\s+.+)");
         setUsableInMP(false);
     }
 
@@ -35,10 +33,9 @@ public class Rule34Command extends AbstractCommand{
         if (super.request(message)) {
 
             if (message.getChannel().isNSFW()) {
-                String url = URL;
-
-                if (m.group(2) != null)
-                    url += "&tags=" + m.group(2).trim();
+                Matcher m = getMatcher(message);
+                m.find();
+                String url = URL + "&tags=" + m.group(1).trim();
 
                 try {
                     DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
@@ -60,7 +57,7 @@ public class Rule34Command extends AbstractCommand{
                         Message.sendText(message.getChannel(), link);
                     } else
                         Message.sendText(message.getChannel(), "Aucune image ne correspond à `"
-                                + m.group(2).trim() + "`.");
+                                + m.group(1).trim() + "`.");
 
                 } catch (Exception e) {
                     new UnknownErrorDiscordException().throwException(message, this);
@@ -75,14 +72,14 @@ public class Rule34Command extends AbstractCommand{
     }
 
     @Override
-    public String help() {
-        return "**" + Constants.prefixCommand + "rule34** est une commande NSFW. Elle poste du contenu sexuellement explicite.";
+    public String help(String prefixe) {
+        return "**" + prefixe + name + "** est une commande NSFW. Elle poste du contenu sexuellement explicite.";
     }
 
     @Override
-    public String helpDetailed() {
-        return help()
-                //+ "\n`" + Constants.prefixCommand + "rule34` : poste une image NSFW au hasard."
-                + "\n`" + Constants.prefixCommand + "rule34 `*`tag1 tag2 ...`* : poste une image NSFW en rapport avec les tag précisés.\n";
+    public String helpDetailed(String prefixe) {
+        return help(prefixe)
+                //+ "\n`" + prefixe + name + "` : poste une image NSFW au hasard."
+                + "\n`" + prefixe + name + " `*`tag1 tag2 ...`* : poste une image NSFW en rapport avec les tag précisés.\n";
     }
 }

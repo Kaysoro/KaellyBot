@@ -1,6 +1,5 @@
 package commands;
 
-import data.Constants;
 import data.RSSFinder;
 import data.User;
 import discord.Message;
@@ -11,7 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sx.blah.discord.handle.obj.IMessage;
 
-import java.util.regex.Pattern;
+import java.util.regex.Matcher;
 
 /**
  * Created by steve on 14/07/2016.
@@ -21,8 +20,7 @@ public class RSSCommand extends AbstractCommand{
     private final static Logger LOG = LoggerFactory.getLogger(RSSCommand.class);
 
     public RSSCommand(){
-        super(Pattern.compile("rss"),
-        Pattern.compile("^(" + Constants.prefixCommand + "rss)(\\s+true|\\s+false|\\s+0|\\s+1|\\s+on|\\s+off)$"));
+        super("rss","(\\s+true|\\s+false|\\s+0|\\s+1|\\s+on|\\s+off)");
         setUsableInMP(false);
     }
 
@@ -33,8 +31,9 @@ public class RSSCommand extends AbstractCommand{
             //On check si la personne a bien les droits pour exécuter cette commande
             if (User.getUsers().get(message.getGuild().getStringID())
                     .get(message.getAuthor().getStringID()).getRights() >= User.RIGHT_MODERATOR) {
-
-                String value = m.group(2);
+                Matcher m = getMatcher(message);
+                m.find();
+                String value = m.group(1);
 
                 if (value.matches("\\s+true") || value.matches("\\s+0") || value.matches("\\s+on")){
                     boolean found = false;
@@ -72,14 +71,15 @@ public class RSSCommand extends AbstractCommand{
     }
 
     @Override
-    public String help() {
-        return "**" + Constants.prefixCommand + "rss** gère le flux RSS Dofus par channel; nécessite un niveau d'administration 2 (Modérateur) minimum.";
+    public String help(String prefixe) {
+        return "**" + prefixe + name + "** gère le flux RSS Dofus dans un salon; "
+        + "nécessite un niveau d'administration 2 (Modérateur) minimum.";
     }
 
     @Override
-    public String helpDetailed() {
-        return help()
-                + "\n`" + Constants.prefixCommand + "rss true` : poste les news à partir du flux RSS de Dofus.com. Fonctionne aussi avec \"on\" et \"0\"."
-                + "\n`" + Constants.prefixCommand + "rss false` : ne poste plus les flux RSS sur le channel. Fonctionne aussi avec \"off\" et \"1\".\n";
+    public String helpDetailed(String prefixe) {
+        return help(prefixe)
+                + "\n`" + prefixe + name + " true` : poste les news à partir du flux RSS de Dofus.com. Fonctionne aussi avec \"on\" et \"0\"."
+                + "\n`" + prefixe + name + " false` : ne poste plus les flux RSS dans le salon. Fonctionne aussi avec \"off\" et \"1\".\n";
     }
 }

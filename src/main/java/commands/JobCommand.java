@@ -16,7 +16,7 @@ import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Pattern;
+import java.util.regex.Matcher;
 
 /**
  * Created by steve on 14/07/2016.
@@ -26,30 +26,31 @@ public class JobCommand extends AbstractCommand{
     private final static Logger LOG = LoggerFactory.getLogger(JobCommand.class);
 
     public JobCommand(){
-        super(Pattern.compile("job"),
-        Pattern.compile("^(" + Constants.prefixCommand + "job)(\\s+([\\p{L}|\\W]+|-all)(\\s+\\d{1,3})?)?$"));
+        super("job", "(\\s+([\\p{L}|\\W]+|-all)(\\s+\\d{1,3})?)?");
         setUsableInMP(false);
     }
 
     @Override
     public boolean request(IMessage message) {
         if (super.request(message)) {
-            if (m.group(2) == null){
+            Matcher m = getMatcher(message);
+            m.find();
+            if (m.group(1) == null){
                 StringBuilder st = new StringBuilder("Voici la liste des métiers du jeu Dofus :\n```");
                 for(String job : Job.getJobs())
                     st.append("\n- ").append(job);
                 st.append("```");
                 Message.sendText(message.getChannel(), st.toString());
             }
-            else if (!m.group(3).equals("-all")) {
-                System.out.println("'" + m.group(3) + "'");
-                List<String> jobs = getJob(m.group(3));
+            else if (!m.group(2).equals("-all")) {
+                System.out.println("'" + m.group(2) + "'");
+                List<String> jobs = getJob(m.group(2));
 
                 if (jobs.size() == 1) {
-                    if (m.group(4) != null) { // setting data
+                    if (m.group(3) != null) { // setting data
                         User author = User.getUsers().get(message.getGuild().getStringID())
                                 .get(message.getAuthor().getStringID());
-                        int level = Integer.parseInt(m.group(4).replaceAll("\\W+", ""));
+                        int level = Integer.parseInt(m.group(3).replaceAll("\\W+", ""));
                         if (!author.getJobs().containsKey(jobs.get(0)))
                             new Job(jobs.get(0), level, author).addToDatabase();
                         else
@@ -103,10 +104,10 @@ public class JobCommand extends AbstractCommand{
                 else
                     new JobNotFoundDiscordException().throwException(message, this);
             }
-            else if (m.group(4) != null){ // add all jobs for the user
+            else if (m.group(3) != null){ // add all jobs for the user
                 User author = User.getUsers().get(message.getGuild().getStringID())
                         .get(message.getAuthor().getStringID());
-                int level = Integer.parseInt(m.group(4).replaceAll("\\W+", ""));
+                int level = Integer.parseInt(m.group(3).replaceAll("\\W+", ""));
 
                 for(String job : Job.getJobs()) {
                     if (!author.getJobs().containsKey(job))
@@ -143,18 +144,18 @@ public class JobCommand extends AbstractCommand{
     }
 
     @Override
-    public String help() {
-        return "**" + Constants.prefixCommand + "job** renvoit l'annuaire des artisans d'un métier.";
+    public String help(String prefixe) {
+        return "**" + prefixe + name + "** renvoit l'annuaire des artisans d'un métier.";
     }
 
     @Override
-    public String helpDetailed() {
-        return help()
-                + "\n`" + Constants.prefixCommand + "job` : renvoie la liste des métiers du jeu Dofus."
-                + "\n`" + Constants.prefixCommand + "job `*`métier`* : renvoit l'annuaire des artisans pour ce métier."
-                + "\n`" + Constants.prefixCommand + "job `*`métier niveau`* : vous ajoute à l'annuaire du métier correspondant." +
+    public String helpDetailed(String prefixe) {
+        return help(prefixe)
+                + "\n`" + prefixe + name + "` : renvoit la liste des métiers du jeu Dofus."
+                + "\n`" + prefixe + name + " `*`métier`* : renvoit l'annuaire des artisans pour ce métier."
+                + "\n`" + prefixe + name + " `*`métier niveau`* : vous ajoute à l'annuaire du métier correspondant." +
                 " Si vous indiquez 0, vous êtes supprimé de l'annuaire pour ce métier."
-                + "\n`" + Constants.prefixCommand + "job -all `*`niveau`* : vous ajoute à l'annuaire pour tous les métiers correspondants." +
+                + "\n`" + prefixe + name + " -all `*`niveau`* : vous ajoute à l'annuaire pour tous les métiers correspondants." +
                 " Si vous indiquez 0, vous êtes supprimé de chaque annuaire.\n";
     }
 }

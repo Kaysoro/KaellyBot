@@ -1,8 +1,11 @@
 package commands;
 
 import data.Constants;
+import data.Guild;
 import exceptions.BadUseCommandDiscordException;
 import exceptions.NotUsableInMPDiscordException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import sx.blah.discord.handle.obj.IMessage;
 
 import java.util.regex.Matcher;
@@ -13,14 +16,15 @@ import java.util.regex.Pattern;
  */
 public abstract class AbstractCommand implements Command {
 
-    protected Pattern name;
-    protected Pattern pattern;
-    protected Matcher m;
+    private final static Logger LOG = LoggerFactory.getLogger(AbstractCommand.class);
+
+    protected String name;
+    protected String pattern;
     protected boolean isPublic;
     protected boolean isUsableInMP;
     protected boolean isAdmin;
 
-    protected AbstractCommand(Pattern name, Pattern pattern){
+    protected AbstractCommand(String name, String pattern){
         super();
         this.name = name;
         this.pattern = pattern;
@@ -31,12 +35,14 @@ public abstract class AbstractCommand implements Command {
 
     @Override
     public boolean request(IMessage message) {
-        m =  pattern.matcher(message.getContent());
+        String prefixe = Guild.getGuilds().get(message.getGuild().getStringID()).getPrefixe();
+        Matcher m = getMatcher(message);
         boolean isFound = m.find();
+
         if (isPublic() && ! isAdmin()) {
             if (isFound && message.getChannel().isPrivate() && !isUsableInMP())
                 new NotUsableInMPDiscordException().throwException(message, this);
-            else if (!isFound && message.getContent().startsWith(Constants.prefixCommand + name.pattern()))
+            else if (!isFound && message.getContent().startsWith(prefixe + name))
                 new BadUseCommandDiscordException().throwException(message, this);
         }
         else if ((! isPublic() || isAdmin()) && ! message.getAuthor().getStringID().equals(Constants.author))
@@ -45,12 +51,18 @@ public abstract class AbstractCommand implements Command {
     }
 
     @Override
-    public Pattern getName() {
+    public Matcher getMatcher(IMessage message){
+        String prefixe = Guild.getGuilds().get(message.getGuild().getStringID()).getPrefixe();
+        return Pattern.compile("^" + prefixe + name + pattern + "$").matcher(message.getContent());
+    }
+
+    @Override
+    public String getName() {
         return name;
     }
 
     @Override
-    public Pattern getPattern() {
+    public String getPattern() {
         return pattern;
     }
 

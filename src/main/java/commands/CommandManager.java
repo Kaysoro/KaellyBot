@@ -29,6 +29,7 @@ public class CommandManager {
         addCommand(new MapCommand());
         addCommand(new MusicCommand());
         addCommand(new PortalCommand());
+        addCommand(new PrefixeCommand());
         addCommand(new RandomCommand());
         addCommand(new RightCommand());
         addCommand(new RSSCommand());
@@ -59,6 +60,6 @@ public class CommandManager {
 
     private void addCommand(Command command){
         commands.add(command);
-        mapCommands.put(command.getName().pattern(), command);
+        mapCommands.put(command.getName(), command);
     }
 }

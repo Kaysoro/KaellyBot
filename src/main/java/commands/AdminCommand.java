@@ -1,12 +1,13 @@
 package commands;
 
 import data.Constants;
+import data.Guild;
 import discord.Message;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sx.blah.discord.handle.obj.IMessage;
 
-import java.util.regex.Pattern;
+import java.util.regex.Matcher;
 
 /**
  * Created by steve on 14/07/2016.
@@ -16,22 +17,24 @@ public class AdminCommand extends AbstractCommand{
     private final static Logger LOG = LoggerFactory.getLogger(AdminCommand.class);
 
     public AdminCommand(){
-        super(Pattern.compile("admin"),
-                Pattern.compile("^(" + Constants.prefixCommand + "admin)(\\s+" + Constants.prefixCommand + "?(.+))?$"));
+        super("admin", "(\\s+.+)?");
         setAdmin(true);
     }
 
     @Override
     public boolean request(IMessage message) {
         if (super.request(message)) {
+            String prefixe = Guild.getGuilds().get(message.getGuild().getStringID()).getPrefixe();
+            Matcher m = getMatcher(message);
+            m.find();
             StringBuilder st = new StringBuilder();
-            boolean argumentFound = m.group(2) != null && m.group(2).replaceAll("^\\s+", "").length() > 0;
+            boolean argumentFound = m.group(1) != null && m.group(1).replaceAll("^\\s+", "").length() > 0;
             for (Command command : CommandManager.getCommands())
                 if (command.isAdmin()) {
                     if (!argumentFound)
-                        st.append(command.help()).append("\n");
-                    else if (command.getName().matcher(m.group(2)).find()) {
-                        st.append(command.helpDetailed());
+                        st.append(command.help(prefixe)).append("\n");
+                    else if (command.getName().equals(m.group(1).trim())) {
+                        st.append(command.helpDetailed(prefixe));
                         break;
                     }
                 }
@@ -48,14 +51,14 @@ public class AdminCommand extends AbstractCommand{
     }
 
     @Override
-    public String help() {
-        return "**" + Constants.prefixCommand + "admin** explique le fonctionnement de chaque commande admin de " + Constants.name + ".";
+    public String help(String prefixe) {
+        return "**" + prefixe + name + "** explique le fonctionnement de chaque commande admin de " + Constants.name + ".";
     }
 
     @Override
-    public String helpDetailed() {
-        return help()
-                + "\n`" + Constants.prefixCommand + "admin` : explique succintement chaque commande admin."
-                + "\n`" + Constants.prefixCommand + "admin `*`command`* : explique de façon détaillée la commande admin spécifiée.\n";
+    public String helpDetailed(String prefixe) {
+        return help(prefixe)
+                + "\n`" + prefixe + name + "` : explique succintement chaque commande admin."
+                + "\n`" + prefixe + name + " `*`command`* : explique de façon détaillée la commande admin spécifiée.\n";
     }
 }

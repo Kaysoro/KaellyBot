@@ -1,7 +1,6 @@
 package commands;
 
 import data.Almanax;
-import data.Constants;
 import discord.Message;
 import exceptions.*;
 import org.jsoup.HttpStatusException;
@@ -17,7 +16,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
-import java.util.regex.Pattern;
+import java.util.regex.Matcher;
 
 /**
  * Created by steve on 14/07/2016.
@@ -29,8 +28,7 @@ public class AlmanaxCommand extends AbstractCommand{
     private final static DateFormat botToAlmanax = new SimpleDateFormat("yyyy-MM-dd", Locale.FRANCE);
 
     public AlmanaxCommand(){
-        super(Pattern.compile("almanax"),
-                Pattern.compile("^(" + Constants.prefixCommand + "almanax)(\\s+\\d{2}/\\d{2}/\\d{4})?$"));
+        super("almanax", "(\\s+\\d{2}/\\d{2}/\\d{4})?");
     }
 
     @Override
@@ -38,10 +36,11 @@ public class AlmanaxCommand extends AbstractCommand{
         if (super.request(message)) {
 
             Date date = new Date();
-
-            if (m.group(2) != null) {
+            Matcher m = getMatcher(message);
+            m.find();
+            if (m.group(1) != null) {
                 try {
-                    date = discordToBot.parse(m.group(2));
+                    date = discordToBot.parse(m.group(1));
                 } catch (ParseException e) {
                     new IncorrectDateFormatDiscordException().throwException(message, this);
                     return false;
@@ -70,14 +69,14 @@ public class AlmanaxCommand extends AbstractCommand{
     }
 
     @Override
-    public String help() {
-        return "**" + Constants.prefixCommand + "almanax** donne le bonus et l'offrande d'une date particulière.";
+    public String help(String prefixe) {
+        return "**" + prefixe + name + "** donne le bonus et l'offrande d'une date particulière.";
     }
 
     @Override
-    public String helpDetailed() {
-        return help()
-                + "\n`" + Constants.prefixCommand + "almanax` : donne le bonus et l'offrande du jour actuel."
-                + "\n`" + Constants.prefixCommand + "almanax `*`jj/mm/aaaa`* : donne le bonus et l'offrande du jour spécifié.\n";
+    public String helpDetailed(String prefixe) {
+        return help(prefixe)
+                + "\n`" + prefixe + name + "` : donne le bonus et l'offrande du jour actuel."
+                + "\n`" + prefixe + name + " `*`jj/mm/aaaa`* : donne le bonus et l'offrande du jour spécifié.\n";
     }
 }

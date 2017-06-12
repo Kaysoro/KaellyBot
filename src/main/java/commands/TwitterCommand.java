@@ -1,6 +1,5 @@
 package commands;
 
-import data.Constants;
 import data.TwitterFinder;
 import data.User;
 import discord.Message;
@@ -9,7 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sx.blah.discord.handle.obj.IMessage;
 
-import java.util.regex.Pattern;
+import java.util.regex.Matcher;
 
 /**
  * Created by steve on 14/07/2016.
@@ -19,8 +18,7 @@ public class TwitterCommand extends AbstractCommand{
     private final static Logger LOG = LoggerFactory.getLogger(TwitterCommand.class);
 
     public TwitterCommand(){
-        super(Pattern.compile("twitter"),
-        Pattern.compile("^(" + Constants.prefixCommand + "twitter)(\\s+true|\\s+false|\\s+0|\\s+1|\\s+on|\\s+off)$"));
+        super("twitter", "(\\s+true|\\s+false|\\s+0|\\s+1|\\s+on|\\s+off)");
         setUsableInMP(false);
     }
 
@@ -31,8 +29,9 @@ public class TwitterCommand extends AbstractCommand{
             //On check si la personne a bien les droits pour exécuter cette commande
             if (User.getUsers().get(message.getGuild().getStringID())
                     .get(message.getAuthor().getStringID()).getRights() >= User.RIGHT_MODERATOR) {
-
-                String value = m.group(2);
+                Matcher m = getMatcher(message);
+                m.find();
+                String value = m.group(1);
 
                 if (value.matches("\\s+true") || value.matches("\\s+0") || value.matches("\\s+on")){
                     if (! TwitterFinder.getTwitterChannels().containsKey(message.getChannel().getLongID())) {
@@ -58,14 +57,15 @@ public class TwitterCommand extends AbstractCommand{
     }
 
     @Override
-    public String help() {
-        return "**" + Constants.prefixCommand + "twitter** poste les tweets de Dofusfr sur un channel; nécessite un niveau d'administration 2 (Modérateur) minimum.";
+    public String help(String prefixe) {
+        return "**" + prefixe + name + "** poste les tweets de Dofusfr dans un salon; "
+            + "nécessite un niveau d'administration 2 (Modérateur) minimum.";
     }
 
     @Override
-    public String helpDetailed() {
-        return help()
-                + "\n`" + Constants.prefixCommand + "twitter true` : poste les tweets de Dofusfr. Fonctionne aussi avec \"on\" et \"0\"."
-                + "\n`" + Constants.prefixCommand + "twitter false` : ne poste plus les tweets sur le channel. Fonctionne aussi avec \"off\" et \"1\".\n";
+    public String helpDetailed(String prefixe) {
+        return help(prefixe)
+                + "\n`" + prefixe + name + " true` : poste les tweets de Dofusfr. Fonctionne aussi avec \"on\" et \"0\"."
+                + "\n`" + prefixe + name + " false` : ne poste plus les tweets dans le salon. Fonctionne aussi avec \"off\" et \"1\".\n";
     }
 }

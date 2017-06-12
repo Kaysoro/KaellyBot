@@ -1,6 +1,5 @@
 package commands;
 
-import data.Constants;
 import data.User;
 import discord.Message;
 import exceptions.AutoChangeRightsDiscordException;
@@ -13,7 +12,7 @@ import sx.blah.discord.handle.obj.IMessage;
 import sx.blah.discord.handle.obj.IRole;
 import sx.blah.discord.handle.obj.IUser;
 
-import java.util.regex.Pattern;
+import java.util.regex.Matcher;
 
 /**
  * Created by steve on 14/07/2016.
@@ -23,8 +22,7 @@ public class RightCommand extends AbstractCommand{
     private final static Logger LOG = LoggerFactory.getLogger(RightCommand.class);
 
     public RightCommand(){
-        super(Pattern.compile("right"),
-        Pattern.compile("^(" + Constants.prefixCommand + "right)(\\s+<@[!|&]?\\d+>)?(\\s+\\d)?$"));
+        super("right", "(\\s+<@[!|&]?\\d+>)?(\\s+\\d)?");
         setUsableInMP(false);
     }
 
@@ -33,17 +31,19 @@ public class RightCommand extends AbstractCommand{
         if (super.request(message)) {
 
             User author = User.getUsers().get(message.getGuild().getStringID()).get(message.getAuthor().getStringID());
+            Matcher m = getMatcher(message);
+            m.find();
 
-            if (m.group(3) != null) { // Level precised : editing
+            if (m.group(2) != null) { // Level precised : editing
 
-                if (m.group(2) == null){
+                if (m.group(1) == null){
                     new BadUseCommandDiscordException().throwException(message, this);
                     return false;
                 }
 
-                String idDecorated = m.group(2).replaceAll("\\s", "");
+                String idDecorated = m.group(1).replaceAll("\\s", "");
                 String id = idDecorated.replaceAll("\\W", "");
-                int level = Integer.parseInt(m.group(3).replaceAll("\\s", ""));
+                int level = Integer.parseInt(m.group(2).replaceAll("\\s", ""));
 
                 if (author.getRights() >= User.RIGHT_MODERATOR) {
                     if (idDecorated.matches("<@&\\d+>")){ // Manage Groups
@@ -90,8 +90,8 @@ public class RightCommand extends AbstractCommand{
                 }
             } else { // Level is not precised : consulting
 
-                if (m.group(2) != null){ // Author want to know specific user's rights.
-                    String idDecorated = m.group(2).replaceAll("\\s", "");
+                if (m.group(1) != null){ // Author want to know specific user's rights.
+                    String idDecorated = m.group(1).replaceAll("\\s", "");
                     String id = idDecorated.replaceAll("\\W", "");
 
                     if (idDecorated.matches("<@!?\\d+>")){
@@ -113,17 +113,17 @@ public class RightCommand extends AbstractCommand{
     }
 
     @Override
-    public String help() {
-        return "**" + Constants.prefixCommand + "right** permet de changer les droits de quelqu'un d'autre tant qu'il n'est pas plus"
+    public String help(String prefixe) {
+        return "**" + prefixe + name + "** permet de changer les droits de quelqu'un d'autre tant qu'il n'est pas plus"
                 + " haut que le sien. Nécessite un niveau d'administration 2 (Modérateur) minimum."
                 + " Les niveaux sont 0 : Invité, 1 : Membre, 2 : Modérateur, 3 : Administrateur.";
     }
 
     @Override
-    public String helpDetailed() {
-        return help()
-                + "\n`" + Constants.prefixCommand + "right` : donne le niveau d'administration de l'auteur de la requête."
-                + "\n`" + Constants.prefixCommand + "right `*`@pseudo`* : donne le niveau d'administration de l'utilisateur ou d'un groupe spécifié."
-                + "\n`" + Constants.prefixCommand + "right `*`@pseudo niveau`* : change le niveau d'administration d'un utilisateur ou d'un groupe spécifié.\n";
+    public String helpDetailed(String prefixe) {
+        return help(prefixe)
+                + "\n`" + prefixe + name + "` : donne le niveau d'administration de l'auteur de la requête."
+                + "\n`" + prefixe + name + " `*`@pseudo`* : donne le niveau d'administration de l'utilisateur ou d'un groupe spécifié."
+                + "\n`" + prefixe + name + " `*`@pseudo niveau`* : change le niveau d'administration d'un utilisateur ou d'un groupe spécifié.\n";
     }
 }
