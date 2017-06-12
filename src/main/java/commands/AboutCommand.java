@@ -26,7 +26,7 @@ public class AboutCommand extends AbstractCommand{
 
     @Override
     public String help(String prefixe) {
-        return "**" + prefixe + name + "** donne des informations sur " + Constants.name + "et un moyen d'obtenir de l'aide.";
+        return "**" + prefixe + name + "** donne des informations sur " + Constants.name + " et un moyen d'obtenir de l'aide.";
     }
 
     @Override

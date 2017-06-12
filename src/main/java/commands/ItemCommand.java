@@ -139,7 +139,7 @@ public class ItemCommand extends AbstractCommand{
     @Override
     public String helpDetailed(String prefixe) {
         return help(prefixe)
-                + "\n`" + prefixe + name + " `*`item`* : renvoit les statistiques de l'item spécifié :"
+                + "\n`" + prefixe + name + " `*`item`* : renvoie les statistiques de l'item spécifié :"
                 + " son nom peut être approximatif s'il est suffisemment précis. A noter que les items inférieurs"
                 + " au niveau " + levelMin + " sont exclus.\n";
     }
