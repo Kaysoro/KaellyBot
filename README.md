@@ -28,7 +28,7 @@ La commande `!help command` explique de façon détaillée la commande spécifi�
 `!job` : Renvoit la liste des métiers du jeu Dofus.  
 `!job métier` : Renvoit l'annuaire des artisans pour ce métier.  
 `!job métier niveau` : Vous ajoute à l'annuaire du métier correspondant. Si vous indiquez 0, vous êtes supprimé de l'annuaire pour ce métier.  
-`!job -allniveau` : Vous ajoute à l'annuaire pour tous les métiers correspondants. Si vous indiquez 0, vous êtes supprimé de chaque annuaire.  
+`!job -all niveau` : Vous ajoute à l'annuaire pour tous les métiers correspondants. Si vous indiquez 0, vous êtes supprimé de chaque annuaire.  
 
 ### Map
 
@@ -41,9 +41,9 @@ La commande `!help command` explique de façon détaillée la commande spécifi�
 `!pos` : Donne la position de tous les portails de dimension.  
 
 `!pos dimension` : Donne la position du portail de la dimension désirée.  
-`!pos dimension[POS, POS]` : Met à jour la position du portail de la dimension spécifiée.  
-`!pos dimension[POS, POS]nombre d'utilisations` : Met à jour la position et le nombre d'utilisation de la dimension spécifiée.  
-`!pos -resetdimension` : Supprime les informations de la dimension spécifiée.  
+`!pos dimension [POS, POS]` : Met à jour la position du portail de la dimension spécifiée.  
+`!pos dimension [POS, POS] nombre d'utilisations` : Met à jour la position et le nombre d'utilisation de la dimension spécifiée.  
+`!pos -reset dimension` : Supprime les informations de la dimension spécifiée.  
 
 ### Prefixe
 
