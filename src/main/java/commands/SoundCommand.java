@@ -90,7 +90,7 @@ public class SoundCommand extends AbstractCommand{
             setTrackTitle(AudioPlayer.
                     getAudioPlayerForGuild(message.getGuild()).queue(file), file.toString());
         } catch (IOException | UnsupportedAudioFileException e) {
-            Reporter.report(e);
+            Reporter.report(e, message.getContent(), file.getName());
             LOG.error(e.getMessage());
         }
     }
