@@ -3,11 +3,9 @@ Discord Bot for DOFUS game.
 
 ## Ajoutez KaellyBOT à votre serveur : [![Official Kaelly Invite](https://img.shields.io/badge/Add-KaellyBOT-0199FE.svg?style=flat)](https://discordapp.com/oauth2/authorize?&client_id=202916641414184960&scope=bot)
 
-## Support [![Support Server Invite](https://img.shields.io/badge/Join-KaellyBOT%20Support-7289DA.svg?style=flat)](https://discord.gg/CyJCFDk)
-
 ## À propos
 
-KaellyBOT est destinée à fournir des commandes utiles à la communauté de DOFUS ! L'intégralité de son code est libre d'accès. Si vous avez des questions, des suggestions ou que vous souhaitez juste passer un coucou, rejoignez le discord : [![Server Invite](https://img.shields.io/badge/Join-KaellyBOT%20Discord-red.svg?style=flat)](https://discord.gg/VsrbrYC)
+KaellyBOT est destinée à fournir des commandes utiles à la communauté de DOFUS ! L'intégralité de son code est libre d'accès. Si vous avez des questions, des suggestions ou que vous souhaitez juste passer un coucou, rejoignez le discord : [![Support Server Invite](https://img.shields.io/badge/Join-KaellyBOT%20Support-7289DA.svg?style=flat)](https://discord.gg/CyJCFDk)
 
 ## Commandes
 
