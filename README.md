@@ -19,14 +19,14 @@ La commande `!help command` explique de façon détaillée la commande spécifi�
 
 ### Item
 
-`!item` : Renvoit les statistiques d'un item du jeu Dofus.  
+`!item` : Renvoie les statistiques d'un item du jeu Dofus.  
 
-`!item item` : Renvoit les statistiques de l'item spécifié : son nom peut être approximatif s'il est suffisemment précis. A noter que les items inférieurs au niveau 50 sont exclus.  
+`!item item` : Renvoie les statistiques de l'item spécifié : son nom peut être approximatif s'il est suffisemment précis. A noter que les items inférieurs au niveau 50 sont exclus.  
 
 ### Job
 
-`!job` : Renvoit la liste des métiers du jeu Dofus.  
-`!job métier` : Renvoit l'annuaire des artisans pour ce métier.  
+`!job` : Renvoie la liste des métiers du jeu Dofus.  
+`!job métier` : Renvoie l'annuaire des artisans pour ce métier.  
 `!job métier niveau` : Vous ajoute à l'annuaire du métier correspondant. Si vous indiquez 0, vous êtes supprimé de l'annuaire pour ce métier.  
 `!job -all niveau` : Vous ajoute à l'annuaire pour tous les métiers correspondants. Si vous indiquez 0, vous êtes supprimé de chaque annuaire.  
 
