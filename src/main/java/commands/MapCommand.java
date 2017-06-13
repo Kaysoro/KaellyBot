@@ -79,7 +79,7 @@ public class MapCommand extends AbstractCommand{
     @Override
     public String helpDetailed(String prefixe) {
         return help(prefixe)
-                + "\n`" + prefixe + name + "` : tire une carte du Goultarminator entre I et XII compris."
-                + "\n`" + prefixe + name + " `*`map1 map2 ...`* : tire une carte parmi celles spécifiées en paramètre. Nombres romains ou numériques uniquement.\n";
+                + "\n" + prefixe + "`"  + name + "` : tire une carte du Goultarminator entre I et XII compris."
+                + "\n" + prefixe + "`"  + name + " `*`map1 map2 ...`* : tire une carte parmi celles spécifiées en paramètre. Nombres romains ou numériques uniquement.\n";
     }
 }

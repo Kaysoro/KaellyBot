@@ -49,8 +49,8 @@ public class RandomCommand extends AbstractCommand{
     @Override
     public String helpDetailed(String prefixe) {
         return help(prefixe)
-                + "\n`" + prefixe + name + "` : tire une valeur entre Vrai et Faux."
-                + "\n`" + prefixe + name + " `*`nombre`* : tire une valeur entre 0 et *nombre*."
-                + "\n`" + prefixe + name + " `*`valeur1 valeur2 ...`* : tire une valeur parmi celles spécifiées en paramètre.\n";
+                + "\n" + prefixe + "`"  + name + "` : tire une valeur entre Vrai et Faux."
+                + "\n" + prefixe + "`"  + name + " `*`nombre`* : tire une valeur entre 0 et *nombre*."
+                + "\n" + prefixe + "`"  + name + " `*`valeur1 valeur2 ...`* : tire une valeur parmi celles spécifiées en paramètre.\n";
     }
 }

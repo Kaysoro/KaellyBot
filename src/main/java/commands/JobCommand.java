@@ -151,11 +151,11 @@ public class JobCommand extends AbstractCommand{
     @Override
     public String helpDetailed(String prefixe) {
         return help(prefixe)
-                + "\n`" + prefixe + name + "` : renvoie la liste des métiers du jeu Dofus."
-                + "\n`" + prefixe + name + " `*`métier`* : renvoit l'annuaire des artisans pour ce métier."
-                + "\n`" + prefixe + name + " `*`métier niveau`* : vous ajoute à l'annuaire du métier correspondant." +
+                + "\n" + prefixe + "`"  + name + "` : renvoie la liste des métiers du jeu Dofus."
+                + "\n" + prefixe + "`"  + name + " `*`métier`* : renvoit l'annuaire des artisans pour ce métier."
+                + "\n" + prefixe + "`"  + name + " `*`métier niveau`* : vous ajoute à l'annuaire du métier correspondant." +
                 " Si vous indiquez 0, vous êtes supprimé de l'annuaire pour ce métier."
-                + "\n`" + prefixe + name + " -all `*`niveau`* : vous ajoute à l'annuaire pour tous les métiers correspondants." +
+                + "\n" + prefixe + "`"  + name + " -all `*`niveau`* : vous ajoute à l'annuaire pour tous les métiers correspondants." +
                 " Si vous indiquez 0, vous êtes supprimé de chaque annuaire.\n";
     }
 }

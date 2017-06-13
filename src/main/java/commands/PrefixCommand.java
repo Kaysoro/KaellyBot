@@ -38,10 +38,10 @@ public class PrefixCommand extends AbstractCommand{
                 if (newPrefix.length() >= 1 && newPrefix.length() <= Constants.prefixeLimit) {
                     Guild.getGuilds().get(message.getGuild().getStringID()).setPrefixe(newPrefix);
                     Message.sendText(message.getChannel(), "Changement réussi. Pour invoquer une commande, "
-                            + "il faudra désormais utiliser le préfixe *" + getPrefixMdEscaped(message) + "*.");
+                            + "il faudra désormais utiliser le préfixe " + getPrefixMdEscaped(message) + ".");
                     Message.sendText(message.getGuild().getOwner().getOrCreatePMChannel(), "RÉCAPITULATIF : "
-                            + "pour invoquer une commande, il faudra désormais utiliser le préfixe *"
-                            + getPrefixMdEscaped(message) + "* sur *" + message.getGuild().getName() + "*.");
+                            + "pour invoquer une commande, il faudra désormais utiliser le préfixe "
+                            + getPrefixMdEscaped(message) + " sur le serveur *" + message.getGuild().getName() + "*.");
                     return true;
                 }
                 else
@@ -61,7 +61,7 @@ public class PrefixCommand extends AbstractCommand{
     @Override
     public String helpDetailed(String prefixe) {
         return help(prefixe)
-                + "\n`" + prefixe + name + " `*`prefixe`* : change le préfixe par celui passé en paramètre. "
+                + "\n" + prefixe + "`"  + name + " `*`prefixe`* : change le préfixe par celui passé en paramètre. "
                 + Constants.prefixeLimit + " maximum.\n";
     }
 }

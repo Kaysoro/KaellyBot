@@ -123,12 +123,12 @@ public class MusicCommand extends AbstractCommand{
     @Override
     public String helpDetailed(String prefixe) {
         return help(prefixe)
-                + "\n`" + prefixe + name + " -join` : rejoint le canal vocal dans lequel vous êtes."
-                + "\n`" + prefixe + name + " `*`" + Constants.youtubeURL + "yourVideo`* : ajoute la vidéo youtube à la liste de lecture."
-                + "\n`" + prefixe + name + " -play` : joue la musique actuelle."
-                + "\n`" + prefixe + name + " -pause` : arrête la musique actuelle."
-                + "\n`" + prefixe + name + " -skip` : passe à la musique suivante."
-                + "\n`" + prefixe + name + " -shuffle` : mélange la liste de lecture."
-                + "\n`" + prefixe + name + " -leave` : quitte le canal vocal.\n";
+                + "\n" + prefixe + "`"  + name + " -join` : rejoint le canal vocal dans lequel vous êtes."
+                + "\n" + prefixe + "`"  + name + " `*`" + Constants.youtubeURL + "yourVideo`* : ajoute la vidéo youtube à la liste de lecture."
+                + "\n" + prefixe + "`"  + name + " -play` : joue la musique actuelle."
+                + "\n" + prefixe + "`"  + name + " -pause` : arrête la musique actuelle."
+                + "\n" + prefixe + "`"  + name + " -skip` : passe à la musique suivante."
+                + "\n" + prefixe + "`"  + name + " -shuffle` : mélange la liste de lecture."
+                + "\n" + prefixe + "`"  + name + " -leave` : quitte le canal vocal.\n";
     }
 }

@@ -62,7 +62,7 @@ public class TalkCommand extends AbstractCommand{
     @Override
     public String helpDetailed(String prefixe) {
         return help(prefixe)
-                + "\n`" + prefixe + name + " `*`text`* : envoie *text* dans le dernier salon utilisé."
-                + "\n`" + prefixe + name + " `*salon `text`* : envoie *text* au salon spécifié (identifiant).\n";
+                + "\n" + prefixe + "`"  + name + " `*`text`* : envoie *text* dans le dernier salon utilisé."
+                + "\n" + prefixe + "`"  + name + " `*salon `text`* : envoie *text* au salon spécifié (identifiant).\n";
     }
 }

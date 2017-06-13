@@ -65,7 +65,7 @@ public class TwitterCommand extends AbstractCommand{
     @Override
     public String helpDetailed(String prefixe) {
         return help(prefixe)
-                + "\n`" + prefixe + name + " true` : poste les tweets de Dofusfr. Fonctionne aussi avec \"on\" et \"0\"."
-                + "\n`" + prefixe + name + " false` : ne poste plus les tweets dans le salon. Fonctionne aussi avec \"off\" et \"1\".\n";
+                + "\n" + prefixe + "`"  + name + " true` : poste les tweets de Dofusfr. Fonctionne aussi avec \"on\" et \"0\"."
+                + "\n" + prefixe + "`"  + name + " false` : ne poste plus les tweets dans le salon. Fonctionne aussi avec \"off\" et \"1\".\n";
     }
 }

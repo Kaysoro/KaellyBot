@@ -135,7 +135,7 @@ public class WhoisCommand extends AbstractCommand{
     @Override
     public String helpDetailed(String prefixe) {
         return help(prefixe)
-                + "\n`" + prefixe + name + " *pseudo`* : donne la page personnelle associée au pseudo. Celui-ci doit être exact."
-                + "\n`" + prefixe + name + " *pseudo serveur`* : est à utiliser lorsque le pseudo ne suffit pas pour déterminer la fiche d'un personnage.\n";
+                + "\n" + prefixe + "`"  + name + " *pseudo`* : donne la page personnelle associée au pseudo. Celui-ci doit être exact."
+                + "\n" + prefixe + "`"  + name + " *pseudo serveur`* : est à utiliser lorsque le pseudo ne suffit pas pour déterminer la fiche d'un personnage.\n";
     }
 }

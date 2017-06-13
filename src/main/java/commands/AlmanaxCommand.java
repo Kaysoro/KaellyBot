@@ -76,7 +76,7 @@ public class AlmanaxCommand extends AbstractCommand{
     @Override
     public String helpDetailed(String prefixe) {
         return help(prefixe)
-                + "\n`" + prefixe + name + "` : donne le bonus et l'offrande du jour actuel."
-                + "\n`" + prefixe + name + " `*`jj/mm/aaaa`* : donne le bonus et l'offrande du jour spécifié.\n";
+                + "\n" + prefixe + "`"  + name + "` : donne le bonus et l'offrande du jour actuel."
+                + "\n" + prefixe + "`"  + name + " `*`jj/mm/aaaa`* : donne le bonus et l'offrande du jour spécifié.\n";
     }
 }

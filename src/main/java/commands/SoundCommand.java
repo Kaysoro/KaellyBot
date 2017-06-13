@@ -133,7 +133,7 @@ public class SoundCommand extends AbstractCommand{
         }
         st.append("```");
         return help(prefixe)
-                + "\n`" + prefixe + name + "` : joue un son au hasard parmi la liste suivante : " + st.toString()
-                + "\n`" + prefixe + name + " `*`sound`* : joue le son passé en paramètre.\n";
+                + "\n" + prefixe + "`"  + name + "` : joue un son au hasard parmi la liste suivante : " + st.toString()
+                + "\n" + prefixe + "`"  + name + " `*`sound`* : joue le son passé en paramètre.\n";
     }
 }

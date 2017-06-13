@@ -122,8 +122,8 @@ public class RightCommand extends AbstractCommand{
     @Override
     public String helpDetailed(String prefixe) {
         return help(prefixe)
-                + "\n`" + prefixe + name + "` : donne le niveau d'administration de l'auteur de la requête."
-                + "\n`" + prefixe + name + " `*`@pseudo`* : donne le niveau d'administration de l'utilisateur ou d'un groupe spécifié."
-                + "\n`" + prefixe + name + " `*`@pseudo niveau`* : change le niveau d'administration d'un utilisateur ou d'un groupe spécifié.\n";
+                + "\n" + prefixe + "`"  + name + "` : donne le niveau d'administration de l'auteur de la requête."
+                + "\n" + prefixe + "`"  + name + " `*`@pseudo`* : donne le niveau d'administration de l'utilisateur ou d'un groupe spécifié."
+                + "\n" + prefixe + "`"  + name + " `*`@pseudo niveau`* : change le niveau d'administration d'un utilisateur ou d'un groupe spécifié.\n";
     }
 }

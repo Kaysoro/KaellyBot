@@ -56,7 +56,7 @@ public class AnnounceCommand extends AbstractCommand{
     @Override
     public String helpDetailed(String prefixe) {
         return help(prefixe)
-                + "\n`" + prefixe + name + " `*`text`* : envoie *text* dans le salon."
-                + "\n`" + prefixe + name + " `*-confirm `text`* : envoie *text* à l'ensemble des guildes.\n";
+                + "\n" + prefixe + "`"  + name + " `*`text`* : envoie *text* dans le salon."
+                + "\n" + prefixe + "`"  + name + " `*-confirm `text`* : envoie *text* à l'ensemble des guildes.\n";
     }
 }
