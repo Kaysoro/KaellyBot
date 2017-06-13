@@ -1,7 +1,6 @@
 package commands;
 
 import data.Constants;
-import data.Guild;
 import discord.Message;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,7 +23,7 @@ public class AdminCommand extends AbstractCommand{
     @Override
     public boolean request(IMessage message) {
         if (super.request(message)) {
-            String prefixe = Guild.getGuilds().get(message.getGuild().getStringID()).getPrefixe();
+            String prefixe = getPrefixMdEscaped(message);
             Matcher m = getMatcher(message);
             m.find();
             StringBuilder st = new StringBuilder();

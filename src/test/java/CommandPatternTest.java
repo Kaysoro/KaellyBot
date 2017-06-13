@@ -176,12 +176,12 @@ public class CommandPatternTest extends TestCase {
     }
 
     public void testPrefixeCommand(){
-        Command cmd = new PrefixeCommand();
+        Command cmd = new PrefixCommand();
         Pattern pattern = Pattern.compile("^" + Constants.prefixCommand + cmd.getName() + cmd.getPattern() + "$");
 
-        assertFalse(pattern.matcher(Constants.prefixCommand + "prefixe").find());
-        assertTrue(pattern.matcher(Constants.prefixCommand + "prefixe test").find());
-        assertTrue(pattern.matcher(Constants.prefixCommand + "prefixe !&").find());
+        assertFalse(pattern.matcher(Constants.prefixCommand + "prefix").find());
+        assertTrue(pattern.matcher(Constants.prefixCommand + "prefix test").find());
+        assertTrue(pattern.matcher(Constants.prefixCommand + "prefix !&").find());
     }
 
     // ADMIN COMMANDS

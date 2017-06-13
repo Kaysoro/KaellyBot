@@ -11,6 +11,7 @@ public interface Command {
     String getName();
     String getPattern();
     Matcher getMatcher(IMessage message);
+    String getPrefix(IMessage message);
     boolean request(IMessage message);
 
     /**

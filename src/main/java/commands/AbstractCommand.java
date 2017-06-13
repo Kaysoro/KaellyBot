@@ -35,14 +35,14 @@ public abstract class AbstractCommand implements Command {
 
     @Override
     public boolean request(IMessage message) {
-        String prefixe = Guild.getGuilds().get(message.getGuild().getStringID()).getPrefixe();
+
         Matcher m = getMatcher(message);
         boolean isFound = m.find();
 
         if (isPublic() && ! isAdmin()) {
             if (isFound && message.getChannel().isPrivate() && !isUsableInMP())
                 new NotUsableInMPDiscordException().throwException(message, this);
-            else if (!isFound && message.getContent().startsWith(prefixe + name))
+            else if (!isFound && message.getContent().startsWith(getPrefix(message) + name))
                 new BadUseCommandDiscordException().throwException(message, this);
         }
         else if ((! isPublic() || isAdmin()) && ! message.getAuthor().getStringID().equals(Constants.author))
@@ -52,8 +52,27 @@ public abstract class AbstractCommand implements Command {
 
     @Override
     public Matcher getMatcher(IMessage message){
-        String prefixe = Guild.getGuilds().get(message.getGuild().getStringID()).getPrefixe();
-        return Pattern.compile("^" + prefixe + name + pattern + "$").matcher(message.getContent());
+        String prefixe = getPrefix(message);
+        return Pattern.compile("^" + Pattern.quote(prefixe) + name + pattern + "$").matcher(message.getContent());
+    }
+
+    @Override
+    public String getPrefix(IMessage message){
+        String prefix = Constants.prefixCommand;
+        if (message.getGuild() != null)
+            prefix = Guild.getGuilds().get(message.getGuild().getStringID()).getPrefixe();
+        return prefix;
+    }
+
+    protected String getPrefixMdEscaped(IMessage message){
+        String prefix = Constants.prefixCommand;
+        if (message.getGuild() != null)
+            prefix = Guild.getGuilds().get(message.getGuild().getStringID()).getPrefixe();
+        prefix = prefix.replaceAll("\\*", "\\*") // Italic & Bold
+                .replaceAll("_", "\\_")          // Underline
+                .replaceAll("~", "\\~")          //Strike
+                .replaceAll("`", "\\`");         //Code
+        return prefix;
     }
 
     @Override

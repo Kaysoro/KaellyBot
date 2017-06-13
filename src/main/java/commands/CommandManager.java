@@ -29,7 +29,7 @@ public class CommandManager {
         addCommand(new MapCommand());
         addCommand(new MusicCommand());
         addCommand(new PortalCommand());
-        addCommand(new PrefixeCommand());
+        addCommand(new PrefixCommand());
         addCommand(new RandomCommand());
         addCommand(new RightCommand());
         addCommand(new RSSCommand());

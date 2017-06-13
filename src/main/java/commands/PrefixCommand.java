@@ -15,12 +15,12 @@ import java.util.regex.Matcher;
 /**
  * Created by steve on 14/07/2016.
  */
-public class PrefixeCommand extends AbstractCommand{
+public class PrefixCommand extends AbstractCommand{
 
-    private final static Logger LOG = LoggerFactory.getLogger(PrefixeCommand.class);
+    private final static Logger LOG = LoggerFactory.getLogger(PrefixCommand.class);
 
-    public PrefixeCommand(){
-        super("prefixe","\\s+(.+)");
+    public PrefixCommand(){
+        super("prefix","\\s+(.+)");
         setUsableInMP(false);
     }
 
@@ -33,15 +33,15 @@ public class PrefixeCommand extends AbstractCommand{
             if (author.getRights() >= User.RIGHT_MODERATOR) {
                 Matcher m = getMatcher(message);
                 m.find();
-                String newPrefixe = m.group(1).trim();
+                String newPrefix = m.group(1).trim();
 
-                if (newPrefixe.length() >= 1 && newPrefixe.length() <= Constants.prefixeLimit) {
-                    Guild.getGuilds().get(message.getGuild().getStringID()).setPrefixe(newPrefixe);
+                if (newPrefix.length() >= 1 && newPrefix.length() <= Constants.prefixeLimit) {
+                    Guild.getGuilds().get(message.getGuild().getStringID()).setPrefixe(newPrefix);
                     Message.sendText(message.getChannel(), "Changement réussi. Pour invoquer une commande, "
-                            + "il faudra désormais utiliser le préfixe *" + newPrefixe + "*.");
+                            + "il faudra désormais utiliser le préfixe *" + getPrefixMdEscaped(message) + "*.");
                     Message.sendText(message.getGuild().getOwner().getOrCreatePMChannel(), "RÉCAPITULATIF : "
-                            + "pour invoquer une commande, il faudra désormais utiliser le préfixe *" + newPrefixe
-                            + "* sur *" + message.getGuild().getName() + "*.");
+                            + "pour invoquer une commande, il faudra désormais utiliser le préfixe *"
+                            + getPrefixMdEscaped(message) + "* sur *" + message.getGuild().getName() + "*.");
                     return true;
                 }
                 else
