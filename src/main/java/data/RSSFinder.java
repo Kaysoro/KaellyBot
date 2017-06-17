@@ -86,9 +86,8 @@ public class RSSFinder {
         Connection connection = connexion.getConnection();
 
         try {
-            PreparedStatement request = connection.prepareStatement("DELETE FROM RSS_Finder WHERE id_chan = ? AND id_guild = ?;");
+            PreparedStatement request = connection.prepareStatement("DELETE FROM RSS_Finder WHERE id_chan = ?;");
             request.setString(1, String.valueOf(getChan()));
-            request.setString(2, String.valueOf(getGuildId()));
             request.executeUpdate();
 
         } catch (SQLException e) {
@@ -116,7 +115,7 @@ public class RSSFinder {
                     IChannel chan = ClientConfig.DISCORD().getChannelByID(idChan);
 
                     if (chan != null && ! chan.isDeleted())
-                        rssFinders.put(chan.getLongID(), new RSSFinder(chan.getLongID(), lastUpdate));
+                        rssFinders.put(chan.getLongID(), new RSSFinder(chan.getGuild().getLongID(), chan.getLongID(), lastUpdate));
                     else {
                         new RSSFinder(idGuild, idChan).removeToDatabase();
                         LOG.info("Chan deleted : " + idChan);
