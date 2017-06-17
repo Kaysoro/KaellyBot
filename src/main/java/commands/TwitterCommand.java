@@ -35,7 +35,7 @@ public class TwitterCommand extends AbstractCommand{
 
                 if (value.matches("\\s+true") || value.matches("\\s+0") || value.matches("\\s+on")){
                     if (! TwitterFinder.getTwitterChannels().containsKey(message.getChannel().getLongID())) {
-                        new TwitterFinder(message.getChannel().getLongID()).addToDatabase();
+                        new TwitterFinder(message.getGuild().getLongID(), message.getChannel().getLongID()).addToDatabase();
                         Message.sendText(message.getChannel(), "Les tweets de @Dofusfr seront postés ici.");
                     }
                     else

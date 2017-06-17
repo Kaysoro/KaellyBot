@@ -36,34 +36,21 @@ public class RSSCommand extends AbstractCommand{
                 String value = m.group(1);
 
                 if (value.matches("\\s+true") || value.matches("\\s+0") || value.matches("\\s+on")){
-                    boolean found = false;
 
-                    for(RSSFinder finder : RSSFinder.getRSSFinders())
-                        if (finder.getChan() == message.getChannel().getLongID()){
-                            found = true;
-                            break;
-                        }
-
-                    if (!found) {
-                        new RSSFinder(message.getChannel().getLongID()).addToDatabase();
+                    if (!RSSFinder.getRSSFinders().containsKey(message.getChannel().getLongID())) {
+                        new RSSFinder(message.getGuild().getLongID(), message.getChannel().getLongID()).addToDatabase();
                         Message.sendText(message.getChannel(), "Les news de dofus.com seront automatiquement postées ici.");
                     }
                     else
                         new RSSFoundDiscordException().throwException(message, this);
                 }
-                else {
-                    boolean found = false;
-                    for(RSSFinder finder : RSSFinder.getRSSFinders())
-                        if (finder.getChan() == message.getChannel().getLongID()){
-                            found = true;
-                            finder.removeToDatabase();
-                            Message.sendText(message.getChannel(), "Les news de dofus.com ne sont plus postées ici.");
-                            break;
-                        }
-
-                    if (!found)
+                else
+                    if (RSSFinder.getRSSFinders().containsKey(message.getChannel().getLongID())){
+                        RSSFinder.getRSSFinders().get(message.getChannel().getLongID()).removeToDatabase();
+                        Message.sendText(message.getChannel(), "Les news de dofus.com ne sont plus postées ici.");
+                    }
+                    else
                         new RSSNotFoundDiscordException().throwException(message, this);
-                }
             } else
                 new NotEnoughRightsDiscordException().throwException(message, this);
         }

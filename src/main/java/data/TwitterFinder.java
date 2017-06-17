@@ -23,9 +23,11 @@ import java.util.Map;
 public class TwitterFinder extends StatusAdapter{
     private final static Logger LOG = LoggerFactory.getLogger(TwitterFinder.class);
     protected static Map<Long, TwitterFinder> twitterChannels;
+    private long guildId;
     private long channelId;
 
-    public TwitterFinder(long channelId) {
+    public TwitterFinder(long guidId, long channelId) {
+        this.guildId = guidId;
         this.channelId = channelId;
 
         if (ClientConfig.TWITTER() != null) {
@@ -67,15 +69,19 @@ public class TwitterFinder extends StatusAdapter{
             Connection connection = connexion.getConnection();
 
             try {
-                PreparedStatement query = connection.prepareStatement("SELECT id_chan FROM Twitter");
+                PreparedStatement query = connection.prepareStatement("SELECT id_guild, id_chan FROM Twitter");
                 ResultSet resultSet = query.executeQuery();
 
                 while (resultSet.next()){
-                    IChannel chan = ClientConfig.DISCORD().getChannelByID(Long.parseLong(resultSet.getString("id_chan")));
-                    if (chan != null)
-                        twitterChannels.put(chan.getLongID(), new TwitterFinder(chan.getLongID()));
-                    else
-                        new TwitterFinder(Long.parseLong(resultSet.getString("id_chan"))).removeToDatabase();
+                    long idChan = Long.parseLong(resultSet.getString("id_chan"));
+                    long idGuild = Long.parseLong(resultSet.getString("id_guild"));
+                    IChannel chan = ClientConfig.DISCORD().getChannelByID(idChan);
+                    if (chan != null && ! chan.isDeleted())
+                        twitterChannels.put(chan.getLongID(), new TwitterFinder(idGuild, idChan));
+                    else {
+                        new TwitterFinder(idGuild, idChan).removeToDatabase();
+                        LOG.info("Chan deleted : " + idChan);
+                    }
                 }
             } catch (SQLException e) {
                 Reporter.report(e);
@@ -93,8 +99,9 @@ public class TwitterFinder extends StatusAdapter{
 
             try {
                 PreparedStatement preparedStatement = connection.prepareStatement(
-                        "INSERT INTO Twitter(id_chan) VALUES(?);");
+                        "INSERT INTO Twitter(id_chan, id_guild) VALUES(?, ?);");
                 preparedStatement.setString(1, String.valueOf(getChannelId()));
+                preparedStatement.setString(2, String.valueOf(getGuildId()));
 
                 preparedStatement.executeUpdate();
             } catch (SQLException e) {
@@ -123,5 +130,9 @@ public class TwitterFinder extends StatusAdapter{
 
     public Long getChannelId(){
         return channelId;
+    }
+
+    public Long getGuildId(){
+        return guildId;
     }
 }

@@ -27,6 +27,7 @@ public class ReadyListener {
         ClientConfig.DISCORD().getDispatcher().registerListener(new GuildLeaveListener());
         ClientConfig.DISCORD().getDispatcher().registerListener(new GuildTransferOwnershipListener());
         ClientConfig.DISCORD().getDispatcher().registerListener(new GuildUpdateListener());
+        ClientConfig.DISCORD().getDispatcher().registerListener(new ChannelDeleteListener());
         ClientConfig.DISCORD().getDispatcher().registerListener(new NickNameChangeListener());
         ClientConfig.DISCORD().getDispatcher().registerListener(new UserBanListener());
         ClientConfig.DISCORD().getDispatcher().registerListener(new UserJoinListener());
