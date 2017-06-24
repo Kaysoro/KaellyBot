@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 import sx.blah.discord.handle.obj.IMessage;
 
 import java.lang.*;
+import java.net.UnknownHostException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -31,7 +32,9 @@ public abstract class ExceptionManager {
                 LOG.error(e.getMessage());
                 new UnknownErrorDiscordException().throwException(message, command);
             }
-        } else {
+        } else if (e instanceof UnknownHostException)
+            new DofusWebsiteInaccessibleDiscordException().throwException(message, command);
+        else {
             Reporter.report(e);
             LOG.error(e.getMessage(), message.getContent());
             new UnknownErrorDiscordException().throwException(message, command);

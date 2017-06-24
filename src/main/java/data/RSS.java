@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.URL;
+import java.net.UnknownHostException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -43,7 +44,6 @@ public class RSS implements Comparable<RSS>{
 
             for(SyndEntry entry : feed.getEntries())
                 rss.add(new RSS(entry.getTitle(), entry.getLink(), entry.getPublishedDate().getTime()));
-
         } catch (FeedException e){
             Reporter.report(e);
             LOG.error(e.getMessage());
@@ -59,10 +59,15 @@ public class RSS implements Comparable<RSS>{
                     Reporter.report(e);
                     LOG.error(e.getMessage());
                 }
-            } else {
+            } else if (e instanceof UnknownHostException)
+                LOG.warn(e.getMessage());
+            else {
                 Reporter.report(e);
                 LOG.error(e.getMessage());
             }
+        } catch(Exception e){
+            Reporter.report(e);
+            LOG.error(e.getMessage());
         }
         Collections.sort(rss);
         return rss;
