@@ -8,7 +8,6 @@ import exceptions.ExceptionManager;
 import exceptions.ItemNotFoundDiscordException;
 import exceptions.TooMuchItemsDiscordException;
 import org.apache.commons.lang3.tuple.Pair;
-import org.jsoup.HttpStatusException;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -16,8 +15,6 @@ import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sx.blah.discord.handle.obj.IMessage;
-
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
@@ -97,7 +94,7 @@ public class ItemCommand extends AbstractCommand{
                 } else // empty
                     new ItemNotFoundDiscordException().throwException(message, this);
             } catch(IOException e){
-                ExceptionManager.manageIOException(e, message, this);
+                ExceptionManager.manageIOException(e, message, this, new ItemNotFoundDiscordException());
             }
 
             return true;
@@ -117,11 +114,8 @@ public class ItemCommand extends AbstractCommand{
                 result.add(Pair.of(element.child(1).text(),
                         element.child(1).select("a").attr("href")));
 
-        } catch (FileNotFoundException | HttpStatusException e){
-            new ItemNotFoundDiscordException().throwException(message, this);
-            return null;
         } catch(IOException e){
-            ExceptionManager.manageIOException(e, message, this);
+            ExceptionManager.manageIOException(e, message, this, new ItemNotFoundDiscordException());
             return null;
         }  catch (Exception e) {
             ExceptionManager.manageException(e, message, this);

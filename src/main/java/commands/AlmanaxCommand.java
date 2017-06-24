@@ -60,7 +60,7 @@ public class AlmanaxCommand extends AbstractCommand{
             } catch (FileNotFoundException | HttpStatusException e){
                 new DofusWebsiteInaccessibleDiscordException().throwException(message, this);
             } catch(IOException e){
-                ExceptionManager.manageIOException(e, message, this);
+                ExceptionManager.manageIOException(e, message, this, new AlmanaxNotFoundDiscordException());
             }  catch (Exception e) {
                 ExceptionManager.manageException(e, message, this);
             }

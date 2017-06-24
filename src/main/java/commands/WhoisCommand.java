@@ -6,7 +6,6 @@ import data.ServerDofus;
 import discord.Message;
 import exceptions.*;
 import org.jsoup.Connection;
-import org.jsoup.HttpStatusException;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -14,8 +13,6 @@ import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sx.blah.discord.handle.obj.IMessage;
-
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.lang.Exception;
@@ -116,10 +113,8 @@ public class WhoisCommand extends AbstractCommand{
                 }
                 else
                     new CharacterNotFoundDiscordException().throwException(message, this);
-            } catch (FileNotFoundException | HttpStatusException e){
-                new CharacterPageNotFoundDiscordException().throwException(message, this);
             } catch(IOException e){
-                ExceptionManager.manageIOException(e, message, this);
+                ExceptionManager.manageIOException(e, message, this, new CharacterPageNotFoundDiscordException());
             }  catch (Exception e) {
                 ExceptionManager.manageException(e, message, this);
             }
