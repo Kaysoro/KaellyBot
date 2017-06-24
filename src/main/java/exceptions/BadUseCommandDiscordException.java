@@ -17,9 +17,9 @@ public class BadUseCommandDiscordException implements DiscordException {
 
     @Override
     public void throwException(IMessage message, Command command, Object... arguments) {
-        Message.sendText(message.getChannel(), message.getAuthor() + ", " + Constants.prefixCommand
+        Message.sendText(message.getChannel(), message.getAuthor() + ", " + command.getPrefix(message)
                 + command.getName() + " ne s'utilise pas comme ça. Tape `"
-                + Constants.prefixCommand + new HelpCommand().getName()
+                + command.getPrefix(message) + new HelpCommand().getName()
                 + " " + command.getName() + "` pour en savoir plus.");
     }
 }
