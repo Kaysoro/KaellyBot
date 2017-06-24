@@ -82,5 +82,52 @@ Affiche la page personelle d'un joueur.
 `!whois *pseudo*` : Donne la page personnelle associée au pseudo. Celui-ci doit être exact.  
 `!whois *pseudo serveur*` : Est à utiliser lorsque le pseudo ne suffit pas pour déterminer la fiche d'un personnage.  
 
+# Participer au projet
+
+## Modifier KaellyBOT
+
+Tout le monde peut aider au développement de KaellyBOT ! Proposez des suggestions, remontez des bugs sur le support ou bien développez des évolutions en proposant vos pulls request : https://github.com/Kaysoro/KaellyBot/pulls.
+
+## Créer votre Bot
+
+### Obtenir un token Discord
+
+1. Connectez vous sur le [site developers discord](https://discordapp.com/developers/applications/me).
+2. Dans Application > MyApp : Cliquez sur New App.
+3. Renseignez le nom du Bot, une brève description et une icône.
+4. Une fois créé, Cliquez sur "Create a bot user".
+5. Cochez la case "Public bot" si vous souhaitez qu'il soit accessible par n'importe qui.
+6. Récupérez le client ID et le token, ils vous serviront à ajouter votre bot sur un serveur et à le mettre en route.
+
+Ne diffusez pas votre token, il permettrait à n'importe qui de modifier votre bot.
+
+### Obtenir un lien d'invitation
+
+Vous avez créé votre bot sur le site de Discord et vous souhaitez l'inviter sur un serveur.
+Récupérez le client ID de votre bot et placez le à la place de CLIENT_ID dans l'url suivante :
+https://discordapp.com/oauth2/authorize?&client_id=CLIENT_ID&scope=bot
+
+### Connecter le bot à Discord
+
+Maintenant que vous avez déclaré votre application sur la plateforme Discord, il suffit d'ajouter le token précèdemment copié dans le fichier [config.properties](https://github.com/Kaysoro/KaellyBot/blob/master/config.properties), de telle sorte que : discord.token=TOKEN.
+
+Avant de continuer il faut ajouter la base de données *bdd.sqlite* à la racine du dossier; celle-ci est en libre téléchargement sur le serveur de support KaellyBOT, dans le salon \#trucs_utiles.
+
+#### Créer le .jar pour démarrer le bot :
+
+Installer *Maven* sur votre machine puis exécutez les commandes suivantes :
+- `cd VotreProjet`
+- `mvn clean compile`
+- `mvn assembly:single`
+
+#### Démarrer le .jar :
+
+- En double cliquant dessus (Ne prémunit pas d'éventuelles erreurs).
+- En l'exécutant depuis la console : `java -jar jarfile` (Permet aussi d'avoir les logs du bot).
+
+#### Heberger le .jar :
+
+Kaelly peut être lancé depuis n'importe quelle distribution : elle est compatible Windows/Linux/MacOS. Un serveur VPS est nécessaire pour son autonomie (sans quoi il devra tourner sur votre machine personnelle); il pourra fonctionner indépendemment en utilisant des commandes tels que `screen` ou encore `tmux` sur Linux, par exemple.
+
 ## Licence
 Ce projet est sous licence GPL(v3).
