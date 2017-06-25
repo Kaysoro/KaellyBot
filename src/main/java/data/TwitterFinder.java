@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 import sx.blah.discord.handle.obj.IChannel;
 import sx.blah.discord.util.EmbedBuilder;
 import twitter4j.FilterQuery;
+import twitter4j.MediaEntity;
 import twitter4j.Status;
 import twitter4j.StatusAdapter;
 
@@ -55,6 +56,11 @@ public class TwitterFinder extends StatusAdapter{
                 builder.withColor(1942002);
                 builder.withDescription(status.getText());
                 builder.withThumbnail(Constants.twitterIcon);
+
+                if(status.getMediaEntities().length > 0){
+                    MediaEntity media = status.getMediaEntities()[0];
+                    builder.withImage(media.getMediaURL());
+                }
 
                 Message.sendEmbed(ClientConfig.DISCORD().getChannelByID(getChannelId()), builder.build());
             }
