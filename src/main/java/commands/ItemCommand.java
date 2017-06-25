@@ -22,6 +22,8 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.net.UnknownHostException;
+import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -38,6 +40,13 @@ public class ItemCommand extends AbstractCommand{
     private final static String forLevelMax = "&object_level_max=";
     private final static String levelMax = "200";
     private final static String and = "&EFFECTMAIN_and_or=AND";
+    private final static String[] typeEqui = {"amulette", "arc", "baguette", "baton", "dague", "epee", "marteau",
+            "pelle", "anneau", "ceinture", "bottes", "chapeau", "cape", "hache", "outil", "pioche", "faux", "dofus", "bouclier",
+            "pierre d'ame", "trophee"};
+    private final static String[] typeEquiId = {"&type_id[]=1", "&type_id[]=2", "&type_id[]=3", "&type_id[]=4",
+            "&type_id[]=5", "&type_id[]=6", "&type_id[]=7", "&type_id[]=8", "&type_id[]=9", "&type_id[]=10",
+            "&type_id[]=11", "&type_id[]=16", "&type_id[]=17", "&type_id[]=19", "&type_id[]=20", "&type_id[]=21",
+            "&type_id[]=22", "&type_id[]=23", "&type_id[]=82", "&type_id[]=83", "&type_id[]=151"};
 
     public ItemCommand(){
         super("item", "\\s+(.*)");
@@ -48,8 +57,8 @@ public class ItemCommand extends AbstractCommand{
         if (super.request(message)){
             Matcher m = getMatcher(message);
             m.find();
-            String name = m.group(1).trim().toLowerCase();
-
+            String name = Normalizer.normalize(m.group(1).trim(), Normalizer.Form.NFD)
+                    .replaceAll("\\p{InCombiningDiacriticalMarks}+", "").toLowerCase();
             StringBuilder urlEquipement = null;
             StringBuilder urlWeapon = null;
             try {
@@ -61,12 +70,24 @@ public class ItemCommand extends AbstractCommand{
                         .append("?").append(forName).append(URLEncoder.encode(name, "UTF-8"))
                         .append(and).append(forLevelMin).append(levelMin)
                         .append(forLevelMax).append(levelMax).append(and);
-
+                for (int i = 0 ; i < typeEqui.length ; i++) {
+                    if (name.contains(typeEqui[i])) {
+                        name = name.replace(typeEqui[i]+" ", "");
+                        urlEquipement = new StringBuilder(Constants.officialURL + Constants.equipementPageURL)
+                                .append("?").append(forName).append(URLEncoder.encode(name, "UTF-8")).append(typeEquiId[i])
+                                .append(and).append(forLevelMin).append(levelMin)
+                                .append(forLevelMax).append(levelMax).append(and);
+                        urlWeapon = new StringBuilder(Constants.officialURL + Constants.weaponPageURL)
+                                .append("?").append(forName).append(URLEncoder.encode(name, "UTF-8")).append(typeEquiId[i])
+                                .append(and).append(forLevelMin).append(levelMin)
+                                .append(forLevelMax).append(levelMax).append(and);
+                        break;
+                    }
+                }
             } catch (UnsupportedEncodingException e) {
                 ExceptionManager.manageException(e, message, this);
                 return false;
             }
-
             List<Pair<String, String>> items = getListItemFrom(urlEquipement, message);
             if (items == null) items = new ArrayList<>();
             items.addAll(getListItemFrom(urlWeapon, message));
@@ -133,7 +154,7 @@ public class ItemCommand extends AbstractCommand{
 
     @Override
     public String help(String prefixe) {
-        return "**" + prefixe + name + "** renvoit les statistiques d'un item du jeu Dofus.";
+        return "**" + prefixe + name + "** renvoie les statistiques d'un item du jeu Dofus.";
     }
 
     @Override
