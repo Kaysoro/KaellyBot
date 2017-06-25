@@ -8,6 +8,7 @@ import sx.blah.discord.handle.obj.IMessage;
 
 import java.io.FileNotFoundException;
 import java.lang.*;
+import java.net.NoRouteToHostException;
 import java.net.UnknownHostException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -37,7 +38,9 @@ public abstract class ExceptionManager {
             }
         } else if (e instanceof UnknownHostException) {
             new DofusWebsiteInaccessibleDiscordException().throwException(message, command);
-        } else if (e instanceof FileNotFoundException || e instanceof HttpStatusException){
+        } else if (e instanceof FileNotFoundException
+                || e instanceof HttpStatusException
+                || e instanceof NoRouteToHostException){
             notFound.throwException(message, command);
         }
         else {
