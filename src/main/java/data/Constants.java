@@ -70,6 +70,16 @@ public class Constants {
     public final static String equipementPageURL = "/fr/mmorpg/encyclopedie/equipements";
 
     /**
+     * Official Dofus URL for Pets page
+     */
+    public final static String petPageURL = "/fr/mmorpg/encyclopedie/familiers";
+
+    /**
+     * Official Dofus URL for Montures page
+     */
+    public final static String monturePageURL = "/fr/mmorpg/encyclopedie/montures";
+
+    /**
      * Twitter Icon from Wikipedia
      */
     public final static String twitterIcon = "https://upload.wikimedia.org/wikipedia/fr/thumb/c/c8/Twitter_Bird.svg/langfr-20px-Twitter_Bird.svg.png";

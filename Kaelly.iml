@@ -14,7 +14,7 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="Maven: com.github.austinv11:Discord4j:shaded:dev-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Maven: org.jsoup:jsoup:1.10.3" level="project" />
-    <orderEntry type="library" name="Maven: org.xerial:sqlite-jdbc:3.18.0" level="project" />
+    <orderEntry type="library" name="Maven: org.xerial:sqlite-jdbc:3.19.3" level="project" />
     <orderEntry type="library" name="Maven: com.github.austinv11:Discord4j:shaded:dev-2.8.3-g4c6bf91-1" level="project" />
     <orderEntry type="library" name="Maven: org.slf4j:slf4j-api:1.7.24" level="project" />
     <orderEntry type="library" name="Maven: org.apache.httpcomponents:httpcore:4.4.6" level="project" />
