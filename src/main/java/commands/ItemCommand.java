@@ -1,8 +1,7 @@
 package commands;
 
-import data.Constants;
-import data.Embedded;
-import data.Item;
+import collections.BestMatcher;
+import data.*;
 import discord.Message;
 import exceptions.ExceptionManager;
 import exceptions.ItemNotFoundDiscordException;
@@ -19,7 +18,6 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLEncoder;
-import java.net.UnknownHostException;
 import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.List;
@@ -32,18 +30,11 @@ public class ItemCommand extends AbstractCommand{
 
     private final static Logger LOG = LoggerFactory.getLogger(ItemCommand.class);
     private final static String forName = "text=";
-    private final static String forLevelMin = "&object_level_min=";
-    private final static String levelMin = "50";
-    private final static String forLevelMax = "&object_level_max=";
+    private final static String forLevelMin = "object_level_min=";
+    private final static String levelMin = "1";
+    private final static String forLevelMax = "object_level_max=";
     private final static String levelMax = "200";
-    private final static String and = "&EFFECTMAIN_and_or=AND";
-    private final static String[] typeEqui = {"amulette", "arc", "baguette", "baton", "dague", "epee", "marteau",
-            "pelle", "anneau", "ceinture", "bottes", "chapeau", "cape", "hache", "outil", "pioche", "faux", "dofus", "bouclier",
-            "pierre d'ame", "trophee"};
-    private final static String[] typeEquiId = {"&type_id[]=1", "&type_id[]=2", "&type_id[]=3", "&type_id[]=4",
-            "&type_id[]=5", "&type_id[]=6", "&type_id[]=7", "&type_id[]=8", "&type_id[]=9", "&type_id[]=10",
-            "&type_id[]=11", "&type_id[]=16", "&type_id[]=17", "&type_id[]=19", "&type_id[]=20", "&type_id[]=21",
-            "&type_id[]=22", "&type_id[]=23", "&type_id[]=82", "&type_id[]=83", "&type_id[]=151"};
+    private final static String and = "EFFECTMAIN_and_or=AND";
 
     public ItemCommand(){
         super("item", "\\s+(.*)");
@@ -54,65 +45,40 @@ public class ItemCommand extends AbstractCommand{
         if (super.request(message)){
             Matcher m = getMatcher(message);
             m.find();
-            String name = Normalizer.normalize(m.group(1).trim(), Normalizer.Form.NFD)
+            String normalName = Normalizer.normalize(m.group(1).trim(), Normalizer.Form.NFD)
                     .replaceAll("\\p{InCombiningDiacriticalMarks}+", "").toLowerCase();
-            StringBuilder urlEquipement = null;
-            StringBuilder urlWeapon = null;
+            String editedName = removeUselessWords(normalName);
+            BestMatcher matcher = new BestMatcher(editedName);
+
             try {
-                urlEquipement = new StringBuilder(Constants.officialURL + Constants.equipementPageURL)
-                        .append("?").append(forName).append(URLEncoder.encode(name, "UTF-8"))
-                        .append(and).append(forLevelMin).append(levelMin)
-                        .append(forLevelMax).append(levelMax).append(and);
-                urlWeapon = new StringBuilder(Constants.officialURL + Constants.weaponPageURL)
-                        .append("?").append(forName).append(URLEncoder.encode(name, "UTF-8"))
-                        .append(and).append(forLevelMin).append(levelMin)
-                        .append(forLevelMax).append(levelMax).append(and);
-                for (int i = 0 ; i < typeEqui.length ; i++) {
-                    if (name.contains(typeEqui[i])) {
-                        name = name.replace(typeEqui[i]+" ", "");
-                        urlEquipement = new StringBuilder(Constants.officialURL + Constants.equipementPageURL)
-                                .append("?").append(forName).append(URLEncoder.encode(name, "UTF-8")).append(typeEquiId[i])
-                                .append(and).append(forLevelMin).append(levelMin)
-                                .append(forLevelMax).append(levelMax).append(and);
-                        urlWeapon = new StringBuilder(Constants.officialURL + Constants.weaponPageURL)
-                                .append("?").append(forName).append(URLEncoder.encode(name, "UTF-8")).append(typeEquiId[i])
-                                .append(and).append(forLevelMin).append(levelMin)
-                                .append(forLevelMax).append(levelMax).append(and);
-                        break;
+                for (int i = 0; i < TypeEquipment.values().length ; i++) {
+                    TypeEquipment equip = TypeEquipment.values()[i];
+                    for(int j = 0; j < equip.getNames().length; j++){
+                        String potentialName = Normalizer.normalize(equip.getNames()[j], Normalizer.Form.NFD)
+                                .replaceAll("\\p{InCombiningDiacriticalMarks}+", "").toLowerCase();
+                        if (normalName.contains(potentialName)) {
+                            matcher.evaluateAll(getListItemFrom(getSearchURL(equip.getType().getUrl(),
+                                    editedName.replace(potentialName, "").trim(), equip.getTypeID()), message));
+                            break;
+                        }
                     }
                 }
+
+                if (matcher.isEmpty())
+                    for(SuperTypeEquipment type : SuperTypeEquipment.values())
+                        matcher.evaluateAll(getListItemFrom(getSearchURL(type.getUrl(), normalName, null), message));
             } catch (UnsupportedEncodingException e) {
                 ExceptionManager.manageException(e, message, this);
                 return false;
             }
-            List<Pair<String, String>> items = getListItemFrom(urlEquipement, message);
-            if (items == null) items = new ArrayList<>();
-            items.addAll(getListItemFrom(urlWeapon, message));
-
-            // If there still a problem
-            if (items == null) return false;
 
             try {
-                if (items.size() == 1) { // We have found it !
-                    Embedded item = Item.getItem(Constants.officialURL + items.get(0).getRight());
+                if (matcher.isUnique()) { // We have found it !
+                    Embedded item = Item.getItem(Constants.officialURL + matcher.getBest().getRight());
                     Message.sendEmbed(message.getChannel(), item.getEmbedObject());
-                } else if (items.size() > 1) {
-                    // We are looking for a specific item. If not found, exception thrown
-                    Pair<String, String> result = null;
-                    for (Pair<String, String> pair : items)
-                        if (name.equals(pair.getLeft().trim().toLowerCase())) {
-                            result = pair;
-                            break;
-                        }
-
-                    if (result != null){
-                        Embedded item = Item.getItem(Constants.officialURL + result.getRight());
-                        Message.sendEmbed(message.getChannel(), item.getEmbedObject());
-                    }
-                    else
-                        new TooMuchItemsDiscordException().throwException(message, this, items);
-
-                } else // empty
+                } else if (! matcher.isEmpty()) // Too much items
+                    new TooMuchItemsDiscordException().throwException(message, this, matcher.getBests());
+                else // empty
                     new ItemNotFoundDiscordException().throwException(message, this);
             } catch(IOException e){
                 ExceptionManager.manageIOException(e, message, this, new ItemNotFoundDiscordException());
@@ -124,10 +90,23 @@ public class ItemCommand extends AbstractCommand{
         return false;
     }
 
-    private List<Pair<String, String>> getListItemFrom(StringBuilder url, IMessage message){
+    private String getSearchURL(String SuperTypeURL, String text, String typeArg) throws UnsupportedEncodingException {
+        StringBuilder url = new StringBuilder(Constants.officialURL).append(SuperTypeURL)
+                .append("?").append(forName.toLowerCase()).append(URLEncoder.encode(text, "UTF-8"))
+                .append("&").append(forName.toUpperCase()).append(URLEncoder.encode(text, "UTF-8"))
+                .append("&").append(and).append("&").append(forLevelMin).append(levelMin)
+                .append("&").append(forLevelMax).append(levelMax).append("&").append(and);
+
+        if (typeArg != null && ! typeArg.isEmpty())
+            url.append(typeArg);
+
+        return url.toString();
+    }
+
+    private List<Pair<String, String>> getListItemFrom(String url, IMessage message){
         List<Pair<String, String>> result = new ArrayList<>();
         try {
-            Document doc = Jsoup.parse(new URL(url.toString()).openStream(), "UTF-8", url.toString());
+            Document doc = Jsoup.parse(new URL(url).openStream(), "UTF-8", url.toString());
             Elements elems = doc.getElementsByClass("ak-bg-odd");
             elems.addAll(doc.getElementsByClass("ak-bg-even"));
 
@@ -137,13 +116,17 @@ public class ItemCommand extends AbstractCommand{
 
         } catch(IOException e){
             ExceptionManager.manageIOException(e, message, this, new ItemNotFoundDiscordException());
-            return null;
+            return new ArrayList<>();
         }  catch (Exception e) {
             ExceptionManager.manageException(e, message, this);
-            return null;
+            return new ArrayList<>();
         }
 
         return result;
+    }
+
+    private String removeUselessWords(String search){
+        return search.replaceAll("\\s+\\w{1,3}\\s+", " ");
     }
 
     @Override
@@ -155,7 +138,6 @@ public class ItemCommand extends AbstractCommand{
     public String helpDetailed(String prefixe) {
         return help(prefixe)
                 + "\n" + prefixe + "`"  + name + " `*`item`* : renvoie les statistiques de l'item spécifié :"
-                + " son nom peut être approximatif s'il est suffisemment précis. A noter que les items inférieurs"
-                + " au niveau " + levelMin + " sont exclus.\n";
+                + " son nom peut être approximatif s'il est suffisemment précis.\n";
     }
 }

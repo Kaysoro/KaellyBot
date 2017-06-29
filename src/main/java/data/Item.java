@@ -53,19 +53,21 @@ public class Item implements Embedded {
 
         builder.withTitle(name);
         builder.withUrl(url);
-        builder.withDescription(description);
+        if (description != null && ! description.isEmpty())
+            builder.withDescription(description);
 
         builder.withColor(new Random().nextInt(16777216));
         builder.withImage(skinURL);
 
-        builder.appendField(":star: Niveau :", level, true);
+        if (level != null && ! level.isEmpty())
+            builder.appendField(":star: Niveau :", level, true);
         builder.appendField(":dagger: Type :", type, true);
         builder.appendField(":cyclone: Effets :", effects, true);
 
-        if (caracteristics != null)
+        if (caracteristics != null && ! caracteristics.isEmpty())
             builder.appendField(":gear: Caractéristiques", caracteristics, true);
 
-        if (conditions != null)
+        if (conditions != null && ! conditions.isEmpty())
             builder.appendField(":key: Conditions",conditions, true);
 
         if (panoplie != null && panoplieURL != null)
@@ -82,8 +84,11 @@ public class Item implements Embedded {
 
         String name = doc.getElementsByClass("ak-return-link").first().text();
         String level = doc.getElementsByClass("ak-encyclo-detail-level").first().text();
-        String description = doc.getElementsByClass("ak-panel-content").get(3).text();
         String type = doc.getElementsByClass("ak-encyclo-detail-type").last().children().last().text();
+        String description = null;
+        if (! type.equals("Montures"))
+                description = doc.getElementsByClass("ak-panel-content").get(3).text();
+
         String skinURL = doc.getElementsByClass("ak-encyclo-detail-illu").first()
                 .children().first().attr("src");
 
