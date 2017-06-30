@@ -1,6 +1,7 @@
 package commands;
 
 import discord.Message;
+import exceptions.APILimitExceededException;
 import exceptions.NSFWNotAuthorizedDiscordException;
 import exceptions.Reporter;
 import exceptions.UnknownErrorDiscordException;
@@ -50,15 +51,17 @@ public class Rule34Command extends AbstractCommand{
 
                         doc = db.parse(new URL(url)
                                 .openStream());
-
                         String link = "https:" + doc.getElementsByTagName("posts").item(0).getChildNodes()
                                 .item(0).getAttributes().getNamedItem("file_url").getNodeValue();
 
                         Message.sendText(message.getChannel(), link);
+
                     } else
                         Message.sendText(message.getChannel(), "Aucune image ne correspond à `"
                                 + m.group(1).trim() + "`.");
 
+                } catch(NullPointerException e){
+                    new APILimitExceededException().throwException(message, this);
                 } catch (Exception e) {
                     new UnknownErrorDiscordException().throwException(message, this);
                     Reporter.report(e, message.getContent());
