@@ -85,22 +85,12 @@ public class Item implements Embedded {
         String name = doc.getElementsByClass("ak-return-link").first().text();
         String level = doc.getElementsByClass("ak-encyclo-detail-level").first().text();
         String type = doc.getElementsByClass("ak-encyclo-detail-type").last().children().last().text();
-        String description = null;
-        if (! type.equals("Montures"))
-                description = doc.getElementsByClass("ak-panel-content").get(3).text();
 
         String skinURL = doc.getElementsByClass("ak-encyclo-detail-illu").first()
-                .children().first().attr("src");
+                .getElementsByTag("img").first().attr("src");
 
-        Elements lines = doc.getElementsByClass("ak-panel-content").get(5)
-                .getElementsByClass("ak-title");
-
-        StringBuilder tmp = new StringBuilder();
-        for(Element line : lines)
-            tmp.append(line.text()).append("\n");
-        String effects = tmp.toString();
-
-        // Optional
+        String description = null;
+        String effects = null;
         String caracteristics = null;
         String conditions = null;
         String panoplie = null;
@@ -108,44 +98,44 @@ public class Item implements Embedded {
         String recipe = null;
 
         Elements titles = doc.getElementsByClass("ak-panel-title");
-        int next = 0;
-        for(Element title : titles){
-            if (title.text().equals("Caractéristiques")){
-                lines = doc.getElementsByClass("ak-panel-content").get(6 + next++)
-                        .getElementsByClass("ak-title");
-                tmp = new StringBuilder();
-                for(Element line : lines)
-                    tmp.append(line.text()).append("\n");
-                caracteristics = tmp.toString();
-            }
-            else if (title.text().equals("Conditions")){
-                lines = doc.getElementsByClass("ak-panel-content").get(6 + next++)
-                        .getElementsByClass("ak-title");
-                tmp = new StringBuilder();
-                for(Element line : lines)
-                    tmp.append(line.text()).append("\n");
-                conditions = tmp.toString();
-            }
-            else if(title.text().contains(name + " fait partie de")){
+        Elements lines;
+        StringBuilder tmp;
+        for (Element title : titles)
+            if (title.text().equals("Description"))
+                description = title.parent().getElementsByClass("ak-panel-content").first().text();
+            else if (title.text().equals("Effets"))
+                effects = extractLinesFromTitle(title);
+            else if (title.text().equals("Caractéristiques"))
+                caracteristics = extractLinesFromTitle(title);
+            else if (title.text().equals("Conditions"))
+                conditions = extractLinesFromTitle(title);
+            else if (title.text().contains(name + " fait partie de")){
                 panoplie = title.getElementsByTag("a").first().text();
                 panoplieURL = Constants.officialURL + title.getElementsByTag("a").first().attr("href");
             }
-            else if(title.text().equals("Recette")){
-                lines = doc.getElementsByClass("ak-panel-content").get(6 + next++)
-                        .getElementsByClass("ak-column");
+            else if (title.text().equals("Recette")){
+                lines = title.parent().getElementsByClass("ak-column");
                 tmp = new StringBuilder();
-                for(Element line : lines)
+                for (Element line : lines)
                     tmp.append(line.getElementsByClass("ak-front").text()).append(" [")
                             .append(line.getElementsByClass("ak-title").first().text()).append("](")
                             .append(Constants.officialURL)
-                            .append(line.getElementsByClass("ak-title").first().children().first()
-                                    .attr("href")).append(")\n");
+                            .append(line.getElementsByClass("ak-title").first()
+                            .children().first().attr("href")).append(")\n");
                 recipe = tmp.toString();
             }
-        }
 
         return new Item(name, type, level, description, effects, skinURL, url,
                 caracteristics, conditions, panoplie, panoplieURL, recipe);
+    }
+
+    private static String extractLinesFromTitle(Element title)
+    {
+        Elements lines = title.parent().getElementsByClass("ak-title");
+        StringBuilder tmp = new StringBuilder();
+        for (Element line : lines)
+            tmp.append(line.text()).append("\n");
+        return tmp.toString();
     }
 }
 

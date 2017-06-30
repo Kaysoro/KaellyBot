@@ -1,27 +1,28 @@
-package controler;
+package listeners;
 
 import data.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sx.blah.discord.api.events.EventSubscriber;
-import sx.blah.discord.handle.impl.events.guild.member.UserBanEvent;
+import sx.blah.discord.handle.impl.events.guild.member.UserLeaveEvent;
 
 /**
  * Created by steve on 14/07/2016.
  */
-public class UserBanListener {
+public class UserLeaveListener {
 
-    private final static Logger LOG = LoggerFactory.getLogger(UserBanListener.class);
+    private final static Logger LOG = LoggerFactory.getLogger(UserLeaveListener.class);
 
-    public UserBanListener(){
+    public UserLeaveListener(){
         super();
     }
 
         @EventSubscriber
-        public void onReady(UserBanEvent event) {
+        public void onReady(UserLeaveEvent event) {
             User user = User.getUsers().get(event.getGuild().getStringID()).get(event.getUser().getStringID());
             user.removeToDatabase();
-            LOG.info("L'utilisateur " + user.getId() + " - " + user.getName() + " a été bannis de "
+
+            LOG.info("L'utilisateur " + user.getId() + " - " + user.getName() + " a quitté "
                     + event.getGuild().getName());
         }
 }

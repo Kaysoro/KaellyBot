@@ -1,4 +1,4 @@
-import controler.ReadyListener;
+import listeners.ReadyListener;
 import data.ClientConfig;
 import sx.blah.discord.api.IDiscordClient;
 
