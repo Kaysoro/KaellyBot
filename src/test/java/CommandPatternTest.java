@@ -17,6 +17,7 @@ public class CommandPatternTest extends TestCase {
 
         assertTrue(pattern.matcher(Constants.prefixCommand + "almanax").find());
         assertTrue(pattern.matcher(Constants.prefixCommand + "almanax 20/02/2016").find());
+        assertTrue(pattern.matcher(Constants.prefixCommand + "almanax +9").find());
     }
 
     public void testAboutCommand(){
@@ -24,6 +25,20 @@ public class CommandPatternTest extends TestCase {
         Pattern pattern = Pattern.compile("^" + Constants.prefixCommand + cmd.getName() + cmd.getPattern() + "$");
 
         assertTrue(pattern.matcher(Constants.prefixCommand + "about").find());
+    }
+
+    public void testCommandCommand(){
+        Command cmd = new CommandCommand();
+        Pattern pattern = Pattern.compile("^" + Constants.prefixCommand + cmd.getName() + cmd.getPattern() + "$");
+
+        assertTrue(pattern.matcher(Constants.prefixCommand + "cmd CommandForbidden true").find());
+        assertTrue(pattern.matcher(Constants.prefixCommand + "cmd CommandForbidden on").find());
+        assertTrue(pattern.matcher(Constants.prefixCommand + "cmd CommandForbidden 0").find());
+        assertTrue(pattern.matcher(Constants.prefixCommand + "cmd CommandForbidden false").find());
+        assertTrue(pattern.matcher(Constants.prefixCommand + "cmd CommandForbidden off").find());
+        assertTrue(pattern.matcher(Constants.prefixCommand + "cmd CommandForbidden 1").find());
+        assertFalse(pattern.matcher(Constants.prefixCommand + "cmd").find());
+        assertFalse(pattern.matcher(Constants.prefixCommand + "cmd CommandForbidden").find());
     }
 
     public void testHelpCommand(){
@@ -97,19 +112,6 @@ public class CommandPatternTest extends TestCase {
         assertTrue(pattern.matcher(Constants.prefixCommand + "right <@&1234>").find());
         assertTrue(pattern.matcher(Constants.prefixCommand + "right <@!1234> 1").find());
         assertTrue(pattern.matcher(Constants.prefixCommand + "right <@&1234> 1").find());
-    }
-
-    public void testMusicCommand(){
-        Command cmd = new MusicCommand();
-        Pattern pattern = Pattern.compile("^" + Constants.prefixCommand + cmd.getName() + cmd.getPattern() + "$");
-
-        assertTrue(pattern.matcher(Constants.prefixCommand + "music https://www.youtube.com/watch?v=dQw4w9WgXcQ").find());
-        assertTrue(pattern.matcher(Constants.prefixCommand + "music -join").find());
-        assertTrue(pattern.matcher(Constants.prefixCommand + "music -play").find());
-        assertTrue(pattern.matcher(Constants.prefixCommand + "music -pause").find());
-        assertTrue(pattern.matcher(Constants.prefixCommand + "music -skip").find());
-        assertTrue(pattern.matcher(Constants.prefixCommand + "music -shuffle").find());
-        assertTrue(pattern.matcher(Constants.prefixCommand + "music -leave").find());
     }
 
     public void testTwitterCommand(){

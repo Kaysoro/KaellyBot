@@ -23,6 +23,7 @@ public class CommandManager {
         // Basics commands
         addCommand(new AlmanaxCommand());
         addCommand(new AboutCommand());
+        addCommand(new CommandCommand());
         addCommand(new HelpCommand());
         addCommand(new ItemCommand());
         addCommand(new JobCommand());
@@ -53,8 +54,8 @@ public class CommandManager {
         return getInstance().commands;
     }
 
-    public Command getCommand(String name){
-        return mapCommands.get(name);
+    public static Command getCommand(String name){
+        return getInstance().mapCommands.get(name);
     }
 
     private void addCommand(Command command){

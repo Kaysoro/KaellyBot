@@ -1,5 +1,6 @@
 package data;
 
+import commands.Command;
 import exceptions.Reporter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,21 +23,18 @@ public class Guild {
     private String id;
     private String name;
     private List<Portal> portals;
+    private Map<String, CommandForbidden> commands;
     private String prefixe;
 
     public Guild(String id, String name){
-        this.id = id;
-        this.name = name;
-        prefixe = Constants.prefixCommand;
-
-        portals = Portal.getPortals(this);
+        this(id, name, Constants.prefixCommand);
     }
 
     private Guild(String id, String name, String prefixe){
         this.id = id;
         this.name = name;
         this.prefixe = prefixe;
-
+        commands = CommandForbidden.getForbiddenCommands(this);
         portals = Portal.getPortals(this);
     }
 
@@ -173,5 +171,9 @@ public class Guild {
 
     public List<Portal> getPortals(){
         return portals;
+    }
+
+    public Map<String, CommandForbidden> getForbiddenCommands(){
+        return commands;
     }
 }

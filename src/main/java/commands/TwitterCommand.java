@@ -41,7 +41,7 @@ public class TwitterCommand extends AbstractCommand{
                     else
                         new TwitterFoundDiscordException().throwException(message, this);
                 }
-                else {
+                else if (value.matches("\\s+false") || value.matches("\\s+1") || value.matches("\\s+off")){
                     if (TwitterFinder.getTwitterChannels().containsKey(message.getChannel().getLongID())) {
                         TwitterFinder.getTwitterChannels().get(message.getChannel().getLongID()).removeToDatabase();
                         Message.sendText(message.getChannel(), "Les tweets de @Dofusfr ne seront plus postés ici.");
@@ -49,6 +49,8 @@ public class TwitterCommand extends AbstractCommand{
                     else
                         new TwitterNotFoundDiscordException().throwException(message, this);
                 }
+                else
+                    new BadUseCommandDiscordException().throwException(message, this);
             }
             else
                 new NotEnoughRightsDiscordException().throwException(message, this);

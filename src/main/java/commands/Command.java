@@ -1,5 +1,6 @@
 package commands;
 
+import data.Guild;
 import sx.blah.discord.handle.obj.IMessage;
 
 import java.util.regex.Matcher;
@@ -37,6 +38,13 @@ public interface Command {
      * @param isPublic is command available or not
      */
     void setPublic(boolean isPublic);
+
+    /**
+     * Is the command available by the guild admin ?
+     * @param g Guild concerned
+     * @return true is the command is forbidden, else false.
+     */
+    boolean isForbidden(Guild g);
 
     /**
      * Change the command scope in MP

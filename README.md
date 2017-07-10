@@ -20,6 +20,12 @@ Donne des informations relatives à l'Almanax.
 Informations relatives à Kaelly.  
 `!about` : Donne des informations sur KaellyBOT et un moyen d'obtenir de l'aide.
 
+### Command
+Autorise ou non l'utilisation d'une commande de Kaelly.  
+`!cmd command true` : Autorise l'utilisation de la commande. Fonctionne aussi avec `on` et `0`.  
+`!cmd command false` : Interdit l'utilisation de la commande. Fonctionne aussi avec `off` et `1`.  
+
+
 ### Item
 Renvoie les statistiques d'un item du jeu Dofus.  
 `!item item` : Renvoie les statistiques de l'item spécifié : son nom peut être approximatif s'il est suffisemment précis. A noter que les items inférieurs au niveau 50 sont exclus.  

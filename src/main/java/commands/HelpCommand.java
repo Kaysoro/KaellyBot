@@ -1,7 +1,9 @@
 package commands;
 
 import data.Constants;
+import data.Guild;
 import discord.Message;
+import exceptions.CommandNotFoundDiscordException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sx.blah.discord.handle.obj.IMessage;
@@ -28,7 +30,8 @@ public class HelpCommand extends AbstractCommand{
             StringBuilder st = new StringBuilder();
             boolean argumentFound = m.group(1) != null && m.group(1).replaceAll("^\\s+", "").length() > 0;
             for(Command command : CommandManager.getCommands())
-                if (command.isPublic() && ! command.isAdmin()){
+                if (command.isPublic() && ! command.isAdmin()
+                        && ! command.isForbidden(Guild.getGuilds().get(message.getGuild().getStringID()))){
                     if (! argumentFound)
                         st.append(command.help(prefixe)).append("\n");
                     else if (command.getName().equals(m.group(1).trim())) {
@@ -38,15 +41,12 @@ public class HelpCommand extends AbstractCommand{
                 }
 
             if (argumentFound && st.length() == 0)
-                st.append("Aucune commande ne répond au nom de *")
-                        .append(m.group(1).trim())
-                        .append("*.");
-
+                new CommandNotFoundDiscordException().throwException(message, this);
+            else
                 Message.sendText(message.getChannel(), st.toString());
-                return true;
             }
-            return false;
-        }
+        return false;
+    }
 
     @Override
     public String help(String prefixe) {

@@ -3,6 +3,7 @@ package commands;
 import data.Constants;
 import data.Guild;
 import exceptions.BadUseCommandDiscordException;
+import exceptions.CommandForbiddenDiscordException;
 import exceptions.NotUsableInMPDiscordException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,18 +37,27 @@ public abstract class AbstractCommand implements Command {
     @Override
     public boolean request(IMessage message) {
 
+        Guild guild = Guild.getGuilds().get(message.getGuild().getStringID());
         Matcher m = getMatcher(message);
         boolean isFound = m.find();
 
-        if (isPublic() && ! isAdmin()) {
-            if (isFound && message.getChannel().isPrivate() && !isUsableInMP())
+        if (isPublic() && ! isAdmin()) { // La commande est publique et non-admin ?
+            if (isFound && message.getChannel().isPrivate() && !isUsableInMP()) // En MP et non utilisable en MP ?
                 new NotUsableInMPDiscordException().throwException(message, this);
-            else if (!isFound && message.getContent().startsWith(getPrefix(message) + name))
+            else if(isFound && isForbidden(guild)) // Désactivé par la guilde ?
+                new CommandForbiddenDiscordException().throwException(message, this);
+            else if (!isFound && message.getContent().startsWith(getPrefix(message) + getName())) // Mauvaise utilisation ?
                 new BadUseCommandDiscordException().throwException(message, this);
         }
+        // Non publique ou Admin et l'utilisateur n'est pas admin ?
         else if ((! isPublic() || isAdmin()) && ! message.getAuthor().getStringID().equals(Constants.author))
             return false;
-        return isFound && (isUsableInMP() || ! message.getChannel().isPrivate());
+        return isFound && ! isForbidden(guild) && (isUsableInMP() || ! message.getChannel().isPrivate());
+    }
+
+    @Override
+    public boolean isForbidden(Guild g){
+        return g.getForbiddenCommands().containsKey(getName());
     }
 
     @Override

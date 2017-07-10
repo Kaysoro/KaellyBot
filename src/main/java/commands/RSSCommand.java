@@ -3,6 +3,7 @@ package commands;
 import data.RSSFinder;
 import data.User;
 import discord.Message;
+import exceptions.BadUseCommandDiscordException;
 import exceptions.NotEnoughRightsDiscordException;
 import exceptions.RSSFoundDiscordException;
 import exceptions.RSSNotFoundDiscordException;
@@ -44,13 +45,15 @@ public class RSSCommand extends AbstractCommand{
                     else
                         new RSSFoundDiscordException().throwException(message, this);
                 }
-                else
+                else if (value.matches("\\s+false") || value.matches("\\s+1") || value.matches("\\s+off"))
                     if (RSSFinder.getRSSFinders().containsKey(message.getChannel().getLongID())){
                         RSSFinder.getRSSFinders().get(message.getChannel().getLongID()).removeToDatabase();
                         Message.sendText(message.getChannel(), "Les news de dofus.com ne sont plus postées ici.");
                     }
                     else
                         new RSSNotFoundDiscordException().throwException(message, this);
+                else
+                    new BadUseCommandDiscordException().throwException(message, this);
             } else
                 new NotEnoughRightsDiscordException().throwException(message, this);
         }
