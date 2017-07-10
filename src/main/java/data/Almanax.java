@@ -66,4 +66,20 @@ public class Almanax implements Embedded{
 
         return new Almanax(bonus, offrande, date, quest, ressourceURL);
     }
+
+    public String getBonus() {
+        return bonus;
+    }
+
+    public String getOffrande() {
+        return offrande;
+    }
+
+    public String getDay() {
+        return day;
+    }
+
+    public String getQuest() {
+        return quest;
+    }
 }
