@@ -1,7 +1,6 @@
 package commands;
 
 import data.ClientConfig;
-import data.Guild;
 import exceptions.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,8 +16,6 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.*;
 import java.util.regex.Matcher;
-
-import static data.VoiceManager.setTrackTitle;
 
 /**
  * Created by steve on 14/07/2016.
@@ -40,9 +37,6 @@ public class SoundCommand extends AbstractCommand{
 
             if (voice == null)
                 new NotInVocalChannelDiscordException().throwException(message, this);
-            else if (Guild.getGuilds().get(message.getGuild().getStringID()).isPlayingMusic())
-                new PlayingMusicDiscordException().throwException(message, this);
-
             else {
                 if (!voice.getModifiedPermissions(ClientConfig.DISCORD().getOurUser()).contains(Permissions.VOICE_CONNECT)
                         && ! ClientConfig.DISCORD().getOurUser().getPermissionsForGuild(message.getGuild())
@@ -87,8 +81,8 @@ public class SoundCommand extends AbstractCommand{
     private void playSound(IVoiceChannel voice, IMessage message, File file) {
         try {
             voice.join();
-            setTrackTitle(AudioPlayer.
-                    getAudioPlayerForGuild(message.getGuild()).queue(file), file.toString());
+            AudioPlayer.getAudioPlayerForGuild(message.getGuild()).queue(file).getMetadata()
+                    .put(file.getName(), file.toString());
         } catch (IOException | UnsupportedAudioFileException e) {
             Reporter.report(e, message.getContent(), file.getName());
             LOG.error(e.getMessage());

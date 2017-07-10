@@ -33,8 +33,6 @@ public class ReadyListener {
         ClientConfig.DISCORD().getDispatcher().registerListener(new UserJoinListener());
         ClientConfig.DISCORD().getDispatcher().registerListener(new UserLeaveListener());
 
-        ClientConfig.DISCORD().getDispatcher().registerListener(new TrackStartListener());
-        ClientConfig.DISCORD().getDispatcher().registerListener(new TrackQueueListener());
         ClientConfig.DISCORD().getDispatcher().registerListener(new TrackFinishListener());
 
         LOG.info("Check des guildes et des utilisateurs");

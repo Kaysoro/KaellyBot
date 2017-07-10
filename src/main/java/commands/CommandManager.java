@@ -27,7 +27,6 @@ public class CommandManager {
         addCommand(new ItemCommand());
         addCommand(new JobCommand());
         addCommand(new MapCommand());
-        addCommand(new MusicCommand());
         addCommand(new PortalCommand());
         addCommand(new PrefixCommand());
         addCommand(new RandomCommand());
