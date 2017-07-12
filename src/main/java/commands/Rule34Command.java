@@ -1,10 +1,7 @@
 package commands;
 
 import discord.Message;
-import exceptions.APILimitExceededException;
-import exceptions.NSFWNotAuthorizedDiscordException;
-import exceptions.Reporter;
-import exceptions.UnknownErrorDiscordException;
+import exceptions.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -12,6 +9,7 @@ import sx.blah.discord.handle.obj.IMessage;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import java.io.IOException;
 import java.net.URL;
 import java.util.Random;
 import java.util.regex.Matcher;
@@ -62,10 +60,10 @@ public class Rule34Command extends AbstractCommand{
 
                 } catch(NullPointerException e){
                     new APILimitExceededException().throwException(message, this);
+                } catch(IOException e){
+                    ExceptionManager.manageIOException(e, message, this, new WebsiteInaccessibleDiscordException());
                 } catch (Exception e) {
-                    new UnknownErrorDiscordException().throwException(message, this);
-                    Reporter.report(e, message.getContent());
-                    LOG.error(e.getMessage());
+                    ExceptionManager.manageException(e, message, this);
                 }
             }
             else
