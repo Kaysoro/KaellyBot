@@ -13,8 +13,8 @@ Cette commande est destiné à expliciter les commandes de Kaelly avec des exemp
 ### Almanax
 Donne des informations relatives à l'Almanax.  
 `!almanax` : Donne le bonus et l'offrande du jour actuel.  
-`!almanax jj/mm/aaaa` : Donne le bonus et l'offrande du jour spécifié.
-`!almanx +days` : donne la liste des bonus et offrandes des jours à venir.
+`!almanax jj/mm/aaaa` : Donne le bonus et l'offrande du jour spécifié.  
+`!almanax +days` : donne la liste des bonus et offrandes des jours à venir.
 
 ### About
 Informations relatives à Kaelly.  
