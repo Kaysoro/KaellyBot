@@ -69,7 +69,7 @@ public class RSSFinder {
                         "INSERT INTO RSS_Finder(id_guild, id_chan, last_update) VALUES(?, ?, ?);");
                 preparedStatement.setString(1, getGuildId());
                 preparedStatement.setString(2, getChan());
-                preparedStatement.setLong(3, 1500637828458L);
+                preparedStatement.setLong(3, getLastRSS());
 
                 preparedStatement.executeUpdate();
             } catch (SQLException e) {
