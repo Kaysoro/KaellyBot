@@ -1,6 +1,5 @@
 package data;
 
-import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
@@ -8,7 +7,6 @@ import sx.blah.discord.api.internal.json.objects.EmbedObject;
 import sx.blah.discord.util.EmbedBuilder;
 
 import java.io.IOException;
-import java.net.URL;
 import java.util.Random;
 
 /**
@@ -80,7 +78,7 @@ public class Item implements Embedded {
     }
 
     public static Item getItem(String url) throws IOException {
-        Document doc = Jsoup.parse(new URL(url).openStream(), "UTF-8", url);
+        Document doc = JSoupManager.getDocument(url);
 
         String name = doc.getElementsByClass("ak-return-link").first().text();
         String level = doc.getElementsByClass("ak-encyclo-detail-level").first().text();

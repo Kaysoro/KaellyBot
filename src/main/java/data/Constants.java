@@ -42,7 +42,7 @@ public class Constants {
     /**
      * Official Ankama Game URL
      */
-    public final static String officialURL = "http://www.dofus.com";
+    public final static String officialURL = "https://www.dofus.com";
 
     /**
      * Official Dofus URL for almanax

@@ -1,6 +1,5 @@
 package data;
 
-import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -8,7 +7,6 @@ import sx.blah.discord.api.internal.json.objects.EmbedObject;
 import sx.blah.discord.util.EmbedBuilder;
 
 import java.io.IOException;
-import java.net.URL;
 import java.util.Random;
 
 /**
@@ -55,8 +53,7 @@ public class Almanax implements Embedded{
 
     private static Almanax gatheringOnlineData(String date) throws IOException {
         LOG.info("connecting to " + Constants.almanaxURL + date + " ...");
-        Document doc = Jsoup.parse(new URL(Constants.almanaxURL + date).openStream(), "UTF-8",
-                Constants.almanaxURL + date);
+        Document doc = JSoupManager.getDocument(Constants.almanaxURL + date);
 
         String bonus = doc.getElementsByClass("more").first()
                 .clone().getElementsByClass("more-infos").empty().parents().first().text();

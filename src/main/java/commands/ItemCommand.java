@@ -7,7 +7,6 @@ import exceptions.ExceptionManager;
 import exceptions.ItemNotFoundDiscordException;
 import exceptions.TooMuchItemsDiscordException;
 import org.apache.commons.lang3.tuple.Pair;
-import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
@@ -16,7 +15,6 @@ import org.slf4j.LoggerFactory;
 import sx.blah.discord.handle.obj.IMessage;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.net.URL;
 import java.net.URLEncoder;
 import java.text.Normalizer;
 import java.util.ArrayList;
@@ -106,7 +104,7 @@ public class ItemCommand extends AbstractCommand{
     private List<Pair<String, String>> getListItemFrom(String url, IMessage message){
         List<Pair<String, String>> result = new ArrayList<>();
         try {
-            Document doc = Jsoup.parse(new URL(url).openStream(), "UTF-8", url.toString());
+            Document doc = JSoupManager.getDocument(url);
             Elements elems = doc.getElementsByClass("ak-bg-odd");
             elems.addAll(doc.getElementsByClass("ak-bg-even"));
 

@@ -2,11 +2,11 @@ package commands;
 
 import data.Character;
 import data.Constants;
+import data.JSoupManager;
 import data.ServerDofus;
 import discord.Message;
 import exceptions.*;
 import org.jsoup.Connection;
-import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
@@ -16,7 +16,6 @@ import sx.blah.discord.handle.obj.IMessage;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.lang.Exception;
-import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
@@ -80,7 +79,7 @@ public class WhoisCommand extends AbstractCommand{
 
             try
             {
-                Document doc = Jsoup.parse(new URL(url.toString()).openStream(), "UTF-8", url.toString());
+                Document doc = JSoupManager.getDocument(url.toString());
                 Elements elems = doc.getElementsByClass("ak-bg-odd");
                 elems.addAll(doc.getElementsByClass("ak-bg-even"));
 
@@ -97,8 +96,8 @@ public class WhoisCommand extends AbstractCommand{
 
                     if (result.size() == 1) {
 
-                        Connection.Response response = Jsoup.connect(Constants.officialURL + result.get(0))
-                                .followRedirects(true).execute();
+                        Connection.Response response = JSoupManager
+                                .getResponse(Constants.officialURL + result.get(0));
 
                         if (!response.url().getPath().endsWith("indisponible")) {
                             Character characPage = Character.getCharacter(Constants.officialURL + result.get(0));

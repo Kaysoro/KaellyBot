@@ -1,6 +1,5 @@
 package data;
 
-import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 import org.slf4j.Logger;
@@ -9,7 +8,6 @@ import sx.blah.discord.api.internal.json.objects.EmbedObject;
 import sx.blah.discord.util.EmbedBuilder;
 
 import java.io.IOException;
-import java.net.URL;
 import java.util.Random;
 
 /**
@@ -78,11 +76,11 @@ public class Character implements Embedded {
     }
 
     public static Character getCharacter(String url) throws IOException {
-        Document doc = Jsoup.parse(new URL(url).openStream(), "UTF-8", url);
+        Document doc = JSoupManager.getDocument(url);
         String bigSkinURL = doc.getElementsByClass("ak-entitylook").first().attr("style");
-        bigSkinURL = bigSkinURL.substring(bigSkinURL.indexOf("http://"), bigSkinURL.indexOf(")"));
+        bigSkinURL = bigSkinURL.substring(bigSkinURL.indexOf("https://"), bigSkinURL.indexOf(")"));
         String littleSkinURL = doc.getElementsByClass("ak-entitylook").last().toString();
-        littleSkinURL = littleSkinURL.substring(littleSkinURL.indexOf("http://"), littleSkinURL.indexOf(")"));
+        littleSkinURL = littleSkinURL.substring(littleSkinURL.indexOf("https://"), littleSkinURL.indexOf(")"));
         String pseudo = doc.getElementsByClass("ak-return-link").first().text();
         String level = doc.getElementsByClass("ak-directories-level").first().text();
         String classe = doc.getElementsByClass("ak-directories-breed").first().text();
