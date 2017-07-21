@@ -27,7 +27,7 @@ public class GuildLeaveListener {
                     + " a supprimé " + Constants.name);
 
             for (RSSFinder finder : RSSFinder.getRSSFinders().values()) {
-                IChannel chan = event.getGuild().getChannelByID(finder.getChan());
+                IChannel chan = event.getGuild().getChannelByID(Long.parseLong(finder.getChan()));
                 if (chan != null && chan.isDeleted()) {
                     finder.removeToDatabase();
                     LOG.info("RSS Chan \"" + chan.getName() + "\"");

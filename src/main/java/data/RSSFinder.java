@@ -24,16 +24,16 @@ public class RSSFinder {
     private final static long DELTA = 600000; // 10min
     private static boolean isStarted = false;
 
-    private static Map<Long, RSSFinder> rssFinders = null;
-    private long idGuild;
-    private long chan;
+    private static Map<String, RSSFinder> rssFinders = null;
+    private String idGuild;
+    private String chan;
     private long lastRSS;
 
-    public RSSFinder(long idGuild, long chan) {
+    public RSSFinder(String idGuild, String chan) {
         this(idGuild, chan, System.currentTimeMillis());
     }
 
-    private RSSFinder(long idGuild, long chan, long lastRSS) {
+    private RSSFinder(String idGuild, String chan, long lastRSS) {
         this.idGuild = idGuild;
         this.chan = chan;
         this.lastRSS = lastRSS;
@@ -49,7 +49,7 @@ public class RSSFinder {
             PreparedStatement preparedStatement = connection.prepareStatement(
                     "UPDATE RSS_Finder SET last_update = ? WHERE id_chan = ?;");
             preparedStatement.setLong(1, lastRSS);
-            preparedStatement.setString(2, String.valueOf(getChan()));
+            preparedStatement.setString(2, getChan());
 
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
@@ -67,9 +67,9 @@ public class RSSFinder {
             try {
                 PreparedStatement preparedStatement = connection.prepareStatement(
                         "INSERT INTO RSS_Finder(id_guild, id_chan, last_update) VALUES(?, ?, ?);");
-                preparedStatement.setString(1, String.valueOf(getGuildId()));
-                preparedStatement.setString(2, String.valueOf(getChan()));
-                preparedStatement.setLong(3, getLastRSS());
+                preparedStatement.setString(1, getGuildId());
+                preparedStatement.setString(2, getChan());
+                preparedStatement.setLong(3, 1500637828458L);
 
                 preparedStatement.executeUpdate();
             } catch (SQLException e) {
@@ -80,14 +80,14 @@ public class RSSFinder {
     }
 
     public void removeToDatabase() {
-        getRSSFinders().remove(this);
+        getRSSFinders().remove(getChan());
 
         Connexion connexion = Connexion.getInstance();
         Connection connection = connexion.getConnection();
 
         try {
             PreparedStatement request = connection.prepareStatement("DELETE FROM RSS_Finder WHERE id_chan = ?;");
-            request.setString(1, String.valueOf(getChan()));
+            request.setString(1, getChan());
             request.executeUpdate();
 
         } catch (SQLException e) {
@@ -96,7 +96,7 @@ public class RSSFinder {
         }
     }
 
-    public static Map<Long, RSSFinder> getRSSFinders(){
+    public static Map<String, RSSFinder> getRSSFinders(){
         if (rssFinders == null){
             rssFinders = new HashMap<>();
 
@@ -108,14 +108,14 @@ public class RSSFinder {
                 ResultSet resultSet = query.executeQuery();
 
                 while (resultSet.next()){
-                    long idChan = Long.parseLong(resultSet.getString("id_chan"));
-                    long idGuild = Long.parseLong(resultSet.getString("id_guild"));
+                    String idChan = resultSet.getString("id_chan");
+                    String idGuild = resultSet.getString("id_guild");
                     long lastUpdate = resultSet.getLong("last_update");
 
-                    IChannel chan = ClientConfig.DISCORD().getChannelByID(idChan);
+                    IChannel chan = ClientConfig.DISCORD().getChannelByID(Long.parseLong(idChan));
 
                     if (chan != null && ! chan.isDeleted())
-                        rssFinders.put(chan.getLongID(), new RSSFinder(chan.getGuild().getLongID(), chan.getLongID(), lastUpdate));
+                        rssFinders.put(chan.getStringID(), new RSSFinder(chan.getGuild().getStringID(), chan.getStringID(), lastUpdate));
                     else {
                         new RSSFinder(idGuild, idChan).removeToDatabase();
                         LOG.info("Chan deleted : " + idChan);
@@ -141,7 +141,8 @@ public class RSSFinder {
 
                             for (RSS rss : rssFeeds)
                                 if (rss.getDate() > finder.getLastRSS()) {
-                                    Message.sendText(ClientConfig.DISCORD().getChannelByID(finder.getChan()), rss.toStringDiscord());
+                                    Message.sendText(ClientConfig.DISCORD().getChannelByID(
+                                            Long.parseLong(finder.getChan())), rss.toStringDiscord());
                                     lastRSS = rss.getDate();
                                 }
 
@@ -160,11 +161,11 @@ public class RSSFinder {
         }
     }
 
-    public long getChan() {
+    public String getChan() {
         return chan;
     }
 
-    public long getGuildId() {
+    public String getGuildId() {
         return idGuild;
     }
 

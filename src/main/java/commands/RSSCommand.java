@@ -38,16 +38,16 @@ public class RSSCommand extends AbstractCommand{
 
                 if (value.matches("\\s+true") || value.matches("\\s+0") || value.matches("\\s+on")){
 
-                    if (!RSSFinder.getRSSFinders().containsKey(message.getChannel().getLongID())) {
-                        new RSSFinder(message.getGuild().getLongID(), message.getChannel().getLongID()).addToDatabase();
+                    if (!RSSFinder.getRSSFinders().containsKey(message.getChannel().getStringID())) {
+                        new RSSFinder(message.getGuild().getStringID(), message.getChannel().getStringID()).addToDatabase();
                         Message.sendText(message.getChannel(), "Les news de dofus.com seront automatiquement postées ici.");
                     }
                     else
                         new RSSFoundDiscordException().throwException(message, this);
                 }
                 else if (value.matches("\\s+false") || value.matches("\\s+1") || value.matches("\\s+off"))
-                    if (RSSFinder.getRSSFinders().containsKey(message.getChannel().getLongID())){
-                        RSSFinder.getRSSFinders().get(message.getChannel().getLongID()).removeToDatabase();
+                    if (RSSFinder.getRSSFinders().containsKey(message.getChannel().getStringID())){
+                        RSSFinder.getRSSFinders().get(message.getChannel().getStringID()).removeToDatabase();
                         Message.sendText(message.getChannel(), "Les news de dofus.com ne sont plus postées ici.");
                     }
                     else
