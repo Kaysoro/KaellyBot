@@ -11,14 +11,16 @@ import java.util.List;
  */
 public class BestMatcher {
 
+    private String base;
     private String[] pattern;
     private List<Pair<String, String>> bestMatches;
     private int bestPoint;
 
     public BestMatcher(String base){
-        this.pattern = Normalizer.normalize(base.trim(), Normalizer.Form.NFD)
+        this.base = Normalizer.normalize(base.trim(), Normalizer.Form.NFD)
                 .replaceAll("\\p{InCombiningDiacriticalMarks}+", "")
-                .toLowerCase().split("\\s+");
+                .toLowerCase();
+        this.pattern = this.base.split("\\s+");
         bestMatches = new ArrayList<>();
         bestPoint = 0;
     }
@@ -27,17 +29,24 @@ public class BestMatcher {
         int points = 0;
         String key = Normalizer.normalize(proposal.getKey().trim(), Normalizer.Form.NFD)
                 .replaceAll("\\p{InCombiningDiacriticalMarks}+", "").toLowerCase();
-        for(String base : pattern)
-            if (key.contains(base))
-                points++;
+        System.out.println(base + " - " + key);
+        if (! key.equals(base)) {
+            for (String base : pattern)
+                if (key.contains(base))
+                    points++;
 
-        if (points > bestPoint){
+            if (points > bestPoint) {
+                bestMatches.clear();
+                bestMatches.add(proposal);
+                bestPoint = points;
+            } else if (points == bestPoint)
+                bestMatches.add(proposal);
+        }
+        else {
             bestMatches.clear();
             bestMatches.add(proposal);
-            bestPoint = points;
+            bestPoint = Integer.MAX_VALUE;
         }
-        else if (points == bestPoint)
-            bestMatches.add(proposal);
     }
 
     public void evaluateAll(List<Pair<String, String>> proposals){

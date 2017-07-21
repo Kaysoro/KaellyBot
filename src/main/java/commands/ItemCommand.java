@@ -46,7 +46,7 @@ public class ItemCommand extends AbstractCommand{
             String normalName = Normalizer.normalize(m.group(1).trim(), Normalizer.Form.NFD)
                     .replaceAll("\\p{InCombiningDiacriticalMarks}+", "").toLowerCase();
             String editedName = removeUselessWords(normalName);
-            BestMatcher matcher = new BestMatcher(editedName);
+            BestMatcher matcher = new BestMatcher(normalName);
 
             try {
                 for (int i = 0; i < TypeEquipment.values().length ; i++) {
