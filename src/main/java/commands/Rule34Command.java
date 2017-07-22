@@ -10,7 +10,9 @@ import sx.blah.discord.handle.obj.IMessage;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.util.Random;
 import java.util.regex.Matcher;
 
@@ -32,11 +34,11 @@ public class Rule34Command extends AbstractCommand{
         if (super.request(message)) {
 
             if (message.getChannel().isNSFW()) {
-                Matcher m = getMatcher(message);
-                m.find();
-                String url = URL + "&tags=" + m.group(1).trim();
-
                 try {
+                    Matcher m = getMatcher(message);
+                    m.find();
+                    String url = URL + "&tags=" + URLEncoder.encode(m.group(1).trim(), "UTF-8");
+
                     DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
                     DocumentBuilder db = dbf.newDocumentBuilder();
                     Document doc = db.parse(new URL(url)
