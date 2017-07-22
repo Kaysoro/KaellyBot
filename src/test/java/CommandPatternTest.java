@@ -41,6 +41,20 @@ public class CommandPatternTest extends TestCase {
         assertFalse(pattern.matcher(Constants.prefixCommand + "cmd CommandForbidden").find());
     }
 
+    public void testAdminCommandCommand(){
+        Command cmd = new AdminCommandCommand();
+        Pattern pattern = Pattern.compile("^" + Constants.prefixCommand + cmd.getName() + cmd.getPattern() + "$");
+
+        assertTrue(pattern.matcher(Constants.prefixCommand + "admincmd CommandForbidden true").find());
+        assertTrue(pattern.matcher(Constants.prefixCommand + "admincmd CommandForbidden on").find());
+        assertTrue(pattern.matcher(Constants.prefixCommand + "admincmd CommandForbidden 0").find());
+        assertTrue(pattern.matcher(Constants.prefixCommand + "admincmd CommandForbidden false").find());
+        assertTrue(pattern.matcher(Constants.prefixCommand + "admincmd CommandForbidden off").find());
+        assertTrue(pattern.matcher(Constants.prefixCommand + "admincmd CommandForbidden 1").find());
+        assertFalse(pattern.matcher(Constants.prefixCommand + "admincmd").find());
+        assertFalse(pattern.matcher(Constants.prefixCommand + "admincmd CommandForbidden").find());
+    }
+
     public void testHelpCommand(){
         Command cmd = new HelpCommand();
         Pattern pattern = Pattern.compile("^" + Constants.prefixCommand + cmd.getName() + cmd.getPattern() + "$");
