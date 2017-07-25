@@ -29,7 +29,7 @@ public class BestMatcher {
         int points = 0;
         String key = Normalizer.normalize(proposal.getKey().trim(), Normalizer.Form.NFD)
                 .replaceAll("\\p{InCombiningDiacriticalMarks}+", "").toLowerCase();
-        System.out.println(base + " - " + key);
+
         if (! key.equals(base)) {
             for (String base : pattern)
                 if (key.contains(base))

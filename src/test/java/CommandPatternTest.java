@@ -128,6 +128,15 @@ public class CommandPatternTest extends TestCase {
         assertTrue(pattern.matcher(Constants.prefixCommand + "right <@&1234> 1").find());
     }
 
+    public void testTutorialCommand(){
+        Command cmd = new TutorialCommand();
+        Pattern pattern = Pattern.compile("^" + Constants.prefixCommand + cmd.getName() + cmd.getPattern() + "$");
+
+        assertTrue(pattern.matcher(Constants.prefixCommand + "tuto test").find());
+        assertTrue(pattern.matcher(Constants.prefixCommand + "tuto tést test").find());
+        assertFalse(pattern.matcher(Constants.prefixCommand + "tuto").find());
+    }
+
     public void testTwitterCommand(){
         Command cmd = new TwitterCommand();
         Pattern pattern = Pattern.compile("^" + Constants.prefixCommand + cmd.getName() + cmd.getPattern() + "$");

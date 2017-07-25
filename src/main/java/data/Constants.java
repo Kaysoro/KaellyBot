@@ -79,6 +79,10 @@ public class Constants {
      */
     public final static String monturePageURL = "/fr/mmorpg/encyclopedie/montures";
 
+    public final static String dofusPourLesNoobURL = "http://www.dofuspourlesnoobs.com";
+
+    public final static String dofusPourLesNoobSearch = "/apps/search";
+
     /**
      * Twitter Icon from Wikipedia
      */
