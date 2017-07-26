@@ -41,17 +41,19 @@ public abstract class AbstractCommand implements Command {
         Matcher m = getMatcher(message);
         boolean isFound = m.find();
 
-        if (isPublic() && ! isAdmin()) { // La commande est publique et non-admin ?
-            if (isFound && message.getChannel().isPrivate() && !isUsableInMP()) // En MP et non utilisable en MP ?
-                new NotUsableInMPDiscordException().throwException(message, this);
-            else if(isFound && isForbidden(guild)) // Désactivé par la guilde ?
-                new CommandForbiddenDiscordException().throwException(message, this);
-            else if (!isFound && message.getContent().startsWith(getPrefix(message) + getName())) // Mauvaise utilisation ?
-                new BadUseCommandDiscordException().throwException(message, this);
-        }
-        // Non publique ou Admin et l'utilisateur n'est pas admin ?
-        else if ((! isPublic() || isAdmin()) && ! message.getAuthor().getStringID().equals(Constants.author))
+        // Dans le cas où l'auteur est super-admin et que la commande est correcte, on accès à la demande.
+        if (message.getAuthor().getStringID().equals(Constants.author) && isFound)
+            return true;
+        else if ((! isPublic() || isAdmin())) // Caché si la fonction est désactivée/réservée aux admin
             return false;
+
+        if (isFound && message.getChannel().isPrivate() && !isUsableInMP()) // En MP et non utilisable en MP ?
+            new NotUsableInMPDiscordException().throwException(message, this);
+        else if(isFound && isForbidden(guild)) // Désactivé par la guilde ?
+            new CommandForbiddenDiscordException().throwException(message, this);
+        else if (!isFound && message.getContent().startsWith(getPrefix(message) + getName())) // Mauvaise utilisation ?
+            new BadUseCommandDiscordException().throwException(message, this);
+
         return isFound && ! isForbidden(guild) && (isUsableInMP() || ! message.getChannel().isPrivate());
     }
 
