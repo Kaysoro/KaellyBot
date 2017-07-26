@@ -20,8 +20,8 @@ public class ChannelDeleteListener {
 
         @EventSubscriber
         public void onReady(ChannelDeleteEvent event) {
-                if (RSSFinder.getRSSFinders().containsKey(event.getChannel().getLongID()))
-                    RSSFinder.getRSSFinders().get(event.getChannel().getLongID()).removeToDatabase();
+                if (RSSFinder.getRSSFinders().containsKey(event.getChannel().getStringID()))
+                    RSSFinder.getRSSFinders().get(event.getChannel().getStringID()).removeToDatabase();
 
                 if (TwitterFinder.getTwitterChannels().containsKey(event.getChannel().getLongID()))
                     TwitterFinder.getTwitterChannels().get(event.getChannel().getLongID()).removeToDatabase();
