@@ -39,7 +39,7 @@ public class SoundCommand extends AbstractCommand{
                 new NotInVocalChannelDiscordException().throwException(message, this);
             else {
                 if (!voice.getModifiedPermissions(ClientConfig.DISCORD().getOurUser()).contains(Permissions.VOICE_CONNECT)
-                        && ! ClientConfig.DISCORD().getOurUser().getPermissionsForGuild(message.getGuild())
+                        || !ClientConfig.DISCORD().getOurUser().getPermissionsForGuild(message.getGuild())
                         .contains(Permissions.VOICE_CONNECT))
                     new NoVoiceConnectPermissionDiscordException().throwException(message, this);
                 else if (voice.getConnectedUsers().size() >= voice.getUserLimit() && voice.getUserLimit() != 0)
