@@ -70,12 +70,7 @@ public class ItemCommand extends AbstractCommand{
                 if (matcher.isEmpty())
                     for(SuperTypeEquipment type : SuperTypeEquipment.values())
                         matcher.evaluateAll(getListItemFrom(getSearchURL(type.getUrl(), normalName, null), message));
-            } catch (UnsupportedEncodingException e) {
-                ExceptionManager.manageException(e, message, this);
-                return false;
-            }
 
-            try {
                 if (matcher.isUnique()) { // We have found it !
                     Embedded item = Item.getItem(Constants.officialURL + matcher.getBest().getRight());
                     Message.sendEmbed(message.getChannel(), item.getEmbedObject());
