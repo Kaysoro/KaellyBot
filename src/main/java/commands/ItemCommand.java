@@ -54,7 +54,12 @@ public class ItemCommand extends AbstractCommand{
                     for(int j = 0; j < equip.getNames().length; j++){
                         String potentialName = Normalizer.normalize(equip.getNames()[j], Normalizer.Form.NFD)
                                 .replaceAll("\\p{InCombiningDiacriticalMarks}+", "").toLowerCase();
-                        if (normalName.contains(potentialName)) {
+                        if (normalName.equals(potentialName)){
+                            matcher.evaluateAll(getListItemFrom(getSearchURL(equip.getType().getUrl(),
+                                    potentialName, equip.getTypeID()), message));
+                            break;
+                        }
+                        else if (normalName.contains(potentialName)) {
                             matcher.evaluateAll(getListItemFrom(getSearchURL(equip.getType().getUrl(),
                                     editedName.replace(potentialName, "").trim(), equip.getTypeID()), message));
                             break;

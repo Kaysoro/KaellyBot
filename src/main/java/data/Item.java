@@ -60,6 +60,8 @@ public class Item implements Embedded {
         if (level != null && ! level.isEmpty())
             builder.appendField(":star: Niveau :", level, true);
         builder.appendField(":dagger: Type :", type, true);
+
+        if (effects != null && ! effects.isEmpty())
         builder.appendField(":cyclone: Effets :", effects, true);
 
         if (caracteristics != null && ! caracteristics.isEmpty())
