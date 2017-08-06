@@ -1,14 +1,10 @@
 package data;
 
-import commands.Command;
 import exceptions.Reporter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -25,16 +21,18 @@ public class Guild {
     private List<Portal> portals;
     private Map<String, CommandForbidden> commands;
     private String prefixe;
+    private ServerDofus server;
 
     public Guild(String id, String name){
-        this(id, name, Constants.prefixCommand);
+        this(id, name, Constants.prefixCommand, null);
     }
 
-    private Guild(String id, String name, String prefixe){
+    private Guild(String id, String name, String prefixe, String serverDofus){
         this.id = id;
         this.name = name;
         this.prefixe = prefixe;
         commands = CommandForbidden.getForbiddenCommands(this);
+        this.server = ServerDofus.getServersMap().get(serverDofus);
         portals = Portal.getPortals(this);
     }
 
@@ -131,25 +129,47 @@ public class Guild {
         }
     }
 
+    public void setServer(ServerDofus server){
+        this.server = server;
+
+        Connexion connexion = Connexion.getInstance();
+        Connection connection = connexion.getConnection();
+
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(
+                    "UPDATE Guild SET server_dofus = ? WHERE id = ?;");
+            if (server != null) preparedStatement.setString(1, server.getName());
+            else preparedStatement.setNull(1, Types.VARCHAR);
+            preparedStatement.setString(2, id);
+
+            preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            Reporter.report(e);
+            LOG.error(e.getMessage());
+        }
+    }
+
     public static Map<String, Guild> getGuilds(){
         if (guilds == null){
             guilds = new HashMap<>();
             String id;
             String name;
             String prefixe;
+            String server;
 
             Connexion connexion = Connexion.getInstance();
             Connection connection = connexion.getConnection();
 
             try {
-                PreparedStatement query = connection.prepareStatement("SELECT id, name, prefixe FROM Guild");
+                PreparedStatement query = connection.prepareStatement("SELECT id, name, prefixe, server_dofus FROM Guild");
                 ResultSet resultSet = query.executeQuery();
 
                 while (resultSet.next()) {
                     id = resultSet.getString("id");
                     name = resultSet.getString("name");
                     prefixe = resultSet.getString("prefixe");
-                    guilds.put(id, new Guild(id, name, prefixe));
+                    server = resultSet.getString("server_dofus");
+                    guilds.put(id, new Guild(id, name, prefixe, server));
                 }
             } catch (SQLException e) {
                 Reporter.report(e);
@@ -175,5 +195,9 @@ public class Guild {
 
     public Map<String, CommandForbidden> getForbiddenCommands(){
         return commands;
+    }
+
+    public ServerDofus getServerDofus() {
+        return server;
     }
 }

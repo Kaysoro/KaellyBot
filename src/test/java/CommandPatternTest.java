@@ -171,6 +171,15 @@ public class CommandPatternTest extends TestCase {
         assertTrue(pattern.matcher(Constants.prefixCommand + "rule34 dofus").find());
     }
 
+    public void testServerCommand(){
+        Command cmd = new ServerCommand();
+        Pattern pattern = Pattern.compile("^" + Constants.prefixCommand + cmd.getName() + cmd.getPattern() + "$");
+
+        assertTrue(pattern.matcher(Constants.prefixCommand + "server").find());
+        assertTrue(pattern.matcher(Constants.prefixCommand + "server dofus").find());
+        assertTrue(pattern.matcher(Constants.prefixCommand + "server -reset").find());
+    }
+
     public void testSoundCommand(){
         Command cmd = new SoundCommand();
         Pattern pattern = Pattern.compile("^" + Constants.prefixCommand + cmd.getName() + cmd.getPattern() + "$");

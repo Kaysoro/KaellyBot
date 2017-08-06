@@ -8,7 +8,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by steve on 20/04/2017.
@@ -16,34 +18,52 @@ import java.util.List;
 public class ServerDofus {
 
     private static List<ServerDofus> servers;
+    private static Map<String, ServerDofus> serversMap;
+    private static boolean initialized = false;
     private String name;
     private String id;
+    private String sweetId;
 
-    public ServerDofus(String name, String id) {
+    public ServerDofus(String name, String id, String sweetId) {
         this.name = name;
         this.id = id;
+        this.sweetId = sweetId;
+    }
+
+    private static void initialize(){
+        initialized = true;
+        servers = new ArrayList<>();
+        serversMap = new HashMap<>();
+
+        Connexion connexion = Connexion.getInstance();
+        Connection connection = connexion.getConnection();
+
+        try {
+            PreparedStatement query = connection.prepareStatement("SELECT name, id_dofus, id_sweet FROM Server");
+            ResultSet resultSet = query.executeQuery();
+
+            while (resultSet.next()) {
+                ServerDofus sd = new ServerDofus(resultSet.getString("name"),
+                        resultSet.getString("id_dofus"),
+                        resultSet.getString("id_sweet"));
+                servers.add(sd);
+                serversMap.put(sd.getName(), sd);
+            }
+        } catch (SQLException e) {
+            Reporter.report(e);
+            LoggerFactory.getLogger(ServerDofus.class).error(e.getMessage());
+        }
+    }
+
+    public static Map<String, ServerDofus> getServersMap(){
+        if (! initialized)
+            initialize();
+        return serversMap;
     }
 
     public static List<ServerDofus> getServersDofus(){
-        if (servers == null){
-            servers = new ArrayList<>();
-
-            Connexion connexion = Connexion.getInstance();
-            Connection connection = connexion.getConnection();
-
-            try {
-                PreparedStatement query = connection.prepareStatement("SELECT name, id_dofus FROM Server");
-                ResultSet resultSet = query.executeQuery();
-
-                while (resultSet.next())
-                    servers.add(new ServerDofus(resultSet.getString("name"),
-                            resultSet.getString("id_dofus")));
-            } catch (SQLException e) {
-                Reporter.report(e);
-                LoggerFactory.getLogger(ServerDofus.class).error(e.getMessage());
-            }
-        }
-
+        if (! initialized)
+            initialize();
         return servers;
     }
 
@@ -53,5 +73,9 @@ public class ServerDofus {
 
     public String getId() {
         return id;
+    }
+
+    public String getSweetId(){
+        return sweetId;
     }
 }

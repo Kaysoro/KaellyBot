@@ -14,7 +14,7 @@ Cette commande est destiné à expliciter les commandes de Kaelly avec des exemp
 Donne des informations relatives à l'Almanax.  
 `!almanax` : Donne le bonus et l'offrande du jour actuel.  
 `!almanax jj/mm/aaaa` : Donne le bonus et l'offrande du jour spécifié.  
-`!almanax +days` : donne la liste des bonus et offrandes des jours à venir.
+`!almanax +days` : donne la liste des bonus et offrandes des jours à venir (jusqu'à 9 jours).
 
 ### About
 Informations relatives à Kaelly.  
@@ -25,10 +25,9 @@ Autorise ou non l'utilisation d'une commande de Kaelly.
 `!cmd command true` : Autorise l'utilisation de la commande. Fonctionne aussi avec `on` et `0`.  
 `!cmd command false` : Interdit l'utilisation de la commande. Fonctionne aussi avec `off` et `1`.  
 
-
 ### Item
 Renvoie les statistiques d'un item du jeu Dofus.  
-`!item item` : Renvoie les statistiques de l'item spécifié : son nom peut être approximatif s'il est suffisemment précis. A noter que les items inférieurs au niveau 50 sont exclus.  
+`!item item` : Renvoie les statistiques de l'item spécifié : son nom peut être approximatif s'il est suffisemment précis.    
 
 ### Job
 Gère un annuaire d'artisans.  
@@ -78,6 +77,16 @@ Poste des images sexuellement explicite.
 Joue des sons dans un salon vocal.  
 `!sound` : Joue un son au hasard, parmi une liste prédéfinie.  
 `!sound sound` : Joue le son spécifié.  
+
+### Server
+Permet de déterminer à quel serveur Dofus correspond ce serveur Discord.  
+`!server` : Affiche le serveur Dofus rattachée au serveur Discord.  
+`!server server` : Permet de déterminer à quel serveur Dofus correspond ce serveur Discord.  
+`!server -reset` : Permet de se détacher d'un quelconque serveur Dofus.  
+
+### Tuto
+Renvoie le tutoriel correspondant à la recherche effectuée..  
+`!tuto search` : renvoie le tutoriel correspondant à la recherche effectuée : quête, donjon... Son nom peut être approximatif s'il est suffisemment précis.  
 
 ### Twitter
 Autorise ou non Kaelly à poster des tweets dans un salon.  

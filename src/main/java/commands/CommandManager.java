@@ -34,6 +34,7 @@ public class CommandManager {
         addCommand(new RightCommand());
         addCommand(new RSSCommand());
         addCommand(new Rule34Command());
+        addCommand(new ServerCommand());
         addCommand(new SoundCommand());
         addCommand(new TutorialCommand());
         addCommand(new TwitterCommand());
