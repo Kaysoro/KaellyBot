@@ -88,6 +88,6 @@ public class AlmanaxCommand extends AbstractCommand{
         return help(prefixe)
                 + "\n" + prefixe + "`" + name + "` : donne le bonus et l'offrande du jour actuel."
                 + "\n" + prefixe + "`" + name + " `*`jj/mm/aaaa`* : donne le bonus et l'offrande du jour spécifié."
-                + "\n" + prefixe + "`" + name + " `*+days`* : donne la liste des bonus et offrandes des jours à venir.\n";
+                + "\n" + prefixe + "`" + name + " `*`+days`* : donne la liste des bonus et offrandes des jours à venir.\n";
     }
 }
