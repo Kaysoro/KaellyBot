@@ -8,7 +8,7 @@ import sx.blah.discord.api.IDiscordClient;
 public class Main {
 
     public static void main(String[] args) {
-       IDiscordClient client = ClientConfig.DISCORD();
-       client.getDispatcher().registerListener(new ReadyListener());
+      IDiscordClient client = ClientConfig.DISCORD();
+      client.getDispatcher().registerListener(new ReadyListener());
     }
 }

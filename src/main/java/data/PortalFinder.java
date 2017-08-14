@@ -1,8 +1,11 @@
 package data;
 
+import exceptions.ExceptionManager;
 import exceptions.Reporter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
 
 import static java.lang.Thread.sleep;
 
@@ -17,10 +20,22 @@ public class PortalFinder
             isStarted = true;
             new Thread(() -> {
                 while(true) {
-                    for (Guild guild : Guild.getGuilds().values())
-                        if (guild.getServerDofus() != null){ //Server renseigné ?
-                            //TODO
-                        }
+                    try {
+                        for (Guild guild : Guild.getGuilds().values())
+                            if (guild.getServerDofus() != null) { //Server renseigné ?
+                                ServerDofus server = guild.getServerDofus();
+
+                                // Si les positions ne sont plus d'actualités, on les met à jour
+                                if (System.currentTimeMillis() - server.getLastSweetRefresh() > DELTA)
+                                    server.setSweetPortals(Portal.getSweetPortals(server));
+
+                                guild.mergePortals(server.getSweetPortals());
+                            }
+                    } catch (IOException e) {
+                        ExceptionManager.manageSilentlyIOException(e);
+                    } catch (Exception e) {
+                        ExceptionManager.manageSilentlyException(e);
+                    }
 
                     try {
                         sleep(DELTA);

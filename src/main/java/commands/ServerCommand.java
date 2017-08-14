@@ -49,7 +49,7 @@ public class ServerCommand extends AbstractCommand{
                                     + " est désormais " + result.get(0).getName() + ".");
                         } else if (result.isEmpty())
                             new ServerNotFoundDiscordException().throwException(message, this);
-                        else if (result.size() > 1)
+                        else
                             new TooMuchServersDiscordException().throwException(message, this, result);
                     }
                     else {

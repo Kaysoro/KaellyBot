@@ -51,9 +51,36 @@ public abstract class ExceptionManager {
         }
     }
 
+    public static void manageSilentlyIOException(Exception e){
+        // First we try parsing the exception message to see if it contains the response code
+        Matcher exMsgStatusCodeMatcher = Pattern.compile("^Server returned HTTP response code: (\\d+)")
+                .matcher(e.getMessage());
+        if(exMsgStatusCodeMatcher.find()) {
+            int statusCode = Integer.parseInt(exMsgStatusCodeMatcher.group(1));
+            if (statusCode >= 500 && statusCode < 600)
+                LOG.warn(e.getMessage());
+            else {
+                Reporter.report(e);
+                LOG.error(e.getMessage());
+            }
+        } else if (e instanceof UnknownHostException
+                || e instanceof SocketTimeoutException
+                || e instanceof FileNotFoundException
+                || e instanceof HttpStatusException
+                || e instanceof NoRouteToHostException)
+            LOG.warn(e.getMessage());
+        else
+            Reporter.report(e);
+    }
+
     public static void manageException(Exception e, IMessage message, Command command){
         LOG.error(e.getMessage());
         Reporter.report(e, message.getContent());
         new UnknownErrorDiscordException().throwException(message, command);
+    }
+
+    public static void manageSilentlyException(Exception e){
+        LOG.error(e.getMessage());
+        Reporter.report(e);
     }
 }

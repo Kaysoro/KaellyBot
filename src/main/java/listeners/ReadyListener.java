@@ -68,6 +68,9 @@ public class ReadyListener {
         LOG.info("Ecoute des flux RSS du site Dofus...");
         RSSFinder.start();
 
+        LOG.info("Récupération des positions de portails...");
+        PortalFinder.start();
+
         LOG.info("Connexion à l'API Twitter...");
         TwitterFinder.getTwitterChannels();
 

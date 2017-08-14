@@ -200,4 +200,10 @@ public class Guild {
     public ServerDofus getServerDofus() {
         return server;
     }
+
+    public void mergePortals(List<Portal> newPortals){
+        for(Portal newPortal : newPortals)
+            for(Portal portal : portals)
+                portal.merge(newPortal);
+    }
 }

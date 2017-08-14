@@ -13,8 +13,8 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="Maven: org.jsoup:jsoup:1.10.3" level="project" />
-    <orderEntry type="library" name="Maven: org.xerial:sqlite-jdbc:3.19.3" level="project" />
-    <orderEntry type="library" name="Maven: com.github.austinv11:Discord4j:shaded:dev-2.8.4-g3e16305-18" level="project" />
+    <orderEntry type="library" name="Maven: org.xerial:sqlite-jdbc:3.20.0" level="project" />
+    <orderEntry type="library" name="Maven: com.github.austinv11:Discord4j:shaded:dev-2.8.4-g6e94a41-39" level="project" />
     <orderEntry type="library" name="Maven: org.slf4j:slf4j-api:1.7.24" level="project" />
     <orderEntry type="library" name="Maven: org.apache.httpcomponents:httpcore:4.4.6" level="project" />
     <orderEntry type="library" name="Maven: org.apache.httpcomponents:httpclient:4.5.3" level="project" />

@@ -31,9 +31,9 @@ public class AnnounceCommand extends AbstractCommand{
 
             if (m.group(1) != null) {
                 for (IGuild guild : ClientConfig.DISCORD().getGuilds())
-                    if (guild.getGeneralChannel().getModifiedPermissions(ClientConfig.DISCORD().getOurUser())
+                    if (guild.getDefaultChannel().getModifiedPermissions(ClientConfig.DISCORD().getOurUser())
                             .contains(Permissions.SEND_MESSAGES))
-                        Message.sendText(guild.getGeneralChannel(), text);
+                        Message.sendText(guild.getDefaultChannel(), text);
                     else
                         Message.sendText(guild.getOwner().getOrCreatePMChannel(), text);
 

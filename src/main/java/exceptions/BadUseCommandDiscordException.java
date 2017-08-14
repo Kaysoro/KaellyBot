@@ -2,7 +2,6 @@ package exceptions;
 
 import commands.Command;
 import commands.HelpCommand;
-import data.Constants;
 import discord.Message;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

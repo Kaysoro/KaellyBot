@@ -42,13 +42,10 @@ public class AlmanaxCommand extends AbstractCommand{
                     for (int i = 0; i < number; i++) {
                         date = DateUtils.addDays(new Date(), i);
                         Almanax almanax = Almanax.get(botToAlmanax.format(date));
-                        st.append(discordToBot.format(date)).append(" : ");
-                        if (almanax != null) {
-                            st.append("**Bonus** : ").append(almanax.getBonus())
-                                    .append("\t**Offrande** : ").append(almanax.getOffrande())
-                                    .append("\n");
-                        } else
-                            st.append("Impossible d'accéder à cette date.\n");
+                        st.append(discordToBot.format(date)).append(" : ")
+                                .append("**Bonus** : ").append(almanax.getBonus())
+                                .append("\t**Offrande** : ").append(almanax.getOffrande())
+                                .append("\n");
                     }
 
                     Message.sendText(message.getChannel(), st.toString());
@@ -56,14 +53,7 @@ public class AlmanaxCommand extends AbstractCommand{
                     if (m.group(1) != null && m.group(1).matches("\\s+\\d{2}/\\d{2}/\\d{4}"))
                         date = discordToBot.parse(m.group(1));
                     Almanax almanax = Almanax.get(botToAlmanax.format(date));
-
-                    if (almanax != null) {
-                        Message.sendEmbed(message.getChannel(), almanax.getEmbedObject());
-                        return false;
-                    } else {
-                        new AlmanaxNotFoundDiscordException().throwException(message, this);
-                        return false;
-                    }
+                    Message.sendEmbed(message.getChannel(), almanax.getEmbedObject());
                 }
 
             } catch (ParseException e) {
@@ -88,6 +78,6 @@ public class AlmanaxCommand extends AbstractCommand{
         return help(prefixe)
                 + "\n" + prefixe + "`" + name + "` : donne le bonus et l'offrande du jour actuel."
                 + "\n" + prefixe + "`" + name + " `*`jj/mm/aaaa`* : donne le bonus et l'offrande du jour spécifié."
-                + "\n" + prefixe + "`" + name + " `*`+days`* : donne la liste des bonus et offrandes des jours à venir.\n";
+                + "\n" + prefixe + "`" + name + " `*`+days`* : donne la liste des bonus et offrandes des jours à venir (jusqu'à 9 jours).\n";
     }
 }

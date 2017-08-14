@@ -1,19 +1,26 @@
 package data;
 
 import exceptions.Reporter;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.DateFormat;
+import java.text.Normalizer;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Created by steve on 07/11/2016.
@@ -23,6 +30,7 @@ public class Portal {
     private final static Logger LOG = LoggerFactory.getLogger(Portal.class);
     private final static long LIMIT = 172800000;
     private final static DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy à HH:mm", Locale.FRANCE);
+    private final static Pattern sweetDateFormat = Pattern.compile("(\\d+\\s+j\\s+)?(\\d+\\s+h\\s+)?(\\d+\\s+min)");
 
     private static List<String> portals;
 
@@ -107,8 +115,11 @@ public class Portal {
     }
 
     public void setUtilisation(int utilisation) {
+        setUtilisation(utilisation, System.currentTimeMillis());
+    }
+    public void setUtilisation(int utilisation, long lastUpdate) {
         this.utilisation = utilisation;
-        this.lastUpdate = System.currentTimeMillis();
+        this.lastUpdate = lastUpdate;
 
         Connexion connexion = Connexion.getInstance();
         Connection connection = connexion.getConnection();
@@ -130,12 +141,16 @@ public class Portal {
     }
 
     public void setCoordonate(String coordonate) {
+        setCoordonate(coordonate, System.currentTimeMillis());
+    }
+
+    public void setCoordonate(String coordonate, long creation) {
         if (! this.coordonate.equals(coordonate)){
             if (coordonate != null)
                 this.coordonate = coordonate;
             else
                 this.coordonate = "";
-            this.creation = System.currentTimeMillis();
+            this.creation = creation;
             this.utilisation = -1;
             this.lastUpdate = -1;
 
@@ -159,7 +174,19 @@ public class Portal {
                 LOG.error(e.getMessage());
             }
         }
+    }
 
+    public void merge(Portal portal){
+
+        if (Normalizer.normalize(portal.getName(), Normalizer.Form.NFD)
+                        .replaceAll("\\p{InCombiningDiacriticalMarks}+", "").toLowerCase()
+                        .equals(Normalizer.normalize(getName(), Normalizer.Form.NFD)
+                        .replaceAll("\\p{InCombiningDiacriticalMarks}+", "").toLowerCase())
+                && ! portal.coordonate.equals(""))
+            if (coordonate.equals(portal.coordonate) && utilisation > portal.utilisation || coordonate.equals("")){
+                setCoordonate(portal.coordonate, portal.creation);
+                setUtilisation(portal.utilisation, portal.lastUpdate);
+            }
     }
 
     @Override
@@ -185,5 +212,43 @@ public class Portal {
         }
 
         return st.toString();
+    }
+
+    public static List<Portal> getSweetPortals(ServerDofus server) throws IOException {
+        List<Portal> portals = new ArrayList<>();
+
+        Document doc = JSoupManager.getDocument(Constants.sweetPortals + server.getSweetId());
+        Elements dimensions = doc.getElementsByClass("row");
+
+        for(Element dim : dimensions){
+            String name = dim.getElementsByTag("h2").get(0).text();
+            String coordonate = dim.getElementsByTag("h2").get(1).text();
+            int utilisation = -1;
+            long creation = 0;
+
+            if (! coordonate.equals("Position Inconnue")) {
+                coordonate = dim.getElementsByTag("h3").get(0).text();
+                utilisation = Integer.parseInt(dim.getElementsByTag("h3")
+                        .get(1).getElementsByTag("b").get(0).text());
+
+                Matcher m = sweetDateFormat.matcher(dim.getElementsByTag("h3").get(3).text());
+                m.find();
+                long timeToRemove = 0;
+                if (m.group(1) != null)
+                    timeToRemove +=  86400000 * Integer.parseInt(m.group(1).replaceAll("\\s+j\\s+", ""));
+                if (m.group(2) != null)
+                    timeToRemove += 3600000 * Integer.parseInt(m.group(2).replaceAll("\\s+h\\s+", ""));
+                timeToRemove += 60000 * Integer.parseInt(m.group(3).replaceAll("\\s+min", ""));
+
+                creation = System.currentTimeMillis() - timeToRemove;
+            }
+            else
+                coordonate = "";
+            long lastUpdate = creation;
+
+            portals.add(new Portal(name, coordonate, utilisation, creation, lastUpdate, null));
+        }
+
+        return portals;
     }
 }

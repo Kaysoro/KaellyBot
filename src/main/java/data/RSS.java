@@ -5,18 +5,16 @@ import com.rometools.rome.feed.synd.SyndFeed;
 import com.rometools.rome.io.FeedException;
 import com.rometools.rome.io.SyndFeedInput;
 import com.rometools.rome.io.XmlReader;
+import exceptions.ExceptionManager;
 import exceptions.Reporter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.URL;
-import java.net.UnknownHostException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * Created by steve on 12/01/2017.
@@ -48,26 +46,9 @@ public class RSS implements Comparable<RSS>{
             Reporter.report(e);
             LOG.error(e.getMessage());
         } catch(IOException e){
-            // First we try parsing the exception message to see if it contains the response code
-            Matcher exMsgStatusCodeMatcher = Pattern.compile("^Server returned HTTP response code: (\\d+)")
-                    .matcher(e.getMessage());
-            if(exMsgStatusCodeMatcher.find()) {
-                int statusCode = Integer.parseInt(exMsgStatusCodeMatcher.group(1));
-                if (statusCode >= 500 && statusCode < 600)
-                    LOG.warn(e.getMessage());
-                else {
-                    Reporter.report(e);
-                    LOG.error(e.getMessage());
-                }
-            } else if (e instanceof UnknownHostException)
-                LOG.warn(e.getMessage());
-            else {
-                Reporter.report(e);
-                LOG.error(e.getMessage());
-            }
+            ExceptionManager.manageSilentlyIOException(e);
         } catch(Exception e){
-            Reporter.report(e);
-            LOG.error(e.getMessage());
+            ExceptionManager.manageSilentlyException(e);
         }
         Collections.sort(rss);
         return rss;

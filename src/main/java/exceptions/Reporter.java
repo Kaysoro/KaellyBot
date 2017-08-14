@@ -43,8 +43,8 @@ public class Reporter {
             for(int i = 0; i < e.getStackTrace().length; i++)
                 st.append("\n").append(e.getStackTrace()[i]);
 
-            for(int i = 0; i < others.length; i++)
-                st.append("[").append(others[i].toString()).append("]");
+            for(Object other : others)
+                st.append("[").append(other.toString()).append("]");
 
             try {
                 RequestBuffer.request(() -> {

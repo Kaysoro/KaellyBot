@@ -43,9 +43,9 @@ public class GuildCreateListener {
                 customMessage = customMessage.replaceAll("\\{0\\}", event.getGuild().getOwner().mention());
                 customMessage = customMessage.replaceAll("\\{1\\}", event.getGuild().getName());
 
-                if(event.getGuild().getGeneralChannel().getModifiedPermissions(ClientConfig.DISCORD().getOurUser())
+                if(event.getGuild().getDefaultChannel().getModifiedPermissions(ClientConfig.DISCORD().getOurUser())
                         .contains(Permissions.SEND_MESSAGES))
-                    Message.sendText(event.getGuild().getGeneralChannel(), customMessage);
+                    Message.sendText(event.getGuild().getDefaultChannel(), customMessage);
                 else
                     Message.sendText(event.getGuild().getOwner().getOrCreatePMChannel(), customMessage);
 
