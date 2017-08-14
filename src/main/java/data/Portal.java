@@ -187,6 +187,10 @@ public class Portal {
                 setCoordonate(portal.coordonate, portal.creation);
                 setUtilisation(portal.utilisation, portal.lastUpdate);
             }
+            else if (! coordonate.equals("") && ! coordonate.equals(portal.coordonate) && creation < portal.creation){
+                setCoordonate(portal.coordonate, portal.creation);
+                setUtilisation(portal.utilisation, portal.lastUpdate);
+            }
     }
 
     @Override
