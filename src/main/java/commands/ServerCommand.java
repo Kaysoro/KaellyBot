@@ -45,6 +45,7 @@ public class ServerCommand extends AbstractCommand{
 
                         if (result.size() == 1) {
                             guild.setServer(result.get(0));
+                            guild.mergePortals(result.get(0).getSweetPortals());
                             Message.sendText(message.getChannel(), "Le serveur dofus de " + guild.getName()
                                     + " est désormais " + result.get(0).getName() + ".");
                         } else if (result.isEmpty())
