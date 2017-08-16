@@ -206,4 +206,9 @@ public class Guild {
             for(Portal portal : portals)
                 portal.merge(newPortal);
     }
+
+    public void resetPortals() {
+        for(Portal portal : portals)
+            portal.reset();
+    }
 }

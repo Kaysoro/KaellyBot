@@ -43,7 +43,7 @@ public class PortalCommand extends AbstractCommand{
                     portals = getPortal(m.group(2), Guild.getGuilds().get(message.getGuild().getStringID()));
                 if (portals.size() == 1) {
                     if (m.group(1) != null && m.group(1).matches("\\s+-reset"))
-                        portals.get(0).setCoordonate(null);
+                        portals.get(0).reset();
                     else {
                         if (m.group(3) != null)
                             portals.get(0).setCoordonate("[" + m.group(4) + "," + m.group(5) + "]");

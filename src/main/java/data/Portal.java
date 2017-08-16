@@ -193,6 +193,11 @@ public class Portal {
             }
     }
 
+    public void reset() {
+        setCoordonate(null);
+
+    }
+
     @Override
     public String toString(){
         StringBuilder st = new StringBuilder("*")
