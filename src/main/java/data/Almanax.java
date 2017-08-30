@@ -7,6 +7,10 @@ import sx.blah.discord.api.internal.json.objects.EmbedObject;
 import sx.blah.discord.util.EmbedBuilder;
 
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 import java.util.Random;
 
 /**
@@ -14,6 +18,8 @@ import java.util.Random;
  */
 public class Almanax implements Embedded{
 
+    public final static DateFormat discordToBot = new SimpleDateFormat("dd/MM/yyyy", Locale.FRANCE);
+    public final static DateFormat botToAlmanax = new SimpleDateFormat("yyyy-MM-dd", Locale.FRANCE);
     private final static Logger LOG = LoggerFactory.getLogger(Almanax.class);
 
     private String bonus;
@@ -49,6 +55,10 @@ public class Almanax implements Embedded{
 
     public static Almanax get(String date) throws IOException {
         return gatheringOnlineData(date);
+    }
+
+    public static Almanax get(Date date) throws IOException {
+        return gatheringOnlineData(botToAlmanax.format(date));
     }
 
     private static Almanax gatheringOnlineData(String date) throws IOException {

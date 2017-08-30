@@ -71,6 +71,9 @@ public class ReadyListener {
         LOG.info("Récupération des positions de portails...");
         PortalFinder.start();
 
+        LOG.info("Lancement du calendrier Almanax...");
+        AlmanaxCalendar.start();
+
         LOG.info("Connexion à l'API Twitter...");
         TwitterFinder.getTwitterChannels();
 

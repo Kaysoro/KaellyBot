@@ -42,6 +42,14 @@ public class GuildLeaveListener {
                 }
             }
 
+            for (AlmanaxCalendar finder : AlmanaxCalendar.getAlmanaxCalendars().values()) {
+                IChannel chan = event.getGuild().getChannelByID(Long.parseLong(finder.getChan()));
+                if (chan != null && chan.isDeleted()) {
+                    finder.removeToDatabase();
+                    LOG.info("Almanax Chan \"" + chan.getName() + "\"");
+                }
+            }
+
             Message.sendText(ClientConfig.DISCORD().getChannelByID(Constants.chanReportID),
                     "[LOSE] **" + event.getGuild().getName() + "**, -" + event.getGuild().getUsers().size()
                             +  " utilisateurs");

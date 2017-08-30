@@ -22,8 +22,6 @@ import java.util.regex.Matcher;
 public class AlmanaxCommand extends AbstractCommand{
 
     private final static Logger LOG = LoggerFactory.getLogger(AlmanaxCommand.class);
-    private final static DateFormat discordToBot = new SimpleDateFormat("dd/MM/yyyy", Locale.FRANCE);
-    private final static DateFormat botToAlmanax = new SimpleDateFormat("yyyy-MM-dd", Locale.FRANCE);
 
     public AlmanaxCommand(){
         super("almanax", "(\\s+\\d{2}/\\d{2}/\\d{4}|\\s+\\+\\d)?");
@@ -41,8 +39,8 @@ public class AlmanaxCommand extends AbstractCommand{
                     StringBuilder st = new StringBuilder();
                     for (int i = 0; i < number; i++) {
                         date = DateUtils.addDays(new Date(), i);
-                        Almanax almanax = Almanax.get(botToAlmanax.format(date));
-                        st.append(discordToBot.format(date)).append(" : ")
+                        Almanax almanax = Almanax.get(date);
+                        st.append(Almanax.discordToBot.format(date)).append(" : ")
                                 .append("**Bonus** : ").append(almanax.getBonus())
                                 .append("\t**Offrande** : ").append(almanax.getOffrande())
                                 .append("\n");
@@ -51,8 +49,8 @@ public class AlmanaxCommand extends AbstractCommand{
                     Message.sendText(message.getChannel(), st.toString());
                 } else {
                     if (m.group(1) != null && m.group(1).matches("\\s+\\d{2}/\\d{2}/\\d{4}"))
-                        date = discordToBot.parse(m.group(1));
-                    Almanax almanax = Almanax.get(botToAlmanax.format(date));
+                        date = Almanax.discordToBot.parse(m.group(1));
+                    Almanax almanax = Almanax.get(date);
                     Message.sendEmbed(message.getChannel(), almanax.getEmbedObject());
                 }
 
