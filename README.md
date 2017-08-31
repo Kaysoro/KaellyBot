@@ -149,4 +149,4 @@ Kaelly peut être lancé depuis n'importe quelle distribution : elle est compati
 Ce projet est sous licence GPL(v3).
 
 ## Merci !
-[![Donate](https://www.paypalobjects.com/fr_FR/FR/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=ZQXYBJTPC5DRW)
+[![Donate](https://www.paypalobjects.com/fr_FR/FR/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=89WTL4LXRZK98)
