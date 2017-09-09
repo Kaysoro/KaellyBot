@@ -51,7 +51,7 @@ public class PortalCommand extends AbstractCommand{
                           portals.get(0).setUtilisation(Integer.parseInt(m.group(6).replaceAll("\\s", "")));
                     }
 
-                    Message.sendText(message.getChannel(), portals.get(0).toString());
+                    Message.sendEmbed(message.getChannel(), portals.get(0).getEmbedObject());
                 }
                 else if(portals.size() > 1)
                     new TooMuchPossibilitiesDiscordException().throwException(message, this);

@@ -51,7 +51,7 @@ public class Guild {
                 request.setString(3, prefixe);
                 request.executeUpdate();
 
-                for(String portal : Portal.getPortals()) {
+                for(String portal : Portal.getPortals().keySet()) {
                     request = connection.prepareStatement("INSERT INTO Portal_Guild"
                             + "(name_portal, id_guild) VALUES (?, ?);");
                     request.setString(1, portal);
