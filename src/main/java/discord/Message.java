@@ -34,7 +34,9 @@ public class Message {
                         .throwException(channel.getMessageHistory().getLatestMessage(), null, e);
             } catch(Exception e){
                 LoggerFactory.getLogger(Message.class).error(e.getMessage());
-                Reporter.report(e);
+
+                if (channel != null) Reporter.report(e, new Object[]{channel.getStringID(), channel.getGuild()});
+                else Reporter.report(e);
             }
             return null;
         });

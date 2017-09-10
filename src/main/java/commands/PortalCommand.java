@@ -31,11 +31,8 @@ public class PortalCommand extends AbstractCommand{
             Matcher m = getMatcher(message);
             m.find();
             if (m.group(1) == null && m.group(2) == null && m.group(6) == null) { // No dimension precised
-                StringBuilder st = new StringBuilder();
                 for(Portal pos : Guild.getGuilds().get(message.getGuild().getStringID()).getPortals())
-                        st.append(pos);
-
-                Message.sendText(message.getChannel(), st.toString());
+                        Message.sendEmbed(message.getChannel(), pos.getEmbedObject());
             }
             else {
                 List<Portal> portals = new ArrayList<>();

@@ -18,6 +18,12 @@ public class CommandPatternTest extends TestCase {
         assertTrue(pattern.matcher(Constants.prefixCommand + "almanax").find());
         assertTrue(pattern.matcher(Constants.prefixCommand + "almanax 20/02/2016").find());
         assertTrue(pattern.matcher(Constants.prefixCommand + "almanax +9").find());
+        assertTrue(pattern.matcher(Constants.prefixCommand + "almanax true").find());
+        assertTrue(pattern.matcher(Constants.prefixCommand + "almanax on").find());
+        assertTrue(pattern.matcher(Constants.prefixCommand + "almanax 0").find());
+        assertTrue(pattern.matcher(Constants.prefixCommand + "almanax false").find());
+        assertTrue(pattern.matcher(Constants.prefixCommand + "almanax off").find());
+        assertTrue(pattern.matcher(Constants.prefixCommand + "almanax 1").find());
     }
 
     public void testAboutCommand(){

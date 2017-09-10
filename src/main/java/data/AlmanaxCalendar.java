@@ -30,7 +30,7 @@ public class AlmanaxCalendar {
     private String idGuild;
     private String chan;
 
-    private AlmanaxCalendar(String idGuild, String chan) {
+    public AlmanaxCalendar(String idGuild, String chan) {
         this.idGuild = idGuild;
         this.chan = chan;
     }
