@@ -26,7 +26,8 @@ public class Message {
                 throw e;
             } catch (DiscordException e){
                 LoggerFactory.getLogger(Message.class).error(e.getErrorMessage());
-                Reporter.report(e);
+                if (channel != null) Reporter.report(e, new Object[]{channel.getStringID(), channel.getGuild()});
+                else Reporter.report(e);
             } catch(MissingPermissionsException e){
                 LoggerFactory.getLogger(Message.class).warn(Constants.name
                         + " n'a pas les permissions pour appliquer cette requête.");
@@ -34,9 +35,7 @@ public class Message {
                         .throwException(channel.getMessageHistory().getLatestMessage(), null, e);
             } catch(Exception e){
                 LoggerFactory.getLogger(Message.class).error(e.getMessage());
-
-                if (channel != null) Reporter.report(e, new Object[]{channel.getStringID(), channel.getGuild()});
-                else Reporter.report(e);
+                Reporter.report(e);
             }
             return null;
         });
@@ -54,7 +53,8 @@ public class Message {
                 throw e;
             } catch (DiscordException e){
                 LoggerFactory.getLogger(Message.class).error(e.getErrorMessage());
-                Reporter.report(e);
+                if (channel != null) Reporter.report(e, new Object[]{channel.getStringID(), channel.getGuild()});
+                else Reporter.report(e);
             } catch(MissingPermissionsException e){
                 LoggerFactory.getLogger(Message.class).warn(Constants.name
                         + " n'a pas les permissions pour appliquer cette requête.");

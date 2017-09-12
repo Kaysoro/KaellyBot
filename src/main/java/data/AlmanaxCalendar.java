@@ -39,7 +39,8 @@ public class AlmanaxCalendar {
         if (!isStarted){
             isStarted = true;
             ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
-            long midnightOne = LocalDateTime.now().until(LocalDate.now().plusDays(1).atStartOfDay().plusMinutes(1), ChronoUnit.MINUTES);
+            long firstDelay = LocalDateTime.now().until(LocalDate.now().plusDays(1).atStartOfDay().plusMinutes(1), ChronoUnit.MINUTES);
+            long period = TimeUnit.DAYS.toMinutes(1);
 
             scheduler.scheduleAtFixedRate(() -> {
                 boolean success = false;
@@ -59,7 +60,7 @@ public class AlmanaxCalendar {
                         try { Thread.sleep(300000); // 5min
                         } catch (InterruptedException e1) {}
                     }
-            }, midnightOne, 24, TimeUnit.DAYS);
+            }, firstDelay, period, TimeUnit.MINUTES);
         }
     }
 
