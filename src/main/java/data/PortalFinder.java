@@ -1,7 +1,6 @@
 package data;
 
 import exceptions.ExceptionManager;
-import exceptions.Reporter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

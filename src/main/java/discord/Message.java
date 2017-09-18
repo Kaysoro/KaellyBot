@@ -3,7 +3,6 @@ package discord;
 import data.ClientConfig;
 import data.Constants;
 import exceptions.MissingPermissionDiscordException;
-import exceptions.Reporter;
 import org.slf4j.LoggerFactory;
 import sx.blah.discord.api.internal.json.objects.EmbedObject;
 import sx.blah.discord.handle.obj.IChannel;

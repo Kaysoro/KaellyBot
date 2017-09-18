@@ -1,7 +1,5 @@
 package data;
 
-import com.sun.security.sasl.ClientFactoryImpl;
-import exceptions.Reporter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -1,7 +1,5 @@
 package data;
 
-import exceptions.Reporter;
-import org.apache.commons.lang3.tuple.Pair;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
