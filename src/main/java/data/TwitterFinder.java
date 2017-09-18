@@ -90,7 +90,7 @@ public class TwitterFinder extends StatusAdapter{
                     }
                 }
             } catch (SQLException e) {
-                Reporter.report(e);
+                ClientConfig.setSentryContext(null, null, null, null);
                 LOG.error(e.getMessage());
             }
         }
@@ -111,7 +111,8 @@ public class TwitterFinder extends StatusAdapter{
 
                 preparedStatement.executeUpdate();
             } catch (SQLException e) {
-                Reporter.report(e);
+                ClientConfig.setSentryContext(ClientConfig.DISCORD().getGuildByID(getGuildId()),
+                        null, ClientConfig.DISCORD().getChannelByID(getChannelId()), null);
                 LOG.error(e.getMessage());
             }
         }
@@ -129,7 +130,8 @@ public class TwitterFinder extends StatusAdapter{
             request.executeUpdate();
 
         } catch (SQLException e) {
-            Reporter.report(e);
+            ClientConfig.setSentryContext(ClientConfig.DISCORD().getGuildByID(getGuildId()),
+                    null, ClientConfig.DISCORD().getChannelByID(getChannelId()), null);
             LOG.error(getChannelId() + " : " + e.getMessage());
         }
     }

@@ -53,7 +53,8 @@ public class RSSFinder {
 
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
-            Reporter.report(e);
+            ClientConfig.setSentryContext(ClientConfig.DISCORD().getGuildByID(Long.parseLong(getGuildId())),
+                    null, ClientConfig.DISCORD().getChannelByID(Long.parseLong(getChan())), null);
             LOG.error(e.getMessage());
         }
     }
@@ -73,7 +74,8 @@ public class RSSFinder {
 
                 preparedStatement.executeUpdate();
             } catch (SQLException e) {
-                Reporter.report(e);
+                ClientConfig.setSentryContext(ClientConfig.DISCORD().getGuildByID(Long.parseLong(getGuildId())),
+                        null, ClientConfig.DISCORD().getChannelByID(Long.parseLong(getChan())), null);
                 LOG.error(e.getMessage());
             }
         }
@@ -91,7 +93,8 @@ public class RSSFinder {
             request.executeUpdate();
 
         } catch (SQLException e) {
-            Reporter.report(e);
+            ClientConfig.setSentryContext(ClientConfig.DISCORD().getGuildByID(Long.parseLong(getGuildId())),
+                    null, ClientConfig.DISCORD().getChannelByID(Long.parseLong(getChan())), null);
             LOG.error(getChan() + " : " + e.getMessage());
         }
     }
@@ -122,7 +125,7 @@ public class RSSFinder {
                     }
                 }
             } catch (SQLException e) {
-                Reporter.report(e);
+                ClientConfig.setSentryContext(null, null, null, null);
                 LOG.error(e.getMessage());
             }
         }
@@ -153,7 +156,7 @@ public class RSSFinder {
                         try {
                             sleep(DELTA);
                         } catch (InterruptedException e) {
-                            Reporter.report(e);
+                            ClientConfig.setSentryContext(null, null, null, null);
                             LOG.error(e.getMessage());
                         }
                     }

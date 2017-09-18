@@ -1,5 +1,6 @@
 package data;
 
+import com.sun.security.sasl.ClientFactoryImpl;
 import exceptions.Reporter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -60,7 +61,7 @@ public class Guild {
                 }
 
             } catch (SQLException e) {
-                Reporter.report(e);
+                ClientConfig.setSentryContext(ClientConfig.DISCORD().getGuildByID(Long.parseLong(getId())), null, null, null);
                 LOG.error(e.getMessage());
             }
         }
@@ -84,7 +85,7 @@ public class Guild {
                 request.executeUpdate();
 
             } catch (SQLException e) {
-                Reporter.report(e);
+                ClientConfig.setSentryContext(ClientConfig.DISCORD().getGuildByID(Long.parseLong(getId())), null, null, null);
                 LOG.error(e.getMessage());
             }
         }
@@ -106,7 +107,7 @@ public class Guild {
             preparedStatement.setString(2, id);
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
-            Reporter.report(e);
+            ClientConfig.setSentryContext(ClientConfig.DISCORD().getGuildByID(Long.parseLong(getId())), null, null, null);
             LOG.error(e.getMessage());
         }
     }
@@ -124,7 +125,7 @@ public class Guild {
             preparedStatement.setString(2, id);
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
-            Reporter.report(e);
+            ClientConfig.setSentryContext(ClientConfig.DISCORD().getGuildByID(Long.parseLong(getId())), null, null, null);
             LOG.error(e.getMessage());
         }
     }
@@ -144,7 +145,7 @@ public class Guild {
 
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
-            Reporter.report(e);
+            ClientConfig.setSentryContext(ClientConfig.DISCORD().getGuildByID(Long.parseLong(getId())), null, null, null);
             LOG.error(e.getMessage());
         }
     }
@@ -172,7 +173,7 @@ public class Guild {
                     guilds.put(id, new Guild(id, name, prefixe, server));
                 }
             } catch (SQLException e) {
-                Reporter.report(e);
+                ClientConfig.setSentryContext(null, null, null, null);
                 LOG.error(e.getMessage());
             }
         }

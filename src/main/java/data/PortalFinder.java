@@ -40,7 +40,7 @@ public class PortalFinder
                     try {
                         sleep(DELTA);
                     } catch (InterruptedException e) {
-                        Reporter.report(e);
+                        ClientConfig.setSentryContext(null, null, null, null);
                         LOG.error(e.getMessage());
                     }
                 }

@@ -43,7 +43,7 @@ public class RSS implements Comparable<RSS>{
             for(SyndEntry entry : feed.getEntries())
                 rss.add(new RSS(entry.getTitle(), entry.getLink(), entry.getPublishedDate().getTime()));
         } catch (FeedException e){
-            Reporter.report(e);
+            ClientConfig.setSentryContext(null,null, null, null);
             LOG.error(e.getMessage());
         } catch(IOException e){
             ExceptionManager.manageSilentlyIOException(e);

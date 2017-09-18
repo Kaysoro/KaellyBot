@@ -61,7 +61,8 @@ public class User {
                 request.executeUpdate();
 
             } catch (SQLException e) {
-                Reporter.report(e);
+                ClientConfig.setSentryContext(ClientConfig.DISCORD().getGuildByID(Long.parseLong(getGuild().getId())),
+                        ClientConfig.DISCORD().getUserByID(Long.parseLong(getId())), null,null);
                 LOG.error(id + " - " + name + " : " + e.getMessage());
             }
         }
@@ -87,7 +88,8 @@ public class User {
                 request.executeUpdate();
 
             } catch (SQLException e) {
-                Reporter.report(e);
+                ClientConfig.setSentryContext(ClientConfig.DISCORD().getGuildByID(Long.parseLong(getGuild().getId())),
+                        ClientConfig.DISCORD().getUserByID(Long.parseLong(getId())), null,null);
                 LOG.error(id + " - " + name + " : " + e.getMessage());
             }
         }
@@ -109,7 +111,8 @@ public class User {
             preparedStatement.executeUpdate();
 
         } catch (SQLException e) {
-            Reporter.report(e);
+            ClientConfig.setSentryContext(ClientConfig.DISCORD().getGuildByID(Long.parseLong(getGuild().getId())),
+                    ClientConfig.DISCORD().getUserByID(Long.parseLong(getId())), null,null);
             LOG.error(e.getMessage());
         }
     }
@@ -129,7 +132,8 @@ public class User {
             preparedStatement.executeUpdate();
 
         } catch (SQLException e) {
-            Reporter.report(e);
+            ClientConfig.setSentryContext(ClientConfig.DISCORD().getGuildByID(Long.parseLong(getGuild().getId())),
+                    ClientConfig.DISCORD().getUserByID(Long.parseLong(getId())), null,null);
             LOG.error(e.getMessage());
         }
     }
@@ -161,7 +165,7 @@ public class User {
                     users.get(guildId.getId()).put(id, new User(id, name, right, guildId));
                 }
             } catch (SQLException e) {
-                Reporter.report(e);
+                ClientConfig.setSentryContext(null, null, null,null);
                 LOG.error(e.getMessage());
             }
         }

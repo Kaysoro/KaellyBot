@@ -1,6 +1,7 @@
 package exceptions;
 
 import commands.Command;
+import data.ClientConfig;
 import org.jsoup.HttpStatusException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,7 +34,8 @@ public abstract class ExceptionManager {
                 new DofusWebsiteInaccessibleDiscordException().throwException(message, command);
             }
             else {
-                Reporter.report(e);
+                ClientConfig.setSentryContext(message.getGuild(),
+                        message.getAuthor(), message.getChannel(), message);
                 LOG.error(e.getMessage());
                 new UnknownErrorDiscordException().throwException(message, command);
             }
@@ -45,7 +47,8 @@ public abstract class ExceptionManager {
             notFound.throwException(message, command);
         }
         else {
-            Reporter.report(e);
+            ClientConfig.setSentryContext(message.getGuild(),
+                    message.getAuthor(), message.getChannel(), message);
             LOG.error(e.getMessage(), message.getContent());
             new UnknownErrorDiscordException().throwException(message, command);
         }
@@ -60,7 +63,7 @@ public abstract class ExceptionManager {
             if (statusCode >= 500 && statusCode < 600)
                 LOG.warn(e.getMessage());
             else {
-                Reporter.report(e);
+                ClientConfig.setSentryContext(null, null, null, null);
                 LOG.error(e.getMessage());
             }
         } else if (e instanceof UnknownHostException
@@ -70,17 +73,18 @@ public abstract class ExceptionManager {
                 || e instanceof NoRouteToHostException)
             LOG.warn(e.getMessage());
         else
-            Reporter.report(e);
+            ClientConfig.setSentryContext(null, null, null, null);
     }
 
     public static void manageException(Exception e, IMessage message, Command command){
+        ClientConfig.setSentryContext(message.getGuild(),
+                message.getAuthor(), message.getChannel(), message);
         LOG.error(e.getMessage());
-        Reporter.report(e, message.getContent());
         new UnknownErrorDiscordException().throwException(message, command);
     }
 
     public static void manageSilentlyException(Exception e){
         LOG.error(e.getMessage());
-        Reporter.report(e);
+        ClientConfig.setSentryContext(null, null, null, null);
     }
 }

@@ -18,7 +18,7 @@ public class TooMuchTutosDiscordException implements DiscordException {
 
     @Override
     public void throwException(IMessage message, Command command, Object... arguments) {
-        StringBuilder st = new StringBuilder("Plusieurs tutoriel de nom similaires trouvés : ");
+        StringBuilder st = new StringBuilder("Plusieurs tutoriels de nom similaires trouvés : ");
 
         if (arguments.length > 0) {
             List<Pair<String, String>> items = (List<Pair<String, String>>) arguments[0];

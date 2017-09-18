@@ -1,6 +1,7 @@
 package commands;
 
 import data.ClientConfig;
+import data.Guild;
 import exceptions.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -84,7 +85,9 @@ public class SoundCommand extends AbstractCommand{
             AudioPlayer.getAudioPlayerForGuild(message.getGuild()).queue(file).getMetadata()
                     .put(file.getName(), file.toString());
         } catch (IOException | UnsupportedAudioFileException e) {
-            Reporter.report(e, message.getContent(), file.getName());
+            ClientConfig.setSentryContext(message.getGuild(),
+                    message.getAuthor(), message.getChannel(),
+                    message);
             LOG.error(e.getMessage());
         }
     }

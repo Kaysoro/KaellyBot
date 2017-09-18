@@ -101,13 +101,13 @@ public class TutorialCommand extends AbstractCommand{
 
     @Override
     public String help(String prefixe) {
-        return "**" + prefixe + name + "** renvoie le tutoriel correspondant à la recherche effectuée.";
+        return "**" + prefixe + name + "** renvoie le tutoriel correspondant à la recherche effectuée sur dofuspourlesnoobs.";
     }
 
     @Override
     public String helpDetailed(String prefixe) {
         return help(prefixe)
-                + "\n" + prefixe + "`"  + name + " `*`recherche`* : renvoie le tutoriel correspondant à la recherche effectuée :"
-                + " quête, donjon... Son nom peut être approximatif s'il est suffisemment précis.\n";
+                + "\n" + prefixe + "`"  + name + " `*`recherche`* : renvoie le tutoriel correspondant à la recherche effectuée"
+                + " sur dofuspourlesnoobs: quête, donjon... Son nom peut être approximatif s'il est suffisemment précis.\n";
     }
 }

@@ -1,9 +1,15 @@
 package data;
 
+import discord.Message;
+import io.sentry.Sentry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sx.blah.discord.api.ClientBuilder;
 import sx.blah.discord.api.IDiscordClient;
+import sx.blah.discord.handle.obj.IChannel;
+import sx.blah.discord.handle.obj.IGuild;
+import sx.blah.discord.handle.obj.IMessage;
+import sx.blah.discord.handle.obj.IUser;
 import sx.blah.discord.util.DiscordException;
 import twitter4j.TwitterStream;
 import twitter4j.TwitterStreamFactory;
@@ -47,10 +53,12 @@ public class ClientConfig {
                             + FILENAME + " ainsi que votre connexion.");
             }
 
-            ConfigurationBuilder cb = new ConfigurationBuilder();
+            if (! prop.get("sentry.dsn").equals(""))
+                Sentry.init(prop.getProperty("sentry.dsn"));
 
             if (! prop.get("twitter.consumer_key").equals("") && ! prop.get("twitter.consumer_secret").equals("")
             && ! prop.get("twitter.access_token").equals("") && ! prop.get("twitter.access_token_secret").equals("")) {
+                ConfigurationBuilder cb = new ConfigurationBuilder();
                 cb.setDebugEnabled(false)
                         .setOAuthConsumerKey(prop.getProperty("twitter.consumer_key"))
                         .setOAuthConsumerSecret(prop.getProperty("twitter.consumer_secret"))
@@ -86,5 +94,26 @@ public class ClientConfig {
     }
     public static IDiscordClient DISCORD() {
         return getInstance().DISCORD;
+    }
+
+    public static void setSentryContext(IGuild guild, IUser user, IChannel chan, IMessage message){
+        if (guild != null && ! guild.isDeleted()){
+            Sentry.getContext().addTag("Guild", guild.getStringID() + " - " + guild.getName());
+            if (chan != null && ! chan.isDeleted())
+                Sentry.getContext().addTag("Channel", chan.getStringID() + " - " + chan.getName());
+            else
+                Sentry.getContext().addTag("Channel", "null");
+        }
+        else
+            Sentry.getContext().addTag("Guild", "null");
+
+        if (user != null)
+            Sentry.getContext().addTag("User", user.getStringID() + " - " + user.getName());
+        else
+            Sentry.getContext().addTag("User", "null");
+        if (message != null)
+            Sentry.getContext().addTag("Message", message.getContent());
+        else
+            Sentry.getContext().addTag("Message", "null");
     }
 }

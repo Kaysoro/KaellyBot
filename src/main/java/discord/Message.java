@@ -25,17 +25,16 @@ public class Message {
                 LoggerFactory.getLogger(Message.class).warn(e.getMessage());
                 throw e;
             } catch (DiscordException e){
+                ClientConfig.setSentryContext(channel.getGuild(), null, channel, null);
                 LoggerFactory.getLogger(Message.class).error(e.getErrorMessage());
-                if (channel != null) Reporter.report(e, new Object[]{channel.getStringID(), channel.getGuild()});
-                else Reporter.report(e);
             } catch(MissingPermissionsException e){
                 LoggerFactory.getLogger(Message.class).warn(Constants.name
                         + " n'a pas les permissions pour appliquer cette requête.");
                 new MissingPermissionDiscordException()
                         .throwException(channel.getMessageHistory().getLatestMessage(), null, e);
             } catch(Exception e){
+                ClientConfig.setSentryContext(channel.getGuild(), null, channel, null);
                 LoggerFactory.getLogger(Message.class).error(e.getMessage());
-                Reporter.report(e);
             }
             return null;
         });
@@ -52,17 +51,16 @@ public class Message {
                 LoggerFactory.getLogger(Message.class).warn(e.getMessage());
                 throw e;
             } catch (DiscordException e){
+                ClientConfig.setSentryContext(channel.getGuild(), null, channel, null);
                 LoggerFactory.getLogger(Message.class).error(e.getErrorMessage());
-                if (channel != null) Reporter.report(e, new Object[]{channel.getStringID(), channel.getGuild()});
-                else Reporter.report(e);
             } catch(MissingPermissionsException e){
                 LoggerFactory.getLogger(Message.class).warn(Constants.name
                         + " n'a pas les permissions pour appliquer cette requête.");
                 new MissingPermissionDiscordException()
                         .throwException(channel.getMessageHistory().getLatestMessage(), null, e);
             } catch(Exception e){
+                ClientConfig.setSentryContext(channel.getGuild(), null, channel, null);
                 LoggerFactory.getLogger(Message.class).error(e.getMessage());
-                Reporter.report(e);
             }
             return null;
         });

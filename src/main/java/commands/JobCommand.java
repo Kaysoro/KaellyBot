@@ -43,7 +43,6 @@ public class JobCommand extends AbstractCommand{
                 Message.sendText(message.getChannel(), st.toString());
             }
             else if (!m.group(2).equals("-all")) {
-                System.out.println("'" + m.group(2) + "'");
                 List<String> jobs = getJob(m.group(2));
 
                 if (jobs.size() == 1) {

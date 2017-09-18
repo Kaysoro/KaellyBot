@@ -54,7 +54,7 @@ public class ServerDofus {
                 serversMap.put(sd.getName(), sd);
             }
         } catch (SQLException e) {
-            Reporter.report(e);
+            ClientConfig.setSentryContext(null, null, null, null);
             LoggerFactory.getLogger(ServerDofus.class).error(e.getMessage());
         }
     }

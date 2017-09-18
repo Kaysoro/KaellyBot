@@ -88,7 +88,7 @@ Permet de déterminer à quel serveur Dofus correspond ce serveur Discord.
 
 ### Tuto
 Renvoie le tutoriel correspondant à la recherche effectuée..  
-`!tuto search` : renvoie le tutoriel correspondant à la recherche effectuée : quête, donjon... Son nom peut être approximatif s'il est suffisemment précis.  
+`!tuto search` : renvoie le tutoriel correspondant à la recherche effectuée sur dofuspourlesnoobs : quête, donjon... Son nom peut être approximatif s'il est suffisemment précis.  
 
 ### Twitter
 Autorise ou non Kaelly à poster des tweets dans un salon.  

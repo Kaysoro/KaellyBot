@@ -69,7 +69,7 @@ public class Portal implements Embedded{
                 while (resultSet.next())
                     portals.put(resultSet.getString("name"), resultSet.getString("url"));
             } catch (SQLException e) {
-                Reporter.report(e);
+                ClientConfig.setSentryContext(null,null, null, null);
                 LOG.error(e.getMessage());
             }
         }
@@ -105,7 +105,8 @@ public class Portal implements Embedded{
             }
 
         } catch (SQLException e) {
-            Reporter.report(e);
+            ClientConfig.setSentryContext(ClientConfig.DISCORD().getGuildByID(Long.parseLong(g.getId())),
+                    null, null, null);
             LOG.error(e.getMessage());
         }
 
@@ -137,7 +138,8 @@ public class Portal implements Embedded{
 
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
-            Reporter.report(e);
+            ClientConfig.setSentryContext(ClientConfig.DISCORD().getGuildByID(Long.parseLong(guild.getId())),
+                    null, null, null);
             LOG.error(e.getMessage());
         }
     }
@@ -172,7 +174,8 @@ public class Portal implements Embedded{
 
                 preparedStatement.executeUpdate();
             } catch (SQLException e) {
-                Reporter.report(e);
+                ClientConfig.setSentryContext(ClientConfig.DISCORD().getGuildByID(Long.parseLong(guild.getId())),
+                        null, null, null);
                 LOG.error(e.getMessage());
             }
         }

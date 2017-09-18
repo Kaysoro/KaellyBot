@@ -52,7 +52,8 @@ public class CommandForbidden {
             }
 
         } catch (SQLException e) {
-            Reporter.report(e);
+            ClientConfig.setSentryContext(ClientConfig.DISCORD().getGuildByID(Long.parseLong(g.getId())),
+                    null, null,null);
             LOG.error(e.getMessage());
         }
 
@@ -74,7 +75,8 @@ public class CommandForbidden {
                 getGuild().getForbiddenCommands().put(getCommand().getName(), this);
                 isSaved = true;
             } catch (SQLException e) {
-                Reporter.report(e);
+                ClientConfig.setSentryContext(ClientConfig.DISCORD().getGuildByID(Long.parseLong(getGuild().getId())),
+                        null, null,null);
                 LOG.error(e.getMessage());
             }
         }
@@ -96,7 +98,8 @@ public class CommandForbidden {
                 isSaved = false;
 
             } catch (SQLException e) {
-                Reporter.report(e);
+                ClientConfig.setSentryContext(ClientConfig.DISCORD().getGuildByID(Long.parseLong(getGuild().getId())),
+                        null, null,null);
                 LOG.error(getGuild().getId() + " - " + getCommand().getName() + " : " + e.getMessage());
             }
         }

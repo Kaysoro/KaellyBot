@@ -13,6 +13,11 @@ public class Constants {
     public final static String name = "Kaelly";
 
     /**
+     * Application version
+     */
+    public final static String version = "1.4.1";
+
+    /**
      * Author
      */
     public final static String author = "162842827183751169";
@@ -118,7 +123,7 @@ public class Constants {
      * Message sent when joining a new guild
      */
     public final static String msgJoinGuild = "Salut et merci pour l'invitation ! Moi c'est " + name
-            + ", je suis un robot dédié au jeu dofus; j'ai quelques commandes dans ma manche qui "
+            + ", je suis un robot dédié au jeu " + game + "; j'ai quelques commandes dans ma manche qui "
             + "peuvent t'intéresser et qui me permettent d'afficher des items du jeu, des pages personnelles de joueurs, "
             + "gérer un annuaire de vos métiers ou encore des positions de portails !"
             + "\nTu veux en savoir plus ? Ecris `" + prefixCommand + new HelpCommand().getName()
