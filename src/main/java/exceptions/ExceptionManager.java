@@ -30,13 +30,13 @@ public abstract class ExceptionManager {
         if(exMsgStatusCodeMatcher.find()) {
             int statusCode = Integer.parseInt(exMsgStatusCodeMatcher.group(1));
             if (statusCode >= 500 && statusCode < 600) {
-                LOG.warn(e.getMessage());
+                LOG.warn("manageIOException", e);
                 new DofusWebsiteInaccessibleDiscordException().throwException(message, command);
             }
             else {
                 ClientConfig.setSentryContext(message.getGuild(),
                         message.getAuthor(), message.getChannel(), message);
-                LOG.error(e.getMessage());
+                LOG.error("manageIOException", e);
                 new UnknownErrorDiscordException().throwException(message, command);
             }
         } else if (e instanceof UnknownHostException || e instanceof SocketTimeoutException) {
@@ -49,42 +49,42 @@ public abstract class ExceptionManager {
         else {
             ClientConfig.setSentryContext(message.getGuild(),
                     message.getAuthor(), message.getChannel(), message);
-            LOG.error(e.getMessage(), message.getContent());
+            LOG.error("manageIOException", e);
             new UnknownErrorDiscordException().throwException(message, command);
         }
     }
 
     public static void manageSilentlyIOException(Exception e){
+        ClientConfig.setSentryContext(null, null, null, null);
         // First we try parsing the exception message to see if it contains the response code
         Matcher exMsgStatusCodeMatcher = Pattern.compile("^Server returned HTTP response code: (\\d+)")
                 .matcher(e.getMessage());
         if(exMsgStatusCodeMatcher.find()) {
             int statusCode = Integer.parseInt(exMsgStatusCodeMatcher.group(1));
             if (statusCode >= 500 && statusCode < 600)
-                LOG.warn(e.getMessage());
-            else {
-                ClientConfig.setSentryContext(null, null, null, null);
-                LOG.error(e.getMessage());
-            }
+                LOG.warn("manageSilentlyIOException", e);
+            else
+                LOG.error("manageSilentlyIOException", e);
         } else if (e instanceof UnknownHostException
                 || e instanceof SocketTimeoutException
                 || e instanceof FileNotFoundException
                 || e instanceof HttpStatusException
                 || e instanceof NoRouteToHostException)
-            LOG.warn(e.getMessage());
+            LOG.warn("manageSilentlyIOException", e);
         else
-            ClientConfig.setSentryContext(null, null, null, null);
+            LOG.error("manageSilentlyIOException", e);
+
     }
 
     public static void manageException(Exception e, IMessage message, Command command){
         ClientConfig.setSentryContext(message.getGuild(),
                 message.getAuthor(), message.getChannel(), message);
-        LOG.error(e.getMessage());
+        LOG.error("manageException", e);
         new UnknownErrorDiscordException().throwException(message, command);
     }
 
     public static void manageSilentlyException(Exception e){
-        LOG.error(e.getMessage());
         ClientConfig.setSentryContext(null, null, null, null);
+        LOG.error("manageSilentlyException", e);
     }
 }
