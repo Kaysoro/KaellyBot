@@ -12,6 +12,7 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" name="Maven: org.apache.commons:commons-lang3:3.6" level="project" />
     <orderEntry type="library" name="Maven: org.jsoup:jsoup:1.10.3" level="project" />
     <orderEntry type="library" name="Maven: org.xerial:sqlite-jdbc:3.20.0" level="project" />
     <orderEntry type="library" name="Maven: com.github.austinv11:Discord4j:shaded:dev-2.9-gd12a9ac-4" level="project" />
@@ -30,7 +31,6 @@
     <orderEntry type="library" name="Maven: org.eclipse.jetty.websocket:websocket-common:9.4.3.v20170317" level="project" />
     <orderEntry type="library" name="Maven: org.eclipse.jetty.websocket:websocket-api:9.4.3.v20170317" level="project" />
     <orderEntry type="library" name="Maven: net.jodah:typetools:0.4.8" level="project" />
-    <orderEntry type="library" name="Maven: org.apache.commons:commons-lang3:3.5" level="project" />
     <orderEntry type="library" name="Maven: com.fasterxml.jackson.module:jackson-module-afterburner:2.8.7" level="project" />
     <orderEntry type="library" name="Maven: com.fasterxml.jackson.core:jackson-core:2.8.7" level="project" />
     <orderEntry type="library" name="Maven: com.fasterxml.jackson.core:jackson-databind:2.8.7" level="project" />

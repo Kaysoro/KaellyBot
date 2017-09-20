@@ -1,5 +1,6 @@
 package commands;
 
+import data.ClientConfig;
 import data.Constants;
 import data.Guild;
 import exceptions.BadUseCommandDiscordException;
@@ -36,7 +37,7 @@ public abstract class AbstractCommand implements Command {
 
     @Override
     public boolean request(IMessage message) {
-
+        ClientConfig.setSentryContext(message.getGuild(), message.getAuthor(), message.getChannel(), message);
         Guild guild = Guild.getGuilds().get(message.getGuild().getStringID());
         Matcher m = getMatcher(message);
         boolean isFound = m.find();

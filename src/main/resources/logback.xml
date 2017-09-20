@@ -15,8 +15,8 @@
     </filter>
   </appender>
 
-  <root level="error">
+  <root level="info">
     <appender-ref ref="STDOUT" />
-    <appender-ref ref="Sentry" />
+    <!--<appender-ref ref="Sentry" />-->
   </root>
 </configuration>

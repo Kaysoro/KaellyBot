@@ -1,5 +1,6 @@
 package data;
 
+import org.apache.commons.lang3.time.DateUtils;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
@@ -17,6 +18,7 @@ import java.text.DateFormat;
 import java.text.Normalizer;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -28,9 +30,10 @@ public class Portal implements Embedded{
     private final static Logger LOG = LoggerFactory.getLogger(Portal.class);
     private final static long LIMIT = 172800000;
     private final static DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy à HH:mm", Locale.FRANCE);
+    private final static DateFormat dayFormat = new SimpleDateFormat("à HH:mm", Locale.FRANCE);
     private final static Pattern sweetDateFormat = Pattern.compile("(\\d+\\s+j\\s+)?(\\d+\\s+h\\s+)?(\\d+\\s+min)");
 
-    private static Map<String, String> portals;
+    private static Map<String, Portal> portals;
 
     private String name;
     private String url;
@@ -38,22 +41,41 @@ public class Portal implements Embedded{
     private int utilisation;
     private long creation;
     private long lastUpdate;
+    private int color;
     private Guild guild;
 
-    private Portal(String name, String coordonate, int utilisation, String url, long creation, long lastUpdate, Guild guild) {
+    private Portal(String name, String url, int color) {
+        this.name = name;
+        this.url = url;
+        this.color = color;
+    }
+
+    private Portal(String name, String coordonate, int utilisation, long creation, long lastUpdate) {
         this.name = name;
         if (coordonate != null)
             this.coordonate = coordonate;
         else
             this.coordonate = "";
         this.utilisation = utilisation;
-        this.url = url;
+        this.creation = creation;
+        this.lastUpdate = lastUpdate;
+    }
+
+    private Portal(Portal classicPortal, String coordonate, int utilisation, long creation, long lastUpdate, Guild guild) {
+        this.name = classicPortal.getName();
+        this.url = classicPortal.getUrl();
+        this.color = classicPortal.getColor();
+        if (coordonate != null)
+            this.coordonate = coordonate;
+        else
+            this.coordonate = "";
+        this.utilisation = utilisation;
         this.creation = creation;
         this.lastUpdate = lastUpdate;
         this.guild = guild;
     }
 
-    public static Map<String, String> getPortals(){
+    public static Map<String, Portal> getPortals(){
         if (portals == null){
             portals = new HashMap<>();
 
@@ -61,11 +83,15 @@ public class Portal implements Embedded{
             Connection connection = connexion.getConnection();
 
             try {
-                PreparedStatement query = connection.prepareStatement("SELECT name, url FROM Portal");
+                PreparedStatement query = connection.prepareStatement("SELECT name, url, color FROM Portal");
                 ResultSet resultSet = query.executeQuery();
 
-                while (resultSet.next())
-                    portals.put(resultSet.getString("name"), resultSet.getString("url"));
+                while (resultSet.next()) {
+                    Portal portal = new Portal(resultSet.getString("name"),
+                            resultSet.getString("url"),
+                            resultSet.getInt("color"));
+                    portals.put(portal.getName(), portal);
+                }
             } catch (SQLException e) {
                 ClientConfig.setSentryContext(null,null, null, null);
                 LOG.error(e.getMessage());
@@ -99,7 +125,7 @@ public class Portal implements Embedded{
                 utilisation = resultSet.getInt("utilisation");
                 creation = resultSet.getLong("creation");
                 lastUpdate = resultSet.getLong("last_update");
-                portals.add(new Portal(name, pos, utilisation, Portal.getPortals().get(name), creation, lastUpdate, g));
+                portals.add(new Portal(Portal.getPortals().get(name), pos, utilisation, creation, lastUpdate, g));
             }
 
         } catch (SQLException e) {
@@ -205,7 +231,7 @@ public class Portal implements Embedded{
         EmbedBuilder builder = new EmbedBuilder();
 
         builder.withTitle(name);
-        builder.withColor(new Random().nextInt(16777216));
+        builder.withColor(getColor());
         builder.withThumbnail(url);
 
         if (System.currentTimeMillis() - creation > LIMIT
@@ -218,10 +244,7 @@ public class Portal implements Embedded{
             if (utilisation != -1)
                 builder.appendField(":eye: Utilisation", utilisation + " utilisation"
                         + (utilisation > 1 ? "" : "s"), true);
-            String date = "Ajouté le " + dateFormat.format(new Date(creation));
-            if (lastUpdate != -1)
-                date += ", édité le " + dateFormat.format(new Date(lastUpdate));
-            builder.withFooterText(date);
+            builder.withFooterText(getDateInformation());
         }
 
         return builder.build();
@@ -243,10 +266,7 @@ public class Portal implements Embedded{
 
             if (utilisation != -1)
                 st.append(", ").append(utilisation).append(" utilisations");
-            st.append(" *(ajouté le ").append(dateFormat.format(new Date(creation)));
-            if (lastUpdate != -1)
-                    st.append(" - édité le ").append(dateFormat.format(new Date(lastUpdate)));
-            st.append(")*\n");
+            st.append(getDateInformation()).append(")*\n");
         }
 
         return st.toString();
@@ -283,10 +303,37 @@ public class Portal implements Embedded{
             else
                 coordonate = "";
             long lastUpdate = creation;
-
-            portals.add(new Portal(name, coordonate, utilisation, null, creation, lastUpdate, null));
+            portals.add(new Portal(name, coordonate, utilisation, creation, lastUpdate));
         }
 
         return portals;
+    }
+
+    private String getDateInformation(){
+        StringBuilder st = new StringBuilder("Ajouté ");
+        Date creationDate = new Date(creation);
+        if (! DateUtils.isSameDay(creationDate, new Date()))
+            st.append("le ").append(dateFormat.format(creationDate));
+        else
+            st.append(dayFormat.format(creationDate));
+        if (lastUpdate != -1) {
+            Date updateDate = new Date(lastUpdate);
+            if (! DateUtils.truncatedEquals(creationDate, updateDate, Calendar.SECOND)) {
+                st.append(" - édité ");
+                if (! DateUtils.isSameDay(updateDate, new Date()))
+                    st.append("le ").append(dateFormat.format(updateDate));
+                else
+                    st.append(dayFormat.format(updateDate));
+            }
+        }
+        return st.toString();
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public int getColor() {
+        return color;
     }
 }
