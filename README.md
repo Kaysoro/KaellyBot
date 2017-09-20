@@ -43,6 +43,10 @@ Tire au hasard une carte du Goultarminator.
 `!map` : Tire au hasard une carte du Goultarminator ou bien parmi celles spécifiées en paramètre.  
 `!map map1 map2 ...` : Tire une carte parmi celles spécifiées en paramètre. Nombres romains ou numériques uniquement.  
 
+### Monster
+Renvoie les statistiques d'un monstre du jeu Dofus.  
+`!monster monstre` : Renvoie les statistiques du monstre spécifié : son nom peut être approximatif s'il est suffisemment précis.    
+
 ### Pos (Dimensions)
 Gère les positions de portails de dimension.  
 `!pos dimension` : Donne la position du portail de la dimension désirée.  

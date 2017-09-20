@@ -84,10 +84,25 @@ public class Constants {
      */
     public final static String monturePageURL = "/fr/mmorpg/encyclopedie/montures";
 
+    /**
+     * Official Dofus URL for Monster page
+     */
+
+    public final static String monsterPageURL = "/fr/mmorpg/encyclopedie/monstres";
+
+    /**
+     * Tutorial URL
+     */
     public final static String dofusPourLesNoobURL = "http://www.dofuspourlesnoobs.com";
 
+    /**
+     * Tutorial Search URL
+     */
     public final static String dofusPourLesNoobSearch = "/apps/search";
 
+    /**
+     * Portal URL
+     */
     public final static String sweetPortals = "http://www.sweet.ovh/portails/";
 
     /**

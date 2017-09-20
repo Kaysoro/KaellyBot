@@ -107,6 +107,15 @@ public class CommandPatternTest extends TestCase {
         assertFalse(pattern.matcher(Constants.prefixCommand + "map un deûx trôis").find());
     }
 
+    public void testMonsterCommand(){
+        Command cmd = new MonsterCommand();
+        Pattern pattern = Pattern.compile("^" + Constants.prefixCommand + cmd.getName() + cmd.getPattern() + "$");
+
+        assertTrue(pattern.matcher(Constants.prefixCommand + "monster test").find());
+        assertTrue(pattern.matcher(Constants.prefixCommand + "monster tést test").find());
+        assertFalse(pattern.matcher(Constants.prefixCommand + "monster").find());
+    }
+
     public void testPortalCommand(){
         Command cmd = new PortalCommand();
         Pattern pattern = Pattern.compile("^" + Constants.prefixCommand + cmd.getName() + cmd.getPattern() + "$");
