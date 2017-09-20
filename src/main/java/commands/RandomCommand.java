@@ -28,9 +28,17 @@ public class RandomCommand extends AbstractCommand{
                 boolean value = new Random().nextBoolean();
                 Message.sendText(message.getChannel(), value ? "Vrai" : "Faux" + " !");
             }
-            else if (m.group(1).matches("\\s+\\d+")){
-                int limit = Integer.parseInt(m.group(1).trim());
-                Message.sendText(message.getChannel(), new Random().nextInt(limit) + " !");
+            else if (m.group(1).matches("\\s+-?\\d+")){
+                try {
+                    int limit = Integer.parseInt(m.group(1).trim());
+                    if (limit > 0)
+                        Message.sendText(message.getChannel(), new Random().nextInt(limit) + " !");
+                    else
+                        Message.sendText(message.getChannel(), "La limite doit être supérieure à 0.");
+                } catch(NumberFormatException e){
+                    Message.sendText(message.getChannel(), "La limite indiquée est trop grande (maximum possible : "
+                            + Integer.MAX_VALUE + ").");
+                }
             }
             else {
                 String value = m.group(1).trim();

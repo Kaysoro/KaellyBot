@@ -58,7 +58,7 @@ public class AlmanaxCommand extends AbstractCommand{
                 else if (m.group(1) != null && m.group(1).matches("\\s+\\+\\d")) {
                     int number = Integer.parseInt(m.group(1).replaceAll("\\s+\\+", ""));
                     StringBuilder st = new StringBuilder();
-                    for (int i = 0; i < number; i++) {
+                    for (int i = 1; i <= number; i++) {
                         date = DateUtils.addDays(new Date(), i);
                         Almanax almanax = Almanax.get(date);
                         st.append(Almanax.discordToBot.format(date)).append(" : ")
