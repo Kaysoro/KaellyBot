@@ -1,14 +1,10 @@
 package data;
 
-import discord.Message;
+import listeners.TwitterListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sx.blah.discord.handle.obj.IChannel;
-import sx.blah.discord.util.EmbedBuilder;
 import twitter4j.FilterQuery;
-import twitter4j.MediaEntity;
-import twitter4j.Status;
-import twitter4j.StatusAdapter;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -20,7 +16,7 @@ import java.util.Map;
 /**
  * Created by steve on 12/01/2017.
  */
-public class TwitterFinder extends StatusAdapter{
+public class TwitterFinder{
     private final static Logger LOG = LoggerFactory.getLogger(TwitterFinder.class);
     protected static Map<Long, TwitterFinder> twitterChannels;
     private long guildId;
@@ -29,41 +25,6 @@ public class TwitterFinder extends StatusAdapter{
     public TwitterFinder(long guidId, long channelId) {
         this.guildId = guidId;
         this.channelId = channelId;
-
-        if (ClientConfig.TWITTER() != null) {
-            ClientConfig.TWITTER().addListener(this);
-
-            FilterQuery query = new FilterQuery();
-            query.follow(Constants.dofusTwitter);
-            ClientConfig.TWITTER().filter(query);
-        }
-    }
-
-    @Override
-    public void onStatus(Status status) {
-        // In case if channel didn't exist anymore and it is not removed at time
-        if (getTwitterChannels().containsKey(getChannelId())){
-            if (status.getUser().getId() == Constants.dofusTwitter && status.getInReplyToScreenName() == null) {
-                EmbedBuilder builder = new EmbedBuilder();
-
-                builder.withAuthorName("@" + status.getUser().getScreenName());
-                builder.withAuthorIcon(status.getUser().getMiniProfileImageURL());
-                builder.withAuthorUrl("https://twitter.com/" + status.getUser().getScreenName());
-
-                builder.withTitle("Tweet");
-                builder.withUrl("https://twitter.com/" + status.getUser().getScreenName() + "/status/" + status.getId());
-                builder.withColor(1942002);
-                builder.withDescription(status.getText());
-                builder.withThumbnail(Constants.twitterIcon);
-
-                if(status.getMediaEntities().length > 0){
-                    MediaEntity media = status.getMediaEntities()[0];
-                    builder.withImage(media.getMediaURL());
-                }
-
-                Message.sendEmbed(ClientConfig.DISCORD().getChannelByID(getChannelId()), builder.build());
-            }
-        }
     }
 
     public static Map<Long, TwitterFinder> getTwitterChannels(){
@@ -141,5 +102,15 @@ public class TwitterFinder extends StatusAdapter{
 
     public Long getGuildId(){
         return guildId;
+    }
+
+    public static void start() {
+        if (ClientConfig.TWITTER() != null) {
+            ClientConfig.TWITTER().addListener(new TwitterListener());
+
+            FilterQuery query = new FilterQuery();
+            query.follow(Constants.dofusTwitter);
+            ClientConfig.TWITTER().filter(query);
+        }
     }
 }

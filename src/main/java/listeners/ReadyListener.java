@@ -75,7 +75,7 @@ public class ReadyListener {
         AlmanaxCalendar.start();
 
         LOG.info("Connexion à l'API Twitter...");
-        TwitterFinder.getTwitterChannels();
+        TwitterFinder.start();
 
         LOG.info("Ecoute des messages...");
         ClientConfig.DISCORD().getDispatcher().registerListener(new MessageListener());
