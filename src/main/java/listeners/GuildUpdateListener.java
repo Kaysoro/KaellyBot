@@ -1,5 +1,6 @@
 package listeners;
 
+import data.ClientConfig;
 import data.Guild;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,6 +15,7 @@ public class GuildUpdateListener {
 
     @EventSubscriber
     public void onReady(GuildUpdateEvent event) {
+        ClientConfig.setSentryContext(event.getGuild(), null, null, null);
         if (! event.getOldGuild().getName().equals(event.getNewGuild().getName())){
             Guild.getGuilds().get(event.getNewGuild().getStringID()).setName(event.getNewGuild().getName());
             LOG.info("'" + event.getOldGuild().getName() + "' renommé en '" + event.getNewGuild().getName() + "'");

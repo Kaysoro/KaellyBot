@@ -21,6 +21,7 @@ public class GuildLeaveListener {
 
         @EventSubscriber
         public void onReady(GuildLeaveEvent event) {
+            ClientConfig.setSentryContext(event.getGuild(), null, null, null);
             Guild.getGuilds().get(event.getGuild().getStringID()).removeToDatabase();
 
             LOG.info("La guilde " + event.getGuild().getStringID() + " - " + event.getGuild().getName()

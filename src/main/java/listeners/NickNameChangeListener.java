@@ -1,5 +1,6 @@
 package listeners;
 
+import data.ClientConfig;
 import data.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,6 +20,8 @@ public class NickNameChangeListener {
 
         @EventSubscriber
         public void onReady(NicknameChangedEvent event) {
+            ClientConfig.setSentryContext(event.getGuild(), event.getUser(), null, null);
+
             if (event.getOldNickname().isPresent() && event.getNewNickname().isPresent()
                     && ! event.getOldNickname().get().equals(event.getNewNickname().get())) {
                 User user = User.getUsers().get(event.getGuild().getStringID()).get(event.getUser().getStringID());

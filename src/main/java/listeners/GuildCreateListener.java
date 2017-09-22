@@ -25,6 +25,7 @@ public class GuildCreateListener {
 
         @EventSubscriber
         public void onReady(GuildCreateEvent event) {
+            ClientConfig.setSentryContext(event.getGuild(), null, null, null);
 
             if(!Guild.getGuilds().containsKey(event.getGuild().getStringID())) {
                 Guild guild = new Guild(event.getGuild().getStringID(), event.getGuild().getName());

@@ -1,5 +1,6 @@
 package listeners;
 
+import data.ClientConfig;
 import data.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,6 +15,7 @@ public class GuildTransferOwnershipListener {
 
     @EventSubscriber
     public void onReady(GuildTransferOwnershipEvent event) {
+        ClientConfig.setSentryContext(event.getGuild(), event.getNewOwner(), null, null);
 
         User oldOwner = User.getUsers().get(event.getGuild().getStringID()).get(event.getNewOwner().getStringID());
         oldOwner.changeRight(User.RIGHT_ADMIN);

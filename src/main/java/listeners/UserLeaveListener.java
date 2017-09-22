@@ -1,5 +1,6 @@
 package listeners;
 
+import data.ClientConfig;
 import data.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,6 +20,7 @@ public class UserLeaveListener {
 
         @EventSubscriber
         public void onReady(UserLeaveEvent event) {
+            ClientConfig.setSentryContext(event.getGuild(), event.getUser(), null, null);
             User user = User.getUsers().get(event.getGuild().getStringID()).get(event.getUser().getStringID());
             user.removeToDatabase();
 

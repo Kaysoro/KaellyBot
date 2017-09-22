@@ -1,5 +1,6 @@
 package listeners;
 
+import data.ClientConfig;
 import data.Guild;
 import data.User;
 import org.slf4j.Logger;
@@ -20,7 +21,7 @@ public class UserJoinListener {
 
         @EventSubscriber
         public void onReady(UserJoinEvent event) {
-
+            ClientConfig.setSentryContext(event.getGuild(), event.getUser(), null, null);
             String id = event.getUser().getStringID();
             String name = event.getUser().getDisplayName(event.getGuild());
             String guildId = event.getGuild().getStringID();

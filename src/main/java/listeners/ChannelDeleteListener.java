@@ -1,5 +1,6 @@
 package listeners;
 
+import data.ClientConfig;
 import data.RSSFinder;
 import data.TwitterFinder;
 import org.slf4j.Logger;
@@ -20,11 +21,12 @@ public class ChannelDeleteListener {
 
         @EventSubscriber
         public void onReady(ChannelDeleteEvent event) {
-                if (RSSFinder.getRSSFinders().containsKey(event.getChannel().getStringID()))
-                    RSSFinder.getRSSFinders().get(event.getChannel().getStringID()).removeToDatabase();
+            ClientConfig.setSentryContext(event.getGuild(), null, event.getChannel(), null);
+            if (RSSFinder.getRSSFinders().containsKey(event.getChannel().getStringID()))
+                RSSFinder.getRSSFinders().get(event.getChannel().getStringID()).removeToDatabase();
 
-                if (TwitterFinder.getTwitterChannels().containsKey(event.getChannel().getLongID()))
-                    TwitterFinder.getTwitterChannels().get(event.getChannel().getLongID()).removeToDatabase();
+            if (TwitterFinder.getTwitterChannels().containsKey(event.getChannel().getLongID()))
+                TwitterFinder.getTwitterChannels().get(event.getChannel().getLongID()).removeToDatabase();
 
             LOG.info(event.getGuild().getStringID() + " - Salon \"" + event.getChannel().getName()
                     + "\" supprimé");

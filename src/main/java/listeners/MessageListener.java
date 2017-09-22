@@ -1,6 +1,7 @@
 package listeners;
 
 import commands.*;
+import data.ClientConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sx.blah.discord.api.events.EventSubscriber;
@@ -18,6 +19,7 @@ public class MessageListener {
     }
         @EventSubscriber
         public void onReady(MessageReceivedEvent event) {
+            ClientConfig.setSentryContext(event.getGuild(), event.getAuthor(), event.getChannel(), event.getMessage());
 
             // If the author is a bot, message get ignored
             if (! event.getMessage().getAuthor().isBot())

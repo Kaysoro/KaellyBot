@@ -12,6 +12,7 @@ public class TrackFinishListener {
 
     @EventSubscriber
     public void onTrackFinish(TrackFinishEvent event) {
+        ClientConfig.setSentryContext(event.getPlayer().getGuild(), null, null, null);
         IGuild guild = event.getPlayer().getGuild();
 
         if (! event.getNewTrack().isPresent())
