@@ -114,8 +114,8 @@ public class RightCommand extends AbstractCommand{
 
     @Override
     public String help(String prefixe) {
-        return "**" + prefixe + name + "** permet de changer les droits de quelqu'un d'autre tant qu'il n'est pas plus"
-                + " haut que le sien. Nécessite un niveau d'administration 2 (Modérateur) minimum."
+        return "**" + prefixe + name + "** permet de changer les droits d'un utilisateur dont les droits sont inférieurs aux siens."
+                + " Nécessite un niveau d'administration 2 (Modérateur) minimum."
                 + " Les niveaux sont 0 : Invité, 1 : Membre, 2 : Modérateur, 3 : Administrateur.";
     }
 

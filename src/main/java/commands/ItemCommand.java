@@ -139,6 +139,7 @@ public class ItemCommand extends AbstractCommand{
     public String helpDetailed(String prefixe) {
         return help(prefixe)
                 + "\n" + prefixe + "`"  + name + " `*`item`* : renvoie les statistiques de l'item spécifié :"
-                + " son nom peut être approximatif s'il est suffisemment précis.\n";
+                + " son nom peut être approximatif s'il est suffisamment précis."
+                + "\n" + prefixe + "`"  + name + " -more `*`item`* : renvoie les statistiques détaillées de l'item spécifié.\n";
     }
 }

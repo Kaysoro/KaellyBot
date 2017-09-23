@@ -57,7 +57,7 @@ public class AdminCommand extends AbstractCommand{
     @Override
     public String helpDetailed(String prefixe) {
         return help(prefixe)
-                + "\n" + prefixe + "`"  + name + "` : explique succintement chaque commande admin."
+                + "\n" + prefixe + "`"  + name + "` : explique succinctement chaque commande admin."
                 + "\n" + prefixe + "`"  + name + " `*`command`* : explique de façon détaillée la commande admin spécifiée.\n";
     }
 }

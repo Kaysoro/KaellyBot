@@ -108,6 +108,6 @@ public class TutorialCommand extends AbstractCommand{
     public String helpDetailed(String prefixe) {
         return help(prefixe)
                 + "\n" + prefixe + "`"  + name + " `*`recherche`* : renvoie le tutoriel correspondant à la recherche effectuée"
-                + " sur dofuspourlesnoobs: quête, donjon... Son nom peut être approximatif s'il est suffisemment précis.\n";
+                + " sur dofuspourlesnoobs: quête, donjon... Son nom peut être approximatif s'il est suffisamment précis.\n";
     }
 }

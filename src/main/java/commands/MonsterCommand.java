@@ -110,6 +110,7 @@ public class MonsterCommand extends AbstractCommand{
     public String helpDetailed(String prefixe) {
         return help(prefixe)
                 + "\n" + prefixe + "`"  + name + " `*`monstre`* : renvoie les statistiques du monstre spécifié :"
-                + " son nom peut être approximatif s'il est suffisemment précis.\n";
+                + " son nom peut être approximatif s'il est suffisamment précis."
+                + "\n" + prefixe + "`"  + name + " -more `*`monstre`* : renvoie les statistiques détaillées du monstre spécifié.\n";
     }
 }

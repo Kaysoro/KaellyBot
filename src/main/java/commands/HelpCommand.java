@@ -56,7 +56,7 @@ public class HelpCommand extends AbstractCommand{
     @Override
     public String helpDetailed(String prefixe) {
         return help(prefixe)
-                + "\n" + prefixe + "`"  + name + "` : explique succintement chaque commande."
+                + "\n" + prefixe + "`"  + name + "` : explique succinctement chaque commande."
                 + "\n" + prefixe + "`"  + name + " `*`command`* : explique de façon détaillée la commande spécifiée.\n";
     }
 }

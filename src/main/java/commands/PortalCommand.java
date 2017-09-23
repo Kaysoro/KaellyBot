@@ -84,7 +84,7 @@ public class PortalCommand extends AbstractCommand{
                 + "\n" + prefixe + "`"  + name + "` : donne la position de tous les portails."
                 + "\n" + prefixe + "`"  + name + " `*`dimension`* : donne la position du portail de la dimension désirée."
                 + "\n" + prefixe + "`"  + name + " `*`dimension`*` [POS, POS]` : met à jour la position du portail de la dimension spécifiée."
-                + "\n" + prefixe + "`"  + name + " `*`dimension`*` [POS, POS] `*`nombre d'uti.`* : met à jour la position et le nombre d'utilisation"
+                + "\n" + prefixe + "`"  + name + " `*`dimension`*` [POS, POS] `*`nombre d'uti.`* : met à jour la position et le nombre d'utilisations"
                 + " de la dimension spécifiée."
                 + "\n" + prefixe + "`"  + name + " -reset `*`dimension`* : supprime les informations de la dimension spécifiée.\n";
     }
