@@ -31,7 +31,7 @@ public class MonsterCommand extends AbstractCommand{
     private final static String forName = "text=";
 
     public MonsterCommand(){
-        super("monster", "\\s+(.*)");
+        super("monster", "\\s+(-more)?(.*)");
     }
 
     @Override
@@ -39,7 +39,7 @@ public class MonsterCommand extends AbstractCommand{
         if (super.request(message)){
             Matcher m = getMatcher(message);
             m.find();
-            String normalName = Normalizer.normalize(m.group(1).trim(), Normalizer.Form.NFD)
+            String normalName = Normalizer.normalize(m.group(2).trim(), Normalizer.Form.NFD)
                     .replaceAll("\\p{InCombiningDiacriticalMarks}+", "").toLowerCase();
             String editedName = removeUselessWords(normalName);
             BestMatcher matcher = new BestMatcher(normalName);
@@ -49,6 +49,9 @@ public class MonsterCommand extends AbstractCommand{
 
                 if (matcher.isUnique()) { // We have found it !
                     Embedded monster = Monster.getMonster(Constants.officialURL + matcher.getBest().getRight());
+                    if (m.group(1) != null)
+                        Message.sendEmbed(message.getChannel(), monster.getMoreEmbedObject());
+                    else
                     Message.sendEmbed(message.getChannel(), monster.getEmbedObject());
                 } else if (! matcher.isEmpty()) // Too much items
                     new TooMuchMonstersDiscordException().throwException(message, this, matcher.getBests());

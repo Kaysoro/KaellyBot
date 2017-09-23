@@ -78,6 +78,7 @@ public class CommandPatternTest extends TestCase {
 
         assertTrue(pattern.matcher(Constants.prefixCommand + "item test").find());
         assertTrue(pattern.matcher(Constants.prefixCommand + "item tést test").find());
+        assertTrue(pattern.matcher(Constants.prefixCommand + "item -more tést test").find());
         assertFalse(pattern.matcher(Constants.prefixCommand + "item").find());
     }
 
@@ -113,6 +114,7 @@ public class CommandPatternTest extends TestCase {
 
         assertTrue(pattern.matcher(Constants.prefixCommand + "monster test").find());
         assertTrue(pattern.matcher(Constants.prefixCommand + "monster tést test").find());
+        assertTrue(pattern.matcher(Constants.prefixCommand + "monster -more tést test").find());
         assertFalse(pattern.matcher(Constants.prefixCommand + "monster").find());
     }
 

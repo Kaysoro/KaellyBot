@@ -35,7 +35,7 @@ public class ItemCommand extends AbstractCommand{
     private final static String and = "EFFECTMAIN_and_or=AND";
 
     public ItemCommand(){
-        super("item", "\\s+(.*)");
+        super("item", "\\s+(-more)?(.*)");
     }
 
     @Override
@@ -43,7 +43,7 @@ public class ItemCommand extends AbstractCommand{
         if (super.request(message)){
             Matcher m = getMatcher(message);
             m.find();
-            String normalName = Normalizer.normalize(m.group(1).trim(), Normalizer.Form.NFD)
+            String normalName = Normalizer.normalize(m.group(2).trim(), Normalizer.Form.NFD)
                     .replaceAll("\\p{InCombiningDiacriticalMarks}+", "").toLowerCase();
             String editedName = removeUselessWords(normalName);
             BestMatcher matcher = new BestMatcher(normalName);
@@ -73,7 +73,10 @@ public class ItemCommand extends AbstractCommand{
 
                 if (matcher.isUnique()) { // We have found it !
                     Embedded item = Item.getItem(Constants.officialURL + matcher.getBest().getRight());
-                    Message.sendEmbed(message.getChannel(), item.getEmbedObject());
+                    if (m.group(1) != null)
+                        Message.sendEmbed(message.getChannel(), item.getMoreEmbedObject());
+                    else
+                        Message.sendEmbed(message.getChannel(), item.getEmbedObject());
                 } else if (! matcher.isEmpty()) // Too much items
                     new TooMuchItemsDiscordException().throwException(message, this, matcher.getBests());
                 else // empty
