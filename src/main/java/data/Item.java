@@ -51,6 +51,35 @@ public class Item implements Embedded {
 
         builder.withTitle(name);
         builder.withUrl(url);
+
+        builder.withColor(new Random().nextInt(16777216));
+        builder.withThumbnail(skinURL);
+
+        if (level != null && ! level.isEmpty())
+            builder.appendField(":star: Niveau :", level, true);
+        builder.appendField(":dagger: Type :", type, true);
+
+        if (effects != null && ! effects.isEmpty())
+        builder.appendField(":cyclone: Effets :", effects, true);
+
+        if (caracteristics != null && ! caracteristics.isEmpty())
+            builder.appendField(":gear: Caractéristiques", caracteristics, true);
+
+        if (conditions != null && ! conditions.isEmpty())
+            builder.appendField(":key: Conditions",conditions, true);
+
+        if (panoplie != null && panoplieURL != null)
+            builder.appendField(":link: Panoplie", "[" + panoplie + "](" + panoplieURL + ")", true);
+
+        return builder.build();
+    }
+
+    @Override
+    public EmbedObject getMoreEmbedObject() {
+        EmbedBuilder builder = new EmbedBuilder();
+
+        builder.withTitle(name);
+        builder.withUrl(url);
         if (description != null && ! description.isEmpty())
             builder.withDescription(description);
 
@@ -62,7 +91,7 @@ public class Item implements Embedded {
         builder.appendField(":dagger: Type :", type, true);
 
         if (effects != null && ! effects.isEmpty())
-        builder.appendField(":cyclone: Effets :", effects, true);
+            builder.appendField(":cyclone: Effets :", effects, true);
 
         if (caracteristics != null && ! caracteristics.isEmpty())
             builder.appendField(":gear: Caractéristiques", caracteristics, true);

@@ -1,5 +1,7 @@
 package data;
 
+import discord.Message;
+import org.apache.commons.lang3.time.DateUtils;
 import org.jsoup.nodes.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,6 +44,22 @@ public class Almanax implements Embedded{
 
         builder.withTitle("Almanax du " + day);
         builder.withUrl(Constants.almanaxURL + day);
+
+        builder.withColor(new Random().nextInt(16777216));
+        builder.withThumbnail(ressourceURL);
+
+        builder.appendField(":cyclone: Bonus : ", bonus, true);
+        builder.appendField(":moneybag: Offrande : ", offrande, true);
+
+        return builder.build();
+    }
+
+    @Override
+    public EmbedObject getMoreEmbedObject() {
+        EmbedBuilder builder = new EmbedBuilder();
+
+        builder.withTitle("Almanax du " + day);
+        builder.withUrl(Constants.almanaxURL + day);
         builder.withDescription(quest);
 
         builder.withColor(new Random().nextInt(16777216));
@@ -49,6 +67,26 @@ public class Almanax implements Embedded{
 
         builder.appendField(":cyclone: Bonus : ", bonus, true);
         builder.appendField(":moneybag: Offrande : ", offrande, true);
+
+        return builder.build();
+    }
+
+    public static EmbedObject getGroupedObject(Date day, int occurrence) throws IOException {
+        Date firstDate = DateUtils.addDays(day,1);
+        Date lastDate = DateUtils.addDays(day, occurrence);
+        String title = "Almanax du " + discordToBot.format(firstDate) +
+                (occurrence > 1 ? " au " + discordToBot.format(lastDate) : "");
+
+        EmbedBuilder builder = new EmbedBuilder();
+        builder.withTitle(title);
+        builder.withColor(new Random().nextInt(16777216));
+
+        for (int i = 1; i <= occurrence; i++) {
+            firstDate = DateUtils.addDays(new Date(), i);
+            Almanax almanax = Almanax.get(firstDate);
+            builder.appendField(discordToBot.format(firstDate) + " :cyclone: Bonus : ", almanax.getBonus(), true);
+            builder.appendField(discordToBot.format(firstDate) + " :moneybag: Offrande : ", almanax.getOffrande(), true);
+        }
 
         return builder.build();
     }

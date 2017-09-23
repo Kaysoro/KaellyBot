@@ -57,22 +57,12 @@ public class AlmanaxCommand extends AbstractCommand{
 
                 else if (m.group(1) != null && m.group(1).matches("\\s+\\+\\d")) {
                     int number = Integer.parseInt(m.group(1).replaceAll("\\s+\\+", ""));
-                    StringBuilder st = new StringBuilder();
-                    for (int i = 1; i <= number; i++) {
-                        date = DateUtils.addDays(new Date(), i);
-                        Almanax almanax = Almanax.get(date);
-                        st.append(Almanax.discordToBot.format(date)).append(" : ")
-                                .append("**Bonus** : ").append(almanax.getBonus())
-                                .append("\t**Offrande** : ").append(almanax.getOffrande())
-                                .append("\n");
-                    }
-
-                    Message.sendText(message.getChannel(), st.toString());
+                    Message.sendEmbed(message.getChannel(), Almanax.getGroupedObject(new Date(), number));
                 } else {
                     if (m.group(1) != null && m.group(1).matches("\\s+\\d{2}/\\d{2}/\\d{4}"))
                         date = Almanax.discordToBot.parse(m.group(1));
                     Almanax almanax = Almanax.get(date);
-                    Message.sendEmbed(message.getChannel(), almanax.getEmbedObject());
+                    Message.sendEmbed(message.getChannel(), almanax.getMoreEmbedObject());
                 }
 
             } catch (ParseException e) {

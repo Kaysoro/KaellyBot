@@ -51,7 +51,7 @@ public class AlmanaxCalendar {
                         for(AlmanaxCalendar calendar : getAlmanaxCalendars().values()){
                             IChannel chan = ClientConfig.DISCORD().getChannelByID(Long.parseLong(calendar.getChan()));
                             if (chan != null && ! chan.isDeleted())
-                                Message.sendEmbed(chan, almanax.getEmbedObject());
+                                Message.sendEmbed(chan, almanax.getMoreEmbedObject());
                         }
                         success = true;
                     } catch (IOException e) {

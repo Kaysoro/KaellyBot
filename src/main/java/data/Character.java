@@ -75,6 +75,11 @@ public class Character implements Embedded {
         return builder.build();
     }
 
+    @Override
+    public EmbedObject getMoreEmbedObject() {
+        return getEmbedObject();
+    }
+
     public static Character getCharacter(String url) throws IOException {
         Document doc = JSoupManager.getDocument(url);
         String bigSkinURL = doc.getElementsByClass("ak-entitylook").first().attr("style");

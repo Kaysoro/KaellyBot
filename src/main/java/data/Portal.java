@@ -251,6 +251,11 @@ public class Portal implements Embedded{
     }
 
     @Override
+    public EmbedObject getMoreEmbedObject() {
+        return getEmbedObject();
+    }
+
+    @Override
     public String toString(){
         StringBuilder st = new StringBuilder("*")
                 .append(getName())

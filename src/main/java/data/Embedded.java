@@ -7,4 +7,5 @@ import sx.blah.discord.api.internal.json.objects.EmbedObject;
  */
 public interface Embedded {
     EmbedObject getEmbedObject();
+    EmbedObject getMoreEmbedObject();
 }
