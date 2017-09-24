@@ -24,6 +24,7 @@ public class ServerCommand extends AbstractCommand{
 
     public ServerCommand(){
         super("server","(\\s+.+)?");
+        setUsableInMP(false);
     }
 
     @Override

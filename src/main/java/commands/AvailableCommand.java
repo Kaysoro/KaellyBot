@@ -1,6 +1,5 @@
 package commands;
 
-import data.Guild;
 import discord.Message;
 import exceptions.*;
 import org.slf4j.Logger;
@@ -14,19 +13,18 @@ import java.util.regex.Matcher;
 /**
  * Created by steve on 14/07/2016.
  */
-public class AdminCommandCommand extends AbstractCommand{
+public class AvailableCommand extends AbstractCommand{
 
-    private final static Logger LOG = LoggerFactory.getLogger(AdminCommandCommand.class);
+    private final static Logger LOG = LoggerFactory.getLogger(AvailableCommand.class);
 
-    public AdminCommandCommand(){
-        super("admincmd","\\s+(\\w+)\\s+(on|off|0|1|true|false)");
+    public AvailableCommand(){
+        super("available","\\s+(\\w+)\\s+(on|off|0|1|true|false)");
         setAdmin(true);
     }
 
     @Override
     public boolean request(IMessage message) {
         if (super.request(message)) {
-            Guild guild = Guild.getGuilds().get(message.getGuild().getStringID());
             Matcher m = getMatcher(message);
             m.find();
             List<Command> potentialCmds = new ArrayList<>();
@@ -39,7 +37,7 @@ public class AdminCommandCommand extends AbstractCommand{
                 Command command = potentialCmds.get(0);
                 String value = m.group(2);
 
-                if (command instanceof AdminCommandCommand){
+                if (command instanceof AvailableCommand){
                     Message.sendText(message.getChannel(), "Impossible de désactiver cette commande.");
                     return false;
                 }

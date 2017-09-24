@@ -15,6 +15,6 @@ public class NotUsableInMPDiscordException implements DiscordException {
 
     @Override
     public void throwException(IMessage message, Command command, Object... arguments) {
-        Message.sendText(message.getChannel(), "Impossible d'utiliser `" + command.getName() + "` sur un channel privé.");
+        Message.sendText(message.getChannel(), "Impossible d'utiliser `" + command.getName() + "` dans un salon privé.");
     }
 }

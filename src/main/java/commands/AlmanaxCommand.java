@@ -32,27 +32,30 @@ public class AlmanaxCommand extends AbstractCommand{
             try {
                 Date date = new Date();
                 Matcher m = getMatcher(message);
-                User user = User.getUsers().get(message.getGuild().getStringID())
-                        .get(message.getAuthor().getStringID());
                 m.find();
 
                 if (m.group(1) != null && (m.group(1).matches("\\s+true") || m.group(1).matches("\\s+0") || m.group(1).matches("\\s+on")
                         || m.group(1).matches("\\s+false") || m.group(1).matches("\\s+1") || m.group(1).matches("\\s+off"))) {
-                    if (user.getRights() >= User.RIGHT_MODERATOR) {
-                        if (m.group(1).matches("\\s+true") || m.group(1).matches("\\s+0") || m.group(1).matches("\\s+on"))
-                            if (!AlmanaxCalendar.getAlmanaxCalendars().containsKey(message.getChannel().getStringID())) {
-                                new AlmanaxCalendar(message.getGuild().getStringID(), message.getChannel().getStringID()).addToDatabase();
-                                Message.sendText(message.getChannel(), "L'almanax sera automatiquement posté ici.");
-                            } else
-                                Message.sendText(message.getChannel(), "L'almanax est déjà posté ici.");
-                        else if (m.group(1).matches("\\s+false") || m.group(1).matches("\\s+1") || m.group(1).matches("\\s+off"))
-                            if (AlmanaxCalendar.getAlmanaxCalendars().containsKey(message.getChannel().getStringID())) {
-                                AlmanaxCalendar.getAlmanaxCalendars().get(message.getChannel().getStringID()).removeToDatabase();
-                                Message.sendText(message.getChannel(), "L'almanax ne sera plus posté ici.");
-                            } else
-                                Message.sendText(message.getChannel(), "L'almanax n'est pas posté ici.");
+                    if (! message.getChannel().isPrivate()){
+                        User user = User.getUsers().get(message.getGuild().getStringID())
+                                .get(message.getAuthor().getStringID());
+                        if (user.getRights() >= User.RIGHT_MODERATOR)
+                            if (m.group(1).matches("\\s+true") || m.group(1).matches("\\s+0") || m.group(1).matches("\\s+on"))
+                                if (!AlmanaxCalendar.getAlmanaxCalendars().containsKey(message.getChannel().getStringID())) {
+                                    new AlmanaxCalendar(message.getGuild().getStringID(), message.getChannel().getStringID()).addToDatabase();
+                                    Message.sendText(message.getChannel(), "L'almanax sera automatiquement posté ici.");
+                                } else
+                                    Message.sendText(message.getChannel(), "L'almanax est déjà posté ici.");
+                            else if (m.group(1).matches("\\s+false") || m.group(1).matches("\\s+1") || m.group(1).matches("\\s+off"))
+                                if (AlmanaxCalendar.getAlmanaxCalendars().containsKey(message.getChannel().getStringID())) {
+                                    AlmanaxCalendar.getAlmanaxCalendars().get(message.getChannel().getStringID()).removeToDatabase();
+                                    Message.sendText(message.getChannel(), "L'almanax ne sera plus posté ici.");
+                                } else
+                                    Message.sendText(message.getChannel(), "L'almanax n'est pas posté ici.");
+                         else
+                            new NotEnoughRightsDiscordException().throwException(message, this);
                     } else
-                        new NotEnoughRightsDiscordException().throwException(message, this);
+                            new NotUsableInMPDiscordException().throwException(message, this);
                 }
 
                 else if (m.group(1) != null && m.group(1).matches("\\s+\\+\\d")) {

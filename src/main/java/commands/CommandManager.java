@@ -43,7 +43,7 @@ public class CommandManager {
 
         // Admin commands
         addCommand(new AdminCommand());
-        addCommand(new AdminCommandCommand());
+        addCommand(new AvailableCommand());
         addCommand(new AnnounceCommand());
         addCommand(new TalkCommand());
     }

@@ -22,6 +22,7 @@ public class CommandCommand extends AbstractCommand{
 
     public CommandCommand(){
         super("cmd","\\s+(\\w+)\\s+(on|off|0|1|true|false)");
+        setUsableInMP(false);
     }
 
     @Override

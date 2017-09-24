@@ -47,18 +47,18 @@ public class CommandPatternTest extends TestCase {
         assertFalse(pattern.matcher(Constants.prefixCommand + "cmd CommandForbidden").find());
     }
 
-    public void testAdminCommandCommand(){
-        Command cmd = new AdminCommandCommand();
+    public void testAvailableCommand(){
+        Command cmd = new AvailableCommand();
         Pattern pattern = Pattern.compile("^" + Constants.prefixCommand + cmd.getName() + cmd.getPattern() + "$");
 
-        assertTrue(pattern.matcher(Constants.prefixCommand + "admincmd CommandForbidden true").find());
-        assertTrue(pattern.matcher(Constants.prefixCommand + "admincmd CommandForbidden on").find());
-        assertTrue(pattern.matcher(Constants.prefixCommand + "admincmd CommandForbidden 0").find());
-        assertTrue(pattern.matcher(Constants.prefixCommand + "admincmd CommandForbidden false").find());
-        assertTrue(pattern.matcher(Constants.prefixCommand + "admincmd CommandForbidden off").find());
-        assertTrue(pattern.matcher(Constants.prefixCommand + "admincmd CommandForbidden 1").find());
-        assertFalse(pattern.matcher(Constants.prefixCommand + "admincmd").find());
-        assertFalse(pattern.matcher(Constants.prefixCommand + "admincmd CommandForbidden").find());
+        assertTrue(pattern.matcher(Constants.prefixCommand + "available CommandForbidden true").find());
+        assertTrue(pattern.matcher(Constants.prefixCommand + "available CommandForbidden on").find());
+        assertTrue(pattern.matcher(Constants.prefixCommand + "available CommandForbidden 0").find());
+        assertTrue(pattern.matcher(Constants.prefixCommand + "available CommandForbidden false").find());
+        assertTrue(pattern.matcher(Constants.prefixCommand + "available CommandForbidden off").find());
+        assertTrue(pattern.matcher(Constants.prefixCommand + "available CommandForbidden 1").find());
+        assertFalse(pattern.matcher(Constants.prefixCommand + "available").find());
+        assertFalse(pattern.matcher(Constants.prefixCommand + "available CommandForbidden").find());
     }
 
     public void testHelpCommand(){

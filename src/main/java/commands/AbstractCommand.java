@@ -36,24 +36,32 @@ public abstract class AbstractCommand implements Command {
 
     @Override
     public boolean request(IMessage message) {
-        Guild guild = Guild.getGuilds().get(message.getGuild().getStringID());
         Matcher m = getMatcher(message);
         boolean isFound = m.find();
 
-        // Dans le cas où l'auteur est super-admin et que la commande est correcte, on accès à la demande.
-        if (message.getAuthor().getStringID().equals(Constants.author) && isFound)
-            return true;
-        else if ((! isPublic() || isAdmin())) // Caché si la fonction est désactivée/réservée aux admin
+        // Caché si la fonction est désactivée/réservée aux admin et que l'auteur n'est pas super-admin
+        if ((! isPublic() || isAdmin()) && ! message.getAuthor().getStringID().equals(Constants.author))
             return false;
 
-        if (isFound && message.getChannel().isPrivate() && !isUsableInMP()) // En MP et non utilisable en MP ?
-            new NotUsableInMPDiscordException().throwException(message, this);
-        else if(isFound && isForbidden(guild)) // Désactivé par la guilde ?
-            new CommandForbiddenDiscordException().throwException(message, this);
-        else if (!isFound && message.getContent().startsWith(getPrefix(message) + getName())) // Mauvaise utilisation ?
+        // La commande est trouvée
+        if(isFound) {
+            // Mais n'est pas utilisable en MP
+            if (! isUsableInMP() && message.getChannel().isPrivate()) {
+                new NotUsableInMPDiscordException().throwException(message, this);
+                return false;
+            }
+            // Mais est désactivée par la guilde
+            else if (! message.getChannel().isPrivate() && ! message.getAuthor().getStringID().equals(Constants.author)
+                && isForbidden(Guild.getGuilds().get(message.getGuild().getStringID()))) {
+                new CommandForbiddenDiscordException().throwException(message, this);
+                return false;
+            }
+        }
+        // Mais est mal utilisée
+        else if (message.getContent().startsWith(getPrefix(message) + getName()))
             new BadUseCommandDiscordException().throwException(message, this);
 
-        return isFound && ! isForbidden(guild) && (isUsableInMP() || ! message.getChannel().isPrivate());
+        return isFound;
     }
 
     @Override
@@ -69,15 +77,15 @@ public abstract class AbstractCommand implements Command {
 
     @Override
     public String getPrefix(IMessage message){
-        String prefix = Constants.prefixCommand;
-        if (message.getGuild() != null)
+        String prefix = "";
+        if (! message.getChannel().isPrivate())
             prefix = Guild.getGuilds().get(message.getGuild().getStringID()).getPrefixe();
         return prefix;
     }
 
     protected String getPrefixMdEscaped(IMessage message){
-        String prefix = Constants.prefixCommand;
-        if (message.getGuild() != null)
+        String prefix = "";
+        if (! message.getChannel().isPrivate())
             prefix = Guild.getGuilds().get(message.getGuild().getStringID()).getPrefixe();
         prefix = prefix.replaceAll("\\*", "\\\\*") // Italic & Bold
                 .replaceAll("_", "\\_")          // Underline

@@ -31,7 +31,8 @@ public class HelpCommand extends AbstractCommand{
             boolean argumentFound = m.group(1) != null && m.group(1).replaceAll("^\\s+", "").length() > 0;
             for(Command command : CommandManager.getCommands())
                 if (command.isPublic() && ! command.isAdmin()
-                        && ! command.isForbidden(Guild.getGuilds().get(message.getGuild().getStringID()))){
+                        && (message.getChannel().isPrivate() || ! command.isForbidden(Guild.getGuilds()
+                                                                    .get(message.getGuild().getStringID())))){
                     if (! argumentFound)
                         st.append(command.help(prefixe)).append("\n");
                     else if (command.getName().equals(m.group(1).trim())) {
