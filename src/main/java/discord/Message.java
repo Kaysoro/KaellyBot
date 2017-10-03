@@ -24,7 +24,7 @@ public class Message {
                 LoggerFactory.getLogger(Message.class).warn(e.getMessage(),e );
                 throw e;
             } catch (DiscordException e){
-                ClientConfig.setSentryContext(channel.getGuild(), null, channel, null);
+                ClientConfig.setSentryContext(channel.isPrivate()? null : channel.getGuild(), null, channel, null);
                 LoggerFactory.getLogger(Message.class).error(e.getMessage(), e);
             } catch(MissingPermissionsException e){
                 LoggerFactory.getLogger(Message.class).warn(Constants.name
@@ -32,7 +32,7 @@ public class Message {
                 new MissingPermissionDiscordException()
                         .throwException(channel.getMessageHistory().getLatestMessage(), null, e);
             } catch(Exception e){
-                ClientConfig.setSentryContext(channel.getGuild(), null, channel, null);
+                ClientConfig.setSentryContext(channel.isPrivate()? null : channel.getGuild(), null, channel, null);
                 LoggerFactory.getLogger(Message.class).error(e.getMessage(),e );
             }
             return null;
@@ -50,7 +50,7 @@ public class Message {
                 LoggerFactory.getLogger(Message.class).warn(e.getMessage(), e);
                 throw e;
             } catch (DiscordException e){
-                ClientConfig.setSentryContext(channel.getGuild(), null, channel, null);
+                ClientConfig.setSentryContext(channel.isPrivate()? null : channel.getGuild(), null, channel, null);
                 LoggerFactory.getLogger(Message.class).error(e.getMessage(), e);
             } catch(MissingPermissionsException e){
                 LoggerFactory.getLogger(Message.class).warn(Constants.name
@@ -58,7 +58,7 @@ public class Message {
                 new MissingPermissionDiscordException()
                         .throwException(channel.getMessageHistory().getLatestMessage(), null, e);
             } catch(Exception e){
-                ClientConfig.setSentryContext(channel.getGuild(), null, channel, null);
+                ClientConfig.setSentryContext(channel.isPrivate()? null : channel.getGuild(), null, channel, null);
                 LoggerFactory.getLogger(Message.class).error(e.getMessage(), e);
             }
             return null;

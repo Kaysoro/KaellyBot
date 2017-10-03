@@ -22,7 +22,8 @@ public class UserBanListener {
         public void onReady(UserBanEvent event) {
             ClientConfig.setSentryContext(event.getGuild(), event.getUser(), null, null);
             User user = User.getUsers().get(event.getGuild().getStringID()).get(event.getUser().getStringID());
-            user.removeToDatabase();
+            if (user != null)
+                user.removeToDatabase();
             LOG.info("L'utilisateur " + user.getId() + " - " + user.getName() + " a été bannis de "
                     + event.getGuild().getName());
         }

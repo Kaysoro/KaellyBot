@@ -2,6 +2,7 @@ package commands;
 
 import data.Guild;
 import data.Portal;
+import data.Position;
 import discord.Message;
 import exceptions.PortalNotFoundDiscordException;
 import exceptions.TooMuchPossibilitiesDiscordException;
@@ -43,7 +44,7 @@ public class PortalCommand extends AbstractCommand{
                         portals.get(0).reset();
                     else {
                         if (m.group(3) != null)
-                            portals.get(0).setCoordonate("[" + m.group(4) + "," + m.group(5) + "]");
+                            portals.get(0).setCoordonate(Position.parse("[" + m.group(4) + "," + m.group(5) + "]"));
                         if (m.group(6) != null)
                           portals.get(0).setUtilisation(Integer.parseInt(m.group(6).replaceAll("\\s", "")));
                     }

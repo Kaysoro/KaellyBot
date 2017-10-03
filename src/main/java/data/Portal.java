@@ -37,7 +37,7 @@ public class Portal implements Embedded{
 
     private String name;
     private String url;
-    private String coordonate;
+    private Position coordonate;
     private int utilisation;
     private long creation;
     private long lastUpdate;
@@ -50,25 +50,19 @@ public class Portal implements Embedded{
         this.color = color;
     }
 
-    private Portal(String name, String coordonate, int utilisation, long creation, long lastUpdate) {
+    private Portal(String name, Position coordonate, int utilisation, long creation, long lastUpdate) {
         this.name = name;
-        if (coordonate != null)
-            this.coordonate = coordonate;
-        else
-            this.coordonate = "";
+        this.coordonate = coordonate;
         this.utilisation = utilisation;
         this.creation = creation;
         this.lastUpdate = lastUpdate;
     }
 
-    private Portal(Portal classicPortal, String coordonate, int utilisation, long creation, long lastUpdate, Guild guild) {
+    private Portal(Portal classicPortal, Position coordonate, int utilisation, long creation, long lastUpdate, Guild guild) {
         this.name = classicPortal.getName();
         this.url = classicPortal.getUrl();
         this.color = classicPortal.getColor();
-        if (coordonate != null)
-            this.coordonate = coordonate;
-        else
-            this.coordonate = "";
+        this.coordonate = coordonate;
         this.utilisation = utilisation;
         this.creation = creation;
         this.lastUpdate = lastUpdate;
@@ -114,18 +108,17 @@ public class Portal implements Embedded{
             ResultSet resultSet = query.executeQuery();
 
             String name;
-            String pos;
             int utilisation;
             long creation;
             long lastUpdate;
 
             while (resultSet.next()) {
                 name = resultSet.getString("name_portal");
-                pos = resultSet.getString("pos");
+                String pos = resultSet.getString("pos");
                 utilisation = resultSet.getInt("utilisation");
                 creation = resultSet.getLong("creation");
                 lastUpdate = resultSet.getLong("last_update");
-                portals.add(new Portal(Portal.getPortals().get(name), pos, utilisation, creation, lastUpdate, g));
+                portals.add(new Portal(Portal.getPortals().get(name), Position.parse(pos), utilisation, creation, lastUpdate, g));
             }
 
         } catch (SQLException e) {
@@ -168,16 +161,13 @@ public class Portal implements Embedded{
         }
     }
 
-    public void setCoordonate(String coordonate) {
+    public void setCoordonate(Position coordonate) {
         setCoordonate(coordonate, System.currentTimeMillis());
     }
 
-    public void setCoordonate(String coordonate, long creation) {
+    public void setCoordonate(Position coordonate, long creation) {
         if (! this.coordonate.equals(coordonate)){
-            if (coordonate != null)
-                this.coordonate = coordonate;
-            else
-                this.coordonate = "";
+            this.coordonate = coordonate;
             this.creation = creation;
             this.utilisation = -1;
             this.lastUpdate = -1;
@@ -189,7 +179,7 @@ public class Portal implements Embedded{
                 PreparedStatement preparedStatement = connection.prepareStatement(
                         "UPDATE Portal_Guild SET pos = ?, creation = ?, utilisation = ?, last_update = ?"
                                 + "WHERE name_portal = ? AND id_guild = ?;");
-                preparedStatement.setString(1, coordonate);
+                preparedStatement.setString(1, coordonate.toString());
                 preparedStatement.setLong(2, creation);
                 preparedStatement.setInt(3, utilisation);
                 preparedStatement.setLong(4, lastUpdate);
@@ -211,19 +201,19 @@ public class Portal implements Embedded{
                         .replaceAll("\\p{InCombiningDiacriticalMarks}+", "").toLowerCase()
                         .equals(Normalizer.normalize(getName(), Normalizer.Form.NFD)
                         .replaceAll("\\p{InCombiningDiacriticalMarks}+", "").toLowerCase())
-                && ! portal.coordonate.equals(""))
-            if (coordonate.equals(portal.coordonate) && utilisation > portal.utilisation || coordonate.equals("")){
+                && ! portal.coordonate.isNull())
+            if (coordonate.equals(portal.coordonate) && utilisation > portal.utilisation || coordonate.isNull()){
                 setCoordonate(portal.coordonate, portal.creation);
                 setUtilisation(portal.utilisation, portal.lastUpdate);
             }
-            else if (! coordonate.equals("") && ! coordonate.equals(portal.coordonate) && creation < portal.creation){
+            else if (! coordonate.isNull() && ! coordonate.equals(portal.coordonate) && creation < portal.creation){
                 setCoordonate(portal.coordonate, portal.creation);
                 setUtilisation(portal.utilisation, portal.lastUpdate);
             }
     }
 
     public void reset() {
-        setCoordonate(null);
+        setCoordonate(new Position());
     }
 
     @Override
@@ -235,15 +225,15 @@ public class Portal implements Embedded{
         builder.withThumbnail(url);
 
         if (System.currentTimeMillis() - creation > LIMIT
-                ||coordonate.equals("")) {
-            coordonate = "";
+                ||coordonate.isNull()) {
+            coordonate = new Position();
             utilisation = -1;
             builder.withDescription("Aucune position récente trouvée.");
         } else {
             builder.appendField(":cyclone: Position", "**" + coordonate + "**", true);
             if (utilisation != -1)
                 builder.appendField(":eye: Utilisation", utilisation + " utilisation"
-                        + (utilisation > 1 ? "" : "s"), true);
+                        + (utilisation > 1 ? "s" : ""), true);
             builder.withFooterText(getDateInformation());
         }
 
@@ -261,8 +251,8 @@ public class Portal implements Embedded{
                 .append(getName())
                 .append( "* : ");
         if (System.currentTimeMillis() - creation > LIMIT
-                ||coordonate.equals("")) {
-            coordonate = "";
+                ||coordonate.isNull()) {
+            coordonate = new Position();
             utilisation = -1;
             st.append("Aucune position récente trouvée.\n");
         }
@@ -270,7 +260,7 @@ public class Portal implements Embedded{
             st.append("**").append(coordonate).append("**");
 
             if (utilisation != -1)
-                st.append(", ").append(utilisation).append(" utilisations");
+                st.append(", ").append(utilisation).append(" utilisation").append(utilisation > 1 ? "s" : "");
             st.append(getDateInformation()).append(")*\n");
         }
 
@@ -285,12 +275,14 @@ public class Portal implements Embedded{
 
         for(Element dim : dimensions){
             String name = dim.getElementsByTag("h2").get(0).text();
-            String coordonate = dim.getElementsByTag("h2").get(1).text();
+            String coordonateText = dim.getElementsByTag("h2").get(1).text();
+            Position coordonate;
             int utilisation = -1;
             long creation = 0;
 
-            if (! coordonate.equals("Position Inconnue")) {
-                coordonate = dim.getElementsByTag("h3").get(0).text();
+            if (! coordonateText.equals("Position Inconnue")) {
+                coordonateText = dim.getElementsByTag("h3").get(0).text();
+                coordonate = Position.parse(coordonateText);
                 utilisation = Integer.parseInt(dim.getElementsByTag("h3")
                         .get(1).getElementsByTag("b").get(0).text());
 
@@ -306,7 +298,7 @@ public class Portal implements Embedded{
                 creation = System.currentTimeMillis() - timeToRemove;
             }
             else
-                coordonate = "";
+                coordonate = new Position();
             long lastUpdate = creation;
             portals.add(new Portal(name, coordonate, utilisation, creation, lastUpdate));
         }

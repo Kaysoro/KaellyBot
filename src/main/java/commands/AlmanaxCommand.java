@@ -39,7 +39,7 @@ public class AlmanaxCommand extends AbstractCommand{
                     if (! message.getChannel().isPrivate()){
                         User user = User.getUsers().get(message.getGuild().getStringID())
                                 .get(message.getAuthor().getStringID());
-                        if (user.getRights() >= User.RIGHT_MODERATOR)
+                        if (user.getRights() >= User.RIGHT_MODERATOR) {
                             if (m.group(1).matches("\\s+true") || m.group(1).matches("\\s+0") || m.group(1).matches("\\s+on"))
                                 if (!AlmanaxCalendar.getAlmanaxCalendars().containsKey(message.getChannel().getStringID())) {
                                     new AlmanaxCalendar(message.getGuild().getStringID(), message.getChannel().getStringID()).addToDatabase();
@@ -52,10 +52,10 @@ public class AlmanaxCommand extends AbstractCommand{
                                     Message.sendText(message.getChannel(), "L'almanax ne sera plus posté ici.");
                                 } else
                                     Message.sendText(message.getChannel(), "L'almanax n'est pas posté ici.");
-                         else
+                        } else
                             new NotEnoughRightsDiscordException().throwException(message, this);
                     } else
-                            new NotUsableInMPDiscordException().throwException(message, this);
+                        new NotUsableInMPDiscordException().throwException(message, this);
                 }
 
                 else if (m.group(1) != null && m.group(1).matches("\\s+\\+\\d")) {
