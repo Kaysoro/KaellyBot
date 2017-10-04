@@ -43,6 +43,8 @@ public class Portal implements Embedded{
     private long lastUpdate;
     private int color;
     private Guild guild;
+    private Transport zaap;
+    private Transport transportLimited;
 
     private Portal(String name, String url, int color) {
         this.name = name;
@@ -67,6 +69,32 @@ public class Portal implements Embedded{
         this.creation = creation;
         this.lastUpdate = lastUpdate;
         this.guild = guild;
+        determineTransports();
+    }
+
+    private void determineTransports() {
+        if(isValid()) {
+            double minDist = Double.MAX_VALUE;
+            double minDistLimited = Double.MAX_VALUE;
+            for (Transport transport : Transport.getTransports()) {
+                double tmp = transport.getPosition().getDistance(coordonate);
+                if (transport.isFreeAccess() && (zaap == null || minDist > tmp)){
+                    zaap = transport;
+                    minDist = tmp;
+                }
+                if (! transport.isFreeAccess() && (transportLimited == null || minDistLimited > tmp)){
+                    transportLimited = transport;
+                    minDistLimited = tmp;
+                }
+            }
+
+            if (minDist < minDistLimited)
+                transportLimited = null;
+        }
+        else {
+            zaap = null;
+            transportLimited = null;
+        }
     }
 
     public static Map<String, Portal> getPortals(){
@@ -171,7 +199,7 @@ public class Portal implements Embedded{
             this.creation = creation;
             this.utilisation = -1;
             this.lastUpdate = -1;
-
+            determineTransports();
             Connexion connexion = Connexion.getInstance();
             Connection connection = connexion.getConnection();
 
@@ -216,6 +244,11 @@ public class Portal implements Embedded{
         setCoordonate(new Position());
     }
 
+    public boolean isValid(){
+        return System.currentTimeMillis() - creation <= LIMIT
+                && !coordonate.isNull();
+    }
+
     @Override
     public EmbedObject getEmbedObject() {
         EmbedBuilder builder = new EmbedBuilder();
@@ -224,8 +257,7 @@ public class Portal implements Embedded{
         builder.withColor(getColor());
         builder.withThumbnail(url);
 
-        if (System.currentTimeMillis() - creation > LIMIT
-                ||coordonate.isNull()) {
+        if (! isValid()) {
             coordonate = new Position();
             utilisation = -1;
             builder.withDescription("Aucune position récente trouvée.");
@@ -234,6 +266,9 @@ public class Portal implements Embedded{
             if (utilisation != -1)
                 builder.appendField(":eye: Utilisation", utilisation + " utilisation"
                         + (utilisation > 1 ? "s" : ""), true);
+            if (transportLimited != null)
+                builder.appendField(":airplane_small: Zaap privé à proximité", transportLimited.toString(), false);
+            builder.appendField(":airplane: Zaap à proximité", zaap.toString(), false);
             builder.withFooterText(getDateInformation());
         }
 
@@ -250,8 +285,7 @@ public class Portal implements Embedded{
         StringBuilder st = new StringBuilder("*")
                 .append(getName())
                 .append( "* : ");
-        if (System.currentTimeMillis() - creation > LIMIT
-                ||coordonate.isNull()) {
+        if (!isValid()) {
             coordonate = new Position();
             utilisation = -1;
             st.append("Aucune position récente trouvée.\n");

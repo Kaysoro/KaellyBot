@@ -57,6 +57,8 @@ public class Position {
     }
 
     public static Position parse(String format){
+        if (format == null)
+            return new Position();
         Matcher m = Pattern.compile("\\[(-?\\d{1,2}),\\s*(-?\\d{1,2})\\]").matcher(format);
         if (m.matches()){
             int posX = Integer.parseInt(m.group(1));
