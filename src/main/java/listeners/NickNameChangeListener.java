@@ -1,6 +1,6 @@
 package listeners;
 
-import data.ClientConfig;
+import util.ClientConfig;
 import data.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

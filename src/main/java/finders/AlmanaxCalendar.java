@@ -1,10 +1,13 @@
-package data;
+package finders;
 
-import discord.Message;
+import data.Almanax;
+import util.Message;
 import exceptions.ExceptionManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sx.blah.discord.handle.obj.IChannel;
+import util.ClientConfig;
+import util.Connexion;
 
 import java.io.IOException;
 import java.sql.Connection;

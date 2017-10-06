@@ -2,6 +2,8 @@ package data;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import util.ClientConfig;
+import util.Connexion;
 
 import java.sql.*;
 import java.util.HashMap;

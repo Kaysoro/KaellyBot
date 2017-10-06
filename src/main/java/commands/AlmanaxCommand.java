@@ -1,11 +1,10 @@
 package commands;
 
 import data.Almanax;
-import data.AlmanaxCalendar;
+import finders.AlmanaxCalendar;
 import data.User;
-import discord.Message;
+import util.Message;
 import exceptions.*;
-import org.apache.commons.lang3.time.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sx.blah.discord.handle.obj.IMessage;

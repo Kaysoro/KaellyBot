@@ -2,7 +2,7 @@ package commands;
 
 import data.Constants;
 import data.Guild;
-import discord.Message;
+import util.Message;
 import exceptions.CommandNotFoundDiscordException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

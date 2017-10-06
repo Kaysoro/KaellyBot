@@ -1,10 +1,13 @@
-package data;
+package finders;
 
+import data.Constants;
 import listeners.TwitterListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sx.blah.discord.handle.obj.IChannel;
 import twitter4j.FilterQuery;
+import util.ClientConfig;
+import util.Connexion;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;

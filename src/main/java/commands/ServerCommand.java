@@ -3,7 +3,7 @@ package commands;
 import data.Guild;
 import data.ServerDofus;
 import data.User;
-import discord.Message;
+import util.Message;
 import exceptions.NotEnoughRightsDiscordException;
 import exceptions.ServerNotFoundDiscordException;
 import exceptions.TooMuchServersDiscordException;

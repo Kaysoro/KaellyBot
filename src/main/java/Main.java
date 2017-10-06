@@ -1,6 +1,6 @@
 import data.Constants;
 import listeners.ReadyListener;
-import data.ClientConfig;
+import util.ClientConfig;
 import org.slf4j.LoggerFactory;
 import sx.blah.discord.api.IDiscordClient;
 

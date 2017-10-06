@@ -1,8 +1,13 @@
-package data;
+package finders;
 
+import data.Guild;
+import data.Portal;
+import data.ServerDofus;
 import exceptions.ExceptionManager;
+import finders.RSSFinder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import util.ClientConfig;
 
 import java.io.IOException;
 

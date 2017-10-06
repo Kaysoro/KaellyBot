@@ -3,7 +3,7 @@ package commands;
 import data.Constants;
 import data.Job;
 import data.User;
-import discord.Message;
+import util.Message;
 import exceptions.JobNotFoundDiscordException;
 import exceptions.LevelNotFoundDiscordException;
 import exceptions.TooMuchPossibilitiesDiscordException;

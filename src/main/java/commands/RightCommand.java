@@ -1,7 +1,7 @@
 package commands;
 
 import data.User;
-import discord.Message;
+import util.Message;
 import exceptions.AutoChangeRightsDiscordException;
 import exceptions.BadUseCommandDiscordException;
 import exceptions.NoRightsForRolesDiscordException;

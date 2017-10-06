@@ -1,10 +1,10 @@
 package listeners;
 
-import data.ClientConfig;
+import util.ClientConfig;
 import data.Constants;
 import data.Guild;
 import data.User;
-import discord.Message;
+import util.Message;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sx.blah.discord.api.events.EventSubscriber;

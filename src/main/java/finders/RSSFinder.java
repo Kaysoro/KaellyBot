@@ -1,9 +1,12 @@
-package data;
+package finders;
 
-import discord.Message;
+import data.RSS;
+import util.Message;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sx.blah.discord.handle.obj.IChannel;
+import util.ClientConfig;
+import util.Connexion;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;

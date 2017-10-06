@@ -1,4 +1,4 @@
-package data;
+package enums;
 
 /**
  * Created by steve on 07/06/2017.

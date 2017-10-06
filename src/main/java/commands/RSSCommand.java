@@ -1,8 +1,8 @@
 package commands;
 
-import data.RSSFinder;
+import finders.RSSFinder;
 import data.User;
-import discord.Message;
+import util.Message;
 import exceptions.BadUseCommandDiscordException;
 import exceptions.NotEnoughRightsDiscordException;
 import exceptions.RSSFoundDiscordException;

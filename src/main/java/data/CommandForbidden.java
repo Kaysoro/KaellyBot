@@ -4,6 +4,8 @@ import commands.Command;
 import commands.CommandManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import util.ClientConfig;
+import util.Connexion;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;

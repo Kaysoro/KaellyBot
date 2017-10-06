@@ -1,7 +1,7 @@
 package commands;
 
-import data.ClientConfig;
-import discord.Message;
+import util.ClientConfig;
+import util.Message;
 import exceptions.ChannelNotFoundDiscordException;
 import exceptions.NoSendTextPermissionDiscordException;
 import org.slf4j.Logger;

@@ -1,7 +1,7 @@
 package commands;
 
 import data.Constants;
-import discord.Message;
+import util.Message;
 import sx.blah.discord.handle.obj.IMessage;
 
 /**

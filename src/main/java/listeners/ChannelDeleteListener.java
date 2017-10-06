@@ -1,8 +1,8 @@
 package listeners;
 
-import data.ClientConfig;
-import data.RSSFinder;
-import data.TwitterFinder;
+import util.ClientConfig;
+import finders.RSSFinder;
+import finders.TwitterFinder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sx.blah.discord.api.events.EventSubscriber;

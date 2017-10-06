@@ -2,9 +2,9 @@ package commands;
 
 import data.Character;
 import data.Constants;
-import data.JSoupManager;
+import util.JSoupManager;
 import data.ServerDofus;
-import discord.Message;
+import util.Message;
 import exceptions.*;
 import org.jsoup.Connection;
 import org.jsoup.nodes.Document;

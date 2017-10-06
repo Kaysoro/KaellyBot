@@ -1,6 +1,5 @@
-package discord;
+package util;
 
-import data.ClientConfig;
 import data.Constants;
 import exceptions.MissingPermissionDiscordException;
 import org.slf4j.LoggerFactory;

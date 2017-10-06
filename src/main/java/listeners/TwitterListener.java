@@ -1,9 +1,9 @@
 package listeners;
 
-import data.ClientConfig;
+import util.ClientConfig;
 import data.Constants;
-import data.TwitterFinder;
-import discord.Message;
+import finders.TwitterFinder;
+import util.Message;
 import sx.blah.discord.util.EmbedBuilder;
 import twitter4j.MediaEntity;
 import twitter4j.Status;

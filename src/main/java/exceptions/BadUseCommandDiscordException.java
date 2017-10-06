@@ -2,7 +2,7 @@ package exceptions;
 
 import commands.Command;
 import commands.HelpCommand;
-import discord.Message;
+import util.Message;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sx.blah.discord.handle.obj.IMessage;

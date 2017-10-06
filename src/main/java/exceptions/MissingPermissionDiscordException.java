@@ -1,8 +1,8 @@
 package exceptions;
 
 import commands.Command;
-import data.Translator;
-import discord.Message;
+import util.Translator;
+import util.Message;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sx.blah.discord.handle.obj.IMessage;

@@ -1,8 +1,8 @@
 package commands;
 
-import data.TwitterFinder;
+import finders.TwitterFinder;
 import data.User;
-import discord.Message;
+import util.Message;
 import exceptions.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

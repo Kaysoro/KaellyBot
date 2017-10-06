@@ -1,4 +1,6 @@
-package data;
+package enums;
+
+import data.Constants;
 
 /**
  * Created by steve on 26/06/2017.

@@ -1,6 +1,6 @@
 package listeners;
 
-import data.ClientConfig;
+import util.ClientConfig;
 import sx.blah.discord.api.events.EventSubscriber;
 import sx.blah.discord.handle.obj.IGuild;
 import sx.blah.discord.util.audio.events.TrackFinishEvent;

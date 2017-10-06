@@ -1,8 +1,10 @@
 package commands;
 
-import collections.BestMatcher;
+import enums.SuperTypeEquipment;
+import enums.TypeEquipment;
+import util.BestMatcher;
 import data.*;
-import discord.Message;
+import util.Message;
 import exceptions.ExceptionManager;
 import exceptions.ItemNotFoundDiscordException;
 import exceptions.TooMuchItemsDiscordException;
@@ -13,6 +15,8 @@ import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sx.blah.discord.handle.obj.IMessage;
+import util.JSoupManager;
+
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;

@@ -1,6 +1,8 @@
 package data;
 
 import org.slf4j.LoggerFactory;
+import util.ClientConfig;
+import util.Connexion;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;

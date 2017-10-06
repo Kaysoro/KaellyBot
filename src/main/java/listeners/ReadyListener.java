@@ -1,6 +1,10 @@
 package listeners;
 
 import data.*;
+import finders.AlmanaxCalendar;
+import finders.PortalFinder;
+import finders.RSSFinder;
+import finders.TwitterFinder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sx.blah.discord.api.events.EventSubscriber;
@@ -8,6 +12,7 @@ import sx.blah.discord.handle.impl.events.ReadyEvent;
 import sx.blah.discord.handle.impl.events.guild.GuildCreateEvent;
 import sx.blah.discord.handle.obj.IGuild;
 import sx.blah.discord.handle.obj.IUser;
+import util.ClientConfig;
 
 import java.util.ArrayList;
 import java.util.List;

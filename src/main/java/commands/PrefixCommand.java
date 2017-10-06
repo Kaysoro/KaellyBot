@@ -3,7 +3,7 @@ package commands;
 import data.Constants;
 import data.Guild;
 import data.User;
-import discord.Message;
+import util.Message;
 import exceptions.NotEnoughRightsDiscordException;
 import exceptions.PrefixeOutOfBoundsDiscordException;
 import org.slf4j.Logger;

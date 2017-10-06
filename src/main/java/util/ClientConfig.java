@@ -1,6 +1,5 @@
-package data;
+package util;
 
-import discord.Message;
 import io.sentry.Sentry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

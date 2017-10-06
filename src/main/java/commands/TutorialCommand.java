@@ -1,8 +1,8 @@
 package commands;
 
-import collections.BestMatcher;
+import util.BestMatcher;
 import data.*;
-import discord.Message;
+import util.Message;
 import exceptions.ExceptionManager;
 import exceptions.TooMuchTutosDiscordException;
 import exceptions.TutoNotFoundDiscordException;
@@ -13,6 +13,7 @@ import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sx.blah.discord.handle.obj.IMessage;
+import util.JSoupManager;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;

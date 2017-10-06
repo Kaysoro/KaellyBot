@@ -3,7 +3,7 @@ package commands;
 import data.CommandForbidden;
 import data.Guild;
 import data.User;
-import discord.Message;
+import util.Message;
 import exceptions.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

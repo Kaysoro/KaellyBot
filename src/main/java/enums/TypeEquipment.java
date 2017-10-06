@@ -1,6 +1,8 @@
-package data;
+package enums;
 
-import static data.SuperTypeEquipment.*;
+import enums.SuperTypeEquipment;
+
+import static enums.SuperTypeEquipment.*;
 
 /**
  * Created by steve on 07/06/2017.

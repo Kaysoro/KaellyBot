@@ -3,7 +3,7 @@ package commands;
 import data.Guild;
 import data.Portal;
 import data.Position;
-import discord.Message;
+import util.Message;
 import exceptions.PortalNotFoundDiscordException;
 import exceptions.TooMuchPossibilitiesDiscordException;
 import org.slf4j.Logger;

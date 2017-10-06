@@ -1,7 +1,7 @@
 package exceptions;
 
 import commands.Command;
-import data.ClientConfig;
+import util.ClientConfig;
 import org.jsoup.HttpStatusException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
