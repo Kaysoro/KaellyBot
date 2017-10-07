@@ -47,18 +47,15 @@ public class CommandPatternTest extends TestCase {
         assertFalse(pattern.matcher(Constants.prefixCommand + "cmd CommandForbidden").find());
     }
 
-    public void testAvailableCommand(){
-        Command cmd = new AvailableCommand();
+    public void testDistCommand(){
+        Command cmd = new DistanceCommand();
         Pattern pattern = Pattern.compile("^" + Constants.prefixCommand + cmd.getName() + cmd.getPattern() + "$");
 
-        assertTrue(pattern.matcher(Constants.prefixCommand + "available CommandForbidden true").find());
-        assertTrue(pattern.matcher(Constants.prefixCommand + "available CommandForbidden on").find());
-        assertTrue(pattern.matcher(Constants.prefixCommand + "available CommandForbidden 0").find());
-        assertTrue(pattern.matcher(Constants.prefixCommand + "available CommandForbidden false").find());
-        assertTrue(pattern.matcher(Constants.prefixCommand + "available CommandForbidden off").find());
-        assertTrue(pattern.matcher(Constants.prefixCommand + "available CommandForbidden 1").find());
-        assertFalse(pattern.matcher(Constants.prefixCommand + "available").find());
-        assertFalse(pattern.matcher(Constants.prefixCommand + "available CommandForbidden").find());
+        assertTrue(pattern.matcher(Constants.prefixCommand + "dist [20,20]").find());
+        assertTrue(pattern.matcher(Constants.prefixCommand + "dist [20 20]").find());
+        assertTrue(pattern.matcher(Constants.prefixCommand + "dist [2, -20]").find());
+        assertTrue(pattern.matcher(Constants.prefixCommand + "dist -20 20").find());
+        assertFalse(pattern.matcher(Constants.prefixCommand + "dist").find());
     }
 
     public void testHelpCommand(){
@@ -254,6 +251,20 @@ public class CommandPatternTest extends TestCase {
         assertTrue(pattern.matcher(Constants.prefixCommand + "announce test").find());
         assertTrue(pattern.matcher(Constants.prefixCommand + "announce -confirm test").find());
         assertFalse(pattern.matcher(Constants.prefixCommand + "announce").find());
+    }
+
+    public void testAvailableCommand(){
+        Command cmd = new AvailableCommand();
+        Pattern pattern = Pattern.compile("^" + Constants.prefixCommand + cmd.getName() + cmd.getPattern() + "$");
+
+        assertTrue(pattern.matcher(Constants.prefixCommand + "available CommandForbidden true").find());
+        assertTrue(pattern.matcher(Constants.prefixCommand + "available CommandForbidden on").find());
+        assertTrue(pattern.matcher(Constants.prefixCommand + "available CommandForbidden 0").find());
+        assertTrue(pattern.matcher(Constants.prefixCommand + "available CommandForbidden false").find());
+        assertTrue(pattern.matcher(Constants.prefixCommand + "available CommandForbidden off").find());
+        assertTrue(pattern.matcher(Constants.prefixCommand + "available CommandForbidden 1").find());
+        assertFalse(pattern.matcher(Constants.prefixCommand + "available").find());
+        assertFalse(pattern.matcher(Constants.prefixCommand + "available CommandForbidden").find());
     }
 
     public void testTalkCommand(){

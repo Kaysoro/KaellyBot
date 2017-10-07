@@ -24,6 +24,7 @@ public class CommandManager {
         addCommand(new AlmanaxCommand());
         addCommand(new AboutCommand());
         addCommand(new CommandCommand());
+        addCommand(new DistanceCommand());
         addCommand(new HelpCommand());
         addCommand(new ItemCommand());
         addCommand(new JobCommand());

@@ -27,6 +27,10 @@ Autorise ou non l'utilisation d'une commande de Kaelly.
 `!cmd command true` : autorise l'utilisation de la commande. Fonctionne aussi avec `on` et `0`.  
 `!cmd command false` : interdit l'utilisation de la commande. Fonctionne aussi avec `off` et `1`.  
 
+### Dist
+Renvoie le transport le plus proche à vol d'oiseau.  
+`!dist [POS, POS]` : renvoie le transport le plus proche de la position indiquée à vol d'oiseau.  
+
 ### Item
 Renvoie les statistiques d'un item du jeu Dofus.  
 `!item item` : renvoie les statistiques de l'item spécifié : son nom peut être approximatif s'il est suffisamment précis.  
