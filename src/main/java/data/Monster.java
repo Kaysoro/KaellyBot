@@ -6,6 +6,7 @@ import org.jsoup.select.Elements;
 import sx.blah.discord.api.internal.json.objects.EmbedObject;
 import sx.blah.discord.util.EmbedBuilder;
 import util.JSoupManager;
+import util.URLManager;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -108,8 +109,8 @@ public class Monster implements Embedded {
         String level = doc.getElementsByClass("ak-encyclo-detail-level").first().text();
         String family = doc.getElementsByClass("ak-encyclo-detail-type").last().children().last().text();
 
-        String skinURL = doc.getElementsByClass("ak-encyclo-detail-illu").first()
-                .getElementsByTag("img").first().attr("src");
+        Element element = doc.getElementsByClass("ak-encyclo-detail-illu").first().getElementsByTag("img").first();
+        String skinURL = element.attr("data-src");
 
         String caracteristics = null;
         String resistances = null;
@@ -130,7 +131,7 @@ public class Monster implements Embedded {
             else if (title.text().equals("Butins conditionnés"))
                 extractButins(butinsConditionne, title.parent());
 
-        return new Monster(name, family, level, caracteristics, skinURL, url, resistances, zones, butins, butinsConditionne);
+        return new Monster(name, family, level, caracteristics, URLManager.abs(skinURL), url, resistances, zones, butins, butinsConditionne);
     }
 
     private static String extractLinesFromTitle(Element title)

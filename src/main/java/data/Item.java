@@ -6,6 +6,7 @@ import org.jsoup.select.Elements;
 import sx.blah.discord.api.internal.json.objects.EmbedObject;
 import sx.blah.discord.util.EmbedBuilder;
 import util.JSoupManager;
+import util.URLManager;
 
 import java.io.IOException;
 import java.util.Random;
@@ -111,7 +112,7 @@ public class Item implements Embedded {
 
     public static Item getItem(String url) throws IOException {
         Document doc = JSoupManager.getDocument(url);
-
+        doc.setBaseUri(url);
         String name = doc.getElementsByClass("ak-return-link").first().text();
         String level = doc.getElementsByClass("ak-encyclo-detail-level").first().text();
         String type = doc.getElementsByClass("ak-encyclo-detail-type").last().children().last().text();
@@ -141,7 +142,7 @@ public class Item implements Embedded {
                 conditions = extractLinesFromTitle(title);
             else if (title.text().contains(name + " fait partie de")){
                 panoplie = title.getElementsByTag("a").first().text();
-                panoplieURL = Constants.officialURL + title.getElementsByTag("a").first().attr("href");
+                panoplieURL = Constants.officialURL + title.getElementsByTag("a").first().attr("abs:href");
             }
             else if (title.text().equals("Recette")){
                 lines = title.parent().getElementsByClass("ak-column");
@@ -151,11 +152,11 @@ public class Item implements Embedded {
                             .append(line.getElementsByClass("ak-title").first().text()).append("](")
                             .append(Constants.officialURL)
                             .append(line.getElementsByClass("ak-title").first()
-                            .children().first().attr("href")).append(")\n");
+                            .children().first().attr("abs:href")).append(")\n");
                 recipe = tmp.toString();
             }
 
-        return new Item(name, type, level, description, effects, skinURL, url,
+        return new Item(name, type, level, description, effects, URLManager.abs(skinURL), url,
                 caracteristics, conditions, panoplie, panoplieURL, recipe);
     }
 
