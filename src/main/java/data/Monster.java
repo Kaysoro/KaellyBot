@@ -153,9 +153,8 @@ public class Monster implements Embedded {
             if (! line.getElementsByClass("ak-title").first().children().isEmpty())
                     tmp.append("[")
                     .append(line.getElementsByClass("ak-title").first().text()).append("](")
-                    .append(Constants.officialURL)
                     .append(line.getElementsByClass("ak-title").first()
-                            .children().first().attr("href")).append(") ");
+                            .children().first().attr("abs:href")).append(") ");
             else
                 tmp.append(line.getElementsByClass("ak-title").first().text()).append(" ");
 

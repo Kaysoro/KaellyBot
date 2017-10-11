@@ -142,7 +142,7 @@ public class Item implements Embedded {
                 conditions = extractLinesFromTitle(title);
             else if (title.text().contains(name + " fait partie de")){
                 panoplie = title.getElementsByTag("a").first().text();
-                panoplieURL = Constants.officialURL + title.getElementsByTag("a").first().attr("abs:href");
+                panoplieURL = title.getElementsByTag("a").first().attr("abs:href");
             }
             else if (title.text().equals("Recette")){
                 lines = title.parent().getElementsByClass("ak-column");
@@ -150,7 +150,6 @@ public class Item implements Embedded {
                 for (Element line : lines)
                     tmp.append(line.getElementsByClass("ak-front").text()).append(" [")
                             .append(line.getElementsByClass("ak-title").first().text()).append("](")
-                            .append(Constants.officialURL)
                             .append(line.getElementsByClass("ak-title").first()
                             .children().first().attr("abs:href")).append(")\n");
                 recipe = tmp.toString();
