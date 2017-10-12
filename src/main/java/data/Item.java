@@ -65,13 +65,13 @@ public class Item implements Embedded {
         builder.appendField(":cyclone: Effets :", effects, true);
 
         if (caracteristics != null && ! caracteristics.isEmpty())
-            builder.appendField(":gear: Caractéristiques", caracteristics, true);
+            builder.appendField(":gear: Caractéristiques :", caracteristics, true);
 
         if (conditions != null && ! conditions.isEmpty())
-            builder.appendField(":key: Conditions",conditions, true);
+            builder.appendField(":key: Conditions :",conditions, true);
 
         if (panoplie != null && panoplieURL != null)
-            builder.appendField(":link: Panoplie", "[" + panoplie + "](" + panoplieURL + ")", true);
+            builder.appendField(":link: Panoplie :", "[" + panoplie + "](" + panoplieURL + ")", true);
 
         return builder.build();
     }
@@ -96,16 +96,16 @@ public class Item implements Embedded {
             builder.appendField(":cyclone: Effets :", effects, true);
 
         if (caracteristics != null && ! caracteristics.isEmpty())
-            builder.appendField(":gear: Caractéristiques", caracteristics, true);
+            builder.appendField(":gear: Caractéristiques :", caracteristics, true);
 
         if (conditions != null && ! conditions.isEmpty())
             builder.appendField(":key: Conditions",conditions, true);
 
         if (panoplie != null && panoplieURL != null)
-            builder.appendField(":link: Panoplie", "[" + panoplie + "](" + panoplieURL + ")", true);
+            builder.appendField(":link: Panoplie :", "[" + panoplie + "](" + panoplieURL + ")", true);
 
         if (recipe != null)
-            builder.appendField(":hammer_pick: Recette", recipe, true);
+            builder.appendField(":hammer_pick: Recette :", recipe, true);
 
         return builder.build();
     }
@@ -114,7 +114,7 @@ public class Item implements Embedded {
         Document doc = JSoupManager.getDocument(url);
         doc.setBaseUri(url);
         String name = doc.getElementsByClass("ak-return-link").first().text();
-        String level = doc.getElementsByClass("ak-encyclo-detail-level").first().text();
+        String level = doc.getElementsByClass("ak-encyclo-detail-level").first().text().replaceAll("Niveau : ", "");;
         String type = doc.getElementsByClass("ak-encyclo-detail-type").last().children().last().text();
 
         String skinURL = doc.getElementsByClass("ak-encyclo-detail-illu").first()

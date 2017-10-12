@@ -57,10 +57,10 @@ public class Monster implements Embedded {
         builder.appendField(":family_mwgb: Race :", family, true);
 
         if (caracteristics != null && ! caracteristics.isEmpty())
-            builder.appendField(":cyclone: Caractéristiques", caracteristics, true);
+            builder.appendField(":cyclone: Caractéristiques :", caracteristics, true);
 
         if (resistances != null && ! resistances.isEmpty())
-            builder.appendField(":shield: Résistances", resistances, true);
+            builder.appendField(":shield: Résistances :", resistances, true);
 
         return builder.build();
     }
@@ -79,24 +79,24 @@ public class Monster implements Embedded {
         builder.appendField(":family_mwgb: Race :", family, true);
 
         if (caracteristics != null && ! caracteristics.isEmpty())
-            builder.appendField(":cyclone: Caractéristiques", caracteristics, true);
+            builder.appendField(":cyclone: Caractéristiques :", caracteristics, true);
 
         if (resistances != null && ! resistances.isEmpty())
-            builder.appendField(":shield: Résistances", resistances, true);
+            builder.appendField(":shield: Résistances :", resistances, true);
 
         if (zones != null && ! zones.isEmpty())
-            builder.appendField(":map: Zones", zones, true);
+            builder.appendField(":map: Zones :", zones, true);
 
         if (! butins.isEmpty())
             for(int i = 0; i < butins.size(); i++)
                 builder.appendField(":moneybag: Butins" + (butins.size() > 1?
-                                " (" + (i + 1) + "/" + butins.size() + ")" : ""),
+                                " (" + (i + 1) + "/" + butins.size() + ")" : "") + " : ",
                         butins.get(i), true);
 
         if (! butinsConditionne.isEmpty())
             for(int i = 0; i < butinsConditionne.size(); i++)
                 builder.appendField(":moneybag: Butins conditionnés" + (butinsConditionne.size() > 1?
-                                " (" + (i + 1) + "/" + butinsConditionne.size() + ")" : ""),
+                                " (" + (i + 1) + "/" + butinsConditionne.size() + ")" : "") + " : ",
                         butinsConditionne.get(i), true);
 
         return builder.build();
@@ -106,7 +106,7 @@ public class Monster implements Embedded {
         Document doc = JSoupManager.getDocument(url);
 
         String name = doc.getElementsByClass("ak-return-link").first().text();
-        String level = doc.getElementsByClass("ak-encyclo-detail-level").first().text();
+        String level = doc.getElementsByClass("ak-encyclo-detail-level").first().text().replaceAll("Niveau : ", "");
         String family = doc.getElementsByClass("ak-encyclo-detail-type").last().children().last().text();
 
         Element element = doc.getElementsByClass("ak-encyclo-detail-illu").first().getElementsByTag("img").first();
