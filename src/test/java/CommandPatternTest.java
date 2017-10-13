@@ -185,6 +185,16 @@ public class CommandPatternTest extends TestCase {
         assertTrue(pattern.matcher(Constants.prefixCommand + "rule34 dofus").find());
     }
 
+    public void testSetCommand(){
+        Command cmd = new SetCommand();
+        Pattern pattern = Pattern.compile("^" + Constants.prefixCommand + cmd.getName() + cmd.getPattern() + "$");
+
+        assertTrue(pattern.matcher(Constants.prefixCommand + "set test").find());
+        assertTrue(pattern.matcher(Constants.prefixCommand + "set tést test").find());
+        assertTrue(pattern.matcher(Constants.prefixCommand + "set -more tést test").find());
+        assertFalse(pattern.matcher(Constants.prefixCommand + "set").find());
+    }
+
     public void testServerCommand(){
         Command cmd = new ServerCommand();
         Pattern pattern = Pattern.compile("^" + Constants.prefixCommand + cmd.getName() + cmd.getPattern() + "$");

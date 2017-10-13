@@ -85,16 +85,21 @@ Autorise ou non Kaelly à poster du contenu RSS dans un salon.
 Poste des images sexuellement explicite.  
 `!rule34 tag1 tag2 ...` : poste du contenu sexuellement explicite (NSFW) avec les tags précisés.  
 
-### Sound
-Joue des sons dans un salon vocal.  
-`!sound` : joue un son au hasard, parmi une liste prédéfinie.  
-`!sound sound` : joue le son spécifié.  
-
 ### Server
 Permet de déterminer à quel serveur Dofus correspond ce serveur Discord.  
 `!server` : affiche le serveur Dofus rattaché au serveur Discord.  
 `!server server` : permet de déterminer à quel serveur Dofus correspond ce serveur Discord.  
 `!server -reset` : permet de se détacher d'un quelconque serveur Dofus.  
+
+### Set
+Renvoie les statistiques d'une panoplie du jeu Dofus.  
+`!set set` : renvoie les statistiques de la panoplie spécifiée : son nom peut être approximatif s'il est suffisamment précis.    
+`!set -more set` : renvoie les statistiques détaillés de la panoplie spécifiée.  
+
+### Sound
+Joue des sons dans un salon vocal.  
+`!sound` : joue un son au hasard, parmi une liste prédéfinie.  
+`!sound sound` : joue le son spécifié.  
 
 ### Tuto
 Renvoie le tutoriel correspondant à la recherche effectuée..  

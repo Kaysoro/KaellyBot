@@ -5,7 +5,7 @@ package enums;
  */
 public enum Language {
 
-    FR("French"), EN("English"), SP("Spanish");
+    FR("Français"), EN("English"), SP("Español");
 
     private String name;
 

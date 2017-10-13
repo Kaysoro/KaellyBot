@@ -91,6 +91,11 @@ public class Constants {
     public final static String monsterPageURL = "/fr/mmorpg/encyclopedie/monstres";
 
     /**
+     * Official Dofus URL for Set page
+     */
+    public final static String setPageURL = "/fr/mmorpg/encyclopedie/panoplies";
+
+    /**
      * Tutorial URL
      */
     public final static String dofusPourLesNoobURL = "http://www.dofuspourlesnoobs.com";
