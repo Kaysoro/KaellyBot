@@ -1,7 +1,10 @@
 package commands;
 
+import exceptions.NoExternalEmojiPermissionDiscordException;
+import sx.blah.discord.handle.obj.Permissions;
 import util.BestMatcher;
 import data.*;
+import util.ClientConfig;
 import util.Message;
 import exceptions.ExceptionManager;
 import exceptions.MonsterNotFoundDiscordException;
@@ -40,29 +43,36 @@ public class MonsterCommand extends AbstractCommand{
         if (super.request(message)){
             Matcher m = getMatcher(message);
             m.find();
-            String normalName = Normalizer.normalize(m.group(2).trim(), Normalizer.Form.NFD)
-                    .replaceAll("\\p{InCombiningDiacriticalMarks}+", "").toLowerCase();
-            String editedName = removeUselessWords(normalName);
-            BestMatcher matcher = new BestMatcher(normalName);
 
-            try {
-                matcher.evaluateAll(getListMonsterFrom(getSearchURL(normalName), message));
+            if (message.getChannel().getModifiedPermissions(ClientConfig.DISCORD().getOurUser()).contains(Permissions.USE_EXTERNAL_EMOJIS)
+                    && ClientConfig.DISCORD().getOurUser().getPermissionsForGuild(message.getGuild())
+                    .contains(Permissions.USE_EXTERNAL_EMOJIS)) {
+                String normalName = Normalizer.normalize(m.group(2).trim(), Normalizer.Form.NFD)
+                        .replaceAll("\\p{InCombiningDiacriticalMarks}+", "").toLowerCase();
+                String editedName = removeUselessWords(normalName);
+                BestMatcher matcher = new BestMatcher(normalName);
 
-                if (matcher.isUnique()) { // We have found it !
-                    Embedded monster = Monster.getMonster(Constants.officialURL + matcher.getBest().getRight());
-                    if (m.group(1) != null)
-                        Message.sendEmbed(message.getChannel(), monster.getMoreEmbedObject());
-                    else
-                    Message.sendEmbed(message.getChannel(), monster.getEmbedObject());
-                } else if (! matcher.isEmpty()) // Too much items
-                    new TooMuchMonstersDiscordException().throwException(message, this, matcher.getBests());
-                else // empty
-                    new MonsterNotFoundDiscordException().throwException(message, this);
-            } catch(IOException e){
-                ExceptionManager.manageIOException(e, message, this, new MonsterNotFoundDiscordException());
+                try {
+                    matcher.evaluateAll(getListMonsterFrom(getSearchURL(normalName), message));
+
+                    if (matcher.isUnique()) { // We have found it !
+                        Embedded monster = Monster.getMonster(Constants.officialURL + matcher.getBest().getRight());
+                        if (m.group(1) != null)
+                            Message.sendEmbed(message.getChannel(), monster.getMoreEmbedObject());
+                        else
+                            Message.sendEmbed(message.getChannel(), monster.getEmbedObject());
+                    } else if (!matcher.isEmpty()) // Too much items
+                        new TooMuchMonstersDiscordException().throwException(message, this, matcher.getBests());
+                    else // empty
+                        new MonsterNotFoundDiscordException().throwException(message, this);
+                } catch (IOException e) {
+                    ExceptionManager.manageIOException(e, message, this, new MonsterNotFoundDiscordException());
+                }
+
+                return true;
             }
-
-            return true;
+            else
+                new NoExternalEmojiPermissionDiscordException().throwException(message, this);
         }
 
         return false;

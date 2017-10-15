@@ -5,6 +5,7 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import sx.blah.discord.api.internal.json.objects.EmbedObject;
 import sx.blah.discord.util.EmbedBuilder;
+import util.EmojiManager;
 import util.JSoupManager;
 import util.URLManager;
 
@@ -121,9 +122,9 @@ public class Monster implements Embedded {
         Elements titles = doc.getElementsByClass("ak-panel-title");
         for (Element title : titles)
             if (title.text().equals("Caractéristiques"))
-                caracteristics = extractLinesFromTitle(title);
+                caracteristics = extractStatsFromTitle(title);
             else if (title.text().equals("Résistances"))
-                resistances = extractLinesFromTitle(title);
+                resistances = extractStatsFromTitle(title);
             else if (title.text().equals("Zones"))
                 zones = title.parent().children().last().text();
             else if (title.text().equals("Butins"))
@@ -140,6 +141,15 @@ public class Monster implements Embedded {
         StringBuilder tmp = new StringBuilder();
         for (Element line : lines)
             tmp.append(line.text()).append("\n");
+        return tmp.toString();
+    }
+
+    private static String extractStatsFromTitle(Element elem)
+    {
+        Elements lines = elem.parent().getElementsByClass("ak-title");
+        StringBuilder tmp = new StringBuilder();
+        for (Element line : lines)
+            tmp.append(EmojiManager.getEmojiForStat(line.text())).append(line.text()).append("\n");
         return tmp.toString();
     }
 

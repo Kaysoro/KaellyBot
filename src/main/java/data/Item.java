@@ -5,6 +5,7 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import sx.blah.discord.api.internal.json.objects.EmbedObject;
 import sx.blah.discord.util.EmbedBuilder;
+import util.EmojiManager;
 import util.JSoupManager;
 import util.URLManager;
 
@@ -135,7 +136,7 @@ public class Item implements Embedded {
             if (title.text().equals("Description"))
                 description = title.parent().getElementsByClass("ak-panel-content").first().text();
             else if (title.text().equals("Effets"))
-                effects = extractLinesFromTitle(title);
+                effects = extractStatsFromTitle(title);
             else if (title.text().equals("Caractéristiques"))
                 caracteristics = extractLinesFromTitle(title);
             else if (title.text().equals("Conditions"))
@@ -165,6 +166,15 @@ public class Item implements Embedded {
         StringBuilder tmp = new StringBuilder();
         for (Element line : lines)
             tmp.append(line.text()).append("\n");
+        return tmp.toString();
+    }
+
+    private static String extractStatsFromTitle(Element title)
+    {
+        Elements lines = title.parent().getElementsByClass("ak-title");
+        StringBuilder tmp = new StringBuilder();
+        for (Element line : lines)
+            tmp.append(EmojiManager.getEmojiForStat(line.text())).append(line.text()).append("\n");
         return tmp.toString();
     }
 }

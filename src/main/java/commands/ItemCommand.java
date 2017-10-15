@@ -2,8 +2,11 @@ package commands;
 
 import enums.SuperTypeEquipment;
 import enums.TypeEquipment;
+import exceptions.NoExternalEmojiPermissionDiscordException;
+import sx.blah.discord.handle.obj.Permissions;
 import util.BestMatcher;
 import data.*;
+import util.ClientConfig;
 import util.Message;
 import exceptions.ExceptionManager;
 import exceptions.ItemNotFoundDiscordException;
@@ -47,50 +50,56 @@ public class ItemCommand extends AbstractCommand{
         if (super.request(message)){
             Matcher m = getMatcher(message);
             m.find();
-            String normalName = Normalizer.normalize(m.group(2).trim(), Normalizer.Form.NFD)
-                    .replaceAll("\\p{InCombiningDiacriticalMarks}+", "").toLowerCase();
-            String editedName = removeUselessWords(normalName);
-            BestMatcher matcher = new BestMatcher(normalName);
+            if (message.getChannel().getModifiedPermissions(ClientConfig.DISCORD().getOurUser()).contains(Permissions.USE_EXTERNAL_EMOJIS)
+                    && ClientConfig.DISCORD().getOurUser().getPermissionsForGuild(message.getGuild())
+                    .contains(Permissions.USE_EXTERNAL_EMOJIS)) {
+                String normalName = Normalizer.normalize(m.group(2).trim(), Normalizer.Form.NFD)
+                        .replaceAll("\\p{InCombiningDiacriticalMarks}+", "").toLowerCase();
+                String editedName = removeUselessWords(normalName);
+                BestMatcher matcher = new BestMatcher(normalName);
 
-            try {
-                for (int i = 0; i < TypeEquipment.values().length ; i++) {
-                    TypeEquipment equip = TypeEquipment.values()[i];
-                    for(int j = 0; j < equip.getNames().length; j++){
-                        String potentialName = Normalizer.normalize(equip.getNames()[j], Normalizer.Form.NFD)
-                                .replaceAll("\\p{InCombiningDiacriticalMarks}+", "").toLowerCase();
-                        if (normalName.equals(potentialName)){
-                            matcher.evaluateAll(getListItemFrom(getSearchURL(equip.getType().getUrl(),
-                                    potentialName, equip.getTypeID()), message));
-                            break;
-                        }
-                        else if (normalName.contains(potentialName)) {
-                            matcher.evaluateAll(getListItemFrom(getSearchURL(equip.getType().getUrl(),
-                                    editedName.replace(potentialName, "").trim(), equip.getTypeID()), message));
-                            break;
+                try {
+                    for (int i = 0; i < TypeEquipment.values().length; i++) {
+                        TypeEquipment equip = TypeEquipment.values()[i];
+                        for (int j = 0; j < equip.getNames().length; j++) {
+                            String potentialName = Normalizer.normalize(equip.getNames()[j], Normalizer.Form.NFD)
+                                    .replaceAll("\\p{InCombiningDiacriticalMarks}+", "").toLowerCase();
+                            if (normalName.equals(potentialName)) {
+                                matcher.evaluateAll(getListItemFrom(getSearchURL(equip.getType().getUrl(),
+                                        potentialName, equip.getTypeID()), message));
+                                break;
+                            } else if (normalName.contains(potentialName)) {
+                                matcher.evaluateAll(getListItemFrom(getSearchURL(equip.getType().getUrl(),
+                                        editedName.replace(potentialName, "").trim(), equip.getTypeID()), message));
+                                break;
+                            }
                         }
                     }
+
+                    if (matcher.isEmpty())
+                        for (SuperTypeEquipment type : SuperTypeEquipment.values())
+                            matcher.evaluateAll(getListItemFrom(getSearchURL(type.getUrl(), normalName, null), message));
+
+                    if (matcher.isUnique()) { // We have found it !
+                        Embedded item = Item.getItem(Constants.officialURL + matcher.getBest().getRight());
+                        if (m.group(1) != null)
+                            Message.sendEmbed(message.getChannel(), item.getMoreEmbedObject());
+                        else
+                            Message.sendEmbed(message.getChannel(), item.getEmbedObject());
+                    } else if (!matcher.isEmpty()) // Too much items
+                        new TooMuchItemsDiscordException().throwException(message, this, matcher.getBests());
+                    else // empty
+                        new ItemNotFoundDiscordException().throwException(message, this);
+                } catch (IOException e) {
+                    ExceptionManager.manageIOException(e, message, this, new ItemNotFoundDiscordException());
                 }
 
-                if (matcher.isEmpty())
-                    for(SuperTypeEquipment type : SuperTypeEquipment.values())
-                        matcher.evaluateAll(getListItemFrom(getSearchURL(type.getUrl(), normalName, null), message));
-
-                if (matcher.isUnique()) { // We have found it !
-                    Embedded item = Item.getItem(Constants.officialURL + matcher.getBest().getRight());
-                    if (m.group(1) != null)
-                        Message.sendEmbed(message.getChannel(), item.getMoreEmbedObject());
-                    else
-                        Message.sendEmbed(message.getChannel(), item.getEmbedObject());
-                } else if (! matcher.isEmpty()) // Too much items
-                    new TooMuchItemsDiscordException().throwException(message, this, matcher.getBests());
-                else // empty
-                    new ItemNotFoundDiscordException().throwException(message, this);
-            } catch(IOException e){
-                ExceptionManager.manageIOException(e, message, this, new ItemNotFoundDiscordException());
+                return true;
             }
-
-            return true;
+            else
+                new NoExternalEmojiPermissionDiscordException().throwException(message, this);
         }
+
 
         return false;
     }
