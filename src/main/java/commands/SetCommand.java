@@ -1,8 +1,10 @@
 package commands;
 
 import exceptions.*;
+import sx.blah.discord.handle.obj.Permissions;
 import util.BestMatcher;
 import data.*;
+import util.ClientConfig;
 import util.Message;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jsoup.nodes.Document;
@@ -35,32 +37,39 @@ public class SetCommand extends AbstractCommand{
 
     @Override
     public boolean request(IMessage message) {
-        if (super.request(message)){
+        if (super.request(message)) {
             Matcher m = getMatcher(message);
             m.find();
-            String normalName = Normalizer.normalize(m.group(2).trim(), Normalizer.Form.NFD)
-                    .replaceAll("\\p{InCombiningDiacriticalMarks}+", "").toLowerCase();
-            String editedName = removeUselessWords(normalName);
-            BestMatcher matcher = new BestMatcher(normalName);
 
-            try {
-                matcher.evaluateAll(getListSetFrom(getSearchURL(normalName), message));
+            if (message.getChannel().getModifiedPermissions(ClientConfig.DISCORD().getOurUser()).contains(Permissions.USE_EXTERNAL_EMOJIS)
+                    && ClientConfig.DISCORD().getOurUser().getPermissionsForGuild(message.getGuild())
+                    .contains(Permissions.USE_EXTERNAL_EMOJIS)) {
+                String normalName = Normalizer.normalize(m.group(2).trim(), Normalizer.Form.NFD)
+                        .replaceAll("\\p{InCombiningDiacriticalMarks}+", "").toLowerCase();
+                String editedName = removeUselessWords(normalName);
+                BestMatcher matcher = new BestMatcher(normalName);
 
-                if (matcher.isUnique()) { // We have found it !
-                    Embedded set = Set.getSet(Constants.officialURL + matcher.getBest().getRight());
-                    if (m.group(1) != null)
-                        Message.sendEmbed(message.getChannel(), set.getMoreEmbedObject());
-                    else
-                        Message.sendEmbed(message.getChannel(), set.getEmbedObject());
-                } else if (! matcher.isEmpty()) // Too much items
-                    new TooMuchSetsDiscordException().throwException(message, this, matcher.getBests());
-                else // empty
-                    new SetNotFoundDiscordException().throwException(message, this);
-            } catch(IOException e){
-                ExceptionManager.manageIOException(e, message, this, new SetNotFoundDiscordException());
+                try {
+                    matcher.evaluateAll(getListSetFrom(getSearchURL(normalName), message));
+
+                    if (matcher.isUnique()) { // We have found it !
+                        Embedded set = Set.getSet(Constants.officialURL + matcher.getBest().getRight());
+                        if (m.group(1) != null)
+                            Message.sendEmbed(message.getChannel(), set.getMoreEmbedObject());
+                        else
+                            Message.sendEmbed(message.getChannel(), set.getEmbedObject());
+                    } else if (!matcher.isEmpty()) // Too much items
+                        new TooMuchSetsDiscordException().throwException(message, this, matcher.getBests());
+                    else // empty
+                        new SetNotFoundDiscordException().throwException(message, this);
+                } catch (IOException e) {
+                    ExceptionManager.manageIOException(e, message, this, new SetNotFoundDiscordException());
+                }
+
+                return true;
             }
-
-            return true;
+            else
+                new NoExternalEmojiPermissionDiscordException().throwException(message, this);
         }
 
         return false;

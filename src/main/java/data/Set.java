@@ -5,6 +5,7 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import sx.blah.discord.api.internal.json.objects.EmbedObject;
 import sx.blah.discord.util.EmbedBuilder;
+import util.EmojiManager;
 import util.JSoupManager;
 import util.URLManager;
 
@@ -108,10 +109,10 @@ public class Set implements Embedded {
         Elements titles = doc.getElementsByClass("ak-panel-title");
         for (Element title : titles)
             if (title.text().equals("Bonus total de la panoplie complète"))
-                bonusTotal = extractLinesFromTitle(title.parent());
+                bonusTotal = extractStatsFromTitle(title.parent());
             else if (title.text().equals("Bonus de la panoplie")){
                 for(int i = 0; i < bonusPano.length; i++)
-                    bonusPano[i] = extractLinesFromTitle(title.parent().getElementsByClass("set-bonus-list set-bonus-" + (i + 2)).first());
+                    bonusPano[i] = extractStatsFromTitle(title.parent().getElementsByClass("set-bonus-list set-bonus-" + (i + 2)).first());
             }
             else if (title.text().equals("Composition")){
                 StringBuilder st = new StringBuilder();
@@ -152,6 +153,15 @@ public class Set implements Embedded {
         StringBuilder tmp = new StringBuilder();
         for (Element line : lines)
             tmp.append(line.text()).append("\n");
+        return tmp.toString();
+    }
+
+    private static String extractStatsFromTitle(Element elem)
+    {
+        Elements lines = elem.getElementsByClass("ak-title");
+        StringBuilder tmp = new StringBuilder();
+        for (Element line : lines)
+            tmp.append(EmojiManager.getEmojiForStat(line.text())).append(line.text()).append("\n");
         return tmp.toString();
     }
 }
