@@ -1,6 +1,6 @@
 package data;
 
-import commands.HelpCommand;
+import commands.*;
 
 /**
  * Created by steve on 28/07/2016.
@@ -15,7 +15,7 @@ public class Constants {
     /**
      * Application version
      */
-    public final static String version = "1.4.2";
+    public final static String version = "1.4.3";
 
     /**
      * Author
@@ -26,6 +26,11 @@ public class Constants {
      * URL for github KaellyBot repository
      */
     public final static String git = "https://github.com/Kaysoro/KaellyBot";
+
+    /**
+     * Official link invite
+     */
+    public final static String invite = "https://discordapp.com/oauth2/authorize?&client_id=202916641414184960&scope=bot";
 
     /**
      * Database name
@@ -148,9 +153,12 @@ public class Constants {
             + "gérer un annuaire de vos métiers ou encore des positions de portails !"
             + "\nTu veux en savoir plus ? Ecris `" + prefixCommand + new HelpCommand().getName()
             + "` pour avoir la liste complète ! :blush:"
-            + "\n\n{0}, en tant qu'administrateur de {1}, tu possèdes un ensemble de droits plus poussés "
-            + "et tu peux par exemple autoriser ou non dans un des salons la réception des tweets émis par le "
-            + "compte officiel " + game + "."
+            + "\n\n{0}, en tant qu'administrateur de {1}, tu possèdes un ensemble de droits plus poussés te permettant "
+            + " de me configurer. Utilise la commande `" + prefixCommand + new ServerCommand().getName() + "` afin de "
+            + "définir ton serveur de jeu et ainsi recevoir automatiquement les positions de portails, ou encore les "
+            + "commandes `" + prefixCommand + new TwitterCommand().getName() + "`, `" + prefixCommand
+            + new AlmanaxCommand().getName() + "` et `" + prefixCommand + new RSSCommand().getName() + "` pour recevoir "
+            + "un maximum de news Dofus."
             + "\n\nC'est pas génial tout ça ? J'espère que nous allons bien nous amuser tous ensemble ! :smile:";
 
     /**
@@ -162,8 +170,9 @@ public class Constants {
      * Message for about Kaelly command
      */
     public final static String about = name + " est destinée à fournir des commandes utiles à la "
-            + "communauté de dofus !\nL'intégralité de son code est libre d'accès et est disponible ici : "
-            + git + "\nSi vous avez des questions, des suggestions ou que vous souhaitez juste "
+            + "communauté de dofus !\nL'intégralité de son code est libre d'accès et est disponible ici : " + git
+            + "\nVous souhaitez ajouter " + name + " sur l'un de vos serveurs ? Utilisez ce lien : " + invite
+            + "\nSi vous avez des questions, des suggestions ou que vous souhaitez juste "
             + "passer un coucou, rejoignez le discord de " + name
             + " : " + discordInvite + "\nPromis, on ne mord pas ! :yum:";
 }
