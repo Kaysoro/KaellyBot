@@ -55,6 +55,11 @@ public class Constants {
     public final static String officialURL = "https://www.dofus.com";
 
     /**
+     * Official Ankama Game Logo
+     */
+    public final static String officialLogo = "https://s.ankama.com/www/static.ankama.com/g/modules/masterpage/block/header/navbar/dofus/logo.png";
+
+    /**
      * Official Dofus URL for almanax
      */
     public final static String almanaxURL = "http://www.krosmoz.com/fr/almanax/";
@@ -119,6 +124,13 @@ public class Constants {
      * Twitter Icon from Wikipedia
      */
     public final static String twitterIcon = "https://upload.wikimedia.org/wikipedia/fr/thumb/c/c8/Twitter_Bird.svg/langfr-20px-Twitter_Bird.svg.png";
+
+    /**
+     * RSS Icon from Wikipedia
+     */
+    public final static String rssIcon = "https://upload.wikimedia.org/wikipedia/commons/thumb/4/43/Feed-icon.svg/20px-Feed-icon.svg.png";
+
+
     /**
      * Official Dofus account on Twitter
      */

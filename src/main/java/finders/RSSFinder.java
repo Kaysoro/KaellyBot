@@ -146,8 +146,8 @@ public class RSSFinder {
 
                             for (RSS rss : rssFeeds)
                                 if (rss.getDate() > finder.getLastRSS()) {
-                                    Message.sendText(ClientConfig.DISCORD().getChannelByID(
-                                            Long.parseLong(finder.getChan())), rss.toStringDiscord());
+                                    Message.sendEmbed(ClientConfig.DISCORD().getChannelByID(
+                                            Long.parseLong(finder.getChan())), rss.getEmbedObject());
                                     lastRSS = rss.getDate();
                                 }
 
