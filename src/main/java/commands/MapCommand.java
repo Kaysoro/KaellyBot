@@ -1,13 +1,14 @@
 package commands;
 
+import data.Constants;
+import exceptions.BadUseCommandDiscordException;
+import sx.blah.discord.util.EmbedBuilder;
 import util.Message;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sx.blah.discord.handle.obj.IMessage;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 import java.util.regex.Matcher;
 
 /**
@@ -16,67 +17,64 @@ import java.util.regex.Matcher;
 public class MapCommand extends AbstractCommand{
 
     private final static Logger LOG = LoggerFactory.getLogger(MapCommand.class);
-    private final static Map<String, String> urls = new HashMap<>();
-    static {
-        urls.put("I", "https://image.noelshack.com/fichiers/2017/14/1491433376-i.png");
-        urls.put("II", "https://image.noelshack.com/fichiers/2017/14/1491433376-ii.png");
-        urls.put("III", "https://image.noelshack.com/fichiers/2017/14/1491433375-iii.png");
-        urls.put("IV", "https://image.noelshack.com/fichiers/2017/14/1491433376-iv.png");
-        urls.put("V", "https://image.noelshack.com/fichiers/2017/14/1491433376-v.png");
-        urls.put("VI", "https://image.noelshack.com/fichiers/2017/14/1491433377-vi.png");
-        urls.put("VII", "https://image.noelshack.com/fichiers/2017/14/1491433378-vii.png");
-        urls.put("VIII", "https://image.noelshack.com/fichiers/2017/14/1491433378-viii.png");
-        urls.put("IX", "https://image.noelshack.com/fichiers/2017/14/1491433376-ix.png");
-        urls.put("X", "https://image.noelshack.com/fichiers/2017/14/1491433379-x.png");
-        urls.put("XI", "https://image.noelshack.com/fichiers/2017/14/1491433381-xi.png");
-        urls.put("XII", "https://image.noelshack.com/fichiers/2017/14/1491433381-xii.png");
-        urls.put("XIII", "https://image.noelshack.com/fichiers/2017/33/1/1502741729-xiii.png");
-        urls.put("XIV", "https://image.noelshack.com/fichiers/2017/33/1/1502741732-xiv.png");
-        urls.put("XV", "https://image.noelshack.com/fichiers/2017/33/1/1502741732-xv.png");
-        urls.put("XVI", "https://image.noelshack.com/fichiers/2017/33/1/1502741731-xvi.png");
-        urls.put("XVII", "https://image.noelshack.com/fichiers/2017/33/1/1502741730-xvii.png");
-    }
+    private static final int[] decimal = {1, 4, 5, 9, 10, 40, 50, 90, 100, 400, 500, 900, 1000};
+    private static final String[] letters = {"I", "IV", "V", "IX", "X", "XL", "L", "XC", "C", "CD", "D", "CM", "M"};
+
 
     public MapCommand(){
         super("map",
-        "((\\s+I|\\s+II|\\s+III|\\s+IV|\\s+V|\\s+VI|\\s+VII|\\s+VIII|\\s+IX|\\s+X"
-                + "|\\s+XI|\\s+XII|\\s+XIII|\\s+XIV|\\s+XV|\\s+XVI|\\s+XVII"
-                + "|\\s+i|\\s+ii|\\s+iii|\\s+iv|\\s+v|\\s+vi|\\s+vii|\\s+viii|\\s+ix|\\s+x"
-                + "|\\s+xi|\\s+xii|\\s+xiii|\\s+xiv|\\s+xv|\\s+xvi|\\s+xvii"
-                + "|\\s+1|\\s+2|\\s+3|\\s+4|\\s+5|\\s+6|\\s+7|\\s+8|\\s+9|\\s+10"
-                + "|\\s+11|\\s+12|\\s+13|\\s+14|\\s+15|\\s+16|\\s+17"
-                + ")+)?");
+        "(\\s+-ban)?((\\s+\\w+)+)?");
     }
 
     @Override
     public boolean request(IMessage message) {
         if (super.request(message)) {
-            String[] maps;
+            List<String> classicMaps = new ArrayList<>();
+            for(int i = 1; i < 18; i++)
+                classicMaps.add(String.valueOf(i));
+            List<String> maps = new ArrayList<>();
+
             Matcher m = getMatcher(message);
             m.find();
-            if (m.group(1) == null)
-                maps = new String[]{"I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X",
-                        "XI", "XII", "XIII", "XIV", "XV", "XVI", "XVII"};
-            else {
-                String text = m.group(1).trim().toUpperCase()
-                        .replaceAll("17", "XVII")
-                        .replaceAll("16", "XVI").replaceAll("15", "XV")
-                        .replaceAll("14", "XIV").replaceAll("13", "XIII")
-                        .replaceAll("12", "XII").replaceAll("11", "XI")
-                        .replaceAll("10", "X").replaceAll("9", "IX")
-                        .replaceAll("8", "VIII").replaceAll("7", "VII")
-                        .replaceAll("6", "VI").replaceAll("5", "V")
-                        .replaceAll("4", "IV").replaceAll("3", "III")
-                        .replaceAll("2", "II").replaceAll("1", "I") ;
 
-                maps = text.split("\\s+");
+            if (m.group(1) == null && m.group(2) == null)
+                maps.addAll(classicMaps);
+            else if (m.group(2) != null){
+                String[] text = m.group(2).trim().toUpperCase().split("\\s+");
+                for(String value : text){
+                    value = getNumberValue(value);
+                    if (value != null)
+                        maps.add(value);
+                }
+            }
+            else {
+                new BadUseCommandDiscordException().throwException(message, this);
+                return false;
             }
 
-            int random = new Random().nextInt(maps.length);
+            if (m.group(1) == null && maps.isEmpty()){
+                new BadUseCommandDiscordException().throwException(message, this);
+                return false;
+            }
+            else if (m.group(1) != null){
+                classicMaps.removeAll(maps);
+                maps = classicMaps;
+            }
 
-            Message.sendText(message.getChannel(), "Le combat aura lieu sur la carte "
-                    + maps[random] + " !"
-                    + "\n" + urls.get(maps[random]));
+            String number = maps.get(new Random().nextInt(maps.size()));
+            String url = Constants.turnamentMapImg.replace("{number}", number);
+
+            String[] punchlines = Constants.mapPunchlines.split(";");
+            String punchline = punchlines[new Random().nextInt(punchlines.length)];
+            EmbedBuilder builder = new EmbedBuilder();
+
+            builder.withTitle("Carte " + numberToRoman(number));
+            builder.withDescription(punchline);
+            builder.withImage(url);
+            builder.withColor(new Random().nextInt(16777216));
+            builder.withImage(url);
+
+            Message.sendEmbed(message.getChannel(), builder.build());
         }
         return false;
     }
@@ -91,6 +89,73 @@ public class MapCommand extends AbstractCommand{
     public String helpDetailed(String prefixe) {
         return help(prefixe)
                 + "\n" + prefixe + "`"  + name + "` : tire une carte du Goultarminator entre I et XVII compris."
-                + "\n" + prefixe + "`"  + name + " `*`map1 map2 ...`* : tire une carte parmi celles spécifiées en paramètre. Nombres romains ou numériques uniquement.\n";
+                + "\n" + prefixe + "`"  + name + " `*`map1 map2 ...`* : tire une carte parmi celles spécifiées en paramètre. Nombres romains ou numériques uniquement."
+                + "\n" + prefixe + "`"  + name + " -ban `*`map1 map2 ...`* : tire une carte parmi celles non-spécifiées en paramètre. Nombres romains ou numériques uniquement.\n";
+    }
+
+    private static String numberToRoman(String num) {
+        try {
+            int number = Integer.parseInt(num);
+            String roman = "";
+
+            if (number < 1 || number > 3999)
+                return null;
+
+            while (number > 0) {
+                int maxFound = 0;
+                for (int i = 0; i < decimal.length; i++)
+                    if (number >= decimal[i])
+                        maxFound = i;
+
+                roman += letters[maxFound];
+                number -= decimal[maxFound];
+            }
+
+            return roman;
+        } catch(NumberFormatException e){
+            return null;
+        }
+    }
+
+    public static String getNumberValue(String value)
+    {
+        value = value.trim().toUpperCase();
+        if (value.equals("I") || value.equals("1"))
+            return "1";
+        else if (value.equals("I") || value.equals("1"))
+            return "1";
+        else if (value.equals("II") || value.equals("2"))
+            return "2";
+        else if (value.equals("III") || value.equals("3"))
+            return "3";
+        else if (value.equals("IV") || value.equals("4"))
+            return "4";
+        else if (value.equals("V") || value.equals("5"))
+            return "5";
+        else if (value.equals("VI") || value.equals("6"))
+            return "6";
+        else if (value.equals("VII") || value.equals("7"))
+            return "7";
+        else if (value.equals("VIII") || value.equals("8"))
+            return "8";
+        else if (value.equals("IX") || value.equals("9"))
+            return "9";
+        else if (value.equals("X") || value.equals("10"))
+            return "10";
+        else if (value.equals("XI") || value.equals("11"))
+            return "11";
+        else if (value.equals("XII") || value.equals("12"))
+            return "12";
+        else if (value.equals("XIII") || value.equals("13"))
+            return "13";
+        else if (value.equals("XIV") || value.equals("14"))
+            return "14";
+        else if (value.equals("XV") || value.equals("15"))
+            return "15";
+        else if (value.equals("XVI") || value.equals("16"))
+            return "16";
+        else if (value.equals("XVII") || value.equals("17"))
+            return "17";
+        return null;
     }
 }

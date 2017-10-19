@@ -120,6 +120,8 @@ public class Constants {
      */
     public final static String sweetPortals = "http://www.sweet.ovh/portails/";
 
+    public final static String turnamentMapImg = "https://dofus-tournaments.fr/_default/src/img/maps/A{number}.jpg";
+
     /**
      * Twitter Icon from Wikipedia
      */
@@ -187,4 +189,21 @@ public class Constants {
             + "\nSi vous avez des questions, des suggestions ou que vous souhaitez juste "
             + "passer un coucou, rejoignez le discord de " + name
             + " : " + discordInvite + "\nPromis, on ne mord pas ! :yum:";
+
+    public final static String mapPunchlines = "Ah ! Dommage :smirk:"
+            + ";Oh! Ça promet :joy:"
+            + ";CHAMPAGNE ! :champagne:"
+            + ";Hihi :relaxed:"
+            + ";Ça va chier. :sunglasses:"
+            + ";Bon chance. BIIIIIIIIIP BIIIIIIIP :telephone_receiver:"
+            + ";Ouuuh ! L'équipe rouge va prendre teeeeeellement cher ! :open_mouth:"
+            + ";C'est tout simplement une hallucination collective ! :dizzy_face:"
+            + ";Après ce tirage, faudra pas venir bégayer Equipe bleue ! :kissing:"
+            + ";Ce combat va être sale ! :underage:"
+            + ";Critiquez pas trop mon tirage, si vous continuez je sors la carte IX en boucle."
+            + ";C'est moi ou ça sent le melon là ? :melon:"
+            + ";Oh non c'est pas vrai... Ça va encore durer plus d'une heure... :weary:"
+            + ";Challenge : Statue. Comment ça *noon* ? Oh allez, pour le beau jeu ! :relieved:"
+            + ";J'voulais sortir une chouette carte, et puis je me suis rappelé que les participants ne la méritaient pas. :rolling_eyes:";
+
 }
