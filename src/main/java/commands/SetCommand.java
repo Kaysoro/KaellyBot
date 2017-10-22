@@ -50,7 +50,7 @@ public class SetCommand extends AbstractCommand{
                 BestMatcher matcher = new BestMatcher(normalName);
 
                 try {
-                    matcher.evaluateAll(getListSetFrom(getSearchURL(normalName), message));
+                    matcher.evaluateAll(getListSetFrom(getSearchURL(editedName), message));
 
                     if (matcher.isUnique()) { // We have found it !
                         Embedded set = Set.getSet(Constants.officialURL + matcher.getBest().getRight());
@@ -106,7 +106,7 @@ public class SetCommand extends AbstractCommand{
     }
 
     private String removeUselessWords(String search){
-        return search.replaceAll("\\s+\\w{1,3}\\s+", " ");
+        return search.replaceAll("\\s+\\w{1,2}\\s+", " ").replaceAll("panoplie", "");
     }
 
     @Override
