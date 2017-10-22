@@ -46,7 +46,7 @@ public class DistanceCommand extends AbstractCommand{
                 }
 
                 st.append("Zaap le plus proche (à vol d'oiseau) : ").append(zaap.toString());
-                if (minDist < minDistLimited)
+                if (minDist > minDistLimited)
                     st.append("\nTransport privé le plus proche (à vol d'oiseau) : ").append(transportLimited.toString());
             }
             else {

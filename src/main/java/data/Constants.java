@@ -204,6 +204,9 @@ public class Constants {
             + ";C'est moi ou ça sent le melon là ? :melon:"
             + ";Oh non c'est pas vrai... Ça va encore durer plus d'une heure... :weary:"
             + ";Challenge : Statue. Comment ça *noon* ? Oh allez, pour le beau jeu ! :relieved:"
-            + ";J'voulais sortir une chouette carte, et puis je me suis rappelé que les participants ne la méritaient pas. :rolling_eyes:";
+            + ";J'voulais sortir une chouette carte, et puis je me suis rappelé que les participants ne la méritaient pas. :rolling_eyes:"
+            + ";Mmmmmmh, mais c'est l'odeur de la boucherie ça ! :horse:"
+            + ";Bienvenue en enfer :smiling_imp:"
+            + ";Morts en perspective ! :skull:";
 
 }
