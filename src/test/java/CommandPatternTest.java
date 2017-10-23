@@ -177,14 +177,6 @@ public class CommandPatternTest extends TestCase {
         assertFalse(pattern.matcher(Constants.prefixCommand + "rss").find());
     }
 
-    public void testRule34Command(){
-        Command cmd = new Rule34Command();
-        Pattern pattern = Pattern.compile("^" + Constants.prefixCommand + cmd.getName() + cmd.getPattern() + "$");
-
-        assertFalse(pattern.matcher(Constants.prefixCommand + "rule34").find());
-        assertTrue(pattern.matcher(Constants.prefixCommand + "rule34 dofus").find());
-    }
-
     public void testSetCommand(){
         Command cmd = new SetCommand();
         Pattern pattern = Pattern.compile("^" + Constants.prefixCommand + cmd.getName() + cmd.getPattern() + "$");
