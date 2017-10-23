@@ -40,7 +40,7 @@ public abstract class AbstractCommand implements Command {
         boolean isFound = m.find();
 
         // Caché si la fonction est désactivée/réservée aux admin et que l'auteur n'est pas super-admin
-        if ((! isPublic() || isAdmin()) && ! message.getAuthor().getStringID().equals(Constants.author))
+        if ((! isPublic() || isAdmin()) && message.getAuthor().getLongID() != Constants.authorId)
             return false;
 
         // La commande est trouvée
@@ -51,7 +51,7 @@ public abstract class AbstractCommand implements Command {
                 return false;
             }
             // Mais est désactivée par la guilde
-            else if (! message.getChannel().isPrivate() && ! message.getAuthor().getStringID().equals(Constants.author)
+            else if (! message.getChannel().isPrivate() && message.getAuthor().getLongID() != Constants.authorId
                 && isForbidden(Guild.getGuilds().get(message.getGuild().getStringID()))) {
                 new CommandForbiddenDiscordException().throwException(message, this);
                 return false;

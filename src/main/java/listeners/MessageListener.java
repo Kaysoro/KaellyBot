@@ -21,7 +21,7 @@ public class MessageListener {
         public void onReady(MessageReceivedEvent event) {
             ClientConfig.setSentryContext(event.getGuild(), event.getAuthor(), event.getChannel(), event.getMessage());
 
-            // If the author is a bot, message get ignored
+            // If the authorId is a bot, message get ignored
             if (! event.getMessage().getAuthor().isBot())
                 for(Command command : CommandManager.getCommands())
                     command.request(event.getMessage());

@@ -89,7 +89,7 @@ public class CommandCommand extends AbstractCommand{
     @Override
     public String helpDetailed(String prefixe) {
         return help(prefixe)
-                + "\n" + prefixe + "`"  + name + "*CommandForbidden* true` : autorise l'utilisation de *CommandForbidden*. Fonctionne aussi avec \"on\" et \"0\"."
-                + "\n" + prefixe + "`"  + name + "*CommandForbidden* false` : masque *CommandForbidden* et la rend inutilisable. Fonctionne aussi avec \"off\" et \"1\".\n";
+                + "\n" + prefixe + "`"  + name + " *CommandForbidden* true` : autorise l'utilisation de *CommandForbidden*. Fonctionne aussi avec \"on\" et \"0\"."
+                + "\n" + prefixe + "`"  + name + " *CommandForbidden* false` : masque *CommandForbidden* et la rend inutilisable. Fonctionne aussi avec \"off\" et \"1\".\n";
     }
 }

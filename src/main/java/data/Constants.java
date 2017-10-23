@@ -18,9 +18,19 @@ public class Constants {
     public final static String version = "1.4.3";
 
     /**
-     * Author
+     * Author id
      */
-    public final static String author = "162842827183751169";
+    public final static long authorId = 162842827183751169L;
+
+    /**
+     * Author name
+     */
+    public final static String authorName = "Kaysoro#8327";
+
+    /**
+     * Author avatar
+     */
+    public final static String authorAvatar = "https://avatars0.githubusercontent.com/u/5544670?s=460&v=4";
 
     /**
      * URL for github KaellyBot repository
@@ -31,6 +41,11 @@ public class Constants {
      * Official link invite
      */
     public final static String invite = "https://discordapp.com/oauth2/authorize?&client_id=202916641414184960&scope=bot";
+
+    /**
+     * Official paypal link
+     */
+    public final static String paypal = "https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=89WTL4LXRZK98";
 
     /**
      * Database name
@@ -159,6 +174,11 @@ public class Constants {
     public final static long chanReportID = 321197720629149698L;
 
     /**
+     * Official changelog
+     */
+    public final static long newsChan = 330475075381886976L;
+
+    /**
      * Message sent when joining a new guild
      */
     public final static String msgJoinGuild = "Salut et merci pour l'invitation ! Moi c'est " + name
@@ -180,15 +200,6 @@ public class Constants {
      */
     public final static String discordInvite = "https://discord.gg/VsrbrYC";
 
-    /**
-     * Message for about Kaelly command
-     */
-    public final static String about = name + " est destinée à fournir des commandes utiles à la "
-            + "communauté de dofus !\nL'intégralité de son code est libre d'accès et est disponible ici : " + git
-            + "\nVous souhaitez ajouter " + name + " sur l'un de vos serveurs ? Utilisez ce lien : " + invite
-            + "\nSi vous avez des questions, des suggestions ou que vous souhaitez juste "
-            + "passer un coucou, rejoignez le discord de " + name
-            + " : " + discordInvite + "\nPromis, on ne mord pas ! :yum:";
 
     public final static String mapPunchlines = "Ah ! Dommage :smirk:"
             + ";Oh! Ça promet :joy:"

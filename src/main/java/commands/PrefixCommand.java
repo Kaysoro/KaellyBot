@@ -62,6 +62,6 @@ public class PrefixCommand extends AbstractCommand{
     public String helpDetailed(String prefixe) {
         return help(prefixe)
                 + "\n" + prefixe + "`"  + name + " `*`prefixe`* : change le préfixe par celui passé en paramètre. "
-                + Constants.prefixeLimit + " maximum.\n";
+                + Constants.prefixeLimit + " caractères maximum.\n";
     }
 }
