@@ -16,7 +16,8 @@ public class TwitterListener extends StatusAdapter {
         for (TwitterFinder twitterFinder : TwitterFinder.getTwitterChannels().values())
             // In case if channel didn't exist anymore and it is not removed at time
             if (TwitterFinder.getTwitterChannels().containsKey(twitterFinder.getChannelId())){
-                if (status.getUser().getId() == Constants.dofusTwitter && status.getInReplyToScreenName() == null) {
+                if (status.getUser().getId() == Constants.dofusTwitter && (status.getInReplyToScreenName() == null
+                || status.getInReplyToUserId() == Constants.dofusTwitter)) {
                     EmbedBuilder builder = new EmbedBuilder();
 
                     builder.withAuthorName("@" + status.getUser().getScreenName());

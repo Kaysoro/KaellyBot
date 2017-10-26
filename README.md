@@ -81,10 +81,6 @@ Autorise ou non Kaelly à poster du contenu RSS dans un salon.
 `!rss true` : poste les news à partir du flux RSS de Dofus.com. Fonctionne aussi avec `on` et `0`.  
 `!rss false` : ne poste plus les flux RSS dans le salon. Fonctionne aussi avec `off` et `1`.  
 
-### Rule34 (NSFW)
-Poste des images sexuellement explicite.  
-`!rule34 tag1 tag2 ...` : poste du contenu sexuellement explicite (NSFW) avec les tags précisés.  
-
 ### Server
 Permet de déterminer à quel serveur Dofus correspond ce serveur Discord.  
 `!server` : affiche le serveur Dofus rattaché au serveur Discord.  
