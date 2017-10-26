@@ -40,6 +40,7 @@ public class ItemCommand extends AbstractCommand{
     private final static String forLevelMax = "object_level_max=";
     private final static String levelMax = "200";
     private final static String and = "EFFECTMAIN_and_or=AND";
+    private final static String size = "size=";
 
     public ItemCommand(){
         super("item", "\\s+(-more)?(.*)");
@@ -109,7 +110,8 @@ public class ItemCommand extends AbstractCommand{
                 .append("?").append(forName.toLowerCase()).append(URLEncoder.encode(text, "UTF-8"))
                 .append("&").append(forName.toUpperCase()).append(URLEncoder.encode(text, "UTF-8"))
                 .append("&").append(and).append("&").append(forLevelMin).append(levelMin)
-                .append("&").append(forLevelMax).append(levelMax).append("&").append(and);
+                .append("&").append(forLevelMax).append(levelMax).append("&").append(and)
+                .append("&").append(size).append(50);
 
         if (typeArg != null && ! typeArg.isEmpty())
             url.append(typeArg);
