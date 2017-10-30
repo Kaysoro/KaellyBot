@@ -1,5 +1,6 @@
 package util;
 
+import enums.Language;
 import sx.blah.discord.handle.obj.Permissions;
 
 import java.util.HashMap;
@@ -47,5 +48,11 @@ public class Translator {
             frenchPermissions.put(Permissions.MANAGE_EMOJIS, "Gérer les émojis");
         }
         return frenchPermissions.get(p);
+    }
+
+    public static Language detectLanguage(String source){
+        Language result = Language.EN;
+        //TODO
+        return result;
     }
 }

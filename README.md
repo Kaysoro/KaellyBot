@@ -70,6 +70,11 @@ Commande tirant des valeurs aléatoires.
 `!rdm nombre` : tire une valeur entre 0 et nombre.  
 `!rdm valeur1 valeur2 ...` : tire une valeur parmi celles spécifiées en paramètre.  
 
+### Resource
+Renvoie les statistiques d'une ressource du jeu Dofus.  
+`!resource resource` : renvoie les statistiques de la ressource spécifiée : son nom peut être approximatif s'il est suffisamment précis.    
+`!resource -more resource` : renvoie les statistiques détaillés de la ressource spécifiée.  
+
 ### Right
 Gère les droits d'administration de Kaelly.  
 `!right` : donne le niveau d'administration de l'auteur de la requête.  

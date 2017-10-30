@@ -204,6 +204,16 @@ public class CommandPatternTest extends TestCase {
         assertTrue(pattern.matcher(Constants.prefixCommand + "sound dofus").find());
     }
 
+    public void testResourceCommand(){
+        Command cmd = new ResourceCommand();
+        Pattern pattern = Pattern.compile("^" + Constants.prefixCommand + cmd.getName() + cmd.getPattern() + "$");
+
+        assertTrue(pattern.matcher(Constants.prefixCommand + "resource test").find());
+        assertTrue(pattern.matcher(Constants.prefixCommand + "resource tést test").find());
+        assertTrue(pattern.matcher(Constants.prefixCommand + "resource -more tést test").find());
+        assertFalse(pattern.matcher(Constants.prefixCommand + "resource").find());
+    }
+
     public void testRandomCommand(){
         Command cmd = new RandomCommand();
         Pattern pattern = Pattern.compile("^" + Constants.prefixCommand + cmd.getName() + cmd.getPattern() + "$");

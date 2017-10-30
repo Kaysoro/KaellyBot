@@ -121,6 +121,32 @@ public class Constants {
     public final static String setPageURL = "/fr/mmorpg/encyclopedie/panoplies";
 
     /**
+     * Official Dofus URL for Haven Bag page
+     */
+    public static String havenBagPageURL = "/fr/mmorpg/encyclopedie/havres-sacs";
+    /**
+     * Official Dofus URL for Harness page
+     */
+    public static String harnessPageURL = "/fr/mmorpg/encyclopedie/harnachements";
+
+    /**
+     * Official Dofus URL for Idol page
+     */
+    public static String idolPageURL = "/fr/mmorpg/encyclopedie/idoles";
+
+    /**
+     * Official Dofus URL for Consumable page
+     */
+    public static String consumablePageURL = "/fr/mmorpg/encyclopedie/consommables";
+
+    /**
+     * Official Dofus URL for Resource page
+     */
+    public static String resourcePageURL = "/fr/mmorpg/encyclopedie/ressources";
+
+
+
+    /**
      * Tutorial URL
      */
     public final static String dofusPourLesNoobURL = "http://www.dofuspourlesnoobs.com";
@@ -219,5 +245,4 @@ public class Constants {
             + ";Mmmmmmh, mais c'est l'odeur de la boucherie ça ! :horse:"
             + ";Bienvenue en enfer :smiling_imp:"
             + ";Morts en perspective ! :skull:";
-
 }
