@@ -22,7 +22,7 @@ public class PortalCommand extends AbstractCommand{
     private final static Logger LOG = LoggerFactory.getLogger(PortalCommand.class);
 
     public PortalCommand(){
-        super("pos", "(\\s+-reset)?(\\s+\\p{L}+)?(\\s+\\[?(-?\\d{1,2})\\s*[,|\\s]\\s*(-?\\d{1,2})\\]?)?(\\s+\\d{1,3})?");
+        super("pos", "(\\s+\\p{L}+)?(\\s+\\[?(-?\\d{1,2})\\s*[,|\\s]\\s*(-?\\d{1,2})\\]?)?(\\s+\\d{1,3})?");
         setUsableInMP(false);
     }
 
@@ -31,23 +31,19 @@ public class PortalCommand extends AbstractCommand{
         if (super.request(message)) {
             Matcher m = getMatcher(message);
             m.find();
-            if (m.group(1) == null && m.group(2) == null && m.group(6) == null) { // No dimension precised
+            if (m.group(1) == null && m.group(5) == null) { // No dimension precised
                 for(Portal pos : Guild.getGuilds().get(message.getGuild().getStringID()).getPortals())
                         Message.sendEmbed(message.getChannel(), pos.getEmbedObject());
             }
             else {
                 List<Portal> portals = new ArrayList<>();
-                if (m.group(2) != null)
-                    portals = getPortal(m.group(2), Guild.getGuilds().get(message.getGuild().getStringID()));
+                if (m.group(1) != null)
+                    portals = getPortal(m.group(1), Guild.getGuilds().get(message.getGuild().getStringID()));
                 if (portals.size() == 1) {
-                    if (m.group(1) != null && m.group(1).matches("\\s+-reset"))
-                        portals.get(0).reset();
-                    else {
-                        if (m.group(3) != null)
-                            portals.get(0).setCoordonate(Position.parse("[" + m.group(4) + "," + m.group(5) + "]"));
-                        if (m.group(6) != null)
-                          portals.get(0).setUtilisation(Integer.parseInt(m.group(6).replaceAll("\\s", "")));
-                    }
+                    if (m.group(2) != null)
+                        portals.get(0).setCoordonate(Position.parse("[" + m.group(3) + "," + m.group(4) + "]"));
+                    if (m.group(5) != null)
+                        portals.get(0).setUtilisation(Integer.parseInt(m.group(5).replaceAll("\\s", "")));
 
                     Message.sendEmbed(message.getChannel(), portals.get(0).getEmbedObject());
                 }
@@ -86,7 +82,7 @@ public class PortalCommand extends AbstractCommand{
                 + "\n" + prefixe + "`"  + name + " `*`dimension`* : donne la position du portail de la dimension désirée."
                 + "\n" + prefixe + "`"  + name + " `*`dimension`*` [POS, POS]` : met à jour la position du portail de la dimension spécifiée."
                 + "\n" + prefixe + "`"  + name + " `*`dimension`*` [POS, POS] `*`nombre d'uti.`* : met à jour la position et le nombre d'utilisations"
-                + " de la dimension spécifiée."
-                + "\n" + prefixe + "`"  + name + " -reset `*`dimension`* : supprime les informations de la dimension spécifiée.\n";
+                + " de la dimension spécifiée. 0 en tant que nombre d'utilisation réinitialise le portail de la dimension spécifiée."
+                + "\n" + prefixe + "`"  + name + " `*`dimension` `nombre d'uti.`* : met à jour le nombre d'utilisation.\n";
     }
 }

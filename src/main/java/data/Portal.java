@@ -172,6 +172,8 @@ public class Portal implements Embedded{
         this.utilisation = utilisation;
         this.lastUpdate = lastUpdate;
 
+        if (utilisation == 0)
+            reset();
         Connexion connexion = Connexion.getInstance();
         Connection connection = connexion.getConnection();
 

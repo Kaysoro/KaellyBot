@@ -121,7 +121,6 @@ public class CommandPatternTest extends TestCase {
 
         assertTrue(pattern.matcher(Constants.prefixCommand + "pos").find());
         assertTrue(pattern.matcher(Constants.prefixCommand + "pos dimension").find());
-        assertTrue(pattern.matcher(Constants.prefixCommand + "pos -reset dimension").find());
         assertTrue(pattern.matcher(Constants.prefixCommand + "pos dimensiôn").find());
         assertTrue(pattern.matcher(Constants.prefixCommand + "pos dimension [1,-1]").find());
         assertTrue(pattern.matcher(Constants.prefixCommand + "pos dimension -1 1").find());

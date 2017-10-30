@@ -57,8 +57,8 @@ Renvoie les statistiques d'un monstre du jeu Dofus.
 Gère les positions de portails de dimension.  
 `!pos dimension` : donne la position du portail de la dimension désirée.  
 `!pos dimension [POS, POS]` : met à jour la position du portail de la dimension spécifiée.  
-`!pos dimension [POS, POS] nombre d'utilisations` : met à jour la position et le nombre d'utilisations de la dimension spécifiée.  
-`!pos -reset dimension` : supprime les informations de la dimension spécifiée.  
+`!pos dimension [POS, POS] nombre d'utilisations` : met à jour la position et le nombre d'utilisations de la dimension spécifiée. Indiquer 0 en nombre d'utilisations permet de réinitialiser le portail.  
+`!pos dimension nombre d'utilisations` : met à jour le nombre d'utilisations de la dimension spécifiée.  
 
 ### Prefix
 Change le préfixe utilisé pour invoquer une commande. Niveau modérateur minimum requis.  
