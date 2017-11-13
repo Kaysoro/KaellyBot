@@ -1,6 +1,7 @@
 package listeners;
 
 import commands.*;
+import exceptions.UnknownErrorDiscordException;
 import util.ClientConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,6 +25,10 @@ public class MessageListener {
             // If the authorId is a bot, message get ignored
             if (! event.getMessage().getAuthor().isBot())
                 for(Command command : CommandManager.getCommands())
-                    command.request(event.getMessage());
+                    try {
+                        command.request(event.getMessage());
+                    } catch (Exception e){
+                        new UnknownErrorDiscordException().throwException(event.getMessage(), command);
+                    }
         }
 }

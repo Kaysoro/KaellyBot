@@ -22,11 +22,10 @@ public class UserLeaveListener {
         public void onReady(UserLeaveEvent event) {
             ClientConfig.setSentryContext(event.getGuild(), event.getUser(), null, null);
             User user = User.getUsers().get(event.getGuild().getStringID()).get(event.getUser().getStringID());
-            if (user != null) {
+            if (user != null)
                 user.removeToDatabase();
 
-                LOG.info("L'utilisateur " + user.getId() + " - " + user.getName() + " a quitté "
-                        + event.getGuild().getName());
-            }
+            LOG.info("L'utilisateur " + user.getId() + " - " + user.getName() + " a quitté "
+                    + event.getGuild().getName());
         }
 }
