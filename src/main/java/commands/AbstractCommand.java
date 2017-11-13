@@ -52,7 +52,7 @@ public abstract class AbstractCommand implements Command {
             }
             // Mais est désactivée par la guilde
             else if (! message.getChannel().isPrivate() && message.getAuthor().getLongID() != Constants.authorId
-                && isForbidden(Guild.getGuilds().get(message.getGuild().getStringID()))) {
+                && isForbidden(Guild.getGuild(message.getGuild()))) {
                 new CommandForbiddenDiscordException().throwException(message, this);
                 return false;
             }
@@ -79,14 +79,14 @@ public abstract class AbstractCommand implements Command {
     public String getPrefix(IMessage message){
         String prefix = "";
         if (! message.getChannel().isPrivate())
-            prefix = Guild.getGuilds().get(message.getGuild().getStringID()).getPrefixe();
+            prefix = Guild.getGuild(message.getGuild()).getPrefixe();
         return prefix;
     }
 
     protected String getPrefixMdEscaped(IMessage message){
         String prefix = "";
         if (! message.getChannel().isPrivate())
-            prefix = Guild.getGuilds().get(message.getGuild().getStringID()).getPrefixe();
+            prefix = Guild.getGuild(message.getGuild()).getPrefixe();
         prefix = prefix.replaceAll("\\*", "\\\\*") // Italic & Bold
                 .replaceAll("_", "\\_")          // Underline
                 .replaceAll("~", "\\~")          //Strike

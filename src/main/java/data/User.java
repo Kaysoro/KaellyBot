@@ -2,6 +2,8 @@ package data;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import sx.blah.discord.handle.obj.IGuild;
+import sx.blah.discord.handle.obj.IUser;
 import util.ClientConfig;
 import util.Connexion;
 
@@ -44,7 +46,7 @@ public class User {
 
     public void addToDatabase() {
         if (!getUsers().containsKey(guild.getId())) {
-            getUsers().put(guild.getId(), new HashMap<>());
+            getUsers().put(guild.getId(), new ConcurrentHashMap<>());
         }
 
         if (! getUsers().get(guild.getId()).containsKey(id)){
@@ -173,6 +175,22 @@ public class User {
         }
 
         return users;
+    }
+
+    public static User getUser(IGuild guild, IUser discordUser){
+       return getUser(guild, discordUser, true);
+    }
+
+    public static User getUser(IGuild discordGuild, IUser discordUser, boolean forceCache){
+        Guild guild = Guild.getGuild(discordGuild);
+        User user = getUsers().get(guild.getId()).get(discordUser.getStringID());
+
+        if (user == null && forceCache){
+            user = new User(discordUser.getStringID(), discordUser.getDisplayName(discordGuild), guild);
+            user.addToDatabase();
+        }
+
+        return user;
     }
 
     public int getRights() {

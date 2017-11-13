@@ -30,8 +30,8 @@ public class ServerCommand extends AbstractCommand{
     @Override
     public boolean request(IMessage message) {
         if (super.request(message)) {
-            User author = User.getUsers().get(message.getGuild().getStringID()).get(message.getAuthor().getStringID());
-            Guild guild = Guild.getGuilds().get(message.getGuild().getStringID());
+            User author = User.getUser(message.getGuild(), message.getAuthor());
+            Guild guild = Guild.getGuild(message.getGuild());
             Matcher m = getMatcher(message);
             m.find();
             if (m.group(1) != null)

@@ -32,13 +32,13 @@ public class PortalCommand extends AbstractCommand{
             Matcher m = getMatcher(message);
             m.find();
             if (m.group(1) == null && m.group(5) == null) { // No dimension precised
-                for(Portal pos : Guild.getGuilds().get(message.getGuild().getStringID()).getPortals())
+                for(Portal pos : Guild.getGuild(message.getGuild()).getPortals())
                         Message.sendEmbed(message.getChannel(), pos.getEmbedObject());
             }
             else {
                 List<Portal> portals = new ArrayList<>();
                 if (m.group(1) != null)
-                    portals = getPortal(m.group(1), Guild.getGuilds().get(message.getGuild().getStringID()));
+                    portals = getPortal(m.group(1), Guild.getGuild(message.getGuild()));
                 if (portals.size() == 1) {
                     if (m.group(2) != null)
                         portals.get(0).setCoordonate(Position.parse("[" + m.group(3) + "," + m.group(4) + "]"));

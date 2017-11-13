@@ -21,7 +21,7 @@ public class UserLeaveListener {
         @EventSubscriber
         public void onReady(UserLeaveEvent event) {
             ClientConfig.setSentryContext(event.getGuild(), event.getUser(), null, null);
-            User user = User.getUsers().get(event.getGuild().getStringID()).get(event.getUser().getStringID());
+            User user = User.getUser(event.getGuild(), event.getUser(), false);
             if (user != null)
                 user.removeToDatabase();
 

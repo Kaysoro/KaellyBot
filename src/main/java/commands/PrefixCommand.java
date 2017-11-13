@@ -28,7 +28,7 @@ public class PrefixCommand extends AbstractCommand{
     public boolean request(IMessage message) {
         if (super.request(message)) {
 
-            User author = User.getUsers().get(message.getGuild().getStringID()).get(message.getAuthor().getStringID());
+            User author = User.getUser(message.getGuild(), message.getAuthor());
 
             if (author.getRights() >= User.RIGHT_MODERATOR) {
                 Matcher m = getMatcher(message);
@@ -36,7 +36,7 @@ public class PrefixCommand extends AbstractCommand{
                 String newPrefix = m.group(1).trim();
 
                 if (newPrefix.length() >= 1 && newPrefix.length() <= Constants.prefixeLimit) {
-                    Guild.getGuilds().get(message.getGuild().getStringID()).setPrefixe(newPrefix);
+                    Guild.getGuild(message.getGuild()).setPrefixe(newPrefix);
                     Message.sendText(message.getChannel(), "Changement réussi. Pour invoquer une commande, "
                             + "il faudra désormais utiliser le préfixe " + getPrefixMdEscaped(message) + ".");
                     Message.sendText(message.getGuild().getOwner().getOrCreatePMChannel(), "RÉCAPITULATIF : "

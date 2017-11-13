@@ -24,9 +24,8 @@ public class UserJoinListener {
             ClientConfig.setSentryContext(event.getGuild(), event.getUser(), null, null);
             String id = event.getUser().getStringID();
             String name = event.getUser().getDisplayName(event.getGuild());
-            String guildId = event.getGuild().getStringID();
 
-            User user = new User(id, name, Guild.getGuilds().get(guildId));
+            User user = new User(id, name, Guild.getGuild(event.getGuild()));
             user.addToDatabase();
             LOG.info("L'utilisateur " + user.getId() + " - " + user.getName() + " a rejoint "
                     + event.getGuild().getName());

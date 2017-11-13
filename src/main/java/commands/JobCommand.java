@@ -47,8 +47,7 @@ public class JobCommand extends AbstractCommand{
 
                 if (jobs.size() == 1) {
                     if (m.group(3) != null) { // setting data
-                        User author = User.getUsers().get(message.getGuild().getStringID())
-                                .get(message.getAuthor().getStringID());
+                        User author = User.getUser(message.getGuild(), message.getAuthor());
                         int level = Integer.parseInt(m.group(3).replaceAll("\\W+", ""));
                         if (!author.getJobs().containsKey(jobs.get(0)))
                             new Job(jobs.get(0), level, author).addToDatabase();
@@ -63,12 +62,13 @@ public class JobCommand extends AbstractCommand{
                             Message.sendText(message.getChannel(), author.getName()
                                     + " n'est plus inscrit dans l'annuaire en tant que " + jobs.get(0) + ".");
                     } else { // Consultation
-                        Map<String, User> users = User.getUsers().get(message.getGuild().getStringID());
                         List<User> artisans = new ArrayList<>();
 
-                        for (IUser iUser : message.getGuild().getUsers())
-                            if (users.get(iUser.getStringID()).getJob(jobs.get(0)) > 0)
-                                artisans.add(users.get(iUser.getStringID()));
+                        for (IUser iUser : message.getGuild().getUsers()) {
+                            User user = User.getUser(message.getGuild(), iUser);
+                            if (user.getJob(jobs.get(0)) > 0)
+                                artisans.add(user);
+                        }
 
                         artisans.sort((User o1, User o2)->{
                                 if (o2.getJob(jobs.get(0)) != o1.getJob(jobs.get(0)))
@@ -104,8 +104,7 @@ public class JobCommand extends AbstractCommand{
                     new JobNotFoundDiscordException().throwException(message, this);
             }
             else if (m.group(3) != null){ // add all jobs for the user
-                User author = User.getUsers().get(message.getGuild().getStringID())
-                        .get(message.getAuthor().getStringID());
+                User author = User.getUser(message.getGuild(), message.getAuthor());
                 int level = Integer.parseInt(m.group(3).replaceAll("\\W+", ""));
 
                 for(String job : Job.getJobs()) {

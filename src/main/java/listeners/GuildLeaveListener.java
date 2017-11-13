@@ -26,32 +26,35 @@ public class GuildLeaveListener {
         @EventSubscriber
         public void onReady(GuildLeaveEvent event) {
             ClientConfig.setSentryContext(event.getGuild(), null, null, null);
-            Guild.getGuilds().get(event.getGuild().getStringID()).removeToDatabase();
+            Guild guild = Guild.getGuild(event.getGuild(), false);
+            if (guild != null) {
+                guild.removeToDatabase();
 
-            LOG.info("La guilde " + event.getGuild().getStringID() + " - " + event.getGuild().getName()
-                    + " a supprimé " + Constants.name);
+                LOG.info("La guilde " + event.getGuild().getStringID() + " - " + event.getGuild().getName()
+                        + " a supprimé " + Constants.name);
 
-            for (RSSFinder finder : RSSFinder.getRSSFinders().values()) {
-                IChannel chan = event.getGuild().getChannelByID(Long.parseLong(finder.getChan()));
-                if (chan != null && chan.isDeleted()) {
-                    finder.removeToDatabase();
-                    LOG.info("RSS Chan \"" + chan.getName() + "\"");
+                for (RSSFinder finder : RSSFinder.getRSSFinders().values()) {
+                    IChannel chan = event.getGuild().getChannelByID(Long.parseLong(finder.getChan()));
+                    if (chan != null && chan.isDeleted()) {
+                        finder.removeToDatabase();
+                        LOG.info("RSS Chan \"" + chan.getName() + "\"");
+                    }
                 }
-            }
 
-            for (TwitterFinder finder : TwitterFinder.getTwitterChannels().values()) {
-                IChannel chan = event.getGuild().getChannelByID(finder.getChannelId());
-                if (chan != null && chan.isDeleted()) {
-                    finder.removeToDatabase();
-                    LOG.info("Twitter Chan \"" + chan.getName() + "\"");
+                for (TwitterFinder finder : TwitterFinder.getTwitterChannels().values()) {
+                    IChannel chan = event.getGuild().getChannelByID(finder.getChannelId());
+                    if (chan != null && chan.isDeleted()) {
+                        finder.removeToDatabase();
+                        LOG.info("Twitter Chan \"" + chan.getName() + "\"");
+                    }
                 }
-            }
 
-            for (AlmanaxCalendar finder : AlmanaxCalendar.getAlmanaxCalendars().values()) {
-                IChannel chan = event.getGuild().getChannelByID(Long.parseLong(finder.getChan()));
-                if (chan != null && chan.isDeleted()) {
-                    finder.removeToDatabase();
-                    LOG.info("Almanax Chan \"" + chan.getName() + "\"");
+                for (AlmanaxCalendar finder : AlmanaxCalendar.getAlmanaxCalendars().values()) {
+                    IChannel chan = event.getGuild().getChannelByID(Long.parseLong(finder.getChan()));
+                    if (chan != null && chan.isDeleted()) {
+                        finder.removeToDatabase();
+                        LOG.info("Almanax Chan \"" + chan.getName() + "\"");
+                    }
                 }
             }
 

@@ -27,8 +27,7 @@ public class TwitterCommand extends AbstractCommand{
         if (super.request(message)) {
 
             //On check si la personne a bien les droits pour exécuter cette commande
-            if (User.getUsers().get(message.getGuild().getStringID())
-                    .get(message.getAuthor().getStringID()).getRights() >= User.RIGHT_MODERATOR) {
+            if (User.getUser(message.getGuild(), message.getAuthor()).getRights() >= User.RIGHT_MODERATOR) {
                 Matcher m = getMatcher(message);
                 m.find();
                 String value = m.group(1);

@@ -2,6 +2,7 @@ package data;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import sx.blah.discord.handle.obj.IGuild;
 import util.ClientConfig;
 import util.Connexion;
 
@@ -178,6 +179,21 @@ public class Guild {
             }
         }
         return guilds;
+    }
+
+    public static Guild getGuild(IGuild guild){
+        return getGuild(guild, true);
+    }
+
+    public static Guild getGuild(IGuild discordGuild, boolean forceCache){
+        Guild guild = getGuilds().get(discordGuild.getStringID());
+
+        if (guild == null && forceCache){
+            guild = new Guild(discordGuild.getStringID(), discordGuild.getName());
+            guild.addToDatabase();
+        }
+
+        return guild;
     }
 
     public String getId(){

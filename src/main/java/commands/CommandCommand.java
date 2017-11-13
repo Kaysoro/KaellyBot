@@ -28,10 +28,10 @@ public class CommandCommand extends AbstractCommand{
     @Override
     public boolean request(IMessage message) {
         if (super.request(message)) {
-            User author = User.getUsers().get(message.getGuild().getStringID()).get(message.getAuthor().getStringID());
+            User author = User.getUser(message.getGuild(), message.getAuthor());
 
             if (author.getRights() >= User.RIGHT_MODERATOR) {
-                Guild guild = Guild.getGuilds().get(message.getGuild().getStringID());
+                Guild guild = Guild.getGuild(message.getGuild());
                 Matcher m = getMatcher(message);
                 m.find();
                 List<Command> potentialCmds = new ArrayList<>();

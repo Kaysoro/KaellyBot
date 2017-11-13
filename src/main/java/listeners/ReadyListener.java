@@ -44,15 +44,14 @@ public class ReadyListener {
         for(IGuild guild : ClientConfig.DISCORD().getGuilds())
             if (Guild.getGuilds().containsKey(guild.getStringID())) {
                 // La guilde existe déjà : on s'assure de mettre à jour l'ensemble des données durant l'absence.
-                if (!guild.getName().equals(Guild.getGuilds().get(guild.getStringID()).getName()))
-                    Guild.getGuilds().get(guild.getStringID()).setName(guild.getName());
+                if (!guild.getName().equals(Guild.getGuild(guild).getName()))
+                    Guild.getGuild(guild).setName(guild.getName());
 
-                for (IUser user : guild.getUsers())
-                    if (! User.getUsers().get(guild.getStringID()).containsKey(user.getStringID()))
-                        new User(user.getStringID(), user.getDisplayName(guild), User.RIGHT_INVITE,
-                                Guild.getGuilds().get(guild.getStringID())).addToDatabase();
-                    else if (!user.getDisplayName(guild).equals(User.getUsers().get(guild.getStringID()).get(user.getStringID()).getName()))
-                        User.getUsers().get(guild.getStringID()).get(user.getStringID()).setName(user.getDisplayName(guild));
+                for (IUser discordUser : guild.getUsers()){
+                    User user = User.getUser(guild, discordUser);
+                    if (!discordUser.getDisplayName(guild).equals(user.getName()))
+                        user.setName(discordUser.getDisplayName(guild));
+                }
             }
             else // La guilde n'existe pas, on lève un évent pour le prendre en compte !
                 ClientConfig.DISCORD().getDispatcher().dispatch(new GuildCreateEvent(guild));

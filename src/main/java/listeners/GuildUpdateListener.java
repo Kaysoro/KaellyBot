@@ -17,7 +17,7 @@ public class GuildUpdateListener {
     public void onReady(GuildUpdateEvent event) {
         ClientConfig.setSentryContext(event.getGuild(), null, null, null);
         if (! event.getOldGuild().getName().equals(event.getNewGuild().getName())){
-            Guild.getGuilds().get(event.getNewGuild().getStringID()).setName(event.getNewGuild().getName());
+            Guild.getGuild(event.getNewGuild()).setName(event.getNewGuild().getName());
             LOG.info("'" + event.getOldGuild().getName() + "' renommé en '" + event.getNewGuild().getName() + "'");
         }
     }

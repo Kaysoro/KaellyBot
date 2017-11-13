@@ -35,8 +35,7 @@ public class GuildCreateListener {
                     new User(user.getStringID(), user.getDisplayName(event.getGuild()), User.RIGHT_INVITE, guild)
                             .addToDatabase();
 
-                User.getUsers().get(guild.getId()).get(event.getGuild().getOwner().getStringID())
-                        .changeRight(User.RIGHT_ADMIN);
+                User.getUser(event.getGuild(), event.getGuild().getOwner()).changeRight(User.RIGHT_ADMIN);
 
                 LOG.info("La guilde " + guild.getId() + " - " + guild.getName() + " a ajouté " + Constants.name);
 
