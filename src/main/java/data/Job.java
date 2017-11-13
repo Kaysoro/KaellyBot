@@ -10,9 +10,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Created by steve on 12/11/2016.
@@ -93,7 +93,7 @@ public class Job {
     }
 
     public static Map<String, Job> getJobs(User user){
-        Map<String, Job> jobs = new HashMap<>();
+        Map<String, Job> jobs = new ConcurrentHashMap<>();
 
         Connexion connexion = Connexion.getInstance();
         Connection connection = connexion.getConnection();

@@ -22,6 +22,7 @@ import java.text.Normalizer;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -102,7 +103,7 @@ public class Portal implements Embedded{
 
     public static Map<String, Portal> getPortals(){
         if (portals == null){
-            portals = new HashMap<>();
+            portals = new ConcurrentHashMap<>();
 
             Connexion connexion = Connexion.getInstance();
             Connection connection = connexion.getConnection();

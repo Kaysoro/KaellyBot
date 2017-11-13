@@ -12,6 +12,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Created by steve on 07/11/2016.
@@ -35,7 +36,7 @@ public class CommandForbidden {
     }
 
     public static Map<String, CommandForbidden> getForbiddenCommands(Guild g){
-        Map<String, CommandForbidden> commands = new HashMap<>();
+        Map<String, CommandForbidden> commands = new ConcurrentHashMap<>();
 
         Connexion connexion = Connexion.getInstance();
         Connection connection = connexion.getConnection();

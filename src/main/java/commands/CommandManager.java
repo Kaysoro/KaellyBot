@@ -1,9 +1,9 @@
 package commands;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Created by steve on 20/05/2017.
@@ -17,8 +17,8 @@ public class CommandManager {
 
     private CommandManager(){
         super();
-        mapCommands = new HashMap<>();
-        commands = new ArrayList<>();
+        mapCommands = new ConcurrentHashMap<>();
+        commands = new CopyOnWriteArrayList<>();
 
         // Basics commands
         addCommand(new AlmanaxCommand());

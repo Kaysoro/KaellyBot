@@ -6,9 +6,9 @@ import util.ClientConfig;
 import util.Connexion;
 
 import java.sql.*;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Created by steve on 31/07/2016.
@@ -69,7 +69,7 @@ public class Guild {
         portals = Portal.getPortals(this);
 
         if (! User.getUsers().containsKey(id))
-            User.getUsers().put(id, new HashMap<>());
+            User.getUsers().put(id, new ConcurrentHashMap<>());
     }
 
     public void removeToDatabase() {
@@ -152,7 +152,7 @@ public class Guild {
 
     public static Map<String, Guild> getGuilds(){
         if (guilds == null){
-            guilds = new HashMap<>();
+            guilds = new ConcurrentHashMap<>();
             String id;
             String name;
             String prefixe;

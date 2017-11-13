@@ -11,6 +11,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Created by steve on 28/07/2016.
@@ -141,7 +142,7 @@ public class User {
 
     public static Map<String, Map<String, User>> getUsers(){
         if (users == null){
-            users = new HashMap<>();
+            users = new ConcurrentHashMap<>();
 
             String id;
             String name;
