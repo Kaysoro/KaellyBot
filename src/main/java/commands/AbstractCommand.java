@@ -1,12 +1,15 @@
 package commands;
 
+import data.ChannelLanguage;
 import data.Constants;
 import data.Guild;
+import enums.Language;
 import exceptions.BadUseCommandDiscordException;
 import exceptions.CommandForbiddenDiscordException;
 import exceptions.NotUsableInMPDiscordException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import sx.blah.discord.handle.obj.IChannel;
 import sx.blah.discord.handle.obj.IMessage;
 
 import java.util.regex.Matcher;
@@ -92,6 +95,15 @@ public abstract class AbstractCommand implements Command {
                 .replaceAll("~", "\\~")          //Strike
                 .replaceAll("\\`", "\\\\`");         //Code
         return prefix;
+    }
+
+    protected Language getLanguageFrom(IChannel channel){
+        Guild guild = Guild.getGuild(channel.getGuild());
+        Language result = guild.getLanguage();
+        ChannelLanguage channelLanguage = ChannelLanguage.getChannelLanguages().get(channel.getLongID());
+        if (channelLanguage != null)
+            result = channelLanguage.getLang();
+        return result;
     }
 
     @Override

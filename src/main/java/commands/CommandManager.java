@@ -28,6 +28,7 @@ public class CommandManager {
         addCommand(new HelpCommand());
         addCommand(new ItemCommand());
         addCommand(new JobCommand());
+        addCommand(new LanguageCommand());
         addCommand(new MapCommand());
         addCommand(new MonsterCommand());
         addCommand(new PortalCommand());

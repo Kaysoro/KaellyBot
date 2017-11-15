@@ -93,6 +93,15 @@ public class CommandPatternTest extends TestCase {
         assertTrue(pattern.matcher(Constants.prefixCommand + "job").find());
     }
 
+    public void testLangCommand(){
+        Command cmd = new LanguageCommand();
+        Pattern pattern = Pattern.compile("^" + Constants.prefixCommand + cmd.getName() + cmd.getPattern() + "$");
+
+        assertTrue(pattern.matcher(Constants.prefixCommand + "lang FR").find());
+        assertTrue(pattern.matcher(Constants.prefixCommand + "lang -channel FR").find());
+        assertTrue(pattern.matcher(Constants.prefixCommand + "lang").find());
+    }
+
     public void testMapCommand(){
         Command cmd = new MapCommand();
         Pattern pattern = Pattern.compile("^" + Constants.prefixCommand + cmd.getName() + cmd.getPattern() + "$");

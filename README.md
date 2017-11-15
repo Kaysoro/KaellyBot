@@ -43,6 +43,13 @@ Gère un annuaire d'artisans.
 `!job métier niveau` : vous ajoute à l'annuaire du métier correspondant. Si vous indiquez 0, vous êtes supprimé de l'annuaire pour ce métier.  
 `!job -all niveau` : vous ajoute à l'annuaire pour tous les métiers correspondants. Si vous indiquez 0, vous êtes supprimé de chaque annuaire.  
 
+### Lang
+Change la langue utilisée pour communiquer avec Kaelly parmi la liste suivante : FR, EN, SP.  
+`!lang` : renseigne la langue du serveur et du salon.    
+`!lang lang` : met à jour la langue du serveur.    
+`!lang -channel lang` : met à jour la langue du salon (prioritaire au serveur).  
+
+
 ### Map
 Tire au hasard une carte du Goultarminator.  
 `!map` : tire au hasard une carte du Goultarminator ou bien parmi celles spécifiées en paramètre.  
