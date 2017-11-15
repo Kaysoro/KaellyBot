@@ -1,10 +1,23 @@
 package util;
 
+import com.google.common.base.Optional;
+import com.optimaize.langdetect.LanguageDetector;
+import com.optimaize.langdetect.LanguageDetectorBuilder;
+import com.optimaize.langdetect.i18n.LdLocale;
+import com.optimaize.langdetect.ngram.NgramExtractors;
+import com.optimaize.langdetect.profiles.LanguageProfile;
+import com.optimaize.langdetect.profiles.LanguageProfileReader;
+import com.optimaize.langdetect.text.CommonTextObjectFactories;
+import com.optimaize.langdetect.text.TextObject;
+import data.Constants;
 import enums.Language;
+import org.slf4j.LoggerFactory;
+import sx.blah.discord.handle.obj.IChannel;
 import sx.blah.discord.handle.obj.Permissions;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.io.*;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Created by steve on 06/06/2017.
@@ -12,8 +25,12 @@ import java.util.Map;
 public class Translator {
 
     private static Map<Permissions, String> frenchPermissions;
+    private static Map<Language, Properties> labels;
+    private static LanguageDetector languageDetector;
 
+    @Deprecated
     public static String getFrenchNameFor(Permissions p){
+        //TODO refactoring with labels files
         if (frenchPermissions == null){
             frenchPermissions = new HashMap<>();
             frenchPermissions.put(Permissions.CREATE_INVITE, "Créer une invitation");
@@ -50,9 +67,78 @@ public class Translator {
         return frenchPermissions.get(p);
     }
 
-    public static Language detectLanguage(String source){
-        Language result = Language.EN;
-        //TODO
+    private static LanguageDetector getLanguageDetector(){
+        if (languageDetector == null){
+            try {
+                List<String> languages = new ArrayList<String>();
+                for(Language lg : Language.values())
+                    languages.add(lg.getAbrev().toLowerCase());
+
+                List<LanguageProfile> languageProfiles = new LanguageProfileReader().read(languages);
+                languageDetector = LanguageDetectorBuilder.create(NgramExtractors.standard())
+                                .withProfiles(languageProfiles).build();
+            }
+            catch (IOException e) {
+                LoggerFactory.getLogger(Translator.class).error("Translator.getLanguageDetector", e);
+            }
+        }
+        return languageDetector;
+    }
+
+    public static Language getLanguageFrom(String source){
+        TextObject textObject = CommonTextObjectFactories.forDetectingOnLargeText().forText(source);
+        Optional<LdLocale> lang = getLanguageDetector().detect(textObject);
+        if (lang.isPresent())
+            for(Language lg : Language.values())
+                if(lang.get().getLanguage().equals(lg.getAbrev().toLowerCase()))
+                    return lg;
+        return null;
+    }
+
+    public static Language detectLanguage(IChannel channel){
+        Language result = Constants.defaultLanguage;
+        Map<Language, Integer> languages = new HashMap<>();
+        for(Language lang : Language.values())
+            languages.put(lang, 0);
+        languages.put(null, 0);
+
+        String[] sources = new String[]{};//TODO sources
+
+        for (String source : sources){
+            Language lg = getLanguageFrom(source);
+            languages.put(lg, languages.get(lg) + 1);
+        }
+        Map.Entry<Language, Integer> better = null;
+        for (Map.Entry<Language, Integer> chosenLanguage : languages.entrySet()){
+            if (better == null)
+                better = chosenLanguage;
+            if (better.getValue() < chosenLanguage.getValue())
+                better = chosenLanguage;
+        }
+
+        if (better.getKey() != null)
+            return better.getKey();
         return result;
+    }
+
+    public static String getLabel(Language lang, String property){
+        if (labels == null){
+            labels = new ConcurrentHashMap<>();
+
+            for(Language language : Language.values())
+                try {
+                    InputStream file = Translator.class.getResourceAsStream("/label_" + language.getAbrev());
+                    Properties prop = new Properties();
+                    prop.load(file);
+                    labels.put(language, prop);
+                    file.close();
+                } catch (IOException e) {
+                    LoggerFactory.getLogger(Translator.class).error("Translator.getLabel", e);
+                }
+        }
+
+        String value = labels.get(lang).getProperty(property);
+        if (value == null || value.trim().isEmpty()) return property;
+        return value;
     }
 }
