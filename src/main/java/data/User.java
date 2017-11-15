@@ -165,7 +165,7 @@ public class User {
                     guildId = Guild.getGuilds().get(resultSet.getString("id_guild"));
 
                     if (!users.containsKey(guildId.getId()))
-                        users.put(guildId.getId(), new HashMap<>());
+                        users.put(guildId.getId(), new ConcurrentHashMap<>());
                     users.get(guildId.getId()).put(id, new User(id, name, right, guildId));
                 }
             } catch (SQLException e) {
@@ -183,6 +183,9 @@ public class User {
 
     public static User getUser(IGuild discordGuild, IUser discordUser, boolean forceCache){
         Guild guild = Guild.getGuild(discordGuild);
+        if (!getUsers().containsKey(guild.getId()))
+            getUsers().put(guild.getId(), new ConcurrentHashMap<>());
+
         User user = getUsers().get(guild.getId()).get(discordUser.getStringID());
 
         if (user == null && forceCache){

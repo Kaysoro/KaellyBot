@@ -1,5 +1,6 @@
 package data;
 
+import enums.Language;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sx.blah.discord.handle.obj.IGuild;
@@ -24,16 +25,18 @@ public class Guild {
     private Map<String, CommandForbidden> commands;
     private String prefixe;
     private ServerDofus server;
+    private Language language;
 
-    public Guild(String id, String name){
-        this(id, name, Constants.prefixCommand, null);
+    public Guild(String id, String name, Language lang){
+        this(id, name, Constants.prefixCommand, lang, null);
     }
 
-    private Guild(String id, String name, String prefixe, String serverDofus){
+    private Guild(String id, String name, String prefixe, Language lang, String serverDofus){
         this.id = id;
         this.name = name;
         this.prefixe = prefixe;
         commands = CommandForbidden.getForbiddenCommands(this);
+        this.language = lang;
         this.server = ServerDofus.getServersMap().get(serverDofus);
         portals = Portal.getPortals(this);
     }
@@ -151,6 +154,25 @@ public class Guild {
         }
     }
 
+    public void setLanguage(Language lang){
+        this.language = lang;
+
+        Connexion connexion = Connexion.getInstance();
+        Connection connection = connexion.getConnection();
+
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(
+                    "UPDATE Guild SET lang = ? WHERE id = ?;");
+            preparedStatement.setString(1, lang.getAbrev());
+            preparedStatement.setString(2, id);
+
+            preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            ClientConfig.setSentryContext(ClientConfig.DISCORD().getGuildByID(Long.parseLong(getId())), null, null, null);
+            LOG.error(e.getMessage());
+        }
+    }
+
     public static Map<String, Guild> getGuilds(){
         if (guilds == null){
             guilds = new ConcurrentHashMap<>();
@@ -158,12 +180,13 @@ public class Guild {
             String name;
             String prefixe;
             String server;
+            String lang;
 
             Connexion connexion = Connexion.getInstance();
             Connection connection = connexion.getConnection();
 
             try {
-                PreparedStatement query = connection.prepareStatement("SELECT id, name, prefixe, server_dofus FROM Guild");
+                PreparedStatement query = connection.prepareStatement("SELECT id, name, prefixe, server_dofus, lang FROM Guild");
                 ResultSet resultSet = query.executeQuery();
 
                 while (resultSet.next()) {
@@ -171,7 +194,9 @@ public class Guild {
                     name = resultSet.getString("name");
                     prefixe = resultSet.getString("prefixe");
                     server = resultSet.getString("server_dofus");
-                    guilds.put(id, new Guild(id, name, prefixe, server));
+                    lang = resultSet.getString("lang");
+
+                    guilds.put(id, new Guild(id, name, prefixe, Language.valueOf(lang), server));
                 }
             } catch (SQLException e) {
                 ClientConfig.setSentryContext(null, null, null, null);
@@ -189,7 +214,7 @@ public class Guild {
         Guild guild = getGuilds().get(discordGuild.getStringID());
 
         if (guild == null && forceCache){
-            guild = new Guild(discordGuild.getStringID(), discordGuild.getName());
+            guild = new Guild(discordGuild.getStringID(), discordGuild.getName(), Constants.defaultLanguage);
             guild.addToDatabase();
         }
 
@@ -205,6 +230,10 @@ public class Guild {
     }
 
     public String getPrefixe(){ return prefixe; }
+
+    public Language getLanguage() {
+        return language;
+    }
 
     public List<Portal> getPortals(){
         return portals;

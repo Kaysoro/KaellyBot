@@ -11,6 +11,7 @@ import sx.blah.discord.api.events.EventSubscriber;
 import sx.blah.discord.handle.impl.events.guild.GuildCreateEvent;
 import sx.blah.discord.handle.obj.IUser;
 import sx.blah.discord.handle.obj.Permissions;
+import util.Translator;
 
 /**
  * Created by steve on 14/07/2016.
@@ -28,7 +29,8 @@ public class GuildCreateListener {
             ClientConfig.setSentryContext(event.getGuild(), null, null, null);
 
             if(!Guild.getGuilds().containsKey(event.getGuild().getStringID())) {
-                Guild guild = new Guild(event.getGuild().getStringID(), event.getGuild().getName());
+                Guild guild = new Guild(event.getGuild().getStringID(), event.getGuild().getName(),
+                        Translator.detectLanguage(event.getGuild().getDefaultChannel()));
                 guild.addToDatabase();
 
                 for (IUser user : event.getGuild().getUsers())
