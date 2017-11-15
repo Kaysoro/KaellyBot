@@ -1,6 +1,7 @@
 package exceptions;
 
 import commands.Command;
+import util.ClientConfig;
 import util.Translator;
 import util.Message;
 import org.slf4j.Logger;
@@ -30,6 +31,9 @@ public class MissingPermissionDiscordException implements DiscordException {
             st.delete(st.length() - 2, st.length()).append(".");
         }
 
-        Message.sendText(message.getGuild().getOwner().getOrCreatePMChannel(), st.toString());
+        if (message.getChannel().getModifiedPermissions(ClientConfig.DISCORD().getOurUser()).contains(Permissions.SEND_MESSAGES))
+            Message.sendText(message.getChannel(), st.toString());
+        else
+            Message.sendText(message.getGuild().getOwner().getOrCreatePMChannel(), st.toString());
     }
 }

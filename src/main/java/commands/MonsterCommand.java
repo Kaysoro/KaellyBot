@@ -53,7 +53,7 @@ public class MonsterCommand extends AbstractCommand{
                 BestMatcher matcher = new BestMatcher(normalName);
 
                 try {
-                    matcher.evaluateAll(getListMonsterFrom(getSearchURL(normalName), message));
+                    matcher.evaluateAll(getListMonsterFrom(getSearchURL(editedName), message));
 
                     if (matcher.isUnique()) { // We have found it !
                         Embedded monster = Monster.getMonster(Constants.officialURL + matcher.getBest().getRight());

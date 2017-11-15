@@ -5,12 +5,22 @@ package enums;
  */
 public enum Language {
 
-    FR("Français"), EN("English"), SP("Español");
+    FR("Français", "FR"), EN("English", "EN"), ES("Español", "ES");
 
     private String name;
+    private String abrev;
 
-    Language(String name){
+    Language(String name, String abrev){
         this.name = name;
+        this.abrev = abrev;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getAbrev() {
+        return abrev;
     }
 
     @Override

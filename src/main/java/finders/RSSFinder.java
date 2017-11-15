@@ -12,9 +12,9 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import static java.lang.Thread.sleep;
 
@@ -103,7 +103,7 @@ public class RSSFinder {
 
     public static Map<String, RSSFinder> getRSSFinders(){
         if (rssFinders == null){
-            rssFinders = new HashMap<>();
+            rssFinders = new ConcurrentHashMap<>();
 
             Connexion connexion = Connexion.getInstance();
             Connection connection = connexion.getConnection();

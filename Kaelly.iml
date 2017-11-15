@@ -58,5 +58,9 @@
     <orderEntry type="library" name="Maven: org.w3c:dom:2.3.0-jaxb-1.0.6" level="project" />
     <orderEntry type="library" name="Maven: org.twitter4j:twitter4j-stream:4.0.6" level="project" />
     <orderEntry type="library" name="Maven: org.twitter4j:twitter4j-core:4.0.6" level="project" />
+    <orderEntry type="library" name="Maven: com.optimaize.languagedetector:language-detector:0.6" level="project" />
+    <orderEntry type="library" name="Maven: net.arnx:jsonic:1.2.11" level="project" />
+    <orderEntry type="library" name="Maven: com.intellij:annotations:12.0" level="project" />
+    <orderEntry type="library" name="Maven: com.google.guava:guava:18.0" level="project" />
   </component>
 </module>

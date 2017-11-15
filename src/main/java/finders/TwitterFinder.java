@@ -13,8 +13,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Created by steve on 12/01/2017.
@@ -32,7 +32,7 @@ public class TwitterFinder{
 
     public static Map<Long, TwitterFinder> getTwitterChannels(){
         if (twitterChannels == null) {
-            twitterChannels = new HashMap<>();
+            twitterChannels = new ConcurrentHashMap<>();
 
             Connexion connexion = Connexion.getInstance();
             Connection connection = connexion.getConnection();

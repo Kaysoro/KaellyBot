@@ -1,6 +1,7 @@
 package data;
 
 import commands.*;
+import enums.Language;
 
 /**
  * Created by steve on 28/07/2016.
@@ -15,7 +16,7 @@ public class Constants {
     /**
      * Application version
      */
-    public final static String version = "1.4.4";
+    public final static String version = "1.4.4.1";
 
     /**
      * Author id
@@ -59,6 +60,7 @@ public class Constants {
      */
     public final static String prefixCommand = "!";
 
+    public final static Language defaultLanguage = Language.FR;
     /**
      * Game desserved
      */
@@ -188,11 +190,6 @@ public class Constants {
      * Character limit for prefixe discord
      */
     public final static int prefixeLimit = 3;
-
-    /**
-     * Youtube URL for music, without the code
-     */
-    public final static String youtubeURL = "https://www.youtube.com/watch?v=";
 
     /**
      * User or channel dedicated to receive error logs.

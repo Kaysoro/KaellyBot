@@ -29,7 +29,7 @@ public class Message {
                 LoggerFactory.getLogger(Message.class).warn(Constants.name
                         + " n'a pas les permissions pour appliquer cette requête.");
                 new MissingPermissionDiscordException()
-                        .throwException(channel.getMessageHistory().getLatestMessage(), null, e);
+                        .throwException(channel.getFullMessageHistory().getLatestMessage(), null, e);
             } catch(Exception e){
                 ClientConfig.setSentryContext(channel.isPrivate()? null : channel.getGuild(), null, channel, null);
                 LoggerFactory.getLogger(Message.class).error(e.getMessage(),e );
@@ -55,7 +55,7 @@ public class Message {
                 LoggerFactory.getLogger(Message.class).warn(Constants.name
                         + " n'a pas les permissions pour appliquer cette requête.");
                 new MissingPermissionDiscordException()
-                        .throwException(channel.getMessageHistory().getLatestMessage(), null, e);
+                        .throwException(channel.getFullMessageHistory().getLatestMessage(), null, e);
             } catch(Exception e){
                 ClientConfig.setSentryContext(channel.isPrivate()? null : channel.getGuild(), null, channel, null);
                 LoggerFactory.getLogger(Message.class).error(e.getMessage(), e);
