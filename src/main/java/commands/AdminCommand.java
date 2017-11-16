@@ -2,6 +2,7 @@ package commands;
 
 import data.Constants;
 import enums.Language;
+import exceptions.CommandNotFoundDiscordException;
 import util.Message;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,11 +43,9 @@ public class AdminCommand extends AbstractCommand{
                 }
 
             if (argumentFound && st.length() == 0)
-                st.append(Translator.getLabel(lg, "admin.request")).append(" *")
-                        .append(m.group(2).replaceAll("^\\W+", ""))
-                        .append("*.");
-
-            Message.sendText(message.getChannel(), st.toString());
+                new CommandNotFoundDiscordException().throwException(message, this);
+            else
+                Message.sendText(message.getChannel(), st.toString());
             return true;
         }
         return false;
@@ -61,6 +60,6 @@ public class AdminCommand extends AbstractCommand{
     public String helpDetailed(Language lg, String prefixe) {
         return help(lg, prefixe)
                 + "\n" + prefixe + "`"  + name + "` : " + Translator.getLabel(lg, "admin.help.detailed.1")
-                + "\n" + prefixe + "`"  + name + " `*`command`* : " + Translator.getLabel(lg, "admin.help.detailed.1") + "\n";
+                + "\n" + prefixe + "`"  + name + " `*`command`* : " + Translator.getLabel(lg, "admin.help.detailed.2") + "\n";
     }
 }

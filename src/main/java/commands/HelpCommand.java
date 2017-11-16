@@ -53,13 +53,13 @@ public class HelpCommand extends AbstractCommand{
 
     @Override
     public String help(Language lg, String prefixe) {
-        return "**" + prefixe + name + "** explique le fonctionnement de chaque commande de " + Constants.name + ".";
+        return "**" + prefixe + name + "** " + Translator.getLabel(lg, "help.help").replace("{name}", Constants.name);
     }
 
     @Override
     public String helpDetailed(Language lg, String prefixe) {
         return help(lg, prefixe)
-                + "\n" + prefixe + "`"  + name + "` : explique succinctement chaque commande."
-                + "\n" + prefixe + "`"  + name + " `*`command`* : explique de façon détaillée la commande spécifiée.\n";
+                + "\n" + prefixe + "`"  + name + "` : " + Translator.getLabel(lg, "help.help.detailed.1")
+                + "\n" + prefixe + "`"  + name + " `*`command`* : " + Translator.getLabel(lg, "help.help.detailed.2") + "\n";
     }
 }
