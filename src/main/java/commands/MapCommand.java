@@ -8,6 +8,7 @@ import util.Message;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sx.blah.discord.handle.obj.IMessage;
+import util.Translator;
 
 import java.util.*;
 import java.util.regex.Matcher;
@@ -30,6 +31,7 @@ public class MapCommand extends AbstractCommand{
     @Override
     public boolean request(IMessage message) {
         if (super.request(message)) {
+            Language lg = Translator.getLanguageFrom(message.getChannel());
             List<String> classicMaps = new ArrayList<>();
             for(int i = 1; i < 18; i++)
                 classicMaps.add(String.valueOf(i));
@@ -65,11 +67,11 @@ public class MapCommand extends AbstractCommand{
             String number = maps.get(new Random().nextInt(maps.size()));
             String url = Constants.turnamentMapImg.replace("{number}", number);
 
-            String[] punchlines = Constants.mapPunchlines.split(";");
+            String[] punchlines = Translator.getLabel(lg, "map.punchline").split(";");
             String punchline = punchlines[new Random().nextInt(punchlines.length)];
             EmbedBuilder builder = new EmbedBuilder();
 
-            builder.withTitle("Carte " + numberToRoman(number));
+            builder.withTitle(Translator.getLabel(lg, "map.embed.title") + " " + numberToRoman(number));
             builder.withDescription(punchline);
             builder.withImage(url);
             builder.withColor(new Random().nextInt(16777216));
@@ -82,16 +84,15 @@ public class MapCommand extends AbstractCommand{
 
     @Override
     public String help(Language lg, String prefixe) {
-        return "**" + prefixe + name + "** tire au hasard une carte du Goultarminator ou bien parmi celles"
-                + " spécifiées en paramètre.";
+        return "**" + prefixe + name + "** " + Translator.getLabel(lg, "map.help");
     }
 
     @Override
     public String helpDetailed(Language lg, String prefixe) {
         return help(lg, prefixe)
-                + "\n" + prefixe + "`"  + name + "` : tire une carte du Goultarminator entre I et XVII compris."
-                + "\n" + prefixe + "`"  + name + " `*`map1 map2 ...`* : tire une carte parmi celles spécifiées en paramètre. Nombres romains ou numériques uniquement."
-                + "\n" + prefixe + "`"  + name + " -ban `*`map1 map2 ...`* : tire une carte parmi celles non-spécifiées en paramètre. Nombres romains ou numériques uniquement.\n";
+                + "\n" + prefixe + "`"  + name + "` : " + Translator.getLabel(lg, "map.help.detailed.1")
+                + "\n" + prefixe + "`"  + name + " `*`map1 map2 ...`* : " + Translator.getLabel(lg, "map.help.detailed.2")
+                + "\n" + prefixe + "`"  + name + " -ban `*`map1 map2 ...`* : " + Translator.getLabel(lg, "map.help.detailed.3") + "\n";
     }
 
     private static String numberToRoman(String num) {

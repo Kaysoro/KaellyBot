@@ -217,24 +217,4 @@ public class Constants {
      * Discord invite link
      */
     public final static String discordInvite = "https://discord.gg/VsrbrYC";
-
-
-    public final static String mapPunchlines = "Ah ! Dommage :smirk:"
-            + ";Oh! Ça promet :joy:"
-            + ";CHAMPAGNE ! :champagne:"
-            + ";Hihi :relaxed:"
-            + ";Ça va chier. :sunglasses:"
-            + ";Bon chance. BIIIIIIIIIP BIIIIIIIP :telephone_receiver:"
-            + ";Ouuuh ! L'équipe rouge va prendre teeeeeellement cher ! :open_mouth:"
-            + ";C'est tout simplement une hallucination collective ! :dizzy_face:"
-            + ";Après ce tirage, faudra pas venir bégayer Equipe bleue ! :kissing:"
-            + ";Ce combat va être sale ! :underage:"
-            + ";Critiquez pas trop mon tirage, si vous continuez je sors la carte IX en boucle."
-            + ";C'est moi ou ça sent le melon là ? :melon:"
-            + ";Oh non c'est pas vrai... Ça va encore durer plus d'une heure... :weary:"
-            + ";Challenge : Statue. Comment ça *noon* ? Oh allez, pour le beau jeu ! :relieved:"
-            + ";J'voulais sortir une chouette carte, et puis je me suis rappelé que les participants ne la méritaient pas. :rolling_eyes:"
-            + ";Mmmmmmh, mais c'est l'odeur de la boucherie ça ! :horse:"
-            + ";Bienvenue en enfer :smiling_imp:"
-            + ";Morts en perspective ! :skull:";
 }
