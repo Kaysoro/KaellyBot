@@ -9,6 +9,8 @@ import exceptions.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sx.blah.discord.handle.obj.IMessage;
+import util.Translator;
+
 import java.io.IOException;
 import java.lang.Exception;
 import java.text.ParseException;
@@ -32,6 +34,7 @@ public class AlmanaxCommand extends AbstractCommand{
             try {
                 Date date = new Date();
                 Matcher m = getMatcher(message);
+                Language lg = getLanguageFrom(message.getChannel());
                 m.find();
 
                 if (m.group(1) != null && (m.group(1).matches("\\s+true") || m.group(1).matches("\\s+0") || m.group(1).matches("\\s+on")
@@ -42,15 +45,15 @@ public class AlmanaxCommand extends AbstractCommand{
                             if (m.group(1).matches("\\s+true") || m.group(1).matches("\\s+0") || m.group(1).matches("\\s+on"))
                                 if (!AlmanaxCalendar.getAlmanaxCalendars().containsKey(message.getChannel().getStringID())) {
                                     new AlmanaxCalendar(message.getGuild().getStringID(), message.getChannel().getStringID()).addToDatabase();
-                                    Message.sendText(message.getChannel(), "L'almanax sera automatiquement posté ici.");
+                                    Message.sendText(message.getChannel(), Translator.getLabel(lg, "almanax.request.1"));
                                 } else
-                                    Message.sendText(message.getChannel(), "L'almanax est déjà posté ici.");
+                                    Message.sendText(message.getChannel(), Translator.getLabel(lg, "almanax.request.2"));
                             else if (m.group(1).matches("\\s+false") || m.group(1).matches("\\s+1") || m.group(1).matches("\\s+off"))
                                 if (AlmanaxCalendar.getAlmanaxCalendars().containsKey(message.getChannel().getStringID())) {
                                     AlmanaxCalendar.getAlmanaxCalendars().get(message.getChannel().getStringID()).removeToDatabase();
-                                    Message.sendText(message.getChannel(), "L'almanax ne sera plus posté ici.");
+                                    Message.sendText(message.getChannel(), Translator.getLabel(lg, "almanax.request.3"));
                                 } else
-                                    Message.sendText(message.getChannel(), "L'almanax n'est pas posté ici.");
+                                    Message.sendText(message.getChannel(), Translator.getLabel(lg, "almanax.request.4"));
                         } else
                             new NotEnoughRightsDiscordException().throwException(message, this);
                     } else
@@ -81,16 +84,16 @@ public class AlmanaxCommand extends AbstractCommand{
 
     @Override
     public String help(Language lg, String prefixe) {
-        return "**" + prefixe + name + "** donne le bonus et l'offrande d'une date particulière.";
+        return "**" + prefixe + name + "** " + Translator.getLabel(lg, "almanax.help");
     }
 
     @Override
     public String helpDetailed(Language lg, String prefixe) {
         return help(lg, prefixe)
-                + "\n" + prefixe + "`" + name + "` : donne le bonus et l'offrande du jour actuel."
-                + "\n" + prefixe + "`" + name + " `*`jj/mm/aaaa`* : donne le bonus et l'offrande du jour spécifié."
-                + "\n" + prefixe + "`" + name + " `*`+days`* : donne la liste des bonus et offrandes des jours à venir (jusqu'à 9 jours)."
-                + "\n" + prefixe + "`"  + name + " true` : poste l'almanax quotidiennement. Fonctionne aussi avec \"on\" et \"0\"."
-                + "\n" + prefixe + "`"  + name + " false` : ne poste plus l'almanax dans le salon. Fonctionne aussi avec \"off\" et \"1\".\n";
+                + "\n" + prefixe + "`" + name + "` : " + Translator.getLabel(lg, "almanax.help.detailed.1")
+                + "\n" + prefixe + "`" + name + " `*`jj/mm/aaaa`* : " + Translator.getLabel(lg, "almanax.help.detailed.2")
+                + "\n" + prefixe + "`" + name + " `*`+days`* : " + Translator.getLabel(lg, "almanax.help.detailed.3")
+                + "\n" + prefixe + "`"  + name + " true` : " + Translator.getLabel(lg, "almanax.help.detailed.4")
+                + "\n" + prefixe + "`"  + name + " false` : " + Translator.getLabel(lg, "almanax.help.detailed.5") + "\n";
     }
 }
