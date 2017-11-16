@@ -1,5 +1,6 @@
 package commands;
 
+import enums.Language;
 import exceptions.*;
 import sx.blah.discord.handle.obj.Permissions;
 import util.BestMatcher;
@@ -110,13 +111,13 @@ public class SetCommand extends AbstractCommand{
     }
 
     @Override
-    public String help(String prefixe) {
+    public String help(Language lg, String prefixe) {
         return "**" + prefixe + name + "** renvoie les statistiques d'une panoplie du jeu Dofus.";
     }
 
     @Override
-    public String helpDetailed(String prefixe) {
-        return help(prefixe)
+    public String helpDetailed(Language lg, String prefixe) {
+        return help(lg, prefixe)
                 + "\n" + prefixe + "`"  + name + " `*`set`* : renvoie les statistiques d'une panoplie spécifiée :"
                 + " son nom peut être approximatif s'il est suffisamment précis."
                 + "\n" + prefixe + "`"  + name + " -more `*`set`* : renvoie les statistiques détaillées d'une panoplie spécifiée.\n";

@@ -1,5 +1,6 @@
 package commands;
 
+import enums.Language;
 import finders.RSSFinder;
 import data.User;
 import util.Message;
@@ -60,14 +61,14 @@ public class RSSCommand extends AbstractCommand{
     }
 
     @Override
-    public String help(String prefixe) {
+    public String help(Language lg, String prefixe) {
         return "**" + prefixe + name + "** gère le flux RSS Dofus dans un salon; "
         + "nécessite un niveau d'administration 2 (Modérateur) minimum.";
     }
 
     @Override
-    public String helpDetailed(String prefixe) {
-        return help(prefixe)
+    public String helpDetailed(Language lg, String prefixe) {
+        return help(lg, prefixe)
                 + "\n" + prefixe + "`"  + name + " true` : poste les news à partir du flux RSS de Dofus.com. Fonctionne aussi avec \"on\" et \"0\"."
                 + "\n" + prefixe + "`"  + name + " false` : ne poste plus les flux RSS dans le salon. Fonctionne aussi avec \"off\" et \"1\".\n";
     }

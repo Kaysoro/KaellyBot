@@ -1,6 +1,7 @@
 package commands;
 
 import data.Constants;
+import enums.Language;
 import exceptions.BadUseCommandDiscordException;
 import sx.blah.discord.util.EmbedBuilder;
 import util.Message;
@@ -80,14 +81,14 @@ public class MapCommand extends AbstractCommand{
     }
 
     @Override
-    public String help(String prefixe) {
+    public String help(Language lg, String prefixe) {
         return "**" + prefixe + name + "** tire au hasard une carte du Goultarminator ou bien parmi celles"
                 + " spécifiées en paramètre.";
     }
 
     @Override
-    public String helpDetailed(String prefixe) {
-        return help(prefixe)
+    public String helpDetailed(Language lg, String prefixe) {
+        return help(lg, prefixe)
                 + "\n" + prefixe + "`"  + name + "` : tire une carte du Goultarminator entre I et XVII compris."
                 + "\n" + prefixe + "`"  + name + " `*`map1 map2 ...`* : tire une carte parmi celles spécifiées en paramètre. Nombres romains ou numériques uniquement."
                 + "\n" + prefixe + "`"  + name + " -ban `*`map1 map2 ...`* : tire une carte parmi celles non-spécifiées en paramètre. Nombres romains ou numériques uniquement.\n";

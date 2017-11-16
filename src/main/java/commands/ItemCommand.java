@@ -1,5 +1,6 @@
 package commands;
 
+import enums.Language;
 import enums.SuperTypeEquipment;
 import enums.TypeEquipment;
 import exceptions.NoExternalEmojiPermissionDiscordException;
@@ -146,13 +147,13 @@ public class ItemCommand extends AbstractCommand{
     }
 
     @Override
-    public String help(String prefixe) {
+    public String help(Language lg, String prefixe) {
         return "**" + prefixe + name + "** renvoie les statistiques d'un item du jeu Dofus.";
     }
 
     @Override
-    public String helpDetailed(String prefixe) {
-        return help(prefixe)
+    public String helpDetailed(Language lg, String prefixe) {
+        return help(lg, prefixe)
                 + "\n" + prefixe + "`"  + name + " `*`item`* : renvoie les statistiques de l'item spécifié :"
                 + " son nom peut être approximatif s'il est suffisamment précis."
                 + "\n" + prefixe + "`"  + name + " -more `*`item`* : renvoie les statistiques détaillées de l'item spécifié.\n";

@@ -1,6 +1,7 @@
 package commands;
 
 import data.Guild;
+import enums.Language;
 import sx.blah.discord.handle.obj.IMessage;
 
 import java.util.regex.Matcher;
@@ -62,11 +63,11 @@ public interface Command {
      * @param prefixe Prefixe for command
      * @return Short description of the command
      */
-    String help(String prefixe);
+    String help(Language lg, String prefixe);
 
     /**
      * @param prefixe Prefixe for command
      * @return Detailed description of the command
      */
-    String helpDetailed(String prefixe);
+    String helpDetailed(Language lg, String prefixe);
 }

@@ -1,5 +1,6 @@
 package commands;
 
+import enums.Language;
 import util.Message;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,13 +51,13 @@ public class RandomCommand extends AbstractCommand{
     }
 
     @Override
-    public String help(String prefixe) {
+    public String help(Language lg, String prefixe) {
         return "**" + prefixe + name + "** tire au hasard une valeur spécifiée ou non.";
     }
 
     @Override
-    public String helpDetailed(String prefixe) {
-        return help(prefixe)
+    public String helpDetailed(Language lg, String prefixe) {
+        return help(lg, prefixe)
                 + "\n" + prefixe + "`"  + name + "` : tire une valeur entre Vrai et Faux."
                 + "\n" + prefixe + "`"  + name + " `*`nombre`* : tire une valeur entre 0 et *nombre*."
                 + "\n" + prefixe + "`"  + name + " `*`valeur1 valeur2 ...`* : tire une valeur parmi celles spécifiées en paramètre.\n";

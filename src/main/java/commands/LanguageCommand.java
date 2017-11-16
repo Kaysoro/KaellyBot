@@ -62,7 +62,8 @@ public class LanguageCommand extends AbstractCommand{
                                 }
                             }
                             else {
-                                new ChannelLanguage(langs.get(0), message.getChannel().getLongID()).addToDatabase();
+                                chan = new ChannelLanguage(langs.get(0), message.getChannel().getLongID());
+                                chan.addToDatabase();
                                 Message.sendText(message.getChannel(), message.getChannel().getName()
                                         + " est désormais en " + chan.getLang());
                             }
@@ -91,13 +92,13 @@ public class LanguageCommand extends AbstractCommand{
     }
 
     @Override
-    public String help(String prefixe) {
+    public String help(Language lg, String prefixe) {
         return "**" + prefixe + name + "** change la langue utilisée (FR, EN, ES).";
     }
 
     @Override
-    public String helpDetailed(String prefixe) {
-        return help(prefixe)
+    public String helpDetailed(Language lg, String prefixe) {
+        return help(lg, prefixe)
                 + "\n" + prefixe + "`"  + name + " `*`language`* : change la langue du serveur"
                 + "\n" + prefixe + "`"  + name + " -channel `*`language`* : change la langue du salon spécifié uniquement"
                     + " (prioritaire sur la langue du serveur)\n";

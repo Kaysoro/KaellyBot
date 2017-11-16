@@ -1,6 +1,7 @@
 package commands;
 
 import data.Almanax;
+import enums.Language;
 import finders.AlmanaxCalendar;
 import data.User;
 import util.Message;
@@ -79,13 +80,13 @@ public class AlmanaxCommand extends AbstractCommand{
     }
 
     @Override
-    public String help(String prefixe) {
+    public String help(Language lg, String prefixe) {
         return "**" + prefixe + name + "** donne le bonus et l'offrande d'une date particulière.";
     }
 
     @Override
-    public String helpDetailed(String prefixe) {
-        return help(prefixe)
+    public String helpDetailed(Language lg, String prefixe) {
+        return help(lg, prefixe)
                 + "\n" + prefixe + "`" + name + "` : donne le bonus et l'offrande du jour actuel."
                 + "\n" + prefixe + "`" + name + " `*`jj/mm/aaaa`* : donne le bonus et l'offrande du jour spécifié."
                 + "\n" + prefixe + "`" + name + " `*`+days`* : donne la liste des bonus et offrandes des jours à venir (jusqu'à 9 jours)."

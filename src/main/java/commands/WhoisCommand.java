@@ -2,6 +2,7 @@ package commands;
 
 import data.Character;
 import data.Constants;
+import enums.Language;
 import util.JSoupManager;
 import data.ServerDofus;
 import util.Message;
@@ -122,13 +123,13 @@ public class WhoisCommand extends AbstractCommand{
     }
 
     @Override
-    public String help(String prefixe) {
+    public String help(Language lg, String prefixe) {
         return "**" + prefixe + name + "** donne la page personnelle d'un personnage.";
     }
 
     @Override
-    public String helpDetailed(String prefixe) {
-        return help(prefixe)
+    public String helpDetailed(Language lg, String prefixe) {
+        return help(lg, prefixe)
                 + "\n" + prefixe + "`"  + name + " *pseudo`* : donne la page personnelle associée au pseudo. Celui-ci doit être exact."
                 + "\n" + prefixe + "`"  + name + " *pseudo serveur`* : est à utiliser lorsque le pseudo ne suffit pas pour déterminer la fiche d'un personnage.\n";
     }

@@ -17,6 +17,7 @@ import sx.blah.discord.handle.obj.IMessage;
 import sx.blah.discord.handle.obj.Permissions;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -142,7 +143,7 @@ public class Translator {
                 try {
                     InputStream file = Translator.class.getResourceAsStream("/label_" + language.getAbrev());
                     Properties prop = new Properties();
-                    prop.load(file);
+                    prop.load(new BufferedReader(new InputStreamReader(file, StandardCharsets.UTF_8)));
                     labels.put(language, prop);
                     file.close();
                 } catch (IOException e) {

@@ -1,5 +1,6 @@
 package commands;
 
+import enums.Language;
 import exceptions.NoExternalEmojiPermissionDiscordException;
 import sx.blah.discord.handle.obj.Permissions;
 import util.BestMatcher;
@@ -113,13 +114,13 @@ public class MonsterCommand extends AbstractCommand{
     }
 
     @Override
-    public String help(String prefixe) {
+    public String help(Language lg, String prefixe) {
         return "**" + prefixe + name + "** renvoie les statistiques d'un monstre du jeu Dofus.";
     }
 
     @Override
-    public String helpDetailed(String prefixe) {
-        return help(prefixe)
+    public String helpDetailed(Language lg, String prefixe) {
+        return help(lg, prefixe)
                 + "\n" + prefixe + "`"  + name + " `*`monstre`* : renvoie les statistiques du monstre spécifié :"
                 + " son nom peut être approximatif s'il est suffisamment précis."
                 + "\n" + prefixe + "`"  + name + " -more `*`monstre`* : renvoie les statistiques détaillées du monstre spécifié.\n";

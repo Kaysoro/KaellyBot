@@ -1,5 +1,6 @@
 package commands;
 
+import enums.Language;
 import util.ClientConfig;
 import util.Message;
 import org.slf4j.Logger;
@@ -49,13 +50,13 @@ public class AnnounceCommand extends AbstractCommand{
     }
 
     @Override
-    public String help(String prefixe) {
+    public String help(Language lg, String prefixe) {
         return "**" + prefixe + name + "** envoie une annonce à l'ensemble des guildes de Kaelly.";
     }
 
     @Override
-    public String helpDetailed(String prefixe) {
-        return help(prefixe)
+    public String helpDetailed(Language lg, String prefixe) {
+        return help(lg, prefixe)
                 + "\n" + prefixe + "`"  + name + " `*`text`* : envoie *text* dans le salon."
                 + "\n" + prefixe + "`"  + name + " `*-confirm `text`* : envoie *text* à l'ensemble des guildes.\n";
     }

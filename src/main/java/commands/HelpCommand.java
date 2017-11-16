@@ -2,6 +2,7 @@ package commands;
 
 import data.Constants;
 import data.Guild;
+import enums.Language;
 import util.Message;
 import exceptions.CommandNotFoundDiscordException;
 import org.slf4j.Logger;
@@ -25,6 +26,7 @@ public class HelpCommand extends AbstractCommand{
     public boolean request(IMessage message) {
         if (super.request(message)) {
             String prefixe = getPrefixMdEscaped(message);
+            Language lg = getLanguageFrom(message.getChannel());
             Matcher m = getMatcher(message);
             m.find();
             StringBuilder st = new StringBuilder();
@@ -33,9 +35,9 @@ public class HelpCommand extends AbstractCommand{
                 if (command.isPublic() && ! command.isAdmin()
                         && (message.getChannel().isPrivate() || ! command.isForbidden(Guild.getGuild(message.getGuild())))){
                     if (! argumentFound)
-                        st.append(command.help(prefixe)).append("\n");
+                        st.append(command.help(lg, prefixe)).append("\n");
                     else if (command.getName().equals(m.group(1).trim())) {
-                        st.append(command.helpDetailed(prefixe));
+                        st.append(command.helpDetailed(lg, prefixe));
                         break;
                     }
                 }
@@ -49,13 +51,13 @@ public class HelpCommand extends AbstractCommand{
     }
 
     @Override
-    public String help(String prefixe) {
+    public String help(Language lg, String prefixe) {
         return "**" + prefixe + name + "** explique le fonctionnement de chaque commande de " + Constants.name + ".";
     }
 
     @Override
-    public String helpDetailed(String prefixe) {
-        return help(prefixe)
+    public String helpDetailed(Language lg, String prefixe) {
+        return help(lg, prefixe)
                 + "\n" + prefixe + "`"  + name + "` : explique succinctement chaque commande."
                 + "\n" + prefixe + "`"  + name + " `*`command`* : explique de façon détaillée la commande spécifiée.\n";
     }

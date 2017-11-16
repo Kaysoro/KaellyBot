@@ -2,18 +2,25 @@ package commands;
 
 import data.Constants;
 import enums.Donator;
+import enums.Language;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import sx.blah.discord.handle.obj.IChannel;
 import sx.blah.discord.handle.obj.IUser;
 import sx.blah.discord.util.EmbedBuilder;
 import util.ClientConfig;
 import util.Message;
 import sx.blah.discord.handle.obj.IMessage;
+import util.Translator;
+
 import java.util.Random;
 
 /**
  * Created by Songfu on 29/05/2017.
  */
 public class AboutCommand extends AbstractCommand{
+
+    private final static Logger LOG = LoggerFactory.getLogger(AbstractCommand.class);
 
     public AboutCommand() {
         super("about", "");
@@ -24,38 +31,44 @@ public class AboutCommand extends AbstractCommand{
         if (super.request(message)){
             IUser author = ClientConfig.DISCORD().getApplicationOwner();
             EmbedBuilder builder = new EmbedBuilder();
+            Language lg = getLanguageFrom(message.getChannel());
 
-            builder.withTitle(Constants.name + " version " + Constants.version)
-            .withDesc("Bot Discord dédié au jeu " + Constants.game + " !")
+            builder.withTitle(Translator.getLabel(lg, "about.title")
+                        .replace("{name}", Constants.name)
+                        .replace("{version}", Constants.version))
+                    .withDesc(Translator.getLabel(lg, "about.desc")
+                        .replace("{game}", Constants.game))
                     .withColor(new Random().nextInt(16777216))
                     .withThumbnail(ClientConfig.DISCORD().getApplicationIconURL())
                     .withAuthorName(author.getName())
                     .withAuthorIcon(author.getAvatarURL());
 
-            builder.appendField(":electric_plug: Lien d'invitation :",
-                    Constants.name +" peut être invité sur vos serveurs grâce à ce [lien]("
-                            + Constants.invite + "). Vous devrez avoir les droits suffisants pour effectuer l'action !", true)
-            .appendField(":bulb: Serveur support :",
-                    "Vous rencontrez un problème quant à son utilisation ? Une suggestion ? "
-                            + "Une amélioration à proposer ? N'hésitez pas à rejoindre le [Discord de "
-                            + Constants.name +"](" + Constants.discordInvite + ") !", true)
-            .appendField("<:github:372093338628784148> Open source :",
-                    "L'intégralité du code source est sous licence GPL-3.0 et accessible sur [Github]("
-                            + Constants.git + ").", true)
-            .appendField(":money_with_wings: Gratuit :", "L'ensemble des fonctionnalités sont gratuites. "
-                    + "Il vous est possible de participer financièrement mais n'allez pas vous mettre dans le rouge ! "
-                    + " [Paypal](" + Constants.paypal + ")", true);
+            builder.appendField(Translator.getLabel(lg, "about.invite.title"),
+                    Translator.getLabel(lg, "about.invite.desc")
+                        .replace("{name}", Constants.name)
+                        .replace("{invite}", Constants.invite), true)
+            .appendField(Translator.getLabel(lg, "about.support.title"),
+                    Translator.getLabel(lg, "about.support.desc")
+                        .replace("{name}", Constants.name)
+                        .replace("{discordInvite}", Constants.discordInvite), true)
+            .appendField(Translator.getLabel(lg, "about.opensource.title"),
+                    Translator.getLabel(lg, "about.opensource.desc")
+                        .replace("{git}", Constants.git), true)
+            .appendField(Translator.getLabel(lg, "about.free.title"),
+                    Translator.getLabel(lg, "about.free.desc")
+                        .replace("{paypal}", Constants.paypal), true);
 
             try {
                 IChannel news = ClientConfig.DISCORD().getChannelByID(Constants.newsChan);
-                builder.appendField(":bookmark_tabs: Changelog :", news.getFullMessageHistory().getLatestMessage().getContent(), true);
-            } catch(Exception e) {e.printStackTrace();}
+                builder.appendField(Translator.getLabel(lg, "about.changelog.title"),
+                        news.getFullMessageHistory().getLatestMessage().getContent(), true);
+            } catch(Exception e) {LOG.error("AboutCommand.request", e);}
 
             StringBuilder st = new StringBuilder();
             for(Donator donator : Donator.values())
                 st.append(donator.getName()).append(", ");
             st.setLength(st.length() - 2);
-            builder.appendField(":ok_woman: Donateurs", st.toString() + ".", true);
+            builder.appendField(Translator.getLabel(lg, "about.donators.title"), st.toString() + ".", true);
 
             Message.sendEmbed(message.getChannel(), builder.build());
             return true;
@@ -65,12 +78,13 @@ public class AboutCommand extends AbstractCommand{
     }
 
     @Override
-    public String help(String prefixe) {
-        return "**" + prefixe + name + "** donne des informations sur " + Constants.name + " et un moyen d'obtenir de l'aide.";
+    public String help(Language lg, String prefixe) {
+        return "**" + prefixe + name + "** " + Translator.getLabel(lg, "about.help")
+                .replace("{name}", Constants.name);
     }
 
     @Override
-    public String helpDetailed(String prefixe) {
-        return help(prefixe);
+    public String helpDetailed(Language lg, String prefixe) {
+        return help(lg, prefixe);
     }
 }

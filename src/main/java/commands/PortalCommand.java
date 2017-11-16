@@ -3,6 +3,7 @@ package commands;
 import data.Guild;
 import data.Portal;
 import data.Position;
+import enums.Language;
 import util.Message;
 import exceptions.PortalNotFoundDiscordException;
 import exceptions.TooMuchPossibilitiesDiscordException;
@@ -71,13 +72,13 @@ public class PortalCommand extends AbstractCommand{
     }
 
     @Override
-    public String help(String prefixe) {
+    public String help(Language lg, String prefixe) {
         return "**" + prefixe + name + "** donne la position des portails dimension.";
     }
 
     @Override
-    public String helpDetailed(String prefixe) {
-        return help(prefixe)
+    public String helpDetailed(Language lg, String prefixe) {
+        return help(lg, prefixe)
                 + "\n" + prefixe + "`"  + name + "` : donne la position de tous les portails."
                 + "\n" + prefixe + "`"  + name + " `*`dimension`* : donne la position du portail de la dimension désirée."
                 + "\n" + prefixe + "`"  + name + " `*`dimension`*` [POS, POS]` : met à jour la position du portail de la dimension spécifiée."

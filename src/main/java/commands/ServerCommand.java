@@ -3,6 +3,7 @@ package commands;
 import data.Guild;
 import data.ServerDofus;
 import data.User;
+import enums.Language;
 import util.Message;
 import exceptions.NotEnoughRightsDiscordException;
 import exceptions.ServerNotFoundDiscordException;
@@ -77,13 +78,13 @@ public class ServerCommand extends AbstractCommand{
     }
 
     @Override
-    public String help(String prefixe) {
+    public String help(Language lg, String prefixe) {
         return "**" + prefixe + name + "** permet de déterminer à quel serveur Dofus correspond ce serveur Discord.";
     }
 
     @Override
-    public String helpDetailed(String prefixe) {
-        return help(prefixe)
+    public String helpDetailed(Language lg, String prefixe) {
+        return help(lg, prefixe)
                 + "\n" + prefixe + "`"  + name + "` : affiche le serveur Dofus correspondant au serveur Discord."
                 + "\n" + prefixe + "`"  + name + " `*`server`* : permet de déterminer à quel serveur Dofus correspond ce serveur Discord."
                 + "\n" + prefixe + "`"  + name + " `*`-reset`* : permet de se détacher d'un quelconque serveur Dofus.\n";

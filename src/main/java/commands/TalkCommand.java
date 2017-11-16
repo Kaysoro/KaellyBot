@@ -1,5 +1,6 @@
 package commands;
 
+import enums.Language;
 import util.ClientConfig;
 import util.Message;
 import exceptions.ChannelNotFoundDiscordException;
@@ -55,13 +56,13 @@ public class TalkCommand extends AbstractCommand{
     }
 
     @Override
-    public String help(String prefixe) {
+    public String help(Language lg, String prefixe) {
         return "**" + prefixe + name + "** envoie un message à destination d'un salon spécifique.";
     }
 
     @Override
-    public String helpDetailed(String prefixe) {
-        return help(prefixe)
+    public String helpDetailed(Language lg, String prefixe) {
+        return help(lg, prefixe)
                 + "\n" + prefixe + "`"  + name + " `*`text`* : envoie *text* dans le dernier salon utilisé."
                 + "\n" + prefixe + "`"  + name + " `*salon `text`* : envoie *text* au salon spécifié (identifiant).\n";
     }

@@ -3,6 +3,7 @@ package commands;
 import data.Constants;
 import data.Embedded;
 import data.Resource;
+import enums.Language;
 import enums.SuperTypeResource;
 import enums.TypeResource;
 import exceptions.ExceptionManager;
@@ -140,13 +141,13 @@ public class ResourceCommand extends AbstractCommand{
     }
 
     @Override
-    public String help(String prefixe) {
+    public String help(Language lg, String prefixe) {
         return "**" + prefixe + name + "** renvoie les statistiques d'une ressource du jeu Dofus.";
     }
 
     @Override
-    public String helpDetailed(String prefixe) {
-        return help(prefixe)
+    public String helpDetailed(Language lg, String prefixe) {
+        return help(lg, prefixe)
                 + "\n" + prefixe + "`"  + name + " `*`resource`* : renvoie les statistiques d'une ressource spécifiée :"
                 + " son nom peut être approximatif s'il est suffisamment précis."
                 + "\n" + prefixe + "`"  + name + " -more `*`resource`* : renvoie les statistiques détaillées de la ressource spécifiée.\n";

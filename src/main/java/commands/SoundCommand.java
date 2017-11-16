@@ -1,5 +1,6 @@
 package commands;
 
+import enums.Language;
 import util.ClientConfig;
 import exceptions.*;
 import org.slf4j.Logger;
@@ -106,12 +107,12 @@ public class SoundCommand extends AbstractCommand{
     }
 
     @Override
-    public String help(String prefixe) {
+    public String help(Language lg, String prefixe) {
         return "**" + prefixe + name + "** joue un son en vous rejoignant succintement dans votre canal vocal.";
     }
 
     @Override
-    public String helpDetailed(String prefixe) {
+    public String helpDetailed(Language lg, String prefixe) {
         StringBuilder st = new StringBuilder("\n```");
 
         List<File> sounds = getSounds();
@@ -128,7 +129,7 @@ public class SoundCommand extends AbstractCommand{
             st.append("\t");
         }
         st.append("```");
-        return help(prefixe)
+        return help(lg, prefixe)
                 + "\n" + prefixe + "`"  + name + "` : joue un son au hasard parmi la liste suivante : " + st.toString()
                 + "\n" + prefixe + "`"  + name + " `*`sound`* : joue le son passé en paramètre.\n";
     }

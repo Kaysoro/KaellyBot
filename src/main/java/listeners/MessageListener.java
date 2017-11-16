@@ -29,6 +29,7 @@ public class MessageListener {
                         command.request(event.getMessage());
                     } catch (Exception e){
                         new UnknownErrorDiscordException().throwException(event.getMessage(), command);
+                        LOG.error("MessageListener.onReady", e);
                     }
         }
 }

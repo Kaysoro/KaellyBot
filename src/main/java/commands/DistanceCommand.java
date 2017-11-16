@@ -2,6 +2,7 @@ package commands;
 
 import data.Position;
 import data.Transport;
+import enums.Language;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sx.blah.discord.handle.obj.IMessage;
@@ -58,13 +59,13 @@ public class DistanceCommand extends AbstractCommand{
     }
 
     @Override
-    public String help(String prefixe) {
+    public String help(Language lg, String prefixe) {
         return "**" + prefixe + name + "** donne le transport le plus proche de la position indiquée.";
     }
 
     @Override
-    public String helpDetailed(String prefixe) {
-        return help(prefixe)
+    public String helpDetailed(Language lg, String prefixe) {
+        return help(lg, prefixe)
                 + "\n" + prefixe + "`"  + name + "` [POS, POS]` : donne le transport le plus proche (à vol d'oiseau) de la position indiquée.\n";
     }
 }

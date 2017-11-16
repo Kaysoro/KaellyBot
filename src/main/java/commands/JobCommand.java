@@ -3,6 +3,7 @@ package commands;
 import data.Constants;
 import data.Job;
 import data.User;
+import enums.Language;
 import util.Message;
 import exceptions.JobNotFoundDiscordException;
 import exceptions.LevelNotFoundDiscordException;
@@ -142,13 +143,13 @@ public class JobCommand extends AbstractCommand{
     }
 
     @Override
-    public String help(String prefixe) {
+    public String help(Language lg, String prefixe) {
         return "**" + prefixe + name + "** renvoie l'annuaire des artisans d'un métier.";
     }
 
     @Override
-    public String helpDetailed(String prefixe) {
-        return help(prefixe)
+    public String helpDetailed(Language lg, String prefixe) {
+        return help(lg, prefixe)
                 + "\n" + prefixe + "`"  + name + "` : renvoie la liste des métiers du jeu Dofus."
                 + "\n" + prefixe + "`"  + name + " `*`métier`* : renvoie l'annuaire des artisans pour ce métier."
                 + "\n" + prefixe + "`"  + name + " `*`métier niveau`* : vous ajoute à l'annuaire du métier correspondant." +

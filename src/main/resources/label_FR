@@ -1,4 +1,4 @@
-welcome.message=
+﻿welcome.message=
 game.url=https://www.dofus.com
 almanax.url=http://www.krosmoz.com/fr/almanax/
 feed.url=/fr/rss/news.xml
@@ -15,4 +15,18 @@ harness.url=/fr/mmorpg/encyclopedie/harnachements
 idol.url=/fr/mmorpg/encyclopedie/idoles
 consumable.url=/fr/mmorpg/encyclopedie/consommables
 resource.url=/fr/mmorpg/encyclopedie/ressources
+about.title={name} version {version}
+about.desc=Bot Discord dédié au jeu {game} !
+about.invite.title=:electric_plug: Lien d'invitation :
+about.invite.desc={name} peut être invité sur vos serveurs grâce à ce [lien]({invite}). Vous devrez avoir les droits suffisants pour effectuer l'action !
+about.support.title=:bulb: Serveur support :
+about.support.desc=Vous rencontrez un problème quant à son utilisation ? Une suggestion ? Une amélioration à proposer ? N'hésitez pas à rejoindre le [Discord de {name}]({discordInvite}) !
+about.opensource.title=<:github:372093338628784148> Open source :
+about.opensource.desc=L'intégralité du code source est sous licence GPL-3.0 et accessible sur [Github]({git}).
+about.free.title=:money_with_wings: Gratuit :
+about.free.desc=L'ensemble des fonctionnalités sont gratuites. Il vous est possible de participer financièrement mais n'allez pas vous mettre dans le rouge ! [Paypal]({paypal})
+about.changelog.title=:bookmark_tabs: Changelog :
+about.donators.title=:ok_woman: Donateurs
+about.help=donne des informations sur {name} et un moyen d'obtenir de l'aide.
+
 map.punchline=Ah ! Dommage :smirk:;Oh! Ça promet :joy:;CHAMPAGNE ! :champagne:;Hihi :relaxed:;Ça va chier. :sunglasses:;Bon chance. BIIIIIIIIIP BIIIIIIIP :telephone_receiver:;Ouuuh ! L'équipe rouge va prendre teeeeeellement cher ! :open_mouth:;C'est tout simplement une hallucination collective ! :dizzy_face:;Après ce tirage, faudra pas venir bégayer Equipe bleue ! :kissing:;Ce combat va être sale ! :underage:;Critiquez pas trop mon tirage, si vous continuez je sors la carte IX en boucle.;C'est moi ou ça sent le melon là ? :melon:;Oh non c'est pas vrai... Ça va encore durer plus d'une heure... :weary:;Challenge : Statue. Comment ça *noon* ? Oh allez, pour le beau jeu ! :relieved:;J'voulais sortir une chouette carte, et puis je me suis rappelé que les participants ne la méritaient pas. :rolling_eyes:;Mmmmmmh, mais c'est l'odeur de la boucherie ça ! :horse:;Bienvenue en enfer :smiling_imp:;Morts en perspective ! :skull:

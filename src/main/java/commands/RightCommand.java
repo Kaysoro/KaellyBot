@@ -1,6 +1,7 @@
 package commands;
 
 import data.User;
+import enums.Language;
 import util.ClientConfig;
 import util.Message;
 import exceptions.AutoChangeRightsDiscordException;
@@ -115,15 +116,15 @@ public class RightCommand extends AbstractCommand{
     }
 
     @Override
-    public String help(String prefixe) {
+    public String help(Language lg, String prefixe) {
         return "**" + prefixe + name + "** permet de changer les droits d'un utilisateur dont les droits sont inférieurs aux siens."
                 + " Nécessite un niveau d'administration 2 (Modérateur) minimum."
                 + " Les niveaux sont 0 : Invité, 1 : Membre, 2 : Modérateur, 3 : Administrateur.";
     }
 
     @Override
-    public String helpDetailed(String prefixe) {
-        return help(prefixe)
+    public String helpDetailed(Language lg, String prefixe) {
+        return help(lg, prefixe)
                 + "\n" + prefixe + "`"  + name + "` : donne le niveau d'administration de l'auteur de la requête."
                 + "\n" + prefixe + "`"  + name + " `*`@pseudo`* : donne le niveau d'administration de l'utilisateur ou d'un groupe spécifié."
                 + "\n" + prefixe + "`"  + name + " `*`@pseudo niveau`* : change le niveau d'administration d'un utilisateur ou d'un groupe spécifié.\n";

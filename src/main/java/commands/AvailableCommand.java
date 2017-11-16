@@ -1,5 +1,6 @@
 package commands;
 
+import enums.Language;
 import util.Message;
 import exceptions.*;
 import org.slf4j.Logger;
@@ -71,13 +72,13 @@ public class AvailableCommand extends AbstractCommand{
     }
 
     @Override
-    public String help(String prefixe) {
+    public String help(Language lg, String prefixe) {
         return "**" + prefixe + name + "** permet d'autoriser ou d'interdire une commande.";
     }
 
     @Override
-    public String helpDetailed(String prefixe) {
-        return help(prefixe)
+    public String helpDetailed(Language lg, String prefixe) {
+        return help(lg, prefixe)
                 + "\n" + prefixe + "`"  + name + "*CommandForbidden* true` : autorise l'utilisation de *CommandForbidden*. Fonctionne aussi avec \"on\" et \"0\"."
                 + "\n" + prefixe + "`"  + name + "*CommandForbidden* false` : masque *CommandForbidden* et la rend inutilisable. Fonctionne aussi avec \"off\" et \"1\".\n";
     }

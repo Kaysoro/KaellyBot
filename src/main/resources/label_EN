@@ -1,4 +1,4 @@
-welcome.message=
+﻿welcome.message=
 game.url=https://www.dofus.com
 almanax.url=http://www.krosmoz.com/en/almanax/
 feed.url=/en/rss/news.xml
@@ -15,4 +15,18 @@ harness.url=/en/mmorpg/encyclopedia/harnesses
 idol.url=/en/mmorpg/encyclopedia/idols
 consumable.url=/en/mmorpg/encyclopedia/consumables
 resource.url=/en/mmorpg/encyclopedia/resources
+about.title=
+about.desc=
+about.invite.title=
+about.invite.desc=
+about.support.title=
+about.support.desc=
+about.opensource.title=
+about.opensource.desc=
+about.free.title=
+about.free.desc=
+about.changelog.title=
+about.donators.title=
+about.help=
+
 map.punchline=
