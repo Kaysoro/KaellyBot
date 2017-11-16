@@ -6,6 +6,7 @@ import util.Message;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sx.blah.discord.handle.obj.IMessage;
+import util.Translator;
 
 import java.util.regex.Matcher;
 
@@ -41,7 +42,7 @@ public class AdminCommand extends AbstractCommand{
                 }
 
             if (argumentFound && st.length() == 0)
-                st.append("Aucune commande ne répond au nom de *")
+                st.append(Translator.getLabel(lg, "admin.request")).append(" *")
                         .append(m.group(2).replaceAll("^\\W+", ""))
                         .append("*.");
 
@@ -53,13 +54,13 @@ public class AdminCommand extends AbstractCommand{
 
     @Override
     public String help(Language lg, String prefixe) {
-        return "**" + prefixe + name + "** explique le fonctionnement de chaque commande admin de " + Constants.name + ".";
+        return "**" + prefixe + name + "** " + Translator.getLabel(lg, "admin.help").replace("name", Constants.name);
     }
 
     @Override
     public String helpDetailed(Language lg, String prefixe) {
         return help(lg, prefixe)
-                + "\n" + prefixe + "`"  + name + "` : explique succinctement chaque commande admin."
-                + "\n" + prefixe + "`"  + name + " `*`command`* : explique de façon détaillée la commande admin spécifiée.\n";
+                + "\n" + prefixe + "`"  + name + "` : " + Translator.getLabel(lg, "admin.help.detailed.1")
+                + "\n" + prefixe + "`"  + name + " `*`command`* : " + Translator.getLabel(lg, "admin.help.detailed.1") + "\n";
     }
 }
