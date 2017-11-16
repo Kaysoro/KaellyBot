@@ -1,5 +1,6 @@
 package commands;
 
+import data.Constants;
 import enums.Language;
 import util.ClientConfig;
 import util.Message;
@@ -8,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import sx.blah.discord.handle.obj.IGuild;
 import sx.blah.discord.handle.obj.IMessage;
 import sx.blah.discord.handle.obj.Permissions;
+import util.Translator;
 
 import java.util.regex.Matcher;
 
@@ -28,6 +30,7 @@ public class AnnounceCommand extends AbstractCommand{
         if (super.request(message)) {
             Matcher m = getMatcher(message);
             m.find();
+            Language lg = Translator.getLanguageFrom(message.getChannel());
             String text = m.group(2).trim();
 
             if (m.group(1) != null) {
@@ -38,8 +41,10 @@ public class AnnounceCommand extends AbstractCommand{
                     else
                         Message.sendText(guild.getOwner().getOrCreatePMChannel(), text);
 
-                Message.sendText(message.getChannel(), "Annonce envoyé à "
-                        + ClientConfig.DISCORD().getGuilds().size() + " guilde(s).");
+                Message.sendText(message.getChannel(), Translator.getLabel(lg, "announce.request.1") + " "
+                        + ClientConfig.DISCORD().getGuilds().size() + " " + Translator.getLabel(lg, "announce.request.2")
+                        + (ClientConfig.DISCORD().getGuilds().size() > 1?"s":"") + "."
+                );
             }
             else
                 Message.sendText(message.getChannel(), text);
@@ -51,13 +56,13 @@ public class AnnounceCommand extends AbstractCommand{
 
     @Override
     public String help(Language lg, String prefixe) {
-        return "**" + prefixe + name + "** envoie une annonce à l'ensemble des guildes de Kaelly.";
+        return "**" + prefixe + name + "** " + Translator.getLabel(lg, "announce.help").replace("{name}", Constants.name);
     }
 
     @Override
     public String helpDetailed(Language lg, String prefixe) {
         return help(lg, prefixe)
-                + "\n" + prefixe + "`"  + name + " `*`text`* : envoie *text* dans le salon."
-                + "\n" + prefixe + "`"  + name + " `*-confirm `text`* : envoie *text* à l'ensemble des guildes.\n";
+                + "\n" + prefixe + "`"  + name + " `*`text`* : " + Translator.getLabel(lg, "announce.help.detailed.1")
+                + "\n" + prefixe + "`"  + name + " `*-confirm `text`* : " + Translator.getLabel(lg, "announce.help.detailed.2") + "\n";
     }
 }
