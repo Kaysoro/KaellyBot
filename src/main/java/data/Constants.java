@@ -77,11 +77,6 @@ public class Constants {
     public final static String officialLogo = "https://s.ankama.com/www/static.ankama.com/g/modules/masterpage/block/header/navbar/dofus/logo.png";
 
     /**
-     * Official Dofus URL for almanax
-     */
-    public final static String almanaxURL = "http://www.krosmoz.com/fr/almanax/";
-
-    /**
      * Official Dofus URL for news feed
      */
     public final static String feedURL = "/fr/rss/news.xml";

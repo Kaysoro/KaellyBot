@@ -64,7 +64,10 @@ command.request.4=est à présent autorisée.
 command.help=permet d'autoriser ou d'interdire une commande; nécessite un niveau d'administration 2 (Modérateur) minimum.
 command.help.detailed.1=autorise l'utilisation de *CommandForbidden*. Fonctionne aussi avec \"on\" et \"0\"."
 command.help.detailed.2=masque *CommandForbidden* et la rend inutilisable. Fonctionne aussi avec "off" et "1".
-
+distance.request.1=Zaap le plus proche (à vol d'oiseau) :
+distance.request.2=Transport privé le plus proche (à vol d'oiseau) :
+distance.request.3=La position n'est pas correcte. Recommencez ! :)
+distance.help=donne le transport le plus proche (à vol d'oiseau) de la position indiquée.
 help.help=explique le fonctionnement de chaque commande de {name}.
 help.help.detailed.1=explique succinctement chaque commande.
 help.help.detailed.2=explique de façon détaillée la commande spécifiée.

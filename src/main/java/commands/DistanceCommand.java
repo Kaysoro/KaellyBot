@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sx.blah.discord.handle.obj.IMessage;
 import util.Message;
+import util.Translator;
 
 import java.util.regex.Matcher;
 
@@ -26,6 +27,7 @@ public class DistanceCommand extends AbstractCommand{
         if (super.request(message)) {
             Matcher m = getMatcher(message);
             m.find();
+            Language lg = Translator.getLanguageFrom(message.getChannel());
             Position position = new Position(Integer.parseInt(m.group(1)), Integer.parseInt(m.group(2)));
             StringBuilder st = new StringBuilder();
             Transport zaap = null;
@@ -46,13 +48,13 @@ public class DistanceCommand extends AbstractCommand{
                     }
                 }
 
-                st.append("Zaap le plus proche (à vol d'oiseau) : ").append(zaap.toString());
+                st.append(Translator.getLabel(lg, "distance.request.1")).append(" ").append(zaap.toString());
                 if (minDist > minDistLimited)
-                    st.append("\nTransport privé le plus proche (à vol d'oiseau) : ").append(transportLimited.toString());
+                    st.append("\n").append(Translator.getLabel(lg, "distance.request.2")).append(" ").append(transportLimited.toString());
             }
-            else {
-                st.append("La position n'est pas correcte. Recommencez ! :)");
-            }
+            else
+                st.append(Translator.getLabel(lg, "distance.request.3"));
+
             Message.sendText(message.getChannel(), st.toString());
         }
         return false;
@@ -60,12 +62,12 @@ public class DistanceCommand extends AbstractCommand{
 
     @Override
     public String help(Language lg, String prefixe) {
-        return "**" + prefixe + name + "** donne le transport le plus proche de la position indiquée.";
+        return "**" + prefixe + name + "** " + Translator.getLabel(lg, "distance.help");
     }
 
     @Override
     public String helpDetailed(Language lg, String prefixe) {
         return help(lg, prefixe)
-                + "\n" + prefixe + "`"  + name + "` [POS, POS]` : donne le transport le plus proche (à vol d'oiseau) de la position indiquée.\n";
+                + "\n" + prefixe + "`"  + name + "` [POS, POS]` : " + Translator.getLabel(lg, "distance.help") + "\n";
     }
 }
