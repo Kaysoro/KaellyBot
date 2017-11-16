@@ -98,11 +98,14 @@ public abstract class AbstractCommand implements Command {
     }
 
     protected Language getLanguageFrom(IChannel channel){
-        Guild guild = Guild.getGuild(channel.getGuild());
-        Language result = guild.getLanguage();
-        ChannelLanguage channelLanguage = ChannelLanguage.getChannelLanguages().get(channel.getLongID());
-        if (channelLanguage != null)
-            result = channelLanguage.getLang();
+        Language result = Constants.defaultLanguage;
+        if (! channel.isPrivate()) {
+            Guild guild = Guild.getGuild(channel.getGuild());
+            result = guild.getLanguage();
+            ChannelLanguage channelLanguage = ChannelLanguage.getChannelLanguages().get(channel.getLongID());
+            if (channelLanguage != null)
+                result = channelLanguage.getLang();
+        }
         return result;
     }
 
