@@ -9,6 +9,7 @@ import exceptions.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sx.blah.discord.handle.obj.IMessage;
+import util.Translator;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,6 +31,7 @@ public class CommandCommand extends AbstractCommand{
     public boolean request(IMessage message) {
         if (super.request(message)) {
             User author = User.getUser(message.getGuild(), message.getAuthor());
+            Language lg = Translator.getLanguageFrom(message.getChannel());
 
             if (author.getRights() >= User.RIGHT_MODERATOR) {
                 Guild guild = Guild.getGuild(message.getGuild());
@@ -46,14 +48,14 @@ public class CommandCommand extends AbstractCommand{
                     String value = m.group(2);
 
                     if (command instanceof CommandCommand){
-                        Message.sendText(message.getChannel(), "Impossible de désactiver cette commande.");
+                        Message.sendText(message.getChannel(), Translator.getLabel(lg, "announce.request.1"));
                         return false;
                     }
                     if (value.matches("false") || value.matches("1") || value.matches("off")){
                         if (! guild.getForbiddenCommands().containsKey(command.getName())) {
                             new CommandForbidden(command, guild).addToDatabase();
-                            Message.sendText(message.getChannel(), "La commande *" + commandName
-                                    + "* est à présent désactivée.");
+                            Message.sendText(message.getChannel(), Translator.getLabel(lg, "announce.request.2") + " *" + commandName
+                                    + "* " + Translator.getLabel(lg, "announce.request.3"));
                         }
                         else
                             new ForbiddenCommandFoundDiscordException().throwException(message, this);
@@ -61,8 +63,8 @@ public class CommandCommand extends AbstractCommand{
                     else if (value.matches("true") || value.matches("0") || value.matches("on")){
                         if (guild.getForbiddenCommands().containsKey(command.getName())) {
                             guild.getForbiddenCommands().get(command.getName()).removeToDatabase();
-                            Message.sendText(message.getChannel(), "La commande *" + commandName
-                                    + "* est à présent autorisée.");
+                            Message.sendText(message.getChannel(), Translator.getLabel(lg, "announce.request.2") + " *" + commandName
+                                    + "* " + Translator.getLabel(lg, "announce.request.4"));
                         }
                         else
                             new ForbiddenCommandNotFoundDiscordException().throwException(message, this);
@@ -83,14 +85,13 @@ public class CommandCommand extends AbstractCommand{
 
     @Override
     public String help(Language lg, String prefixe) {
-        return "**" + prefixe + name + "** permet d'autoriser ou d'interdire une commande; "
-                + "nécessite un niveau d'administration 2 (Modérateur) minimum.";
+        return "**" + prefixe + name + "** " + Translator.getLabel(lg, "command.help");
     }
 
     @Override
     public String helpDetailed(Language lg, String prefixe) {
         return help(lg, prefixe)
-                + "\n" + prefixe + "`"  + name + " *CommandForbidden* true` : autorise l'utilisation de *CommandForbidden*. Fonctionne aussi avec \"on\" et \"0\"."
-                + "\n" + prefixe + "`"  + name + " *CommandForbidden* false` : masque *CommandForbidden* et la rend inutilisable. Fonctionne aussi avec \"off\" et \"1\".\n";
+                + "\n" + prefixe + "`"  + name + " *CommandForbidden* true` : " + Translator.getLabel(lg, "command.detailed.1")
+                + "\n" + prefixe + "`"  + name + " *CommandForbidden* false` : " + Translator.getLabel(lg, "command.detailed.2") + "\n";
     }
 }
