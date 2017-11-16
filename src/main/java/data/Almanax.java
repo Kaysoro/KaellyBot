@@ -1,5 +1,6 @@
 package data;
 
+import enums.Language;
 import org.apache.commons.lang3.time.DateUtils;
 import org.jsoup.nodes.Document;
 import org.slf4j.Logger;
@@ -7,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import sx.blah.discord.api.internal.json.objects.EmbedObject;
 import sx.blah.discord.util.EmbedBuilder;
 import util.JSoupManager;
+import util.Translator;
 
 import java.io.IOException;
 import java.text.DateFormat;
@@ -39,43 +41,43 @@ public class Almanax implements Embedded{
     }
 
     @Override
-    public EmbedObject getEmbedObject() {
+    public EmbedObject getEmbedObject(Language lg) {
         EmbedBuilder builder = new EmbedBuilder();
 
-        builder.withTitle("Almanax du " + day);
-        builder.withUrl(Constants.almanaxURL + day);
+        builder.withTitle(Translator.getLabel(lg, "almanax.embed.title.1") + " " + day);
+        builder.withUrl(Translator.getLabel(lg, "almanax.url") + day);
 
         builder.withColor(new Random().nextInt(16777216));
         builder.withThumbnail(ressourceURL);
 
-        builder.appendField(":cyclone: Bonus : ", bonus, true);
-        builder.appendField(":moneybag: Offrande : ", offrande, true);
+        builder.appendField(Translator.getLabel(lg, "almanax.embed.bonus"), bonus, true);
+        builder.appendField(Translator.getLabel(lg, "almanax.embed.offrande"), offrande, true);
 
         return builder.build();
     }
 
     @Override
-    public EmbedObject getMoreEmbedObject() {
+    public EmbedObject getMoreEmbedObject(Language lg) {
         EmbedBuilder builder = new EmbedBuilder();
 
-        builder.withTitle("Almanax du " + day);
-        builder.withUrl(Constants.almanaxURL + day);
+        builder.withTitle(Translator.getLabel(lg, "almanax.embed.title.1") + " " + day);
+        builder.withUrl(Translator.getLabel(lg, "almanax.url") + day);
         builder.withDescription(quest);
 
         builder.withColor(new Random().nextInt(16777216));
         builder.withImage(ressourceURL);
 
-        builder.appendField(":cyclone: Bonus : ", bonus, true);
-        builder.appendField(":moneybag: Offrande : ", offrande, true);
+        builder.appendField(Translator.getLabel(lg, "almanax.embed.bonus"), bonus, true);
+        builder.appendField(Translator.getLabel(lg, "almanax.embed.offrande"), offrande, true);
 
         return builder.build();
     }
 
-    public static EmbedObject getGroupedObject(Date day, int occurrence) throws IOException {
+    public static EmbedObject getGroupedObject(Language lg, Date day, int occurrence) throws IOException {
         Date firstDate = DateUtils.addDays(day,1);
         Date lastDate = DateUtils.addDays(day, occurrence);
-        String title = "Almanax du " + discordToBot.format(firstDate) +
-                (occurrence > 1 ? " au " + discordToBot.format(lastDate) : "");
+        String title = Translator.getLabel(lg, "almanax.embed.title.1") + " " + discordToBot.format(firstDate) +
+                (occurrence > 1 ? " " + Translator.getLabel(lg, "almanax.embed.title.2") + " " + discordToBot.format(lastDate) : "");
 
         EmbedBuilder builder = new EmbedBuilder();
         builder.withTitle(title);
@@ -83,25 +85,25 @@ public class Almanax implements Embedded{
 
         for (int i = 1; i <= occurrence; i++) {
             firstDate = DateUtils.addDays(new Date(), i);
-            Almanax almanax = Almanax.get(firstDate);
-            builder.appendField(discordToBot.format(firstDate) + " :cyclone: Bonus : ", almanax.getBonus(), true);
-            builder.appendField(discordToBot.format(firstDate) + " :moneybag: Offrande : ", almanax.getOffrande(), true);
+            Almanax almanax = Almanax.get(lg, firstDate);
+            builder.appendField(discordToBot.format(firstDate) + Translator.getLabel(lg, "almanax.embed.bonus"), almanax.getBonus(), true);
+            builder.appendField(discordToBot.format(firstDate) + Translator.getLabel(lg, "almanax.embed.offrande"), almanax.getOffrande(), true);
         }
 
         return builder.build();
     }
 
-    public static Almanax get(String date) throws IOException {
-        return gatheringOnlineData(date);
+    public static Almanax get(Language lg, String date) throws IOException {
+        return gatheringOnlineData(lg, date);
     }
 
-    public static Almanax get(Date date) throws IOException {
-        return gatheringOnlineData(botToAlmanax.format(date));
+    public static Almanax get(Language lg, Date date) throws IOException {
+        return gatheringOnlineData(lg, botToAlmanax.format(date));
     }
 
-    private static Almanax gatheringOnlineData(String date) throws IOException {
-        LOG.info("connecting to " + Constants.almanaxURL + date + " ...");
-        Document doc = JSoupManager.getDocument(Constants.almanaxURL + date);
+    private static Almanax gatheringOnlineData(Language lg, String date) throws IOException {
+        LOG.info("connecting to " + Translator.getLabel(lg, "almanax.url") + date + " ...");
+        Document doc = JSoupManager.getDocument(Translator.getLabel(lg, "almanax.url") + date);
 
         String bonus = doc.getElementsByClass("more").first()
                 .clone().getElementsByClass("more-infos").empty().parents().first().text();

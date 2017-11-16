@@ -3,10 +3,8 @@ package commands;
 import enums.Language;
 import exceptions.NoExternalEmojiPermissionDiscordException;
 import sx.blah.discord.handle.obj.Permissions;
-import util.BestMatcher;
+import util.*;
 import data.*;
-import util.ClientConfig;
-import util.Message;
 import exceptions.ExceptionManager;
 import exceptions.MonsterNotFoundDiscordException;
 import exceptions.TooMuchMonstersDiscordException;
@@ -17,7 +15,6 @@ import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sx.blah.discord.handle.obj.IMessage;
-import util.JSoupManager;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -43,6 +40,7 @@ public class MonsterCommand extends AbstractCommand{
     public boolean request(IMessage message) {
         if (super.request(message)){
             Matcher m = getMatcher(message);
+            Language lg = Translator.getLanguageFrom(message.getChannel());
             m.find();
 
             if (message.getChannel().getModifiedPermissions(ClientConfig.DISCORD().getOurUser()).contains(Permissions.USE_EXTERNAL_EMOJIS)
@@ -59,9 +57,9 @@ public class MonsterCommand extends AbstractCommand{
                     if (matcher.isUnique()) { // We have found it !
                         Embedded monster = Monster.getMonster(Constants.officialURL + matcher.getBest().getRight());
                         if (m.group(1) != null)
-                            Message.sendEmbed(message.getChannel(), monster.getMoreEmbedObject());
+                            Message.sendEmbed(message.getChannel(), monster.getMoreEmbedObject(lg));
                         else
-                            Message.sendEmbed(message.getChannel(), monster.getEmbedObject());
+                            Message.sendEmbed(message.getChannel(), monster.getEmbedObject(lg));
                     } else if (!matcher.isEmpty()) // Too much items
                         new TooMuchMonstersDiscordException().throwException(message, this, matcher.getBests());
                     else // empty

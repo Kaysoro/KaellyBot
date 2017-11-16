@@ -26,7 +26,7 @@ public class AdminCommand extends AbstractCommand{
     public boolean request(IMessage message) {
         if (super.request(message)) {
             String prefixe = getPrefixMdEscaped(message);
-            Language lg = getLanguageFrom(message.getChannel());
+            Language lg = Translator.getLanguageFrom(message.getChannel());
             Matcher m = getMatcher(message);
             m.find();
             StringBuilder st = new StringBuilder();

@@ -19,6 +19,7 @@ import sx.blah.discord.handle.obj.IMessage;
 import util.BestMatcher;
 import util.JSoupManager;
 import util.Message;
+import util.Translator;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -50,6 +51,7 @@ public class ResourceCommand extends AbstractCommand{
     public boolean request(IMessage message) {
         if (super.request(message)){
             Matcher m = getMatcher(message);
+            Language lg = Translator.getLanguageFrom(message.getChannel());
             m.find();
 
             String normalName = Normalizer.normalize(m.group(2).trim(), Normalizer.Form.NFD)
@@ -82,9 +84,9 @@ public class ResourceCommand extends AbstractCommand{
                 if (matcher.isUnique()) { // We have found it !
                     Embedded resource = Resource.getResource(Constants.officialURL + matcher.getBest().getRight());
                     if (m.group(1) != null)
-                        Message.sendEmbed(message.getChannel(), resource.getMoreEmbedObject());
+                        Message.sendEmbed(message.getChannel(), resource.getMoreEmbedObject(lg));
                     else
-                        Message.sendEmbed(message.getChannel(), resource.getEmbedObject());
+                        Message.sendEmbed(message.getChannel(), resource.getEmbedObject(lg));
                 } else if (!matcher.isEmpty()) // Too much items
                     new TooMuchResourcesDiscordException().throwException(message, this, matcher.getBests());
                 else // empty

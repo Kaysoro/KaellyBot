@@ -5,10 +5,8 @@ import enums.SuperTypeEquipment;
 import enums.TypeEquipment;
 import exceptions.NoExternalEmojiPermissionDiscordException;
 import sx.blah.discord.handle.obj.Permissions;
-import util.BestMatcher;
+import util.*;
 import data.*;
-import util.ClientConfig;
-import util.Message;
 import exceptions.ExceptionManager;
 import exceptions.ItemNotFoundDiscordException;
 import exceptions.TooMuchItemsDiscordException;
@@ -19,7 +17,6 @@ import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sx.blah.discord.handle.obj.IMessage;
-import util.JSoupManager;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -51,6 +48,7 @@ public class ItemCommand extends AbstractCommand{
     public boolean request(IMessage message) {
         if (super.request(message)){
             Matcher m = getMatcher(message);
+            Language lg = Translator.getLanguageFrom(message.getChannel());
             m.find();
             if (message.getChannel().getModifiedPermissions(ClientConfig.DISCORD().getOurUser()).contains(Permissions.USE_EXTERNAL_EMOJIS)
                     && ClientConfig.DISCORD().getOurUser().getPermissionsForGuild(message.getGuild())
@@ -85,9 +83,9 @@ public class ItemCommand extends AbstractCommand{
                     if (matcher.isUnique()) { // We have found it !
                         Embedded item = Item.getItem(Constants.officialURL + matcher.getBest().getRight());
                         if (m.group(1) != null)
-                            Message.sendEmbed(message.getChannel(), item.getMoreEmbedObject());
+                            Message.sendEmbed(message.getChannel(), item.getMoreEmbedObject(lg));
                         else
-                            Message.sendEmbed(message.getChannel(), item.getEmbedObject());
+                            Message.sendEmbed(message.getChannel(), item.getEmbedObject(lg));
                     } else if (!matcher.isEmpty()) // Too much items
                         new TooMuchItemsDiscordException().throwException(message, this, matcher.getBests());
                     else // empty

@@ -1,5 +1,6 @@
 package data;
 
+import enums.Language;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
@@ -41,7 +42,7 @@ public class Set implements Embedded {
     }
 
     @Override
-    public EmbedObject getEmbedObject() {
+    public EmbedObject getEmbedObject(Language lg) {
         EmbedBuilder builder = new EmbedBuilder();
 
         builder.withTitle(name);
@@ -62,7 +63,7 @@ public class Set implements Embedded {
     }
 
     @Override
-    public EmbedObject getMoreEmbedObject() {
+    public EmbedObject getMoreEmbedObject(Language lg) {
         EmbedBuilder builder = new EmbedBuilder();
 
         builder.withTitle(name);

@@ -14,6 +14,8 @@ import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sx.blah.discord.handle.obj.IMessage;
+import util.Translator;
+
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.lang.Exception;
@@ -47,6 +49,7 @@ public class WhoisCommand extends AbstractCommand{
 
             Matcher m = getMatcher(message);
             m.find();
+            Language lg = Translator.getLanguageFrom(message.getChannel());
             String pseudo = m.group(1).trim().toLowerCase();
 
             StringBuilder url = null;
@@ -102,7 +105,7 @@ public class WhoisCommand extends AbstractCommand{
 
                         if (!response.url().getPath().endsWith("indisponible")) {
                             Character characPage = Character.getCharacter(Constants.officialURL + result.get(0));
-                            Message.sendEmbed(message.getChannel(), characPage.getEmbedObject());
+                            Message.sendEmbed(message.getChannel(), characPage.getEmbedObject(lg));
                         } else
                             new CharacterTooOldDiscordException().throwException(message, this);
                     }

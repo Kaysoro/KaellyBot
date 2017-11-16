@@ -31,7 +31,7 @@ public class AboutCommand extends AbstractCommand{
         if (super.request(message)){
             IUser author = ClientConfig.DISCORD().getApplicationOwner();
             EmbedBuilder builder = new EmbedBuilder();
-            Language lg = getLanguageFrom(message.getChannel());
+            Language lg = Translator.getLanguageFrom(message.getChannel());
 
             builder.withTitle(Translator.getLabel(lg, "about.title")
                         .replace("{name}", Constants.name)

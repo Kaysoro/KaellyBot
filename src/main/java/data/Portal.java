@@ -1,5 +1,6 @@
 package data;
 
+import enums.Language;
 import org.apache.commons.lang3.time.DateUtils;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -256,7 +257,7 @@ public class Portal implements Embedded{
     }
 
     @Override
-    public EmbedObject getEmbedObject() {
+    public EmbedObject getEmbedObject(Language lg) {
         EmbedBuilder builder = new EmbedBuilder();
 
         builder.withTitle(name);
@@ -282,8 +283,8 @@ public class Portal implements Embedded{
     }
 
     @Override
-    public EmbedObject getMoreEmbedObject() {
-        return getEmbedObject();
+    public EmbedObject getMoreEmbedObject(Language lg) {
+        return getEmbedObject(lg);
     }
 
     @Override

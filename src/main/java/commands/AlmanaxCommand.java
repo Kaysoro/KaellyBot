@@ -34,7 +34,7 @@ public class AlmanaxCommand extends AbstractCommand{
             try {
                 Date date = new Date();
                 Matcher m = getMatcher(message);
-                Language lg = getLanguageFrom(message.getChannel());
+                Language lg = Translator.getLanguageFrom(message.getChannel());
                 m.find();
 
                 if (m.group(1) != null && (m.group(1).matches("\\s+true") || m.group(1).matches("\\s+0") || m.group(1).matches("\\s+on")
@@ -62,12 +62,12 @@ public class AlmanaxCommand extends AbstractCommand{
 
                 else if (m.group(1) != null && m.group(1).matches("\\s+\\+\\d")) {
                     int number = Integer.parseInt(m.group(1).replaceAll("\\s+\\+", ""));
-                    Message.sendEmbed(message.getChannel(), Almanax.getGroupedObject(new Date(), number));
+                    Message.sendEmbed(message.getChannel(), Almanax.getGroupedObject(lg, new Date(), number));
                 } else {
                     if (m.group(1) != null && m.group(1).matches("\\s+\\d{2}/\\d{2}/\\d{4}"))
                         date = Almanax.discordToBot.parse(m.group(1));
-                    Almanax almanax = Almanax.get(date);
-                    Message.sendEmbed(message.getChannel(), almanax.getMoreEmbedObject());
+                    Almanax almanax = Almanax.get(lg, date);
+                    Message.sendEmbed(message.getChannel(), almanax.getMoreEmbedObject(lg));
                 }
 
             } catch (ParseException e) {

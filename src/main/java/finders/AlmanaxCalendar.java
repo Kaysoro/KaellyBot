@@ -1,6 +1,7 @@
 package finders;
 
 import data.Almanax;
+import enums.Language;
 import util.Message;
 import exceptions.ExceptionManager;
 import org.slf4j.Logger;
@@ -8,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import sx.blah.discord.handle.obj.IChannel;
 import util.ClientConfig;
 import util.Connexion;
+import util.Translator;
 
 import java.io.IOException;
 import java.sql.Connection;
@@ -49,12 +51,15 @@ public class AlmanaxCalendar {
 
                 while(!success)
                     try {
-                        Almanax almanax = Almanax.get(new Date());
+                        Map<Language, Almanax> almanax = new HashMap<>();
+                        for(Language lg : Language.values())
+                            almanax.put(lg, Almanax.get(lg, new Date()));
 
                         for(AlmanaxCalendar calendar : getAlmanaxCalendars().values()){
                             IChannel chan = ClientConfig.DISCORD().getChannelByID(Long.parseLong(calendar.getChan()));
+                            Language lg = Translator.getLanguageFrom(chan);
                             if (chan != null && ! chan.isDeleted())
-                                Message.sendEmbed(chan, almanax.getMoreEmbedObject());
+                                Message.sendEmbed(chan, almanax.get(lg).getMoreEmbedObject(lg));
                         }
                         success = true;
                     } catch (IOException e) {

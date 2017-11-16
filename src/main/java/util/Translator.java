@@ -9,7 +9,9 @@ import com.optimaize.langdetect.profiles.LanguageProfile;
 import com.optimaize.langdetect.profiles.LanguageProfileReader;
 import com.optimaize.langdetect.text.CommonTextObjectFactories;
 import com.optimaize.langdetect.text.TextObject;
+import data.ChannelLanguage;
 import data.Constants;
+import data.Guild;
 import enums.Language;
 import org.slf4j.LoggerFactory;
 import sx.blah.discord.handle.obj.IChannel;
@@ -87,6 +89,18 @@ public class Translator {
             }
         }
         return languageDetector;
+    }
+
+    public static Language getLanguageFrom(IChannel channel){
+        Language result = Constants.defaultLanguage;
+        if (! channel.isPrivate()) {
+            Guild guild = Guild.getGuild(channel.getGuild());
+            result = guild.getLanguage();
+            ChannelLanguage channelLanguage = ChannelLanguage.getChannelLanguages().get(channel.getLongID());
+            if (channelLanguage != null)
+                result = channelLanguage.getLang();
+        }
+        return result;
     }
 
     private static List<String> getReformatedMessages(IChannel channel){

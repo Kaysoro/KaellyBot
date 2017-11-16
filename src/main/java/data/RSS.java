@@ -5,6 +5,7 @@ import com.rometools.rome.feed.synd.SyndFeed;
 import com.rometools.rome.io.FeedException;
 import com.rometools.rome.io.SyndFeedInput;
 import com.rometools.rome.io.XmlReader;
+import enums.Language;
 import exceptions.ExceptionManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -99,7 +100,7 @@ public class RSS implements Comparable<RSS>, Embedded {
     }
 
     @Override
-    public EmbedObject getEmbedObject() {
+    public EmbedObject getEmbedObject(Language lg) {
         EmbedBuilder builder = new EmbedBuilder();
 
         builder.withAuthorName("Dofus.com");
@@ -115,7 +116,7 @@ public class RSS implements Comparable<RSS>, Embedded {
     }
 
     @Override
-    public EmbedObject getMoreEmbedObject() {
-        return getEmbedObject();
+    public EmbedObject getMoreEmbedObject(Language lg) {
+        return getEmbedObject(lg);
     }
 }

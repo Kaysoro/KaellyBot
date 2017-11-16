@@ -1,5 +1,6 @@
 package data;
 
+import enums.Language;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 import org.slf4j.Logger;
@@ -52,7 +53,7 @@ public class Character implements Embedded {
     }
 
     @Override
-    public EmbedObject getEmbedObject(){
+    public EmbedObject getEmbedObject(Language lg){
         EmbedBuilder builder = new EmbedBuilder();
 
         builder.withTitle(pseudo);
@@ -77,8 +78,8 @@ public class Character implements Embedded {
     }
 
     @Override
-    public EmbedObject getMoreEmbedObject() {
-        return getEmbedObject();
+    public EmbedObject getMoreEmbedObject(Language lg) {
+        return getEmbedObject(lg);
     }
 
     public static Character getCharacter(String url) throws IOException {

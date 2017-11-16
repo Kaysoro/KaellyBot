@@ -10,6 +10,8 @@ import exceptions.TooMuchPossibilitiesDiscordException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sx.blah.discord.handle.obj.IMessage;
+import util.Translator;
+
 import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.List;
@@ -31,10 +33,11 @@ public class PortalCommand extends AbstractCommand{
     public boolean request(IMessage message) {
         if (super.request(message)) {
             Matcher m = getMatcher(message);
+            Language lg = Translator.getLanguageFrom(message.getChannel());
             m.find();
             if (m.group(1) == null && m.group(5) == null) { // No dimension precised
                 for(Portal pos : Guild.getGuild(message.getGuild()).getPortals())
-                        Message.sendEmbed(message.getChannel(), pos.getEmbedObject());
+                        Message.sendEmbed(message.getChannel(), pos.getEmbedObject(lg));
             }
             else {
                 List<Portal> portals = new ArrayList<>();
@@ -46,7 +49,7 @@ public class PortalCommand extends AbstractCommand{
                     if (m.group(5) != null)
                         portals.get(0).setUtilisation(Integer.parseInt(m.group(5).replaceAll("\\s", "")));
 
-                    Message.sendEmbed(message.getChannel(), portals.get(0).getEmbedObject());
+                    Message.sendEmbed(message.getChannel(), portals.get(0).getEmbedObject(lg));
                 }
                 else if(portals.size() > 1)
                     new TooMuchPossibilitiesDiscordException().throwException(message, this);

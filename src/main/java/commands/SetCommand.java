@@ -3,10 +3,8 @@ package commands;
 import enums.Language;
 import exceptions.*;
 import sx.blah.discord.handle.obj.Permissions;
-import util.BestMatcher;
+import util.*;
 import data.*;
-import util.ClientConfig;
-import util.Message;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -14,7 +12,6 @@ import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sx.blah.discord.handle.obj.IMessage;
-import util.JSoupManager;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -40,6 +37,7 @@ public class SetCommand extends AbstractCommand{
     public boolean request(IMessage message) {
         if (super.request(message)) {
             Matcher m = getMatcher(message);
+            Language lg = Translator.getLanguageFrom(message.getChannel());
             m.find();
 
             if (message.getChannel().getModifiedPermissions(ClientConfig.DISCORD().getOurUser()).contains(Permissions.USE_EXTERNAL_EMOJIS)
@@ -56,9 +54,9 @@ public class SetCommand extends AbstractCommand{
                     if (matcher.isUnique()) { // We have found it !
                         Embedded set = Set.getSet(Constants.officialURL + matcher.getBest().getRight());
                         if (m.group(1) != null)
-                            Message.sendEmbed(message.getChannel(), set.getMoreEmbedObject());
+                            Message.sendEmbed(message.getChannel(), set.getMoreEmbedObject(lg));
                         else
-                            Message.sendEmbed(message.getChannel(), set.getEmbedObject());
+                            Message.sendEmbed(message.getChannel(), set.getEmbedObject(lg));
                     } else if (!matcher.isEmpty()) // Too much items
                         new TooMuchSetsDiscordException().throwException(message, this, matcher.getBests());
                     else // empty

@@ -1,12 +1,14 @@
 package finders;
 
 import data.RSS;
+import enums.Language;
 import util.Message;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sx.blah.discord.handle.obj.IChannel;
 import util.ClientConfig;
 import util.Connexion;
+import util.Translator;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -146,8 +148,9 @@ public class RSSFinder {
 
                             for (RSS rss : rssFeeds)
                                 if (rss.getDate() > finder.getLastRSS()) {
-                                    Message.sendEmbed(ClientConfig.DISCORD().getChannelByID(
-                                            Long.parseLong(finder.getChan())), rss.getEmbedObject());
+                                    IChannel chan = ClientConfig.DISCORD().getChannelByID(Long.parseLong(finder.getChan()));
+                                    Language lg = Translator.getLanguageFrom(chan);
+                                    Message.sendEmbed(chan, rss.getEmbedObject(lg));
                                     lastRSS = rss.getDate();
                                 }
 

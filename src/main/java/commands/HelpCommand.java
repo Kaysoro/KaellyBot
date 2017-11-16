@@ -8,6 +8,7 @@ import exceptions.CommandNotFoundDiscordException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sx.blah.discord.handle.obj.IMessage;
+import util.Translator;
 
 import java.util.regex.Matcher;
 
@@ -26,7 +27,7 @@ public class HelpCommand extends AbstractCommand{
     public boolean request(IMessage message) {
         if (super.request(message)) {
             String prefixe = getPrefixMdEscaped(message);
-            Language lg = getLanguageFrom(message.getChannel());
+            Language lg = Translator.getLanguageFrom(message.getChannel());
             Matcher m = getMatcher(message);
             m.find();
             StringBuilder st = new StringBuilder();
