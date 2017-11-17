@@ -4,51 +4,42 @@ import data.Guild;
 import data.Portal;
 import data.ServerDofus;
 import exceptions.ExceptionManager;
-import finders.RSSFinder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import util.ClientConfig;
 
 import java.io.IOException;
-
-import static java.lang.Thread.sleep;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 public class PortalFinder
 {
     private final static Logger LOG = LoggerFactory.getLogger(RSSFinder.class);
-    private final static long DELTA = 3600000; // 1 hour
+    private final static long DELTA = 20; // 20 minutes
     private static boolean isStarted = false;
 
     public static void start(){
         if (!isStarted) {
             isStarted = true;
-            new Thread(() -> {
-                while(true) {
-                    try {
-                        for (Guild guild : Guild.getGuilds().values())
-                            if (guild.getServerDofus() != null) { //Server renseigné ?
-                                ServerDofus server = guild.getServerDofus();
+            ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+            scheduler.scheduleAtFixedRate(() -> {
+                try {
+                    for (Guild guild : Guild.getGuilds().values())
+                        if (guild.getServerDofus() != null) { //Server renseigné ?
+                            ServerDofus server = guild.getServerDofus();
 
-                                // Si les positions ne sont plus d'actualités, on les met à jour
-                                if (System.currentTimeMillis() - server.getLastSweetRefresh() > DELTA)
-                                    server.setSweetPortals(Portal.getSweetPortals(server));
+                            // Si les positions ne sont plus d'actualités, on les met à jour
+                            if (System.currentTimeMillis() - server.getLastSweetRefresh() > DELTA)
+                                server.setSweetPortals(Portal.getSweetPortals(server));
 
-                                guild.mergePortals(server.getSweetPortals());
-                            }
-                    } catch (IOException e) {
-                        ExceptionManager.manageSilentlyIOException(e);
-                    } catch (Exception e) {
-                        ExceptionManager.manageSilentlyException(e);
-                    }
-
-                    try {
-                        sleep(DELTA);
-                    } catch (InterruptedException e) {
-                        ClientConfig.setSentryContext(null, null, null, null);
-                        LOG.error(e.getMessage());
-                    }
+                            guild.mergePortals(server.getSweetPortals());
+                        }
+                } catch (IOException e) {
+                    ExceptionManager.manageSilentlyIOException(e);
+                } catch (Exception e) {
+                    ExceptionManager.manageSilentlyException(e);
                 }
-            }).start();
+            }, 0, 20, TimeUnit.MINUTES);
         }
     }
 }
