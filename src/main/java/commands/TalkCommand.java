@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import sx.blah.discord.handle.obj.IChannel;
 import sx.blah.discord.handle.obj.IMessage;
 import sx.blah.discord.handle.obj.Permissions;
+import util.Translator;
 
 import java.util.regex.Matcher;
 
@@ -57,13 +58,13 @@ public class TalkCommand extends AbstractCommand{
 
     @Override
     public String help(Language lg, String prefixe) {
-        return "**" + prefixe + name + "** envoie un message à destination d'un salon spécifique.";
+        return "**" + prefixe + name + "** " + Translator.getLabel(lg, "talk.help");
     }
 
     @Override
     public String helpDetailed(Language lg, String prefixe) {
         return help(lg, prefixe)
-                + "\n" + prefixe + "`"  + name + " `*`text`* : envoie *text* dans le dernier salon utilisé."
-                + "\n" + prefixe + "`"  + name + " `*salon `text`* : envoie *text* au salon spécifié (identifiant).\n";
+                + "\n" + prefixe + "`"  + name + " `*`text`* : " + Translator.getLabel(lg, "talk.help.detailed.1")
+                + "\n" + prefixe + "`"  + name + " `*salon `text`* : " + Translator.getLabel(lg, "talk.help.detailed.2") + "\n";
     }
 }

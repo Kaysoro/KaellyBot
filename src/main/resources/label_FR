@@ -82,3 +82,6 @@ map.punchline=Ah ! Dommage :smirk:;Oh! Ça promet :joy:;CHAMPAGNE ! :champagne:;
 sound.help=joue un son en vous rejoignant succintement dans votre canal vocal.
 sound.help.detailed.1=joue un son au hasard parmi la liste suivante :
 sound.help.detailed.2=joue le son passé en paramètre.
+talk.help=envoie un message à destination d'un salon spécifique.
+talk.help.detailed.1=envoie *text* dans le dernier salon utilisé.
+talk.help.detailed.2=envoie *text* au salon spécifié (identifiant).
