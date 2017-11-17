@@ -17,15 +17,16 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-
-import static java.lang.Thread.sleep;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by steve on 12/01/2017.
  */
 public class RSSFinder {
     private final static Logger LOG = LoggerFactory.getLogger(RSSFinder.class);
-    private final static long DELTA = 600000; // 10min
+    private final static long DELTA = 10; // 10min
     private static boolean isStarted = false;
 
     private static Map<String, RSSFinder> rssFinders = null;
@@ -140,32 +141,24 @@ public class RSSFinder {
     public static void start(){
         if (!isStarted) {
             isStarted = true;
-            new Thread(() -> {
-                    while(true) {
-                        List<RSS> rssFeeds = RSS.getRSSFeeds();
-                        for (RSSFinder finder : getRSSFinders().values()) {
-                            long lastRSS = -1;
+            ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+            scheduler.scheduleAtFixedRate(() -> {
+                List<RSS> rssFeeds = RSS.getRSSFeeds();
+                for (RSSFinder finder : getRSSFinders().values()) {
+                    long lastRSS = -1;
 
-                            for (RSS rss : rssFeeds)
-                                if (rss.getDate() > finder.getLastRSS()) {
-                                    IChannel chan = ClientConfig.DISCORD().getChannelByID(Long.parseLong(finder.getChan()));
-                                    Language lg = Translator.getLanguageFrom(chan);
-                                    Message.sendEmbed(chan, rss.getEmbedObject(lg));
-                                    lastRSS = rss.getDate();
-                                }
-
-                            if (lastRSS != -1)
-                                finder.setLastRSS(lastRSS);
+                    for (RSS rss : rssFeeds)
+                        if (rss.getDate() > finder.getLastRSS()) {
+                            IChannel chan = ClientConfig.DISCORD().getChannelByID(Long.parseLong(finder.getChan()));
+                            Language lg = Translator.getLanguageFrom(chan);
+                            Message.sendEmbed(chan, rss.getEmbedObject(lg));
+                            lastRSS = rss.getDate();
                         }
 
-                        try {
-                            sleep(DELTA);
-                        } catch (InterruptedException e) {
-                            ClientConfig.setSentryContext(null, null, null, null);
-                            LOG.error(e.getMessage());
-                        }
-                    }
-            }).start();
+                    if (lastRSS != -1)
+                        finder.setLastRSS(lastRSS);
+                }
+            }, 0, DELTA, TimeUnit.MINUTES);
         }
     }
 
