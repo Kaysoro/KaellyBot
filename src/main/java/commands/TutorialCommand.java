@@ -15,6 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sx.blah.discord.handle.obj.IMessage;
 import util.JSoupManager;
+import util.Translator;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -42,6 +43,7 @@ public class TutorialCommand extends AbstractCommand{
         if (super.request(message)){
             Matcher m = getMatcher(message);
             m.find();
+            Language lg = Translator.getLanguageFrom(message.getChannel());
             String normalName = Normalizer.normalize(m.group(1).trim(), Normalizer.Form.NFD)
                     .replaceAll("\\p{InCombiningDiacriticalMarks}+", "").toLowerCase();
             String editedName = removeUselessWords(normalName);
@@ -51,7 +53,7 @@ public class TutorialCommand extends AbstractCommand{
                 matcher.evaluateAll(getListTutoFrom(getSearchURL(normalName), message));
 
                 if (matcher.isUnique())// We have found it !
-                    Message.sendText(message.getChannel(), "Voici le lien du tutoriel souhaité : " +
+                    Message.sendText(message.getChannel(), Translator.getLabel(lg, "tutorial.request") + " " +
                             Constants.dofusPourLesNoobURL + matcher.getBest().getRight());
                 else if (! matcher.isEmpty()) // Too much items
                     new TooMuchTutosDiscordException().throwException(message, this, matcher.getBests());
@@ -103,13 +105,12 @@ public class TutorialCommand extends AbstractCommand{
 
     @Override
     public String help(Language lg, String prefixe) {
-        return "**" + prefixe + name + "** renvoie le tutoriel correspondant à la recherche effectuée sur dofuspourlesnoobs.";
+        return "**" + prefixe + name + "** " + Translator.getLabel(lg, "tutorial.help");
     }
 
     @Override
     public String helpDetailed(Language lg, String prefixe) {
         return help(lg, prefixe)
-                + "\n" + prefixe + "`"  + name + " `*`recherche`* : renvoie le tutoriel correspondant à la recherche effectuée"
-                + " sur dofuspourlesnoobs: quête, donjon... Son nom peut être approximatif s'il est suffisamment précis.\n";
+                + "\n" + prefixe + "`"  + name + " `*`search`* : " + Translator.getLabel(lg, "tutorial.help.detailed") + "\n";
     }
 }

@@ -85,3 +85,6 @@ sound.help.detailed.2=joue le son passé en paramètre.
 talk.help=envoie un message à destination d'un salon spécifique.
 talk.help.detailed.1=envoie *text* dans le dernier salon utilisé.
 talk.help.detailed.2=envoie *text* au salon spécifié (identifiant).
+tutorial.request=Voici le lien du tutoriel souhaité :
+tutorial.help=renvoie le tutoriel correspondant à la recherche effectuée sur dofuspourlesnoobs.
+tutorial.help.detailed=renvoie le tutoriel correspondant à la recherche effectuée sur dofuspourlesnoobs: quête, donjon... Son nom peut être approximatif s'il est suffisamment précis.
