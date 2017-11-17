@@ -10,6 +10,7 @@ import sx.blah.discord.handle.obj.IVoiceChannel;
 import sx.blah.discord.handle.obj.Permissions;
 import sx.blah.discord.util.MissingPermissionsException;
 import sx.blah.discord.util.audio.AudioPlayer;
+import util.Translator;
 
 import javax.sound.sampled.UnsupportedAudioFileException;
 import java.io.File;
@@ -108,7 +109,7 @@ public class SoundCommand extends AbstractCommand{
 
     @Override
     public String help(Language lg, String prefixe) {
-        return "**" + prefixe + name + "** joue un son en vous rejoignant succintement dans votre canal vocal.";
+        return "**" + prefixe + name + "** " + Translator.getLabel(lg, "sound.help");
     }
 
     @Override
@@ -130,7 +131,7 @@ public class SoundCommand extends AbstractCommand{
         }
         st.append("```");
         return help(lg, prefixe)
-                + "\n" + prefixe + "`"  + name + "` : joue un son au hasard parmi la liste suivante : " + st.toString()
-                + "\n" + prefixe + "`"  + name + " `*`sound`* : joue le son passé en paramètre.\n";
+                + "\n" + prefixe + "`"  + name + "` : " + Translator.getLabel(lg, "sound.help.detailed.1") + " " + st.toString()
+                + "\n" + prefixe + "`"  + name + " `*`sound`* : " + Translator.getLabel(lg, "sound.help.detailed.2") + "\n";
     }
 }
