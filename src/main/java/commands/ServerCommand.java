@@ -11,6 +11,7 @@ import exceptions.TooMuchServersDiscordException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sx.blah.discord.handle.obj.IMessage;
+import util.Translator;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,6 +34,7 @@ public class ServerCommand extends AbstractCommand{
         if (super.request(message)) {
             User author = User.getUser(message.getGuild(), message.getAuthor());
             Guild guild = Guild.getGuild(message.getGuild());
+            Language lg = Translator.getLanguageFrom(message.getChannel());
             Matcher m = getMatcher(message);
             m.find();
             if (m.group(1) != null)
@@ -50,8 +52,9 @@ public class ServerCommand extends AbstractCommand{
                                 guild.resetPortals();
                             guild.setServer(result.get(0));
                             guild.mergePortals(result.get(0).getSweetPortals());
-                            Message.sendText(message.getChannel(), "Le serveur dofus de " + guild.getName()
-                                    + " est désormais " + result.get(0).getName() + ".");
+                            Message.sendText(message.getChannel(), Translator.getLabel(lg, "server.request.1")
+                                    + " " + guild.getName() + " " + Translator.getLabel(lg, "server.request.2")
+                                    + " " + result.get(0).getName() + ".");
                         } else if (result.isEmpty())
                             new ServerNotFoundDiscordException().throwException(message, this);
                         else
@@ -60,18 +63,19 @@ public class ServerCommand extends AbstractCommand{
                     else {
                         guild.setServer(null);
                         Message.sendText(message.getChannel(), guild.getName()
-                                + " n'est désormais plus rattachée à un serveur Dofus.");
+                                + " " + Translator.getLabel(lg, "server.request.3"));
                     }
                 }
                 else
                     new NotEnoughRightsDiscordException().throwException(message, this);
             else {
                 if (guild.getServerDofus() != null)
-                    Message.sendText(message.getChannel(), guild.getName() + " correspond au serveur "
-                        + guild.getServerDofus().getName() + ".");
+                    Message.sendText(message.getChannel(), guild.getName() + " "
+                            + Translator.getLabel(lg, "server.request.4") + " "
+                            + guild.getServerDofus().getName() + ".");
                 else
                     Message.sendText(message.getChannel(), guild.getName()
-                            + " ne correspond à aucun serveur Dofus.");
+                            + " " + Translator.getLabel(lg, "server.request.5"));
             }
         }
         return false;
@@ -79,14 +83,14 @@ public class ServerCommand extends AbstractCommand{
 
     @Override
     public String help(Language lg, String prefixe) {
-        return "**" + prefixe + name + "** permet de déterminer à quel serveur Dofus correspond ce serveur Discord.";
+        return "**" + prefixe + name + "** " + Translator.getLabel(lg, "server.help");
     }
 
     @Override
     public String helpDetailed(Language lg, String prefixe) {
         return help(lg, prefixe)
-                + "\n" + prefixe + "`"  + name + "` : affiche le serveur Dofus correspondant au serveur Discord."
-                + "\n" + prefixe + "`"  + name + " `*`server`* : permet de déterminer à quel serveur Dofus correspond ce serveur Discord."
-                + "\n" + prefixe + "`"  + name + " `*`-reset`* : permet de se détacher d'un quelconque serveur Dofus.\n";
+                + "\n" + prefixe + "`"  + name + "` : " + Translator.getLabel(lg, "server.help.detailed.1")
+                + "\n" + prefixe + "`"  + name + " `*`server`* : " + Translator.getLabel(lg, "server.help.detailed.2")
+                + "\n" + prefixe + "`"  + name + " `*`-reset`* : " + Translator.getLabel(lg, "server.help.detailed.3") + "\n";
     }
 }
