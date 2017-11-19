@@ -10,6 +10,7 @@ import exceptions.PrefixeOutOfBoundsDiscordException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sx.blah.discord.handle.obj.IMessage;
+import util.Translator;
 
 import java.util.regex.Matcher;
 
@@ -28,7 +29,7 @@ public class PrefixCommand extends AbstractCommand{
     @Override
     public boolean request(IMessage message) {
         if (super.request(message)) {
-
+            Language lg = Translator.getLanguageFrom(message.getChannel());
             User author = User.getUser(message.getGuild(), message.getAuthor());
 
             if (author.getRights() >= User.RIGHT_MODERATOR) {
@@ -38,11 +39,12 @@ public class PrefixCommand extends AbstractCommand{
 
                 if (newPrefix.length() >= 1 && newPrefix.length() <= Constants.prefixeLimit) {
                     Guild.getGuild(message.getGuild()).setPrefixe(newPrefix);
-                    Message.sendText(message.getChannel(), "Changement réussi. Pour invoquer une commande, "
-                            + "il faudra désormais utiliser le préfixe " + getPrefixMdEscaped(message) + ".");
-                    Message.sendText(message.getGuild().getOwner().getOrCreatePMChannel(), "RÉCAPITULATIF : "
-                            + "pour invoquer une commande, il faudra désormais utiliser le préfixe "
-                            + getPrefixMdEscaped(message) + " sur le serveur *" + message.getGuild().getName() + "*.");
+                    Message.sendText(message.getChannel(), Translator.getLabel(lg, "prefix.request.1")
+                        .replace("{prefix}", getPrefixMdEscaped(message)));
+                    Message.sendText(message.getGuild().getOwner().getOrCreatePMChannel(),
+                            Translator.getLabel(lg, "prefix.request.2")
+                                    .replace("{prefix}", getPrefixMdEscaped(message))
+                                    .replace("{guild.name}", message.getGuild().getName()));
                     return true;
                 }
                 else
@@ -56,13 +58,13 @@ public class PrefixCommand extends AbstractCommand{
 
     @Override
     public String help(Language lg, String prefixe) {
-        return "**" + prefixe + name + "** change le préfixe utilisé pour invoquer une commande. Niveau modérateur minimum requis.";
+        return "**" + prefixe + name + "** " + Translator.getLabel(lg, "prefix.help");
     }
 
     @Override
     public String helpDetailed(Language lg, String prefixe) {
         return help(lg, prefixe)
-                + "\n" + prefixe + "`"  + name + " `*`prefixe`* : change le préfixe par celui passé en paramètre. "
-                + Constants.prefixeLimit + " caractères maximum.\n";
+                + "\n" + prefixe + "`"  + name + " `*`prefixe`* : " + Translator.getLabel(lg, "prefix.help.detailed")
+                .replace("{prefixeLimit}", String.valueOf(Constants.prefixeLimit)) + "\n";
     }
 }

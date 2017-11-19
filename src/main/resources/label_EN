@@ -143,6 +143,10 @@ map.help.detailed.2=
 map.help.detailed.3=
 map.punchline=
 
+prefix.request.1=
+prefix.request.2=
+prefix.help=
+prefix.help.detailed=
 random.request.1=
 random.request.2=
 random.request.3=

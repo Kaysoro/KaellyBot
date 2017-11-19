@@ -143,6 +143,10 @@ map.help.detailed.2=tire une carte parmi celles spécifiées en paramètre. Nomb
 map.help.detailed.3=tire une carte parmi celles non-spécifiées en paramètre. Nombres romains ou numériques uniquement.
 map.punchline=Ah ! Dommage :smirk:;Oh! Ça promet :joy:;CHAMPAGNE ! :champagne:;Hihi :relaxed:;Ça va chier. :sunglasses:;Bon chance. BIIIIIIIIIP BIIIIIIIP :telephone_receiver:;Ouuuh ! L'équipe rouge va prendre teeeeeellement cher ! :open_mouth:;C'est tout simplement une hallucination collective ! :dizzy_face:;Après ce tirage, faudra pas venir bégayer Equipe bleue ! :kissing:;Ce combat va être sale ! :underage:;Critiquez pas trop mon tirage, si vous continuez je sors la carte IX en boucle.;C'est moi ou ça sent le melon là ? :melon:;Oh non c'est pas vrai... Ça va encore durer plus d'une heure... :weary:;Challenge : Statue. Comment ça *noon* ? Oh allez, pour le beau jeu ! :relieved:;J'voulais sortir une chouette carte, et puis je me suis rappelé que les participants ne la méritaient pas. :rolling_eyes:;Mmmmmmh, mais c'est l'odeur de la boucherie ça ! :horse:;Bienvenue en enfer :smiling_imp:;Morts en perspective ! :skull:
 
+prefix.request.1=Changement réussi. Pour invoquer une commande, il faudra désormais utiliser le préfixe {prefix}.
+prefix.request.2=RÉCAPITULATIF : pour invoquer une commande, il faudra désormais utiliser le préfixe {prefix} sur le serveur *{guild.name}*.
+prefix.help=change le préfixe utilisé pour invoquer une commande. Niveau modérateur minimum requis.
+prefix.help.detailed=change le préfixe par celui passé en paramètre. {prefixeLimit} caractères maximum.
 random.request.1=Vrai
 random.request.2=Faux
 random.request.3=La limite doit être supérieure à 0.
