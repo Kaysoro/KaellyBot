@@ -4,11 +4,14 @@ import data.ChannelLanguage;
 import data.Guild;
 import data.User;
 import enums.Language;
+import exceptions.LanguageNotFoundDiscordException;
 import exceptions.NotEnoughRightsDiscordException;
+import exceptions.TooMuchLanguagesException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sx.blah.discord.handle.obj.IMessage;
 import util.Message;
+import util.Translator;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,8 +32,8 @@ public class LanguageCommand extends AbstractCommand{
     @Override
     public boolean request(IMessage message) {
         if (super.request(message)) {
-
             User author = User.getUser(message.getGuild(), message.getAuthor());
+            Language lg = Translator.getLanguageFrom(message.getChannel());
             Matcher m = getMatcher(message);
             m.find();
 
@@ -44,35 +47,39 @@ public class LanguageCommand extends AbstractCommand{
                     if (langs.size() == 1) {
                         if (m.group(1) == null) {
                             Guild.getGuild(message.getGuild()).setLanguage(langs.get(0));
+                            lg = langs.get(0);
                             Message.sendText(message.getChannel(), message.getGuild().getName()
-                                    + " est maintenant en " + langs.get(0));
+                                    + " " + Translator.getLabel(lg, "lang.request.1") + " " + langs.get(0));
                         } else {
                             ChannelLanguage chan = ChannelLanguage.getChannelLanguages().get(message.getChannel().getLongID());
                             if (chan != null){
                                 if (chan.getLang().equals(langs.get(0))){
                                     chan.removeToDatabase();
+                                    lg = Translator.getLanguageFrom(message.getChannel());
                                     Message.sendText(message.getChannel(), message.getChannel().getName()
-                                            + " se réfère maintenant à la langue du serveur : "
+                                            + " " + Translator.getLabel(lg, "lang.request.2") + " "
                                             + Guild.getGuild(message.getGuild()).getLanguage());
                                 }
                                 else {
                                     chan.setLanguage(langs.get(0));
+                                    lg = langs.get(0);
                                     Message.sendText(message.getChannel(), message.getChannel().getName()
-                                            + " est désormais en " + chan.getLang());
+                                            + " " + Translator.getLabel(lg, "lang.request.1") + " " + chan.getLang());
                                 }
                             }
                             else {
                                 chan = new ChannelLanguage(langs.get(0), message.getChannel().getLongID());
                                 chan.addToDatabase();
+                                lg = langs.get(0);
                                 Message.sendText(message.getChannel(), message.getChannel().getName()
-                                        + " est désormais en " + chan.getLang());
+                                        + " " + Translator.getLabel(lg, "lang.request.1") + " " + chan.getLang());
                             }
                         }
                     }
                     else if (langs.isEmpty())
-                        Message.sendText(message.getChannel(), "Aucune langue correspondante trouvée.");
+                        new LanguageNotFoundDiscordException().throwException(message, this);
                     else
-                        Message.sendText(message.getChannel(), "Plusieurs langues trouvées. Recommencez en étant plus précis !");
+                        new TooMuchLanguagesException().throwException(message, this);
 
                 } else {
                     new NotEnoughRightsDiscordException().throwException(message, this);
@@ -80,11 +87,13 @@ public class LanguageCommand extends AbstractCommand{
                 }
             }
             else { // Consultation
-                String text = "**" + message.getGuild().getName() + "** est en " + Guild.getGuild(message.getGuild()).getLanguage() + ".";
+                String text = "**" + message.getGuild().getName() + "** " + Translator.getLabel(lg, "lang.request.3")
+                        + " " + Guild.getGuild(message.getGuild()).getLanguage() + ".";
 
                 ChannelLanguage chanLang = ChannelLanguage.getChannelLanguages().get(message.getChannel().getLongID());
                 if (chanLang != null)
-                    text += "\nLe salon *" + message.getChannel().getName() + "* est en " + chanLang.getLang() + ".";
+                    text += "\nLe salon *" + message.getChannel().getName() + "* " + Translator.getLabel(lg, "lang.request.3")
+                    + " " + chanLang.getLang() + ".";
                 Message.sendText(message.getChannel(), text);
             }
         }
@@ -93,14 +102,19 @@ public class LanguageCommand extends AbstractCommand{
 
     @Override
     public String help(Language lg, String prefixe) {
-        return "**" + prefixe + name + "** change la langue utilisée (FR, EN, ES).";
+        StringBuilder st = new StringBuilder(" (");
+        for(Language lang : Language.values())
+            st.append(lang.getAbrev()).append(", ");
+        st.setLength(st.length() - 2);
+        st.append(").");
+
+        return "**" + prefixe + name + "** " + Translator.getLabel(lg, "lang.help") + st.toString();
     }
 
     @Override
     public String helpDetailed(Language lg, String prefixe) {
         return help(lg, prefixe)
-                + "\n" + prefixe + "`"  + name + " `*`language`* : change la langue du serveur"
-                + "\n" + prefixe + "`"  + name + " -channel `*`language`* : change la langue du salon spécifié uniquement"
-                    + " (prioritaire sur la langue du serveur)\n";
+                + "\n" + prefixe + "`"  + name + " `*`language`* : " + Translator.getLabel(lg, "lang.help.detailed.1")
+                + "\n" + prefixe + "`"  + name + " -channel `*`language`* : " + Translator.getLabel(lg, "lang.help.detailed.2") + "\n";
     }
 }

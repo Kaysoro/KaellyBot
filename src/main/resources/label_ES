@@ -72,6 +72,12 @@ help.help=
 help.help.detailed.1=
 help.help.detailed.2=
 
+lang.request.1=ahora está en
+lang.request.2=ahora se refiere al idioma del servidor :
+lang.request.3=está en
+lang.help=
+lang.help.detailed.1=
+lang.help.detailed.2=
 map.embed.title=
 map.help=
 map.help.detailed.1=

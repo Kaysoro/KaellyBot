@@ -72,6 +72,12 @@ help.help=explique le fonctionnement de chaque commande de {name}.
 help.help.detailed.1=explique succinctement chaque commande.
 help.help.detailed.2=explique de façon détaillée la commande spécifiée.
 
+lang.request.1=est maintenant en
+lang.request.2=se réfère maintenant à la langue du serveur :
+lang.request.3=est en
+lang.help=change la langue utilisée
+lang.help.detailed.1=change la langue du serveur
+lang.help.detailed.2=change la langue du salon spécifié uniquement (prioritaire sur la langue du serveur)
 map.embed.title=Carte
 map.help=tire au hasard une carte du Goultarminator ou bien parmi celles spécifiées en paramètre.
 map.help.detailed.1=tire une carte du Goultarminator entre I et XVII compris.

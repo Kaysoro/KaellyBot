@@ -134,7 +134,7 @@ public class WhoisCommand extends AbstractCommand{
     @Override
     public String helpDetailed(Language lg, String prefixe) {
         return help(lg, prefixe)
-                + "\n" + prefixe + "`"  + name + " *pseudo`* : " + Translator.getLabel(lg, "whois.help.detailed.1")
-                + "\n" + prefixe + "`"  + name + " *pseudo serveur`* : " + Translator.getLabel(lg, "whois.help.detailed.2") + "\n";
+                + "\n" + prefixe + "`"  + name + " `*`pseudo`* : " + Translator.getLabel(lg, "whois.help.detailed.1")
+                + "\n" + prefixe + "`"  + name + " `*`pseudo serveur`* : " + Translator.getLabel(lg, "whois.help.detailed.2") + "\n";
     }
 }
