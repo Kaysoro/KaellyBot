@@ -54,7 +54,8 @@ public class WhoisCommand extends AbstractCommand{
 
             StringBuilder url = null;
             try {
-                url = new StringBuilder(Constants.officialURL + Constants.characterPageURL)
+                url = new StringBuilder(Translator.getLabel(lg, "game.url"))
+                        .append(Translator.getLabel(lg, "character.url"))
                         .append("?").append(forPseudo).append(URLEncoder.encode(pseudo, "UTF-8"));
 
             } catch (UnsupportedEncodingException e) {
@@ -101,10 +102,10 @@ public class WhoisCommand extends AbstractCommand{
                     if (result.size() == 1) {
 
                         Connection.Response response = JSoupManager
-                                .getResponse(Constants.officialURL + result.get(0));
+                                .getResponse(Translator.getLabel(lg, "game.url") + result.get(0));
 
-                        if (!response.url().getPath().endsWith("indisponible")) {
-                            Character characPage = Character.getCharacter(Constants.officialURL + result.get(0));
+                        if (!response.url().getPath().endsWith(Translator.getLabel(lg, "whois.request"))) {
+                            Character characPage = Character.getCharacter(Translator.getLabel(lg, "game.url") + result.get(0));
                             Message.sendEmbed(message.getChannel(), characPage.getEmbedObject(lg));
                         } else
                             new CharacterTooOldDiscordException().throwException(message, this);
@@ -127,13 +128,13 @@ public class WhoisCommand extends AbstractCommand{
 
     @Override
     public String help(Language lg, String prefixe) {
-        return "**" + prefixe + name + "** donne la page personnelle d'un personnage.";
+        return "**" + prefixe + name + "** " + Translator.getLabel(lg, "whois.help");
     }
 
     @Override
     public String helpDetailed(Language lg, String prefixe) {
         return help(lg, prefixe)
-                + "\n" + prefixe + "`"  + name + " *pseudo`* : donne la page personnelle associée au pseudo. Celui-ci doit être exact."
-                + "\n" + prefixe + "`"  + name + " *pseudo serveur`* : est à utiliser lorsque le pseudo ne suffit pas pour déterminer la fiche d'un personnage.\n";
+                + "\n" + prefixe + "`"  + name + " *pseudo`* : " + Translator.getLabel(lg, "whois.help.detailed.1")
+                + "\n" + prefixe + "`"  + name + " *pseudo serveur`* : " + Translator.getLabel(lg, "whois.help.detailed.2") + "\n";
     }
 }

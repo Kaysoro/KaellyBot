@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import sx.blah.discord.api.internal.json.objects.EmbedObject;
 import sx.blah.discord.util.EmbedBuilder;
 import util.JSoupManager;
+import util.Translator;
 
 import java.io.IOException;
 import java.util.Random;
@@ -58,21 +59,22 @@ public class Character implements Embedded {
 
         builder.withTitle(pseudo);
         builder.withUrl(url);
-        builder.withDescription("Page perso");
+        builder.withDescription(Translator.getLabel(lg, "whois.desc"));
 
         builder.withColor(new Random().nextInt(16777216));
         builder.withThumbnail(littleSkinURL);
         builder.withImage(bigSkinURL);
 
-        builder.appendField(":star: Niveau :", level, true);
-        builder.appendField(":bust_in_silhouette: Classe :", classe, true);
-        builder.appendField(":globe_with_meridians: Serveur :", server, true);
-        builder.appendField(":trophy: Succès : " + score, "Progression : " + progression, true);
+        builder.appendField(Translator.getLabel(lg, "whois.level"), level, true);
+        builder.appendField(Translator.getLabel(lg, "whois.class"), classe, true);
+        builder.appendField(Translator.getLabel(lg, "whois.server"), server, true);
+        builder.appendField(Translator.getLabel(lg, "whois.success") + " " + score,
+                Translator.getLabel(lg, "whois.progression")+ " " + progression, true);
 
         if (guildName != null)
-            builder.appendField(":shield: Guilde", "[" + guildName + "](" + guildUrl + ")", true);
+            builder.appendField(Translator.getLabel(lg, "whois.guild"), "[" + guildName + "](" + guildUrl + ")", true);
         if (alliName != null)
-            builder.appendField(":beginner: Alliance", "[" + alliName + "](" + alliUrl + ")", true);
+            builder.appendField(Translator.getLabel(lg, "whois.ally"), "[" + alliName + "](" + alliUrl + ")", true);
 
         return builder.build();
     }
@@ -105,13 +107,13 @@ public class Character implements Embedded {
 
         if (!elem.isEmpty()) {
             guildName = elem.first().text();
-            guildUrl = Constants.officialURL + elem.first().select("a").attr("href");
+            guildUrl = elem.first().select("a").attr("abs:href");
 
             elem = doc.getElementsByClass("ak-infos-alliancename");
 
             if (!elem.isEmpty()) {
                 alliName = elem.first().text();
-                alliUrl = Constants.officialURL + elem.first().select("a").attr("href");
+                alliUrl = elem.first().select("a").attr("abs:href");
             }
         }
 
