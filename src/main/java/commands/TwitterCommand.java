@@ -8,6 +8,7 @@ import exceptions.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sx.blah.discord.handle.obj.IMessage;
+import util.Translator;
 
 import java.util.regex.Matcher;
 
@@ -31,12 +32,13 @@ public class TwitterCommand extends AbstractCommand{
             if (User.getUser(message.getGuild(), message.getAuthor()).getRights() >= User.RIGHT_MODERATOR) {
                 Matcher m = getMatcher(message);
                 m.find();
+                Language lg = Translator.getLanguageFrom(message.getChannel());
                 String value = m.group(1);
 
                 if (value.matches("\\s+true") || value.matches("\\s+0") || value.matches("\\s+on")){
                     if (! TwitterFinder.getTwitterChannels().containsKey(message.getChannel().getLongID())) {
                         new TwitterFinder(message.getGuild().getLongID(), message.getChannel().getLongID()).addToDatabase();
-                        Message.sendText(message.getChannel(), "Les tweets de @Dofusfr seront postés ici.");
+                        Message.sendText(message.getChannel(), Translator.getLabel(lg, "twitter.request.1"));
                     }
                     else
                         new TwitterFoundDiscordException().throwException(message, this);
@@ -44,7 +46,7 @@ public class TwitterCommand extends AbstractCommand{
                 else if (value.matches("\\s+false") || value.matches("\\s+1") || value.matches("\\s+off")){
                     if (TwitterFinder.getTwitterChannels().containsKey(message.getChannel().getLongID())) {
                         TwitterFinder.getTwitterChannels().get(message.getChannel().getLongID()).removeToDatabase();
-                        Message.sendText(message.getChannel(), "Les tweets de @Dofusfr ne seront plus postés ici.");
+                        Message.sendText(message.getChannel(), Translator.getLabel(lg, "twitter.request.2"));
                     }
                     else
                         new TwitterNotFoundDiscordException().throwException(message, this);
@@ -60,14 +62,13 @@ public class TwitterCommand extends AbstractCommand{
 
     @Override
     public String help(Language lg, String prefixe) {
-        return "**" + prefixe + name + "** poste les tweets de Dofusfr dans un salon; "
-            + "nécessite un niveau d'administration 2 (Modérateur) minimum.";
+        return "**" + prefixe + name + "** " + Translator.getLabel(lg, "twitter.help");
     }
 
     @Override
     public String helpDetailed(Language lg, String prefixe) {
         return help(lg, prefixe)
-                + "\n" + prefixe + "`"  + name + " true` : poste les tweets de Dofusfr. Fonctionne aussi avec \"on\" et \"0\"."
-                + "\n" + prefixe + "`"  + name + " false` : ne poste plus les tweets dans le salon. Fonctionne aussi avec \"off\" et \"1\".\n";
+                + "\n" + prefixe + "`"  + name + " true` : " + Translator.getLabel(lg, "twitter.help.detailed.1")
+                + "\n" + prefixe + "`"  + name + " false` : " + Translator.getLabel(lg, "twitter.help.detailed.2") + "\n";
     }
 }
