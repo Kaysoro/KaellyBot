@@ -81,7 +81,7 @@ public class ItemCommand extends AbstractCommand{
                             matcher.evaluateAll(getListItemFrom(getSearchURL(type.getUrl(), normalName, null), message));
 
                     if (matcher.isUnique()) { // We have found it !
-                        Embedded item = Item.getItem(Constants.officialURL + matcher.getBest().getRight());
+                        Embedded item = Item.getItem(lg, Constants.officialURL + matcher.getBest().getRight());
                         if (m.group(1) != null)
                             Message.sendEmbed(message.getChannel(), item.getMoreEmbedObject(lg));
                         else

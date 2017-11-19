@@ -169,4 +169,12 @@ public class Translator {
         if (value == null || value.trim().isEmpty()) return property;
         return value;
     }
+
+    public static String[] getStatProposalFor(String label){
+        String txt = "";
+        for(Language lg : Language.values())
+            txt+= getLabel(lg, label) + ";";
+        return txt.split(";");
+
+    }
 }

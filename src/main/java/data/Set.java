@@ -118,10 +118,10 @@ public class Set implements Embedded {
         Elements titles = doc.getElementsByClass("ak-panel-title");
         for (Element title : titles)
             if (title.text().equals(Translator.getLabel(lg, "set.extract.bonus.total")))
-                bonusTotal = extractStatsFromTitleToList(title.parent());
+                bonusTotal = extractStatsFromTitleToList(lg, title.parent());
             else if (title.text().equals(Translator.getLabel(lg, "set.extract.bonus"))){
                 for(int i = 0; i < bonusPano.length; i++)
-                    bonusPano[i] = extractStatsFromTitle(title.parent().getElementsByClass("set-bonus-list set-bonus-" + (i + 2)).first());
+                    bonusPano[i] = extractStatsFromTitle(lg, title.parent().getElementsByClass("set-bonus-list set-bonus-" + (i + 2)).first());
             }
             else if (title.text().equals(Translator.getLabel(lg, "set.extract.composition"))){
                 StringBuilder st = new StringBuilder();
@@ -156,22 +156,22 @@ public class Set implements Embedded {
         return new Set(name, level, bonusTotal, URLManager.abs(skinURL), url, composition, bonusPano, recipeTotal);
     }
 
-    private static String extractStatsFromTitle(Element elem)
+    private static String extractStatsFromTitle(Language lg, Element elem)
     {
         Elements lines = elem.getElementsByClass("ak-title");
         StringBuilder tmp = new StringBuilder();
         for (Element line : lines)
-            tmp.append(EmojiManager.getEmojiForStat(line.text())).append(line.text()).append("\n");
+            tmp.append(EmojiManager.getEmojiForStat(lg, line.text())).append(line.text()).append("\n");
         return tmp.toString();
     }
 
-    private static List<String> extractStatsFromTitleToList(Element elem)
+    private static List<String> extractStatsFromTitleToList(Language lg, Element elem)
     {
         List<String> values = new ArrayList<>();
         Elements lines = elem.getElementsByClass("ak-title");
         StringBuilder tmp = new StringBuilder();
         for (Element line : lines) {
-            String value = EmojiManager.getEmojiForStat(line.text()) + line.text() + "\n";
+            String value = EmojiManager.getEmojiForStat(lg, line.text()) + line.text() + "\n";
             if (value.length() + tmp.length() > EmbedBuilder.FIELD_CONTENT_LIMIT){
                 values.add(tmp.toString());
                 tmp.setLength(0);

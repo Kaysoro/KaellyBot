@@ -82,7 +82,7 @@ public class ResourceCommand extends AbstractCommand{
                         matcher.evaluateAll(getListResourceFrom(getSearchURL(type.getUrl(), normalName, null), message));
 
                 if (matcher.isUnique()) { // We have found it !
-                    Embedded resource = Resource.getResource(Constants.officialURL + matcher.getBest().getRight());
+                    Embedded resource = Resource.getResource(lg, Constants.officialURL + matcher.getBest().getRight());
                     if (m.group(1) != null)
                         Message.sendEmbed(message.getChannel(), resource.getMoreEmbedObject(lg));
                     else

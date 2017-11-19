@@ -104,7 +104,7 @@ public class Monster implements Embedded {
         return builder.build();
     }
 
-    public static Monster getMonster(String url) throws IOException {
+    public static Monster getMonster(Language lg, String url) throws IOException {
         Document doc = JSoupManager.getDocument(url);
 
         String name = doc.getElementsByClass("ak-return-link").first().text();
@@ -123,9 +123,9 @@ public class Monster implements Embedded {
         Elements titles = doc.getElementsByClass("ak-panel-title");
         for (Element title : titles)
             if (title.text().equals("Caractéristiques"))
-                caracteristics = extractStatsFromTitle(title);
+                caracteristics = extractStatsFromTitle(lg, title);
             else if (title.text().equals("Résistances"))
-                resistances = extractStatsFromTitle(title);
+                resistances = extractStatsFromTitle(lg, title);
             else if (title.text().equals("Zones"))
                 zones = title.parent().children().last().text();
             else if (title.text().equals("Butins"))
@@ -145,12 +145,12 @@ public class Monster implements Embedded {
         return tmp.toString();
     }
 
-    private static String extractStatsFromTitle(Element elem)
+    private static String extractStatsFromTitle(Language lg, Element elem)
     {
         Elements lines = elem.parent().getElementsByClass("ak-title");
         StringBuilder tmp = new StringBuilder();
         for (Element line : lines)
-            tmp.append(EmojiManager.getEmojiForStat(line.text())).append(line.text()).append("\n");
+            tmp.append(EmojiManager.getEmojiForStat(lg, line.text())).append(line.text()).append("\n");
         return tmp.toString();
     }
 

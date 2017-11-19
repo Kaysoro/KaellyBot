@@ -112,7 +112,7 @@ public class Item implements Embedded {
         return builder.build();
     }
 
-    public static Item getItem(String url) throws IOException {
+    public static Item getItem(Language lg, String url) throws IOException {
         Document doc = JSoupManager.getDocument(url);
         doc.setBaseUri(url);
         String name = doc.getElementsByClass("ak-return-link").first().text();
@@ -137,7 +137,7 @@ public class Item implements Embedded {
             if (title.text().equals("Description"))
                 description = title.parent().getElementsByClass("ak-panel-content").first().text();
             else if (title.text().equals("Effets"))
-                effects = extractStatsFromTitle(title);
+                effects = extractStatsFromTitle(lg, title);
             else if (title.text().equals("Caractéristiques"))
                 caracteristics = extractLinesFromTitle(title);
             else if (title.text().equals("Conditions"))
@@ -170,12 +170,12 @@ public class Item implements Embedded {
         return tmp.toString();
     }
 
-    private static String extractStatsFromTitle(Element title)
+    private static String extractStatsFromTitle(Language lg, Element title)
     {
         Elements lines = title.parent().getElementsByClass("ak-title");
         StringBuilder tmp = new StringBuilder();
         for (Element line : lines)
-            tmp.append(EmojiManager.getEmojiForStat(line.text())).append(line.text()).append("\n");
+            tmp.append(EmojiManager.getEmojiForStat(lg, line.text())).append(line.text()).append("\n");
         return tmp.toString();
     }
 }
