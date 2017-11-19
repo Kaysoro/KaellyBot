@@ -82,11 +82,6 @@ public class Constants {
     public final static String feedURL = "/fr/rss/news.xml";
 
     /**
-     * Official Dofus URL for character page
-     */
-    public final static String characterPageURL = "/fr/mmorpg/communaute/annuaires/pages-persos";
-
-    /**
      * Official Dofus URL for Weapon page
      */
     public final static String weaponPageURL = "/fr/mmorpg/encyclopedie/armes";
@@ -169,12 +164,6 @@ public class Constants {
      * RSS Icon from Wikipedia
      */
     public final static String rssIcon = "https://upload.wikimedia.org/wikipedia/commons/thumb/4/43/Feed-icon.svg/20px-Feed-icon.svg.png";
-
-
-    /**
-     * Official Dofus account on Twitter
-     */
-    public final static long dofusTwitter = 72272795L;
 
     /**
      * Character limit for nickname discord
