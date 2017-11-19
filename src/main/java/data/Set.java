@@ -8,6 +8,7 @@ import sx.blah.discord.api.internal.json.objects.EmbedObject;
 import sx.blah.discord.util.EmbedBuilder;
 import util.EmojiManager;
 import util.JSoupManager;
+import util.Translator;
 import util.URLManager;
 
 import java.io.IOException;
@@ -51,13 +52,14 @@ public class Set implements Embedded {
         builder.withThumbnail(skinURL);
 
         if (level != null && ! level.isEmpty())
-            builder.appendField(":star: Niveau :", level, true);
+            builder.appendField(Translator.getLabel(lg, "set.level"), level, true);
 
         if (composition != null && ! composition.isEmpty())
-            builder.appendField(":shopping_bags: Composition :", composition, true);
+            builder.appendField(Translator.getLabel(lg, "set.composition"), composition, true);
 
         for(int i = 0; i < bonusPano.length; i++)
-            builder.appendField(":diamond_shape_with_a_dot_inside: Bonus avec " + (i + 2) + " items :", bonusPano[i], true);
+            builder.appendField(Translator.getLabel(lg, "set.bonus.1") + " " + (i + 2)
+                    + " " + Translator.getLabel(lg, "set.bonus.2"), bonusPano[i], true);
 
         return builder.build();
     }
@@ -72,35 +74,37 @@ public class Set implements Embedded {
         builder.withImage(skinURL);
 
         if (level != null && ! level.isEmpty())
-            builder.appendField(":star: Niveau :", level, true);
+            builder.appendField(Translator.getLabel(lg, "set.level"), level, true);
 
         if (composition != null && ! composition.isEmpty())
-            builder.appendField(":shopping_bags: Composition :", composition, true);
+            builder.appendField(Translator.getLabel(lg, "set.composition"), composition, true);
 
         if (bonusTotal != null && ! bonusTotal.isEmpty())
             for(int i = 0; i < bonusTotal.size(); i++)
-                builder.appendField(":cyclone: Bonus total de la panoplie complète :" + (bonusTotal.size() > 1?
+                builder.appendField(Translator.getLabel(lg, "set.bonus.total") + (bonusTotal.size() > 1?
                             " (" + (i + 1) + "/" + bonusTotal.size() + ")" : "") + " : ",
                     bonusTotal.get(i), true);
 
         if (! recipeTotal.isEmpty())
             for(int i = 0; i < recipeTotal.size(); i++)
-                builder.appendField(":moneybag: liste totale d'ingrédients :" + (recipeTotal.size() > 1?
+                builder.appendField(Translator.getLabel(lg, "set.recipe") + (recipeTotal.size() > 1?
                                 " (" + (i + 1) + "/" + recipeTotal.size() + ")" : "") + " : ",
                         recipeTotal.get(i), true);
 
         for(int i = 0; i < bonusPano.length; i++)
-            builder.appendField(":diamond_shape_with_a_dot_inside: Bonus avec " + (i + 2) + " items :", bonusPano[i], true);
+            builder.appendField(Translator.getLabel(lg, "set.bonus.1") + " " + (i + 2)
+                    + " " + Translator.getLabel(lg, "set.bonus.2"), bonusPano[i], true);
 
 
         return builder.build();
     }
 
-    public static Set getSet(String url) throws IOException {
+    public static Set getSet(Language lg, String url) throws IOException {
         Document doc = JSoupManager.getDocument(url);
 
         String name = doc.getElementsByClass("ak-return-link").first().text();
-        String level = doc.getElementsByClass("ak-encyclo-detail-level").first().text().replaceAll("Niveau : ", "");
+        String level = doc.getElementsByClass("ak-encyclo-detail-level").first().text()
+                .replaceAll(Translator.getLabel(lg, "set.extract.level") + " ", "");
 
         Element element = doc.getElementsByClass("ak-encyclo-detail-illu").first().getElementsByTag("img").first();
         String skinURL = element.attr("src");
@@ -113,13 +117,13 @@ public class Set implements Embedded {
 
         Elements titles = doc.getElementsByClass("ak-panel-title");
         for (Element title : titles)
-            if (title.text().equals("Bonus total de la panoplie complète"))
+            if (title.text().equals(Translator.getLabel(lg, "set.extract.bonus.total")))
                 bonusTotal = extractStatsFromTitleToList(title.parent());
-            else if (title.text().equals("Bonus de la panoplie")){
+            else if (title.text().equals(Translator.getLabel(lg, "set.extract.bonus"))){
                 for(int i = 0; i < bonusPano.length; i++)
                     bonusPano[i] = extractStatsFromTitle(title.parent().getElementsByClass("set-bonus-list set-bonus-" + (i + 2)).first());
             }
-            else if (title.text().equals("Composition")){
+            else if (title.text().equals(Translator.getLabel(lg, "set.extract.composition"))){
                 StringBuilder st = new StringBuilder();
                 for(Element tr : title.parent().getElementsByTag("tr")){
                     Element a = tr.getElementsByClass("ak-set-composition-name").first().getElementsByTag("a").first();
@@ -128,7 +132,7 @@ public class Set implements Embedded {
                 }
                 composition = st.toString();
             }
-            else if (title.text().equals("liste totale d'ingrédients")){
+            else if (title.text().equals(Translator.getLabel(lg, "set.extract.recipe"))){
                 Elements lines = title.parent().getElementsByClass("ak-column");
                 StringBuilder field = new StringBuilder();
 
@@ -150,15 +154,6 @@ public class Set implements Embedded {
             }
 
         return new Set(name, level, bonusTotal, URLManager.abs(skinURL), url, composition, bonusPano, recipeTotal);
-    }
-
-    private static String extractLinesFromTitle(Element elem)
-    {
-        Elements lines = elem.getElementsByClass("ak-title");
-        StringBuilder tmp = new StringBuilder();
-        for (Element line : lines)
-            tmp.append(line.text()).append("\n");
-        return tmp.toString();
     }
 
     private static String extractStatsFromTitle(Element elem)

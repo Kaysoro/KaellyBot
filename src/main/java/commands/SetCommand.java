@@ -45,14 +45,15 @@ public class SetCommand extends AbstractCommand{
                     .contains(Permissions.USE_EXTERNAL_EMOJIS)) {
                 String normalName = Normalizer.normalize(m.group(2).trim(), Normalizer.Form.NFD)
                         .replaceAll("\\p{InCombiningDiacriticalMarks}+", "").toLowerCase();
-                String editedName = removeUselessWords(normalName);
+                String editedName = removeUselessWords(lg, normalName);
                 BestMatcher matcher = new BestMatcher(normalName);
 
                 try {
-                    matcher.evaluateAll(getListSetFrom(getSearchURL(editedName), message));
+                    matcher.evaluateAll(getListSetFrom(getSearchURL(lg, editedName), message));
 
                     if (matcher.isUnique()) { // We have found it !
-                        Embedded set = Set.getSet(Constants.officialURL + matcher.getBest().getRight());
+                        Embedded set = Set.getSet(lg, Translator.getLabel(lg, "game.url")
+                                + matcher.getBest().getRight());
                         if (m.group(1) != null)
                             Message.sendEmbed(message.getChannel(), set.getMoreEmbedObject(lg));
                         else
@@ -74,12 +75,10 @@ public class SetCommand extends AbstractCommand{
         return false;
     }
 
-    private String getSearchURL(String text) throws UnsupportedEncodingException {
-        StringBuilder url = new StringBuilder(Constants.officialURL).append(Constants.setPageURL)
-                .append("?").append(forName.toLowerCase()).append(URLEncoder.encode(text, "UTF-8"))
-                .append("&").append(forName.toUpperCase()).append(URLEncoder.encode(text, "UTF-8"));
-
-        return url.toString();
+    private String getSearchURL(Language lg, String text) throws UnsupportedEncodingException {
+        return Translator.getLabel(lg, "game.url") + Translator.getLabel(lg, "set.url")
+                + "?" + forName.toLowerCase() + URLEncoder.encode(text, "UTF-8")
+                + "&" + forName.toUpperCase() + URLEncoder.encode(text, "UTF-8");
     }
 
     private List<Pair<String, String>> getListSetFrom(String url, IMessage message){
@@ -104,20 +103,20 @@ public class SetCommand extends AbstractCommand{
         return result;
     }
 
-    private String removeUselessWords(String search){
-        return search.replaceAll("\\s+\\w{1,2}\\s+", " ").replaceAll("panoplie", "");
+    private String removeUselessWords(Language lg, String search){
+        return search.replaceAll("\\s+\\w{1,2}\\s+", " ")
+                .replaceAll(Translator.getLabel(lg, "set.meta"), "");
     }
 
     @Override
     public String help(Language lg, String prefixe) {
-        return "**" + prefixe + name + "** renvoie les statistiques d'une panoplie du jeu Dofus.";
+        return "**" + prefixe + name + "** " + Translator.getLabel(lg, "set.help");
     }
 
     @Override
     public String helpDetailed(Language lg, String prefixe) {
         return help(lg, prefixe)
-                + "\n" + prefixe + "`"  + name + " `*`set`* : renvoie les statistiques d'une panoplie spécifiée :"
-                + " son nom peut être approximatif s'il est suffisamment précis."
-                + "\n" + prefixe + "`"  + name + " -more `*`set`* : renvoie les statistiques détaillées d'une panoplie spécifiée.\n";
+                + "\n" + prefixe + "`"  + name + " `*`set`* : " + Translator.getLabel(lg, "set.help.detailed.1")
+                + "\n" + prefixe + "`"  + name + " -more `*`set`* : " + Translator.getLabel(lg, "set.help.detailed.2") + "\n";
     }
 }
