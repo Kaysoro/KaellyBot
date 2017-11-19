@@ -102,17 +102,6 @@ public class Constants {
     public final static String monturePageURL = "/fr/mmorpg/encyclopedie/montures";
 
     /**
-     * Official Dofus URL for Monster page
-     */
-
-    public final static String monsterPageURL = "/fr/mmorpg/encyclopedie/monstres";
-
-    /**
-     * Official Dofus URL for Set page
-     */
-    public final static String setPageURL = "/fr/mmorpg/encyclopedie/panoplies";
-
-    /**
      * Official Dofus URL for Haven Bag page
      */
     public static String havenBagPageURL = "/fr/mmorpg/encyclopedie/havres-sacs";

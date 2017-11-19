@@ -8,6 +8,7 @@ import sx.blah.discord.api.internal.json.objects.EmbedObject;
 import sx.blah.discord.util.EmbedBuilder;
 import util.EmojiManager;
 import util.JSoupManager;
+import util.Translator;
 import util.URLManager;
 
 import java.io.IOException;
@@ -55,14 +56,14 @@ public class Monster implements Embedded {
         builder.withThumbnail(skinURL);
 
         if (level != null && ! level.isEmpty())
-            builder.appendField(":star: Niveau :", level, true);
-        builder.appendField(":family_mwgb: Race :", family, true);
+            builder.appendField(Translator.getLabel(lg, "monster.level"), level, true);
+        builder.appendField(Translator.getLabel(lg, "monster.race"), family, true);
 
         if (caracteristics != null && ! caracteristics.isEmpty())
-            builder.appendField(":cyclone: Caractéristiques :", caracteristics, true);
+            builder.appendField(Translator.getLabel(lg, "monster.caracteristic"), caracteristics, true);
 
         if (resistances != null && ! resistances.isEmpty())
-            builder.appendField(":shield: Résistances :", resistances, true);
+            builder.appendField(Translator.getLabel(lg, "monster.resistance"), resistances, true);
 
         return builder.build();
     }
@@ -77,28 +78,29 @@ public class Monster implements Embedded {
         builder.withImage(skinURL);
 
         if (level != null && ! level.isEmpty())
-            builder.appendField(":star: Niveau :", level, true);
-        builder.appendField(":family_mwgb: Race :", family, true);
+            builder.appendField(Translator.getLabel(lg, "monster.level"), level, true);
+        builder.appendField(Translator.getLabel(lg, "monster.race"), family, true);
 
         if (caracteristics != null && ! caracteristics.isEmpty())
-            builder.appendField(":cyclone: Caractéristiques :", caracteristics, true);
+            builder.appendField(Translator.getLabel(lg, "monster.caracteristic"), caracteristics, true);
 
         if (resistances != null && ! resistances.isEmpty())
-            builder.appendField(":shield: Résistances :", resistances, true);
+            builder.appendField(Translator.getLabel(lg, "monster.resistance"), resistances, true);
 
         if (zones != null && ! zones.isEmpty())
-            builder.appendField(":map: Zones :", zones, true);
+            builder.appendField(Translator.getLabel(lg, "monster.zones"), zones, true);
 
         if (! butins.isEmpty())
             for(int i = 0; i < butins.size(); i++)
-                builder.appendField(":moneybag: Butins" + (butins.size() > 1?
-                                " (" + (i + 1) + "/" + butins.size() + ")" : "") + " : ",
+                builder.appendField(Translator.getLabel(lg, "monster.butins")
+                                + (butins.size() > 1? " (" + (i + 1) + "/" + butins.size() + ")" : "") + " : ",
                         butins.get(i), true);
 
         if (! butinsConditionne.isEmpty())
             for(int i = 0; i < butinsConditionne.size(); i++)
-                builder.appendField(":moneybag: Butins conditionnés" + (butinsConditionne.size() > 1?
-                                " (" + (i + 1) + "/" + butinsConditionne.size() + ")" : "") + " : ",
+                builder.appendField(Translator.getLabel(lg, "monster.butins_conditionnes")
+                                + (butinsConditionne.size() > 1? " (" + (i + 1) + "/"
+                                + butinsConditionne.size() + ")" : "") + " : ",
                         butinsConditionne.get(i), true);
 
         return builder.build();
@@ -108,7 +110,8 @@ public class Monster implements Embedded {
         Document doc = JSoupManager.getDocument(url);
 
         String name = doc.getElementsByClass("ak-return-link").first().text();
-        String level = doc.getElementsByClass("ak-encyclo-detail-level").first().text().replaceAll("Niveau : ", "");
+        String level = doc.getElementsByClass("ak-encyclo-detail-level").first().text()
+                .replaceAll(Translator.getLabel(lg, "monster.extract.level") + " ", "");
         String family = doc.getElementsByClass("ak-encyclo-detail-type").last().children().last().text();
 
         Element element = doc.getElementsByClass("ak-encyclo-detail-illu").first().getElementsByTag("img").first();
@@ -122,27 +125,18 @@ public class Monster implements Embedded {
 
         Elements titles = doc.getElementsByClass("ak-panel-title");
         for (Element title : titles)
-            if (title.text().equals("Caractéristiques"))
+            if (title.text().equals(Translator.getLabel(lg, "monster.extract.caracteristic")))
                 caracteristics = extractStatsFromTitle(lg, title);
-            else if (title.text().equals("Résistances"))
+            else if (title.text().equals(Translator.getLabel(lg, "monster.extract.resistance")))
                 resistances = extractStatsFromTitle(lg, title);
-            else if (title.text().equals("Zones"))
+            else if (title.text().equals(Translator.getLabel(lg, "monster.extract.zones")))
                 zones = title.parent().children().last().text();
-            else if (title.text().equals("Butins"))
+            else if (title.text().equals(Translator.getLabel(lg, "monster.extract.butins")))
                 extractButins(butins, title.parent().getElementById("ak-encyclo-monster-drops ak-container ak-content-list"));
-            else if (title.text().equals("Butins conditionnés"))
+            else if (title.text().equals(Translator.getLabel(lg, "monster.extract.butins_conditionnes")))
                 extractButins(butinsConditionne, title.parent());
 
         return new Monster(name, family, level, caracteristics, URLManager.abs(skinURL), url, resistances, zones, butins, butinsConditionne);
-    }
-
-    private static String extractLinesFromTitle(Element title)
-    {
-        Elements lines = title.parent().getElementsByClass("ak-title");
-        StringBuilder tmp = new StringBuilder();
-        for (Element line : lines)
-            tmp.append(line.text()).append("\n");
-        return tmp.toString();
     }
 
     private static String extractStatsFromTitle(Language lg, Element elem)

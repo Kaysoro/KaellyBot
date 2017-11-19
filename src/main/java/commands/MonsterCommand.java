@@ -52,7 +52,7 @@ public class MonsterCommand extends AbstractCommand{
                 BestMatcher matcher = new BestMatcher(normalName);
 
                 try {
-                    matcher.evaluateAll(getListMonsterFrom(getSearchURL(editedName), message));
+                    matcher.evaluateAll(getListMonsterFrom(getSearchURL(lg, editedName), message));
 
                     if (matcher.isUnique()) { // We have found it !
                         Embedded monster = Monster.getMonster(lg, Constants.officialURL + matcher.getBest().getRight());
@@ -77,12 +77,10 @@ public class MonsterCommand extends AbstractCommand{
         return false;
     }
 
-    private String getSearchURL(String text) throws UnsupportedEncodingException {
-        StringBuilder url = new StringBuilder(Constants.officialURL).append(Constants.monsterPageURL)
-                .append("?").append(forName.toLowerCase()).append(URLEncoder.encode(text, "UTF-8"))
-                .append("&").append(forName.toUpperCase()).append(URLEncoder.encode(text, "UTF-8"));
-
-        return url.toString();
+    private String getSearchURL(Language lg, String text) throws UnsupportedEncodingException {
+        return Translator.getLabel(lg, "game.url") + Translator.getLabel(lg, "monster.url")
+                + "?" + forName.toLowerCase() + URLEncoder.encode(text, "UTF-8")
+                + "&" + forName.toUpperCase() + URLEncoder.encode(text, "UTF-8");
     }
 
     private List<Pair<String, String>> getListMonsterFrom(String url, IMessage message){
@@ -113,14 +111,14 @@ public class MonsterCommand extends AbstractCommand{
 
     @Override
     public String help(Language lg, String prefixe) {
-        return "**" + prefixe + name + "** renvoie les statistiques d'un monstre du jeu Dofus.";
+        return "**" + prefixe + name + "** " + Translator.getLabel(lg, "monster.help")
+                .replace("{game}", Constants.game);
     }
 
     @Override
     public String helpDetailed(Language lg, String prefixe) {
         return help(lg, prefixe)
-                + "\n" + prefixe + "`"  + name + " `*`monstre`* : renvoie les statistiques du monstre spécifié :"
-                + " son nom peut être approximatif s'il est suffisamment précis."
-                + "\n" + prefixe + "`"  + name + " -more `*`monstre`* : renvoie les statistiques détaillées du monstre spécifié.\n";
+                + "\n" + prefixe + "`"  + name + " `*`monstre`* : " + Translator.getLabel(lg, "monster.help.detailed.1")
+                + "\n" + prefixe + "`"  + name + " -more `*`monstre`* : " + Translator.getLabel(lg, "monster.help.detailed.2") + "\n";
     }
 }

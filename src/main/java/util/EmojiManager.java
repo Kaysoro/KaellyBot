@@ -10,8 +10,10 @@ public class EmojiManager {
                 .replaceAll(Translator.getLabel(lg, "emoji.from") + "\\s+", "")
                 .replaceAll("-?\\+?\\d+\\s+" + Translator.getLabel(lg, "emoji.to") + "\\s+-?\\+?\\d+", "")
                 .replaceAll("-?\\+?\\d+", "")
+                .replaceAll(Translator.getLabel(lg, "emoji.to") + " %", "")
                 .replaceAll(":", "")
                 .replaceAll("\\.", "")
+                .replaceAll("\\s{2}", " ")
                 .trim();
 
         for(Statistique stat : Statistique.values())
