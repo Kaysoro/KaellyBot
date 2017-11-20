@@ -175,23 +175,6 @@ public class Constants {
     public final static long newsChan = 330475075381886976L;
 
     /**
-     * Message sent when joining a new guild
-     */
-    public final static String msgJoinGuild = "Salut et merci pour l'invitation ! Moi c'est " + name
-            + ", je suis un robot dédié au jeu " + game + "; j'ai quelques commandes dans ma manche qui "
-            + "peuvent t'intéresser et qui me permettent d'afficher des items du jeu, des pages personnelles de joueurs, "
-            + "gérer un annuaire de vos métiers ou encore des positions de portails !"
-            + "\nTu veux en savoir plus ? Ecris `" + prefixCommand + new HelpCommand().getName()
-            + "` pour avoir la liste complète ! :blush:"
-            + "\n\n{0}, en tant qu'administrateur de {1}, tu possèdes un ensemble de droits plus poussés te permettant "
-            + " de me configurer. Utilise la commande `" + prefixCommand + new ServerCommand().getName() + "` afin de "
-            + "définir ton serveur de jeu et ainsi recevoir automatiquement les positions de portails, ou encore les "
-            + "commandes `" + prefixCommand + new TwitterCommand().getName() + "`, `" + prefixCommand
-            + new AlmanaxCommand().getName() + "` et `" + prefixCommand + new RSSCommand().getName() + "` pour recevoir "
-            + "un maximum de news Dofus."
-            + "\n\nC'est pas génial tout ça ? J'espère que nous allons bien nous amuser tous ensemble ! :smile:";
-
-    /**
      * Discord invite link
      */
     public final static String discordInvite = "https://discord.gg/VsrbrYC";

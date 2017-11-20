@@ -1,5 +1,7 @@
 package listeners;
 
+import commands.*;
+import enums.Language;
 import util.ClientConfig;
 import data.Constants;
 import data.Guild;
@@ -38,12 +40,23 @@ public class GuildCreateListener {
                             .addToDatabase();
 
                 User.getUser(event.getGuild(), event.getGuild().getOwner()).changeRight(User.RIGHT_ADMIN);
+                Language lg = guild.getLanguage();
+                LOG.info("La guilde " + guild.getId() + " - " + guild.getName() + " a ajouté "   + Constants.name);
 
-                LOG.info("La guilde " + guild.getId() + " - " + guild.getName() + " a ajouté " + Constants.name);
+                String customMessage = Translator.getLabel(lg, "welcome.message");
 
-                String customMessage = Constants.msgJoinGuild;
-                customMessage = customMessage.replaceAll("\\{0\\}", event.getGuild().getOwner().mention());
-                customMessage = customMessage.replaceAll("\\{1\\}", event.getGuild().getName());
+                customMessage = customMessage
+                        .replaceAll("\\{name\\}", Constants.name)
+                        .replaceAll("\\{game\\}", Constants.game)
+                        .replaceAll("\\{prefix\\}", Constants.prefixCommand)
+                        .replaceAll("\\{help\\}", new HelpCommand().getName())
+                        .replaceAll("\\{server\\}", new ServerCommand().getName())
+                        .replaceAll("\\{lang\\}", new LanguageCommand().getName())
+                        .replaceAll("\\{twitter\\}", new TwitterCommand().getName())
+                        .replaceAll("\\{almanax\\}", new AlmanaxCommand().getName())
+                        .replaceAll("\\{rss\\}", new RSSCommand().getName())
+                        .replaceAll("\\{owner\\}", event.getGuild().getOwner().mention())
+                        .replaceAll("\\{guild\\}", event.getGuild().getName());
 
                 if(event.getGuild().getDefaultChannel() != null && event.getGuild().getDefaultChannel()
                         .getModifiedPermissions(ClientConfig.DISCORD().getOurUser())
