@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import sx.blah.discord.handle.obj.IMessage;
 import sx.blah.discord.handle.obj.IRole;
 import sx.blah.discord.handle.obj.IUser;
+import util.Translator;
 
 import java.util.regex.Matcher;
 
@@ -31,7 +32,7 @@ public class RightCommand extends AbstractCommand{
     @Override
     public boolean request(IMessage message) {
         if (super.request(message)) {
-
+            Language lg = Translator.getLanguageFrom(message.getChannel());
             User author = User.getUser(message.getGuild(), message.getAuthor());
             Matcher m = getMatcher(message);
             m.find();
@@ -60,13 +61,14 @@ public class RightCommand extends AbstractCommand{
                                     author.getRights() >= target.getRights())
                                     target.changeRight(level);
                                 else
-                                    Message.sendText(message.getChannel(), "Les droits d'administration de "
-                                    + target.getName() + " n'ont pu être changés.\n");
+                                    Message.sendText(message.getChannel(), Translator.getLabel(lg, "right.request.1")
+                                    .replace("{name}", target.getName()));
                             }
                         }
 
-                        Message.sendText(message.getChannel(), "Droits d'administration des membres du groupe *"
-                                + role.getName() + "* mis au niveau " + level + ".");
+                        Message.sendText(message.getChannel(), Translator.getLabel(lg, "right.request.2")
+                                .replace("{name}", role.getName())
+                                .replace("{right}", String.valueOf(level)));
                     }
                     else if (idDecorated.matches("<@!?\\d+>")){ // Manage users
                         User target = User.getUser(message.getGuild(), ClientConfig.DISCORD().getUserByID(Long.parseLong(id)));
@@ -82,8 +84,9 @@ public class RightCommand extends AbstractCommand{
                         }
 
                         target.changeRight(level);
-                        Message.sendText(message.getChannel(), "Droits d'administration de *"
-                                + target.getName() + "* mis au niveau " + target.getRights() + ".");
+                        Message.sendText(message.getChannel(), Translator.getLabel(lg, "right.request.3")
+                                .replace("{name}", target.getName())
+                                .replace("{right}", String.valueOf(target.getRights())));
                     }
                 } // Not an admin or a moderator
                 else {
@@ -99,16 +102,16 @@ public class RightCommand extends AbstractCommand{
                     if (idDecorated.matches("<@!?\\d+>")){
                         User target = User.getUser(message.getGuild(),
                                 ClientConfig.DISCORD().getUserByID(Long.parseLong(id)));
-                        Message.sendText(message.getChannel(), "*" + target.getName()
-                                + "* a des droits d'administration de niveau "
-                                + target.getRights() + ".");
+                        Message.sendText(message.getChannel(), Translator.getLabel(lg, "right.request.4")
+                                .replace("{name}", target.getName())
+                                .replace("{right}", String.valueOf(target.getRights())));
                     }
                     else
                         new NoRightsForRolesDiscordException().throwException(message, this);
                 }
                 else
-                    Message.sendText(message.getChannel(), "Tu as les droits d'administration de niveau "
-                            + author.getRights() + ".");
+                    Message.sendText(message.getChannel(), Translator.getLabel(lg, "right.request.5")
+                            .replace("{right}", String.valueOf(author.getRights())));
             }
         }
 
@@ -117,16 +120,14 @@ public class RightCommand extends AbstractCommand{
 
     @Override
     public String help(Language lg, String prefixe) {
-        return "**" + prefixe + name + "** permet de changer les droits d'un utilisateur dont les droits sont inférieurs aux siens."
-                + " Nécessite un niveau d'administration 2 (Modérateur) minimum."
-                + " Les niveaux sont 0 : Invité, 1 : Membre, 2 : Modérateur, 3 : Administrateur.";
+        return "**" + prefixe + name + "** " + Translator.getLabel(lg, "right.help");
     }
 
     @Override
     public String helpDetailed(Language lg, String prefixe) {
         return help(lg, prefixe)
-                + "\n" + prefixe + "`"  + name + "` : donne le niveau d'administration de l'auteur de la requête."
-                + "\n" + prefixe + "`"  + name + " `*`@pseudo`* : donne le niveau d'administration de l'utilisateur ou d'un groupe spécifié."
-                + "\n" + prefixe + "`"  + name + " `*`@pseudo niveau`* : change le niveau d'administration d'un utilisateur ou d'un groupe spécifié.\n";
+                + "\n" + prefixe + "`"  + name + "` : " + Translator.getLabel(lg, "right.help.detailed.1")
+                + "\n" + prefixe + "`"  + name + " `*`@pseudo`* : " + Translator.getLabel(lg, "right.help.detailed.2")
+                + "\n" + prefixe + "`"  + name + " `*`@pseudo niveau`* : " + Translator.getLabel(lg, "right.help.detailed.3") + "\n";
     }
 }

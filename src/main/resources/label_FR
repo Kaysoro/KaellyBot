@@ -172,6 +172,15 @@ random.help.detailed.1=tire une valeur entre Vrai et Faux.
 random.help.detailed.2=tire une valeur entre 0 et *nombre*.
 random.help.detailed.3=tire une valeur parmi celles spécifiées en paramètre.
 
+right.request.1=Les droits d'administration de {name} n'ont pu être changés.
+right.request.2=Droits d'administration des membres du groupe *{name}* mis au niveau {right}.
+right.request.3=Droits d'administration de *{name}* mis au niveau {right}.
+right.request.4=*{name}* a des droits d'administration de niveau {right}.
+right.request.5=Tu as les droits d'administration de niveau {right}.
+right.help=permet de changer les droits d'un utilisateur dont les droits sont inférieurs aux siens. Nécessite un niveau d'administration 2 (Modérateur) minimum. Les niveaux sont 0 : Invité, 1 : Membre, 2 : Modérateur, 3 : Administrateur.
+right.help.detailed.1=donne le niveau d'administration de l'auteur de la requête.
+right.help.detailed.2=donne le niveau d'administration de l'utilisateur ou d'un groupe spécifié.
+right.help.detailed.3=change le niveau d'administration d'un utilisateur ou d'un groupe spécifié.
 rss.request.1=Les news de dofus.com seront automatiquement postées ici.
 rss.request.2=Les news de dofus.com ne sont plus postées ici.
 rss.help=gère le flux RSS Dofus dans un salon; nécessite un niveau d'administration 2 (Modérateur) minimum.
