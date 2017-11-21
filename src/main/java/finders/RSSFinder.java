@@ -14,6 +14,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -143,14 +144,18 @@ public class RSSFinder {
             isStarted = true;
             ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
             scheduler.scheduleAtFixedRate(() -> {
-                List<RSS> rssFeeds = RSS.getRSSFeeds();
+                Map<Language, List<RSS>> allFeeds = new HashMap<>();
+                for(Language lg : Language.values())
+                    allFeeds.put(lg, RSS.getRSSFeeds(lg));
+
                 for (RSSFinder finder : getRSSFinders().values()) {
+                    IChannel chan = ClientConfig.DISCORD().getChannelByID(Long.parseLong(finder.getChan()));
+                    Language lg = Translator.getLanguageFrom(chan);
+                    List<RSS> rssFeeds = allFeeds.get(Translator.getLanguageFrom(chan));
                     long lastRSS = -1;
 
                     for (RSS rss : rssFeeds)
                         if (rss.getDate() > finder.getLastRSS()) {
-                            IChannel chan = ClientConfig.DISCORD().getChannelByID(Long.parseLong(finder.getChan()));
-                            Language lg = Translator.getLanguageFrom(chan);
                             Message.sendEmbed(chan, rss.getEmbedObject(lg));
                             lastRSS = rss.getDate();
                         }

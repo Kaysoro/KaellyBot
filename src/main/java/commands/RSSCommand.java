@@ -11,6 +11,7 @@ import exceptions.RSSNotFoundDiscordException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sx.blah.discord.handle.obj.IMessage;
+import util.Translator;
 
 import java.util.regex.Matcher;
 
@@ -34,13 +35,14 @@ public class RSSCommand extends AbstractCommand{
             if (User.getUser(message.getGuild(), message.getAuthor()).getRights() >= User.RIGHT_MODERATOR) {
                 Matcher m = getMatcher(message);
                 m.find();
+                Language lg = Translator.getLanguageFrom(message.getChannel());
                 String value = m.group(1);
 
                 if (value.matches("\\s+true") || value.matches("\\s+0") || value.matches("\\s+on")){
 
                     if (!RSSFinder.getRSSFinders().containsKey(message.getChannel().getStringID())) {
                         new RSSFinder(message.getGuild().getStringID(), message.getChannel().getStringID()).addToDatabase();
-                        Message.sendText(message.getChannel(), "Les news de dofus.com seront automatiquement postées ici.");
+                        Message.sendText(message.getChannel(), Translator.getLabel(lg, "rss.request.1"));
                     }
                     else
                         new RSSFoundDiscordException().throwException(message, this);
@@ -48,7 +50,7 @@ public class RSSCommand extends AbstractCommand{
                 else if (value.matches("\\s+false") || value.matches("\\s+1") || value.matches("\\s+off"))
                     if (RSSFinder.getRSSFinders().containsKey(message.getChannel().getStringID())){
                         RSSFinder.getRSSFinders().get(message.getChannel().getStringID()).removeToDatabase();
-                        Message.sendText(message.getChannel(), "Les news de dofus.com ne sont plus postées ici.");
+                        Message.sendText(message.getChannel(), Translator.getLabel(lg, "rss.request.2"));
                     }
                     else
                         new RSSNotFoundDiscordException().throwException(message, this);
@@ -62,14 +64,13 @@ public class RSSCommand extends AbstractCommand{
 
     @Override
     public String help(Language lg, String prefixe) {
-        return "**" + prefixe + name + "** gère le flux RSS Dofus dans un salon; "
-        + "nécessite un niveau d'administration 2 (Modérateur) minimum.";
+        return "**" + prefixe + name + "** " + Translator.getLabel(lg, "rss.help");
     }
 
     @Override
     public String helpDetailed(Language lg, String prefixe) {
         return help(lg, prefixe)
-                + "\n" + prefixe + "`"  + name + " true` : poste les news à partir du flux RSS de Dofus.com. Fonctionne aussi avec \"on\" et \"0\"."
-                + "\n" + prefixe + "`"  + name + " false` : ne poste plus les flux RSS dans le salon. Fonctionne aussi avec \"off\" et \"1\".\n";
+                + "\n" + prefixe + "`"  + name + " true` : " + Translator.getLabel(lg, "rss.help.detailed.1")
+                + "\n" + prefixe + "`"  + name + " false` : " + Translator.getLabel(lg, "rss.help.detailed.2") + "\n";
     }
 }

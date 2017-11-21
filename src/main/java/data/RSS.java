@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import sx.blah.discord.api.internal.json.objects.EmbedObject;
 import sx.blah.discord.util.EmbedBuilder;
 import util.ClientConfig;
+import util.Translator;
 
 import java.io.IOException;
 import java.net.URL;
@@ -44,12 +45,13 @@ public class RSS implements Comparable<RSS>, Embedded {
         this.date = date;
     }
 
-    public static List<RSS> getRSSFeeds(){
+    public static List<RSS> getRSSFeeds(Language lg){
         List<RSS> rss = new ArrayList<>();
 
         try {
             SyndFeedInput input = new SyndFeedInput();
-            SyndFeed feed = input.build(new XmlReader(new URL(Constants.officialURL + Constants.feedURL)));
+            SyndFeed feed = input.build(new XmlReader(new URL(Translator.getLabel(lg, "game.url")
+                    + Translator.getLabel(lg, "feed.url"))));
 
             for(SyndEntry entry : feed.getEntries()) {
                 Matcher m = Pattern.compile("<img.+src=\"(.*\\.jpg)\".+>").matcher(entry.getDescription().getValue());

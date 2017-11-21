@@ -172,6 +172,11 @@ random.help.detailed.1=tire une valeur entre Vrai et Faux.
 random.help.detailed.2=tire une valeur entre 0 et *nombre*.
 random.help.detailed.3=tire une valeur parmi celles spécifiées en paramètre.
 
+rss.request.1=Les news de dofus.com seront automatiquement postées ici.
+rss.request.2=Les news de dofus.com ne sont plus postées ici.
+rss.help=gère le flux RSS Dofus dans un salon; nécessite un niveau d'administration 2 (Modérateur) minimum.
+rss.help.detailed.1=poste les news à partir du flux RSS de Dofus.com. Fonctionne aussi avec "on" et "0".
+rss.help.detailed.2=ne poste plus les flux RSS dans le salon. Fonctionne aussi avec "off" et "1".
 server.request.1=Le serveur dofus de
 server.request.2=est désormais
 server.request.3=n'est désormais plus rattachée à un serveur Dofus.
