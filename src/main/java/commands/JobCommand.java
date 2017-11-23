@@ -12,11 +12,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sx.blah.discord.handle.obj.IMessage;
 import sx.blah.discord.handle.obj.IUser;
+import util.Translator;
 
 import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.regex.Matcher;
 
 /**
@@ -34,17 +34,19 @@ public class JobCommand extends AbstractCommand{
     @Override
     public boolean request(IMessage message) {
         if (super.request(message)) {
+            Language lg = Translator.getLanguageFrom(message.getChannel());
             Matcher m = getMatcher(message);
             m.find();
+
             if (m.group(1) == null){
-                StringBuilder st = new StringBuilder("Voici la liste des métiers du jeu Dofus :\n```");
-                for(String job : Job.getJobs())
-                    st.append("\n- ").append(job);
+                StringBuilder st = new StringBuilder(Translator.getLabel(lg, "job.request.1")).append(" :\n```");
+                for(Job job : Job.getJobs())
+                    st.append("\n- ").append(Translator.getLabel(lg, job.getName()));
                 st.append("```");
                 Message.sendText(message.getChannel(), st.toString());
             }
             else if (!m.group(2).equals("-all")) {
-                List<String> jobs = getJob(m.group(2));
+                List<String> jobs = getJob(lg, m.group(2));
 
                 if (jobs.size() == 1) {
                     if (m.group(3) != null) { // setting data
@@ -56,12 +58,14 @@ public class JobCommand extends AbstractCommand{
                             author.getJobs().get(jobs.get(0)).setLevel(level);
 
                         if (author.getJob(jobs.get(0)) > 0)
-                            Message.sendText(message.getChannel(), author.getName()
-                                    + " est inscrit dans l'annuaire en tant que " + jobs.get(0)
-                                    + " niv. " + author.getJob(jobs.get(0)) + ".");
+                            Message.sendText(message.getChannel(), Translator.getLabel(lg, "job.request.2")
+                                .replace("{user}", author.getName())
+                                .replace("{job}", jobs.get(0))
+                                .replace("{level}", String.valueOf(author.getJob(jobs.get(0)))));
                         else
-                            Message.sendText(message.getChannel(), author.getName()
-                                    + " n'est plus inscrit dans l'annuaire en tant que " + jobs.get(0) + ".");
+                            Message.sendText(message.getChannel(), Translator.getLabel(lg, "job.request.3")
+                                    .replace("{user}", author.getName())
+                                    .replace("{job}", jobs.get(0)));
                     } else { // Consultation
                         List<User> artisans = new ArrayList<>();
 
@@ -81,8 +85,10 @@ public class JobCommand extends AbstractCommand{
                         StringBuilder st = new StringBuilder();
 
                         if (!artisans.isEmpty()) {
-                            st.append("Voici l'annuaire des ").append(jobs.get(0))
-                                    .append("s de ").append(message.getGuild().getName()).append(" :\n```");
+                            st.append(Translator.getLabel(lg, "job.request.4")
+                                    .replace("{job}", jobs.get(0))
+                                    .replace("{guild}",  message.getGuild().getName()))
+                              .append("\n```");
 
                             for (User user : artisans) {
                                 st.append("\n").append(user.getName());
@@ -95,7 +101,8 @@ public class JobCommand extends AbstractCommand{
                             }
                             st.append("```");
                         } else
-                            st.append("Aucun ").append(jobs.get(0)).append(" n'est inscrit à l'annuaire.");
+                            st.append(Translator.getLabel(lg, "job.request.5")
+                                    .replace("{job}", jobs.get(0)));
 
                         Message.sendText(message.getChannel(), st.toString());
                     }
@@ -108,18 +115,18 @@ public class JobCommand extends AbstractCommand{
                 User author = User.getUser(message.getGuild(), message.getAuthor());
                 int level = Integer.parseInt(m.group(3).replaceAll("\\W+", ""));
 
-                for(String job : Job.getJobs()) {
-                    if (!author.getJobs().containsKey(job))
-                        new Job(job, level, author).addToDatabase();
+                for(Job job : Job.getJobs()) {
+                    if (!author.getJobs().containsKey(job.getName()))
+                        new Job(job.getName(), level, author).addToDatabase();
                     else
-                        author.getJobs().get(job).setLevel(level);
+                        author.getJobs().get(job.getName()).setLevel(level);
                 }
                 if (level > 0)
-                    Message.sendText(message.getChannel(), author.getName()
-                            + " est inscrit dans tous les annuaires.");
+                    Message.sendText(message.getChannel(), Translator.getLabel(lg, "job.request.6")
+                            .replace("{user}", author.getName()));
                 else
-                    Message.sendText(message.getChannel(), author.getName()
-                            + " n'est plus inscrit des annuaires.");
+                    Message.sendText(message.getChannel(), Translator.getLabel(lg, "job.request.7")
+                            .replace("{user}", author.getName()));
             }
             else
                 new LevelNotFoundDiscordException().throwException(message, this);
@@ -128,33 +135,31 @@ public class JobCommand extends AbstractCommand{
         return false;
     }
 
-    private List<String> getJob(String nameProposed){
+    private List<String> getJob(Language lg, String nameProposed){
         nameProposed = Normalizer.normalize(nameProposed, Normalizer.Form.NFD)
                 .replaceAll("\\p{InCombiningDiacriticalMarks}+", "").toLowerCase();
         nameProposed = nameProposed.replaceAll("\\W+", "");
         List<String> jobs = new ArrayList<>();
 
-        for(String job : Job.getJobs())
-            if (Normalizer.normalize(job, Normalizer.Form.NFD)
+        for(Job job : Job.getJobs())
+            if (Normalizer.normalize(Translator.getLabel(lg, job.getName()), Normalizer.Form.NFD)
                     .replaceAll("\\p{InCombiningDiacriticalMarks}+", "")
                     .toLowerCase().replaceAll("\\W+", "").startsWith(nameProposed))
-                jobs.add(job);
+                jobs.add(job.getName());
         return jobs;
     }
 
     @Override
     public String help(Language lg, String prefixe) {
-        return "**" + prefixe + name + "** renvoie l'annuaire des artisans d'un métier.";
+        return "**" + prefixe + name + "** " + Translator.getLabel(lg, "job.help");
     }
 
     @Override
     public String helpDetailed(Language lg, String prefixe) {
         return help(lg, prefixe)
-                + "\n" + prefixe + "`"  + name + "` : renvoie la liste des métiers du jeu Dofus."
-                + "\n" + prefixe + "`"  + name + " `*`métier`* : renvoie l'annuaire des artisans pour ce métier."
-                + "\n" + prefixe + "`"  + name + " `*`métier niveau`* : vous ajoute à l'annuaire du métier correspondant." +
-                " Si vous indiquez 0, vous êtes supprimé de l'annuaire pour ce métier."
-                + "\n" + prefixe + "`"  + name + " -all `*`niveau`* : vous ajoute à l'annuaire pour tous les métiers correspondants." +
-                " Si vous indiquez 0, vous êtes supprimé de chaque annuaire.\n";
+                + "\n" + prefixe + "`"  + name + "` : " + Translator.getLabel(lg, "job.help.detailed.1")
+                + "\n" + prefixe + "`"  + name + " `*`métier`* : " + Translator.getLabel(lg, "job.help.detailed.2")
+                + "\n" + prefixe + "`"  + name + " `*`métier niveau`* : " + Translator.getLabel(lg, "job.help.detailed.3")
+                + "\n" + prefixe + "`"  + name + " -all `*`niveau`* : " + Translator.getLabel(lg, "job.help.detailed.4") + "\n";
     }
 }

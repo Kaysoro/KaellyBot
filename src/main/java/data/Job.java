@@ -20,7 +20,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class Job {
 
     private final static Logger LOG = LoggerFactory.getLogger(Job.class);
-    private static List<String> jobs;
+    private static List<Job> jobs;
     private String name;
     private int level;
     private User user;
@@ -31,6 +31,12 @@ public class Job {
             level = 200;
         this.level = level;
         this.user = user;
+    }
+
+    private Job(String name){
+        this.name = name;
+        level = 0;
+        user = null;
     }
 
     public void setLevel(int level){
@@ -123,7 +129,7 @@ public class Job {
         return jobs;
     }
 
-    public static List<String> getJobs(){
+    public static List<Job> getJobs(){
         if (jobs == null){
             jobs = new ArrayList<>();
 
@@ -135,13 +141,17 @@ public class Job {
                 ResultSet resultSet = query.executeQuery();
 
                 while (resultSet.next())
-                    jobs.add(resultSet.getString("name"));
+                    jobs.add(new Job(resultSet.getString("name")));
             } catch (SQLException e) {
                 ClientConfig.setSentryContext(null,null, null,null);
                 LOG.error(e.getMessage());
             }
         }
         return jobs;
+    }
+
+    public String getName() {
+        return name;
     }
 
     public int getLevel(){
