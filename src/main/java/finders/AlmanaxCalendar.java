@@ -71,7 +71,7 @@ public class AlmanaxCalendar {
         }
     }
 
-    public void addToDatabase(){
+    public synchronized void addToDatabase(){
         if (! getAlmanaxCalendars().containsKey(getChan())) {
             getAlmanaxCalendars().put(getChan(), this);
             Connexion connexion = Connexion.getInstance();
@@ -93,7 +93,7 @@ public class AlmanaxCalendar {
         }
     }
 
-    public void removeToDatabase() {
+    public synchronized void removeToDatabase() {
         getAlmanaxCalendars().remove(getChan());
 
         Connexion connexion = Connexion.getInstance();
@@ -112,7 +112,7 @@ public class AlmanaxCalendar {
         }
     }
 
-    public static Map<String, AlmanaxCalendar> getAlmanaxCalendars(){
+    public synchronized static Map<String, AlmanaxCalendar> getAlmanaxCalendars(){
         if (almanaxCalendar == null){
             almanaxCalendar = new HashMap<>();
 

@@ -29,7 +29,7 @@ public class Transport {
         this.isFreeAccess = isFreeAccess;
     }
 
-    public static List<Transport> getTransports(){
+    public synchronized static List<Transport> getTransports(){
         if (transports == null) {
             transports = new ArrayList<>();
 

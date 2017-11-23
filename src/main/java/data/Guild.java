@@ -41,7 +41,7 @@ public class Guild {
         portals = Portal.getPortals(this);
     }
 
-    public void addToDatabase(){
+    public synchronized void addToDatabase(){
         if (! getGuilds().containsKey(id)){
             getGuilds().put(id, this);
 
@@ -76,7 +76,7 @@ public class Guild {
             User.getUsers().put(id, new ConcurrentHashMap<>());
     }
 
-    public void removeToDatabase() {
+    public synchronized void removeToDatabase() {
         if (getGuilds().containsKey(id)) {
             getGuilds().remove(id);
 
@@ -98,7 +98,7 @@ public class Guild {
             User.getUsers().remove(id);
     }
 
-    public void setName(String name){
+    public synchronized void setName(String name){
         this.name = name;
 
         Connexion connexion = Connexion.getInstance();
@@ -116,7 +116,7 @@ public class Guild {
         }
     }
 
-    public void setPrefixe(String prefixe){
+    public synchronized void setPrefixe(String prefixe){
         this.prefixe = prefixe;
 
         Connexion connexion = Connexion.getInstance();
@@ -134,7 +134,7 @@ public class Guild {
         }
     }
 
-    public void setServer(ServerDofus server){
+    public synchronized void setServer(ServerDofus server){
         this.server = server;
 
         Connexion connexion = Connexion.getInstance();
@@ -154,7 +154,7 @@ public class Guild {
         }
     }
 
-    public void setLanguage(Language lang){
+    public synchronized void setLanguage(Language lang){
         this.language = lang;
 
         Connexion connexion = Connexion.getInstance();
@@ -173,7 +173,7 @@ public class Guild {
         }
     }
 
-    public static Map<String, Guild> getGuilds(){
+    public synchronized static Map<String, Guild> getGuilds(){
         if (guilds == null){
             guilds = new ConcurrentHashMap<>();
             String id;
@@ -210,7 +210,7 @@ public class Guild {
         return getGuild(guild, true);
     }
 
-    public static Guild getGuild(IGuild discordGuild, boolean forceCache){
+    public synchronized static Guild getGuild(IGuild discordGuild, boolean forceCache){
         Guild guild = getGuilds().get(discordGuild.getStringID());
 
         if (guild == null && forceCache){

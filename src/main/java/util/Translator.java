@@ -149,7 +149,7 @@ public class Translator {
         return result;
     }
 
-    public static String getLabel(Language lang, String property){
+    public synchronized static String getLabel(Language lang, String property){
         if (labels == null){
             labels = new ConcurrentHashMap<>();
 

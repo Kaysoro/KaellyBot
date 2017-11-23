@@ -34,7 +34,7 @@ public class TwitterFinder{
         this.channelId = channelId;
     }
 
-    public static Map<Long, TwitterFinder> getTwitterChannels(){
+    public synchronized static Map<Long, TwitterFinder> getTwitterChannels(){
         if (twitterChannels == null) {
             twitterChannels = new ConcurrentHashMap<>();
 
@@ -64,7 +64,7 @@ public class TwitterFinder{
         return twitterChannels;
     }
 
-    public void addToDatabase(){
+    public synchronized void addToDatabase(){
         if (! getTwitterChannels().containsKey(getChannelId())) {
             getTwitterChannels().put(getChannelId(), this);
             Connexion connexion = Connexion.getInstance();
@@ -85,7 +85,7 @@ public class TwitterFinder{
         }
     }
 
-    public void removeToDatabase() {
+    public synchronized void removeToDatabase() {
         getTwitterChannels().remove(getChannelId());
 
         Connexion connexion = Connexion.getInstance();

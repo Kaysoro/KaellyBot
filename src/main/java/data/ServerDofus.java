@@ -35,7 +35,7 @@ public class ServerDofus {
         lastSweetRefresh = 0;
     }
 
-    private static void initialize(){
+    private synchronized static void initialize(){
         initialized = true;
         servers = new ArrayList<>();
         serversMap = new HashMap<>();
@@ -60,13 +60,13 @@ public class ServerDofus {
         }
     }
 
-    public static Map<String, ServerDofus> getServersMap(){
+    public synchronized static Map<String, ServerDofus> getServersMap(){
         if (! initialized)
             initialize();
         return serversMap;
     }
 
-    public static List<ServerDofus> getServersDofus(){
+    public synchronized static List<ServerDofus> getServersDofus(){
         if (! initialized)
             initialize();
         return servers;

@@ -35,7 +35,7 @@ public class CommandForbidden {
         this.isSaved = isSaved;
     }
 
-    public static Map<String, CommandForbidden> getForbiddenCommands(Guild g){
+    public synchronized static Map<String, CommandForbidden> getForbiddenCommands(Guild g){
         Map<String, CommandForbidden> commands = new ConcurrentHashMap<>();
 
         Connexion connexion = Connexion.getInstance();
@@ -62,7 +62,7 @@ public class CommandForbidden {
         return commands;
     }
 
-    public void addToDatabase(){
+    public synchronized void addToDatabase(){
         if (! isSaved) {
             Connexion connexion = Connexion.getInstance();
             Connection connection = connexion.getConnection();
@@ -84,7 +84,7 @@ public class CommandForbidden {
         }
     }
 
-    public void removeToDatabase() {
+    public synchronized void removeToDatabase() {
         if (isSaved) {
             Connexion connexion = Connexion.getInstance();
             Connection connection = connexion.getConnection();

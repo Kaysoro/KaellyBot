@@ -39,7 +39,7 @@ public class Job {
         user = null;
     }
 
-    public void setLevel(int level){
+    public synchronized void setLevel(int level){
         if (level > 200)
             level = 200;
         this.level = level;
@@ -75,7 +75,7 @@ public class Job {
         }
     }
 
-    public void addToDatabase(){
+    public synchronized void addToDatabase(){
         if (! user.getJobs().containsKey(name) && level > 0) {
             user.getJobs().put(name, this);
             Connexion connexion = Connexion.getInstance();
@@ -98,7 +98,7 @@ public class Job {
         }
     }
 
-    public static Map<String, Job> getJobs(User user){
+    public synchronized static Map<String, Job> getJobs(User user){
         Map<String, Job> jobs = new ConcurrentHashMap<>();
 
         Connexion connexion = Connexion.getInstance();
@@ -129,7 +129,7 @@ public class Job {
         return jobs;
     }
 
-    public static List<Job> getJobs(){
+    public synchronized static List<Job> getJobs(){
         if (jobs == null){
             jobs = new ArrayList<>();
 

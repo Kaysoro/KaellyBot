@@ -49,7 +49,7 @@ public class Connexion {
 		}
 	}
 	
-	public static Connexion getInstance(){
+	public synchronized static Connexion getInstance(){
 		if (instance == null) {
 			instance = new Connexion();
 			instance.connect();

@@ -28,7 +28,7 @@ public class ChannelLanguage {
         this.channelId = channelId;
     }
 
-    public static Map<Long, ChannelLanguage> getChannelLanguages(){
+    public synchronized static Map<Long, ChannelLanguage> getChannelLanguages(){
         if (channelLanguages == null) {
             channelLanguages = new ConcurrentHashMap<>();
 
@@ -58,7 +58,7 @@ public class ChannelLanguage {
         return channelLanguages;
     }
 
-    public void addToDatabase(){
+    public synchronized void addToDatabase(){
         if (! getChannelLanguages().containsKey(getChannelId())) {
             getChannelLanguages().put(getChannelId(), this);
             Connexion connexion = Connexion.getInstance();
@@ -79,7 +79,7 @@ public class ChannelLanguage {
         }
     }
 
-    public void setLanguage(Language lang){
+    public synchronized void setLanguage(Language lang){
         this.lang = lang;
         Connexion connexion = Connexion.getInstance();
         Connection connection = connexion.getConnection();
@@ -97,7 +97,7 @@ public class ChannelLanguage {
         }
     }
 
-    public void removeToDatabase() {
+    public synchronized void removeToDatabase() {
         getChannelLanguages().remove(getChannelId());
 
         Connexion connexion = Connexion.getInstance();

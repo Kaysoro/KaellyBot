@@ -43,7 +43,7 @@ public class User {
         this(id, name, User.RIGHT_INVITE, guild);
     }
 
-    public void addToDatabase() {
+    public synchronized void addToDatabase() {
         if (!getUsers().containsKey(guild.getId())) {
             getUsers().put(guild.getId(), new ConcurrentHashMap<>());
         }
@@ -77,7 +77,7 @@ public class User {
         return 0;
     }
 
-    public void removeToDatabase() {
+    public synchronized void removeToDatabase() {
         if (getUsers().get(guild.getId()).containsKey(id)){
             getUsers().get(guild.getId()).remove(id);
 
@@ -99,7 +99,7 @@ public class User {
 
     }
 
-    public void setName(String name){
+    public synchronized void setName(String name){
         this.name = name;
 
         Connexion connexion = Connexion.getInstance();
@@ -120,7 +120,7 @@ public class User {
         }
     }
 
-    public void changeRight(int right){
+    public synchronized void changeRight(int right){
         this.rights = right;
 
         Connexion connexion = Connexion.getInstance();
@@ -141,7 +141,7 @@ public class User {
         }
     }
 
-    public static Map<String, Map<String, User>> getUsers(){
+    public synchronized static Map<String, Map<String, User>> getUsers(){
         if (users == null){
             users = new ConcurrentHashMap<>();
 
@@ -180,7 +180,7 @@ public class User {
        return getUser(guild, discordUser, true);
     }
 
-    public static User getUser(IGuild discordGuild, IUser discordUser, boolean forceCache){
+    public synchronized static User getUser(IGuild discordGuild, IUser discordUser, boolean forceCache){
         Guild guild = Guild.getGuild(discordGuild);
         if (!getUsers().containsKey(guild.getId()))
             getUsers().put(guild.getId(), new ConcurrentHashMap<>());

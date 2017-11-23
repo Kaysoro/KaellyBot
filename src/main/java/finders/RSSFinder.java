@@ -45,7 +45,7 @@ public class RSSFinder {
         this.lastRSS = lastRSS;
     }
 
-    public void setLastRSS(long lastRSS) {
+    public synchronized void setLastRSS(long lastRSS) {
         this.lastRSS = lastRSS;
 
         Connexion connexion = Connexion.getInstance();
@@ -65,7 +65,7 @@ public class RSSFinder {
         }
     }
 
-    public void addToDatabase(){
+    public synchronized void addToDatabase(){
         if (! getRSSFinders().containsKey(getChan())) {
             getRSSFinders().put(getChan(), this);
             Connexion connexion = Connexion.getInstance();
@@ -87,7 +87,7 @@ public class RSSFinder {
         }
     }
 
-    public void removeToDatabase() {
+    public synchronized void removeToDatabase() {
         getRSSFinders().remove(getChan());
 
         Connexion connexion = Connexion.getInstance();
@@ -105,7 +105,7 @@ public class RSSFinder {
         }
     }
 
-    public static Map<String, RSSFinder> getRSSFinders(){
+    public synchronized static Map<String, RSSFinder> getRSSFinders(){
         if (rssFinders == null){
             rssFinders = new ConcurrentHashMap<>();
 

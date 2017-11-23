@@ -102,7 +102,7 @@ public class Portal implements Embedded{
         }
     }
 
-    public static Map<String, Portal> getPortals(){
+    public synchronized static Map<String, Portal> getPortals(){
         if (portals == null){
             portals = new ConcurrentHashMap<>();
 
@@ -128,7 +128,7 @@ public class Portal implements Embedded{
         return portals;
     }
 
-    public static List<Portal> getPortals(Guild g){
+    public synchronized static List<Portal> getPortals(Guild g){
         List<Portal> portals = new ArrayList<>();
 
         Connexion connexion = Connexion.getInstance();
@@ -170,7 +170,7 @@ public class Portal implements Embedded{
     public void setUtilisation(int utilisation) {
         setUtilisation(utilisation, System.currentTimeMillis());
     }
-    public void setUtilisation(int utilisation, long lastUpdate) {
+    public synchronized void setUtilisation(int utilisation, long lastUpdate) {
         this.utilisation = utilisation;
         this.lastUpdate = lastUpdate;
 
@@ -200,7 +200,7 @@ public class Portal implements Embedded{
         setCoordonate(coordonate, System.currentTimeMillis());
     }
 
-    public void setCoordonate(Position coordonate, long creation) {
+    public synchronized void setCoordonate(Position coordonate, long creation) {
         if (! this.coordonate.equals(coordonate)){
             this.coordonate = coordonate;
             this.creation = creation;
