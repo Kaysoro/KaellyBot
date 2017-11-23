@@ -34,6 +34,11 @@ public class Constants {
     public final static String authorAvatar = "https://avatars0.githubusercontent.com/u/5544670?s=460&v=4";
 
     /**
+     * URL for Kaelly twitter account
+     */
+    public final static String twitterAccount = "https://twitter.com/KaellyBot";
+
+    /**
      * URL for github KaellyBot repository
      */
     public final static String git = "https://github.com/Kaysoro/KaellyBot";

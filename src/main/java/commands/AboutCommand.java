@@ -51,6 +51,10 @@ public class AboutCommand extends AbstractCommand{
                     Translator.getLabel(lg, "about.support.desc")
                         .replace("{name}", Constants.name)
                         .replace("{discordInvite}", Constants.discordInvite), true)
+            .appendField(Translator.getLabel(lg, "about.twitter.title"),
+                    Translator.getLabel(lg, "about.twitter.desc")
+                        .replace("{name}", Constants.name)
+                        .replace("{twitter}", Constants.twitterAccount), true)
             .appendField(Translator.getLabel(lg, "about.opensource.title"),
                     Translator.getLabel(lg, "about.opensource.desc")
                         .replace("{git}", Constants.git), true)
