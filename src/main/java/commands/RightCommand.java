@@ -54,7 +54,7 @@ public class RightCommand extends AbstractCommand{
 
                         for(IUser user : message.getGuild().getUsers()){
 
-                            User target = User.getUser(message.getGuild(), message.getAuthor());
+                            User target = User.getUser(message.getGuild(), user);
 
                             if (user.getRolesForGuild(message.getGuild()).contains(role)){
                                 if ((! target.getId().equals(author.getId())) &&
