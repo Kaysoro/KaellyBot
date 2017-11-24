@@ -2,7 +2,8 @@ package enums;
 
 public enum Donator {
 
-    IHART69("iHart69#4211", 10);
+    IHART69("iHart69#4211", 10),
+    ELDER_MASTER("Elder-Master#4090", 10);
 
     private String name;
     private int amount;
