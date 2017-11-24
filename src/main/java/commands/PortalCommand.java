@@ -76,17 +76,19 @@ public class PortalCommand extends AbstractCommand{
 
     @Override
     public String help(Language lg, String prefixe) {
-        return "**" + prefixe + name + "** donne la position des portails dimension.";
+        return "**" + prefixe + name + "** " + Translator.getLabel(lg, "portal.help");
     }
 
     @Override
     public String helpDetailed(Language lg, String prefixe) {
         return help(lg, prefixe)
-                + "\n" + prefixe + "`"  + name + "` : donne la position de tous les portails."
-                + "\n" + prefixe + "`"  + name + " `*`dimension`* : donne la position du portail de la dimension désirée."
-                + "\n" + prefixe + "`"  + name + " `*`dimension`*` [POS, POS]` : met à jour la position du portail de la dimension spécifiée."
-                + "\n" + prefixe + "`"  + name + " `*`dimension`*` [POS, POS] `*`nombre d'uti.`* : met à jour la position et le nombre d'utilisations"
-                + " de la dimension spécifiée. 0 en tant que nombre d'utilisation réinitialise le portail de la dimension spécifiée."
-                + "\n" + prefixe + "`"  + name + " `*`dimension` `nombre d'uti.`* : met à jour le nombre d'utilisation.\n";
+                + "\n" + prefixe + "`"  + name + "` : " + Translator.getLabel(lg, "portal.help.detailed.1")
+                + "\n" + prefixe + "`"  + name + " `*`dimension`* : " + Translator.getLabel(lg, "portal.help.detailed.2")
+                + "\n" + prefixe + "`"  + name + " `*`dimension`*` [POS, POS]` : "
+                        + Translator.getLabel(lg, "portal.help.detailed.3")
+                + "\n" + prefixe + "`"  + name + " `*`dimension`*` [POS, POS] `*`utilisation`* : "
+                        + Translator.getLabel(lg, "portal.help.detailed.4")
+                + "\n" + prefixe + "`"  + name + " `*`dimension` `utilisation`* : "
+                        + Translator.getLabel(lg, "portal.help.detailed.5") + "\n";
     }
 }

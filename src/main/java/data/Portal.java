@@ -12,6 +12,7 @@ import sx.blah.discord.util.EmbedBuilder;
 import util.ClientConfig;
 import util.Connexion;
 import util.JSoupManager;
+import util.Translator;
 
 import java.io.IOException;
 import java.sql.Connection;
@@ -170,6 +171,7 @@ public class Portal implements Embedded{
     public void setUtilisation(int utilisation) {
         setUtilisation(utilisation, System.currentTimeMillis());
     }
+
     public synchronized void setUtilisation(int utilisation, long lastUpdate) {
         this.utilisation = utilisation;
         this.lastUpdate = lastUpdate;
@@ -267,16 +269,17 @@ public class Portal implements Embedded{
         if (! isValid()) {
             coordonate = new Position();
             utilisation = -1;
-            builder.withDescription("Aucune position récente trouvée.");
+            builder.withDescription(Translator.getLabel(lg, "portal.unknown"));
         } else {
-            builder.appendField(":cyclone: Position", "**" + coordonate + "**", true);
+            builder.appendField(Translator.getLabel(lg, "portal.position"), "**" + coordonate + "**", true);
             if (utilisation != -1)
-                builder.appendField(":eye: Utilisation", utilisation + " utilisation"
+                builder.appendField(Translator.getLabel(lg, "portal.utilisation.title"), utilisation
+                        + " " + Translator.getLabel(lg, "portal.utilisation.desc")
                         + (utilisation > 1 ? "s" : ""), true);
             if (transportLimited != null)
-                builder.appendField(":airplane_small: Zaap privé à proximité", transportLimited.toString(), false);
-            builder.appendField(":airplane: Zaap à proximité", zaap.toString(), false);
-            builder.withFooterText(getDateInformation());
+                builder.appendField(Translator.getLabel(lg, "portal.private_zaap"), transportLimited.toString(), false);
+            builder.appendField(Translator.getLabel(lg, "portal.zaap"), zaap.toString(), false);
+            builder.withFooterText(getDateInformation(lg));
         }
 
         return builder.build();
@@ -285,27 +288,6 @@ public class Portal implements Embedded{
     @Override
     public EmbedObject getMoreEmbedObject(Language lg) {
         return getEmbedObject(lg);
-    }
-
-    @Override
-    public String toString(){
-        StringBuilder st = new StringBuilder("*")
-                .append(getName())
-                .append( "* : ");
-        if (!isValid()) {
-            coordonate = new Position();
-            utilisation = -1;
-            st.append("Aucune position récente trouvée.\n");
-        }
-        else {
-            st.append("**").append(coordonate).append("**");
-
-            if (utilisation != -1)
-                st.append(", ").append(utilisation).append(" utilisation").append(utilisation > 1 ? "s" : "");
-            st.append(getDateInformation()).append(")*\n");
-        }
-
-        return st.toString();
     }
 
     public static List<Portal> getSweetPortals(ServerDofus server) throws IOException {
@@ -347,8 +329,8 @@ public class Portal implements Embedded{
         return portals;
     }
 
-    private String getDateInformation(){
-        StringBuilder st = new StringBuilder("Ajouté ");
+    private String getDateInformation(Language lg){
+        StringBuilder st = new StringBuilder(Translator.getLabel(lg, "portal.date.1")).append(" ");
         Date creationDate = new Date(creation);
         if (! DateUtils.isSameDay(creationDate, new Date()))
             st.append("le ").append(dateFormat.format(creationDate));
@@ -357,9 +339,9 @@ public class Portal implements Embedded{
         if (lastUpdate != -1) {
             Date updateDate = new Date(lastUpdate);
             if (! DateUtils.truncatedEquals(creationDate, updateDate, Calendar.SECOND)) {
-                st.append(" - édité ");
+                st.append(" - ").append(Translator.getLabel(lg, "portal.date.2")).append(" ");
                 if (! DateUtils.isSameDay(updateDate, new Date()))
-                    st.append("le ").append(dateFormat.format(updateDate));
+                    st.append(Translator.getLabel(lg, "portal.date.3")).append(" ").append(dateFormat.format(updateDate));
                 else
                     st.append(dayFormat.format(updateDate));
             }
