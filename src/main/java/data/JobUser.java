@@ -17,26 +17,19 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * Created by steve on 12/11/2016.
  */
-public class Job {
+public class JobUser {
 
-    private final static Logger LOG = LoggerFactory.getLogger(Job.class);
-    private static List<Job> jobs;
+    private final static Logger LOG = LoggerFactory.getLogger(JobUser.class);
     private String name;
     private int level;
     private User user;
 
-    public Job(String name, int level, User user){
+    public JobUser(String name, int level, User user){
         this.name = name;
         if (level > 200)
             level = 200;
         this.level = level;
         this.user = user;
-    }
-
-    private Job(String name){
-        this.name = name;
-        level = 0;
-        user = null;
     }
 
     public synchronized void setLevel(int level){
@@ -98,8 +91,8 @@ public class Job {
         }
     }
 
-    public synchronized static Map<String, Job> getJobs(User user){
-        Map<String, Job> jobs = new ConcurrentHashMap<>();
+    public synchronized static Map<String, JobUser> getJobUsers(User user){
+        Map<String, JobUser> jobs = new ConcurrentHashMap<>();
 
         Connexion connexion = Connexion.getInstance();
         Connection connection = connexion.getConnection();
@@ -118,7 +111,7 @@ public class Job {
             while (resultSet.next()) {
                 name = resultSet.getString("name_job");
                 level = resultSet.getInt("level");
-                jobs.put(name, new Job(name, level, user));
+                jobs.put(name, new JobUser(name, level, user));
             }
         } catch (SQLException e) {
             ClientConfig.setSentryContext(ClientConfig.DISCORD().getGuildByID(Long.parseLong(user.getGuild().getId())),
@@ -126,27 +119,6 @@ public class Job {
             LOG.error(e.getMessage());
         }
 
-        return jobs;
-    }
-
-    public synchronized static List<Job> getJobs(){
-        if (jobs == null){
-            jobs = new ArrayList<>();
-
-            Connexion connexion = Connexion.getInstance();
-            Connection connection = connexion.getConnection();
-
-            try {
-                PreparedStatement query = connection.prepareStatement("SELECT name FROM Job");
-                ResultSet resultSet = query.executeQuery();
-
-                while (resultSet.next())
-                    jobs.add(new Job(resultSet.getString("name")));
-            } catch (SQLException e) {
-                ClientConfig.setSentryContext(null,null, null,null);
-                LOG.error(e.getMessage());
-            }
-        }
         return jobs;
     }
 

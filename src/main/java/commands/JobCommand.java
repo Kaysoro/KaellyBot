@@ -1,8 +1,9 @@
 package commands;
 
 import data.Constants;
-import data.Job;
+import data.JobUser;
 import data.User;
+import enums.Job;
 import enums.Language;
 import util.Message;
 import exceptions.JobNotFoundDiscordException;
@@ -40,8 +41,8 @@ public class JobCommand extends AbstractCommand{
 
             if (m.group(1) == null){
                 StringBuilder st = new StringBuilder(Translator.getLabel(lg, "job.request.1")).append(" :\n```");
-                for(Job job : Job.getJobs())
-                    st.append("\n- ").append(Translator.getLabel(lg, job.getName()));
+                for(Job job : Job.values())
+                    st.append("\n- ").append(job.getLabel(lg));
                 st.append("```");
                 Message.sendText(message.getChannel(), st.toString());
             }
@@ -53,7 +54,7 @@ public class JobCommand extends AbstractCommand{
                         User author = User.getUser(message.getGuild(), message.getAuthor());
                         int level = Integer.parseInt(m.group(3).replaceAll("\\W+", ""));
                         if (!author.getJobs().containsKey(jobs.get(0)))
-                            new Job(jobs.get(0), level, author).addToDatabase();
+                            new JobUser(jobs.get(0), level, author).addToDatabase();
                         else
                             author.getJobs().get(jobs.get(0)).setLevel(level);
 
@@ -115,9 +116,9 @@ public class JobCommand extends AbstractCommand{
                 User author = User.getUser(message.getGuild(), message.getAuthor());
                 int level = Integer.parseInt(m.group(3).replaceAll("\\W+", ""));
 
-                for(Job job : Job.getJobs()) {
+                for(Job job : Job.values()) {
                     if (!author.getJobs().containsKey(job.getName()))
-                        new Job(job.getName(), level, author).addToDatabase();
+                        new JobUser(job.getName(), level, author).addToDatabase();
                     else
                         author.getJobs().get(job.getName()).setLevel(level);
                 }
@@ -141,8 +142,8 @@ public class JobCommand extends AbstractCommand{
         nameProposed = nameProposed.replaceAll("\\W+", "");
         List<String> jobs = new ArrayList<>();
 
-        for(Job job : Job.getJobs())
-            if (Normalizer.normalize(Translator.getLabel(lg, job.getName()), Normalizer.Form.NFD)
+        for(Job job : Job.values())
+            if (Normalizer.normalize(job.getLabel(lg), Normalizer.Form.NFD)
                     .replaceAll("\\p{InCombiningDiacriticalMarks}+", "")
                     .toLowerCase().replaceAll("\\W+", "").startsWith(nameProposed))
                 jobs.add(job.getName());

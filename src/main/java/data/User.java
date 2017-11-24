@@ -29,14 +29,14 @@ public class User {
     private String name;
     private int rights;
     private Guild guild;
-    private Map<String, Job> jobs;
+    private Map<String, JobUser> jobs;
 
     public User(String id, String name, int rights, Guild guild){
         this.id = id;
         this.name = name;
         this.rights = rights;
         this.guild = guild;
-        this.jobs = Job.getJobs(this);
+        this.jobs = JobUser.getJobUsers(this);
     }
 
     public User(String id, String name, Guild guild){
@@ -211,7 +211,7 @@ public class User {
         return name;
     }
 
-    public Map<String, Job> getJobs() {
+    public Map<String, JobUser> getJobs() {
         return jobs;
     }
 }
