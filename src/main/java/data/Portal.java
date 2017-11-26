@@ -1,6 +1,7 @@
 package data;
 
 import enums.Language;
+import enums.Transport;
 import org.apache.commons.lang3.time.DateUtils;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -82,7 +83,7 @@ public class Portal implements Embedded{
         if(isValid()) {
             double minDist = Double.MAX_VALUE;
             double minDistLimited = Double.MAX_VALUE;
-            for (Transport transport : Transport.getTransports()) {
+            for (Transport transport : Transport.values()) {
                 double tmp = transport.getPosition().getDistance(coordonate);
                 if (transport.isFreeAccess() && (zaap == null || minDist > tmp)){
                     zaap = transport;
@@ -277,8 +278,8 @@ public class Portal implements Embedded{
                         + " " + Translator.getLabel(lg, "portal.utilisation.desc")
                         + (utilisation > 1 ? "s" : ""), true);
             if (transportLimited != null)
-                builder.appendField(Translator.getLabel(lg, "portal.private_zaap"), transportLimited.toString(), false);
-            builder.appendField(Translator.getLabel(lg, "portal.zaap"), zaap.toString(), false);
+                builder.appendField(Translator.getLabel(lg, "portal.private_zaap"), transportLimited.toDiscordString(lg), false);
+            builder.appendField(Translator.getLabel(lg, "portal.zaap"), zaap.toDiscordString(lg), false);
             builder.withFooterText(getDateInformation(lg));
         }
 

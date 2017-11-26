@@ -4,25 +4,25 @@ import util.Translator;
 
 public enum Job {
 
-    ALCHIMISTE("alchimiste"),
-    BIJOUTIER("bijoutier"),
-    BRICOLEUR("bricoleur"),
-    BUCHERON("bucheron"),
-    CHASSEUR("chasseur"),
-    CORDOMAGE("cordomage"),
-    CORDONNIER("cordonnier"),
-    COSTUMAGE("costumage"),
-    FACONNEUR("faconneur"),
-    FORGEMAGE("forgemage"),
-    FORGERON("forgeron"),
-    JOAILLOMAGE("joaillomage"),
-    MINEUR("mineur"),
-    PAYSAN("paysan"),
-    PECHEUR("pecheur"),
-    SCULPTEMAGE("sculptemage"),
-    SCULPTEUR("sculpteur"),
-    TAILLEUR("tailleur"),
-    FACOMAGE("facomage");
+    ALCHIMISTE("job.alchimiste"),
+    BIJOUTIER("job.bijoutier"),
+    BRICOLEUR("job.bricoleur"),
+    BUCHERON("job.bucheron"),
+    CHASSEUR("job.chasseur"),
+    CORDOMAGE("job.cordomage"),
+    CORDONNIER("job.cordonnier"),
+    COSTUMAGE("job.costumage"),
+    FACONNEUR("job.faconneur"),
+    FORGEMAGE("job.forgemage"),
+    FORGERON("job.forgeron"),
+    JOAILLOMAGE("job.joaillomage"),
+    MINEUR("job.mineur"),
+    PAYSAN("job.paysan"),
+    PECHEUR("job.pecheur"),
+    SCULPTEMAGE("job.sculptemage"),
+    SCULPTEUR("job.sculpteur"),
+    TAILLEUR("job.tailleur"),
+    FACOMAGE("job.facomage");
 
     private String name;
 

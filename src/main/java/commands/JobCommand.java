@@ -61,12 +61,12 @@ public class JobCommand extends AbstractCommand{
                         if (author.getJob(jobs.get(0)) > 0)
                             Message.sendText(message.getChannel(), Translator.getLabel(lg, "job.request.2")
                                 .replace("{user}", author.getName())
-                                .replace("{job}", jobs.get(0))
+                                .replace("{job}", Translator.getLabel(lg, jobs.get(0)))
                                 .replace("{level}", String.valueOf(author.getJob(jobs.get(0)))));
                         else
                             Message.sendText(message.getChannel(), Translator.getLabel(lg, "job.request.3")
                                     .replace("{user}", author.getName())
-                                    .replace("{job}", jobs.get(0)));
+                                    .replace("{job}", Translator.getLabel(lg, jobs.get(0))));
                     } else { // Consultation
                         List<User> artisans = new ArrayList<>();
 
@@ -87,7 +87,7 @@ public class JobCommand extends AbstractCommand{
 
                         if (!artisans.isEmpty()) {
                             st.append(Translator.getLabel(lg, "job.request.4")
-                                    .replace("{job}", jobs.get(0))
+                                    .replace("{job}", Translator.getLabel(lg, jobs.get(0)))
                                     .replace("{guild}",  message.getGuild().getName()))
                               .append("\n```");
 
@@ -103,7 +103,7 @@ public class JobCommand extends AbstractCommand{
                             st.append("```");
                         } else
                             st.append(Translator.getLabel(lg, "job.request.5")
-                                    .replace("{job}", jobs.get(0)));
+                                    .replace("{job}", Translator.getLabel(lg, jobs.get(0))));
 
                         Message.sendText(message.getChannel(), st.toString());
                     }

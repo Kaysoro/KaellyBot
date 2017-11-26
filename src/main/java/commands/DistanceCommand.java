@@ -1,7 +1,7 @@
 package commands;
 
 import data.Position;
-import data.Transport;
+import enums.Transport;
 import enums.Language;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,7 +36,7 @@ public class DistanceCommand extends AbstractCommand{
             if(! position.isNull()) {
                 double minDist = Double.MAX_VALUE;
                 double minDistLimited = Double.MAX_VALUE;
-                for (Transport transport : Transport.getTransports()) {
+                for (Transport transport : Transport.values()) {
                     double tmp = transport.getPosition().getDistance(position);
                     if (transport.isFreeAccess() && (zaap == null || minDist > tmp)){
                         zaap = transport;
