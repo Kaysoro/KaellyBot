@@ -48,9 +48,9 @@ public class DistanceCommand extends AbstractCommand{
                     }
                 }
 
-                st.append(Translator.getLabel(lg, "distance.request.1")).append(" ").append(zaap.toString());
+                st.append(Translator.getLabel(lg, "distance.request.1")).append(" ").append(zaap.toDiscordString(lg));
                 if (minDist > minDistLimited)
-                    st.append("\n").append(Translator.getLabel(lg, "distance.request.2")).append(" ").append(transportLimited.toString());
+                    st.append("\n").append(Translator.getLabel(lg, "distance.request.2")).append(" ").append(transportLimited.toDiscordString(lg));
             }
             else
                 st.append(Translator.getLabel(lg, "distance.request.3"));

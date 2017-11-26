@@ -20,9 +20,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.text.DateFormat;
 import java.text.Normalizer;
-import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
@@ -36,8 +34,6 @@ public class Portal implements Embedded{
 
     private final static Logger LOG = LoggerFactory.getLogger(Portal.class);
     private final static long LIMIT = 172800000;
-    private final static DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy à HH:mm", Locale.FRANCE);
-    private final static DateFormat dayFormat = new SimpleDateFormat("à HH:mm", Locale.FRANCE);
     private final static Pattern sweetDateFormat = Pattern.compile("(\\d+\\s+j\\s+)?(\\d+\\s+h\\s+)?(\\d+\\s+min)");
 
     private static Map<String, Portal> portals;
@@ -331,23 +327,28 @@ public class Portal implements Embedded{
     }
 
     private String getDateInformation(Language lg){
-        StringBuilder st = new StringBuilder(Translator.getLabel(lg, "portal.date.1")).append(" ");
-        Date creationDate = new Date(creation);
-        if (! DateUtils.isSameDay(creationDate, new Date()))
-            st.append("le ").append(dateFormat.format(creationDate));
-        else
-            st.append(dayFormat.format(creationDate));
-        if (lastUpdate != -1) {
-            Date updateDate = new Date(lastUpdate);
-            if (! DateUtils.truncatedEquals(creationDate, updateDate, Calendar.SECOND)) {
-                st.append(" - ").append(Translator.getLabel(lg, "portal.date.2")).append(" ");
-                if (! DateUtils.isSameDay(updateDate, new Date()))
-                    st.append(Translator.getLabel(lg, "portal.date.3")).append(" ").append(dateFormat.format(updateDate));
-                else
-                    st.append(dayFormat.format(updateDate));
-            }
+        StringBuilder st = new StringBuilder(Translator.getLabel(lg, "portal.date.added")).append(" ");
+
+        long deltaCreation = System.currentTimeMillis() - creation;
+        st.append(getLabelTimeAgo(lg, deltaCreation));
+
+        if (lastUpdate != -1 && ! DateUtils.truncatedEquals(new Date(creation), new Date(lastUpdate), Calendar.SECOND)){
+            long deltaUpdate = System.currentTimeMillis() - lastUpdate;
+            st.append(" - ").append(Translator.getLabel(lg, "portal.date.edited")).append(" ")
+            .append(getLabelTimeAgo(lg, deltaUpdate));
         }
         return st.toString();
+    }
+
+    private String getLabelTimeAgo(Language lg, long time){
+        if (time < DateUtils.MILLIS_PER_MINUTE)
+            return Translator.getLabel(lg, "portal.date.now");
+        else if (time < DateUtils.MILLIS_PER_HOUR)
+            return Translator.getLabel(lg, "portal.date.minutes_ago")
+                    .replace("{time}", String.valueOf(time / DateUtils.MILLIS_PER_MINUTE));
+        else
+            return Translator.getLabel(lg, "portal.date.hours_ago")
+                    .replace("{time}", String.valueOf(time / DateUtils.MILLIS_PER_HOUR));
     }
 
     public String getUrl() {
