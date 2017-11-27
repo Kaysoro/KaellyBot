@@ -44,6 +44,8 @@ public class Portal implements Embedded{
     private int utilisation;
     private long creation;
     private long lastUpdate;
+    private String creationSource;
+    private String updateSource;
     private int color;
     private Guild guild;
     private Transport zaap;
@@ -55,15 +57,18 @@ public class Portal implements Embedded{
         this.color = color;
     }
 
-    private Portal(String name, Position coordonate, int utilisation, long creation, long lastUpdate) {
+    private Portal(String name, Position coordonate, int utilisation, long creation, long lastUpdate, String source) {
         this.name = name;
         this.coordonate = coordonate;
         this.utilisation = utilisation;
         this.creation = creation;
         this.lastUpdate = lastUpdate;
+        this.creationSource = source;
+        this.updateSource = source;
     }
 
-    private Portal(Portal classicPortal, Position coordonate, int utilisation, long creation, long lastUpdate, Guild guild) {
+    private Portal(Portal classicPortal, Position coordonate, int utilisation, long creation, long lastUpdate, Guild guild,
+                   String creationSource, String updateSource) {
         this.name = classicPortal.getName();
         this.url = classicPortal.getUrl();
         this.color = classicPortal.getColor();
@@ -72,6 +77,8 @@ public class Portal implements Embedded{
         this.creation = creation;
         this.lastUpdate = lastUpdate;
         this.guild = guild;
+        this.creationSource = creationSource;
+        this.updateSource = updateSource;
         determineTransports();
     }
 
@@ -134,7 +141,7 @@ public class Portal implements Embedded{
 
         try {
             PreparedStatement query = connection.prepareStatement("SELECT name_portal, pos, utilisation,"
-                    + "creation, last_update FROM Portal_Guild WHERE id_guild = (?);");
+                    + "creation, last_update, creation_source, update_source FROM Portal_Guild WHERE id_guild = (?);");
             query.setString(1, g.getId());
             ResultSet resultSet = query.executeQuery();
 
@@ -142,6 +149,8 @@ public class Portal implements Embedded{
             int utilisation;
             long creation;
             long lastUpdate;
+            String creationSource;
+            String updateSource;
 
             while (resultSet.next()) {
                 name = resultSet.getString("name_portal");
@@ -149,7 +158,10 @@ public class Portal implements Embedded{
                 utilisation = resultSet.getInt("utilisation");
                 creation = resultSet.getLong("creation");
                 lastUpdate = resultSet.getLong("last_update");
-                portals.add(new Portal(Portal.getPortals().get(name), Position.parse(pos), utilisation, creation, lastUpdate, g));
+                creationSource = resultSet.getString("creation_source");
+                updateSource = resultSet.getString("update_source");
+                portals.add(new Portal(Portal.getPortals().get(name), Position.parse(pos), utilisation, creation,
+                        lastUpdate, g, creationSource, updateSource));
             }
 
         } catch (SQLException e) {
@@ -165,13 +177,14 @@ public class Portal implements Embedded{
         return this.name;
     }
 
-    public void setUtilisation(int utilisation) {
-        setUtilisation(utilisation, System.currentTimeMillis());
+    public void setUtilisation(int utilisation, String source) {
+        setUtilisation(utilisation, System.currentTimeMillis(), source);
     }
 
-    public synchronized void setUtilisation(int utilisation, long lastUpdate) {
+    public synchronized void setUtilisation(int utilisation, long lastUpdate, String source) {
         this.utilisation = utilisation;
         this.lastUpdate = lastUpdate;
+        this.updateSource = source;
 
         if (utilisation == 0)
             reset();
@@ -180,12 +193,13 @@ public class Portal implements Embedded{
 
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(
-                    "UPDATE Portal_Guild SET utilisation = ?, last_update = ?"
+                    "UPDATE Portal_Guild SET utilisation = ?, last_update = ?, update_source = ?"
                             + "WHERE name_portal = ? AND id_guild = ?;");
             preparedStatement.setInt(1, utilisation);
             preparedStatement.setLong(2, lastUpdate);
-            preparedStatement.setString(3, name);
-            preparedStatement.setString(4, guild.getId());
+            preparedStatement.setString(3, updateSource);
+            preparedStatement.setString(4, name);
+            preparedStatement.setString(5, guild.getId());
 
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
@@ -195,30 +209,35 @@ public class Portal implements Embedded{
         }
     }
 
-    public void setCoordonate(Position coordonate) {
-        setCoordonate(coordonate, System.currentTimeMillis());
+    public void setCoordonate(Position coordonate, String source) {
+        setCoordonate(coordonate, System.currentTimeMillis(), source);
     }
 
-    public synchronized void setCoordonate(Position coordonate, long creation) {
+    public synchronized void setCoordonate(Position coordonate, long creation, String source) {
         if (! this.coordonate.equals(coordonate)){
             this.coordonate = coordonate;
             this.creation = creation;
             this.utilisation = -1;
             this.lastUpdate = -1;
+            this.creationSource = source;
+            this.updateSource = "";
             determineTransports();
             Connexion connexion = Connexion.getInstance();
             Connection connection = connexion.getConnection();
 
             try {
                 PreparedStatement preparedStatement = connection.prepareStatement(
-                        "UPDATE Portal_Guild SET pos = ?, creation = ?, utilisation = ?, last_update = ?"
+                        "UPDATE Portal_Guild SET pos = ?, creation = ?, utilisation = ?, last_update = ?," +
+                                " creation_source = ?, update_source = ?"
                                 + "WHERE name_portal = ? AND id_guild = ?;");
                 preparedStatement.setString(1, coordonate.toString());
                 preparedStatement.setLong(2, creation);
                 preparedStatement.setInt(3, utilisation);
                 preparedStatement.setLong(4, lastUpdate);
-                preparedStatement.setString(5, name);
-                preparedStatement.setString(6, guild.getId());
+                preparedStatement.setString(5, creationSource);
+                preparedStatement.setString(6, updateSource);
+                preparedStatement.setString(7, name);
+                preparedStatement.setString(8, guild.getId());
 
                 preparedStatement.executeUpdate();
             } catch (SQLException e) {
@@ -237,17 +256,17 @@ public class Portal implements Embedded{
                         .replaceAll("\\p{InCombiningDiacriticalMarks}+", "").toLowerCase())
                 && ! portal.coordonate.isNull())
             if (coordonate.equals(portal.coordonate) && utilisation > portal.utilisation || coordonate.isNull()){
-                setCoordonate(portal.coordonate, portal.creation);
-                setUtilisation(portal.utilisation, portal.lastUpdate);
+                setCoordonate(portal.coordonate, portal.creation, portal.creationSource);
+                setUtilisation(portal.utilisation, portal.lastUpdate, portal.updateSource);
             }
             else if (! coordonate.isNull() && ! coordonate.equals(portal.coordonate) && creation < portal.creation){
-                setCoordonate(portal.coordonate, portal.creation);
-                setUtilisation(portal.utilisation, portal.lastUpdate);
+                setCoordonate(portal.coordonate, portal.creation, portal.creationSource);
+                setUtilisation(portal.utilisation, portal.lastUpdate, portal.updateSource);
             }
     }
 
     public void reset() {
-        setCoordonate(new Position());
+        setCoordonate(new Position(), "");
     }
 
     public boolean isValid(){
@@ -276,7 +295,7 @@ public class Portal implements Embedded{
             if (transportLimited != null)
                 builder.appendField(Translator.getLabel(lg, "portal.private_zaap"), transportLimited.toDiscordString(lg), false);
             builder.appendField(Translator.getLabel(lg, "portal.zaap"), zaap.toDiscordString(lg), false);
-            builder.withFooterText(getDateInformation(lg));
+            builder.withFooterText(getDateInformation(creationSource, updateSource, lg));
         }
 
         return builder.build();
@@ -288,6 +307,7 @@ public class Portal implements Embedded{
     }
 
     public static List<Portal> getSweetPortals(ServerDofus server) throws IOException {
+        String source = "Sweet.ovh";
         List<Portal> portals = new ArrayList<>();
 
         Document doc = JSoupManager.getDocument(Constants.sweetPortals + server.getSweetId());
@@ -320,22 +340,24 @@ public class Portal implements Embedded{
             else
                 coordonate = new Position();
             long lastUpdate = creation;
-            portals.add(new Portal(name, coordonate, utilisation, creation, lastUpdate));
+            portals.add(new Portal(name, coordonate, utilisation, creation, lastUpdate, source));
         }
 
         return portals;
     }
 
-    private String getDateInformation(Language lg){
+    private String getDateInformation(String creationSource, String updateSource, Language lg){
         StringBuilder st = new StringBuilder(Translator.getLabel(lg, "portal.date.added")).append(" ");
 
         long deltaCreation = System.currentTimeMillis() - creation;
-        st.append(getLabelTimeAgo(lg, deltaCreation));
+        st.append(getLabelTimeAgo(lg, deltaCreation)).append(" ").append(Translator.getLabel(lg, "portal.date.by"))
+                .append(" ").append(creationSource);
 
         if (lastUpdate != -1 && ! DateUtils.truncatedEquals(new Date(creation), new Date(lastUpdate), Calendar.SECOND)){
             long deltaUpdate = System.currentTimeMillis() - lastUpdate;
             st.append(" - ").append(Translator.getLabel(lg, "portal.date.edited")).append(" ")
-            .append(getLabelTimeAgo(lg, deltaUpdate));
+            .append(getLabelTimeAgo(lg, deltaUpdate)).append(" ").append(Translator.getLabel(lg, "portal.date.by"))
+            .append(" ").append(updateSource);
         }
         return st.toString();
     }

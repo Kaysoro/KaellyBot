@@ -271,6 +271,7 @@ portal.date.edited=edited
 portal.date.now=just now
 portal.date.minutes_ago={time}min ago
 portal.date.hours_ago={time}h ago
+portal.date.by=by
 prefix.request.1=
 prefix.request.2=
 prefix.help=

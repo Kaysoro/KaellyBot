@@ -45,9 +45,11 @@ public class PortalCommand extends AbstractCommand{
                     portals = getPortal(m.group(1), Guild.getGuild(message.getGuild()));
                 if (portals.size() == 1) {
                     if (m.group(2) != null)
-                        portals.get(0).setCoordonate(Position.parse("[" + m.group(3) + "," + m.group(4) + "]"));
+                        portals.get(0).setCoordonate(Position.parse("[" + m.group(3) + "," + m.group(4) + "]"),
+                                message.getAuthor().getDisplayName(message.getGuild()));
                     if (m.group(5) != null)
-                        portals.get(0).setUtilisation(Integer.parseInt(m.group(5).replaceAll("\\s", "")));
+                        portals.get(0).setUtilisation(Integer.parseInt(m.group(5).replaceAll("\\s", "")),
+                                message.getAuthor().getDisplayName(message.getGuild()));
 
                     Message.sendEmbed(message.getChannel(), portals.get(0).getEmbedObject(lg));
                 }
