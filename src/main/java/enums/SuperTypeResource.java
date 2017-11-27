@@ -1,20 +1,20 @@
 package enums;
 
-import data.Constants;
+import util.Translator;
 
 public enum SuperTypeResource {
 
-    HAVEN_BAG(Constants.havenBagPageURL),
-    HARNESS(Constants.harnessPageURL),
-    IDOL(Constants.idolPageURL),
-    CONSUMABLE(Constants.consumablePageURL),
-    RESOURCE(Constants.resourcePageURL);
+    HAVEN_BAG("havenbag.url"),
+    HARNESS("harness.url"),
+    IDOL("idol.url"),
+    CONSUMABLE("consumable.url"),
+    RESOURCE("resource.url");
 
     private String url;
 
     SuperTypeResource(String url){this.url = url;}
 
-    public String getUrl(){
-        return url;
+    public String getUrl(Language lg){
+        return Translator.getLabel(lg, url);
     }
 }

@@ -1,6 +1,5 @@
 package data;
 
-import commands.*;
 import enums.Language;
 
 /**
@@ -80,57 +79,6 @@ public class Constants {
      * Official Ankama Game Logo
      */
     public final static String officialLogo = "https://s.ankama.com/www/static.ankama.com/g/modules/masterpage/block/header/navbar/dofus/logo.png";
-
-    /**
-     * Official Dofus URL for news feed
-     */
-    public final static String feedURL = "/fr/rss/news.xml";
-
-    /**
-     * Official Dofus URL for Weapon page
-     */
-    public final static String weaponPageURL = "/fr/mmorpg/encyclopedie/armes";
-
-    /**
-     * Official Dofus URL for Equipement page
-     */
-    public final static String equipementPageURL = "/fr/mmorpg/encyclopedie/equipements";
-
-    /**
-     * Official Dofus URL for Pets page
-     */
-    public final static String petPageURL = "/fr/mmorpg/encyclopedie/familiers";
-
-    /**
-     * Official Dofus URL for Montures page
-     */
-    public final static String monturePageURL = "/fr/mmorpg/encyclopedie/montures";
-
-    /**
-     * Official Dofus URL for Haven Bag page
-     */
-    public static String havenBagPageURL = "/fr/mmorpg/encyclopedie/havres-sacs";
-    /**
-     * Official Dofus URL for Harness page
-     */
-    public static String harnessPageURL = "/fr/mmorpg/encyclopedie/harnachements";
-
-    /**
-     * Official Dofus URL for Idol page
-     */
-    public static String idolPageURL = "/fr/mmorpg/encyclopedie/idoles";
-
-    /**
-     * Official Dofus URL for Consumable page
-     */
-    public static String consumablePageURL = "/fr/mmorpg/encyclopedie/consommables";
-
-    /**
-     * Official Dofus URL for Resource page
-     */
-    public static String resourcePageURL = "/fr/mmorpg/encyclopedie/ressources";
-
-
 
     /**
      * Tutorial URL

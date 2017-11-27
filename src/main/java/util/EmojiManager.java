@@ -16,10 +16,12 @@ public class EmojiManager {
                 .replaceAll("\\s{2}", " ")
                 .trim();
 
-        for(Statistique stat : Statistique.values())
-            for(String proposal : stat.getNames())
+        for(Statistique stat : Statistique.values()) {
+            String[] names = stat.getNames(lg);
+            for (String proposal : names)
                 if (proposal.equals(text))
                     return stat.getEmoji();
+        }
         return "";
     }
 }

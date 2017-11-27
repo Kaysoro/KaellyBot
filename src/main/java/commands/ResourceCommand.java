@@ -66,11 +66,11 @@ public class ResourceCommand extends AbstractCommand{
                         String potentialName = Normalizer.normalize(equip.getNames()[j], Normalizer.Form.NFD)
                                 .replaceAll("\\p{InCombiningDiacriticalMarks}+", "").toLowerCase();
                         if (normalName.equals(potentialName)) {
-                            matcher.evaluateAll(getListResourceFrom(getSearchURL(equip.getType().getUrl(),
+                            matcher.evaluateAll(getListResourceFrom(getSearchURL(equip.getType().getUrl(lg),
                                     potentialName, equip.getTypeID()), message));
                             break;
                         } else if (normalName.contains(potentialName)) {
-                            matcher.evaluateAll(getListResourceFrom(getSearchURL(equip.getType().getUrl(),
+                            matcher.evaluateAll(getListResourceFrom(getSearchURL(equip.getType().getUrl(lg),
                                     editedName.replace(potentialName, "").trim(), equip.getTypeID()), message));
                             break;
                         }
@@ -79,7 +79,7 @@ public class ResourceCommand extends AbstractCommand{
 
                 if (matcher.isEmpty())
                     for (SuperTypeResource type : SuperTypeResource.values())
-                        matcher.evaluateAll(getListResourceFrom(getSearchURL(type.getUrl(), normalName, null), message));
+                        matcher.evaluateAll(getListResourceFrom(getSearchURL(type.getUrl(lg), normalName, null), message));
 
                 if (matcher.isUnique()) { // We have found it !
                     Embedded resource = Resource.getResource(lg, Constants.officialURL + matcher.getBest().getRight());
