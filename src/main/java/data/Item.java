@@ -8,6 +8,7 @@ import sx.blah.discord.api.internal.json.objects.EmbedObject;
 import sx.blah.discord.util.EmbedBuilder;
 import util.EmojiManager;
 import util.JSoupManager;
+import util.Translator;
 import util.URLManager;
 
 import java.io.IOException;
@@ -60,20 +61,20 @@ public class Item implements Embedded {
         builder.withThumbnail(skinURL);
 
         if (level != null && ! level.isEmpty())
-            builder.appendField(":star: Niveau :", level, true);
-        builder.appendField(":dagger: Type :", type, true);
+            builder.appendField(Translator.getLabel(lg, "item.niveau"), level, true);
+        builder.appendField(Translator.getLabel(lg, "item.type"), type, true);
 
         if (effects != null && ! effects.isEmpty())
-        builder.appendField(":cyclone: Effets :", effects, true);
+        builder.appendField(Translator.getLabel(lg, "item.effets"), effects, true);
 
         if (caracteristics != null && ! caracteristics.isEmpty())
-            builder.appendField(":gear: Caractéristiques :", caracteristics, true);
+            builder.appendField(Translator.getLabel(lg, "item.caracteristiques"), caracteristics, true);
 
         if (conditions != null && ! conditions.isEmpty())
-            builder.appendField(":key: Conditions :",conditions, true);
+            builder.appendField(Translator.getLabel(lg, "item.conditions"), conditions, true);
 
         if (panoplie != null && panoplieURL != null)
-            builder.appendField(":link: Panoplie :", "[" + panoplie + "](" + panoplieURL + ")", true);
+            builder.appendField(Translator.getLabel(lg, "item.panoplie"), "[" + panoplie + "](" + panoplieURL + ")", true);
 
         return builder.build();
     }
@@ -91,23 +92,23 @@ public class Item implements Embedded {
         builder.withImage(skinURL);
 
         if (level != null && ! level.isEmpty())
-            builder.appendField(":star: Niveau :", level, true);
-        builder.appendField(":dagger: Type :", type, true);
+            builder.appendField(Translator.getLabel(lg, "item.niveau"), level, true);
+        builder.appendField(Translator.getLabel(lg, "item.type"), type, true);
 
         if (effects != null && ! effects.isEmpty())
-            builder.appendField(":cyclone: Effets :", effects, true);
+            builder.appendField(Translator.getLabel(lg, "item.effets"), effects, true);
 
         if (caracteristics != null && ! caracteristics.isEmpty())
-            builder.appendField(":gear: Caractéristiques :", caracteristics, true);
+            builder.appendField(Translator.getLabel(lg, "item.caracteristiques"), caracteristics, true);
 
         if (conditions != null && ! conditions.isEmpty())
-            builder.appendField(":key: Conditions",conditions, true);
+            builder.appendField(Translator.getLabel(lg, "item.conditions"), conditions, true);
 
         if (panoplie != null && panoplieURL != null)
-            builder.appendField(":link: Panoplie :", "[" + panoplie + "](" + panoplieURL + ")", true);
+            builder.appendField(Translator.getLabel(lg, "item.panoplie"), "[" + panoplie + "](" + panoplieURL + ")", true);
 
         if (recipe != null)
-            builder.appendField(":hammer_pick: Recette :", recipe, true);
+            builder.appendField(Translator.getLabel(lg, "item.recette"), recipe, true);
 
         return builder.build();
     }
@@ -116,7 +117,8 @@ public class Item implements Embedded {
         Document doc = JSoupManager.getDocument(url);
         doc.setBaseUri(url);
         String name = doc.getElementsByClass("ak-return-link").first().text();
-        String level = doc.getElementsByClass("ak-encyclo-detail-level").first().text().replaceAll("Niveau : ", "");;
+        String level = doc.getElementsByClass("ak-encyclo-detail-level").first().text()
+                .replaceAll(Translator.getLabel(lg, "item.extract.level") + " ", "");
         String type = doc.getElementsByClass("ak-encyclo-detail-type").last().children().last().text();
 
         String skinURL = doc.getElementsByClass("ak-encyclo-detail-illu").first()
@@ -134,19 +136,19 @@ public class Item implements Embedded {
         Elements lines;
         StringBuilder tmp;
         for (Element title : titles)
-            if (title.text().equals("Description"))
+            if (title.text().equals(Translator.getLabel(lg, "item.extract.description")))
                 description = title.parent().getElementsByClass("ak-panel-content").first().text();
-            else if (title.text().equals("Effets"))
+            else if (title.text().equals(Translator.getLabel(lg, "item.extract.effets")))
                 effects = extractStatsFromTitle(lg, title);
-            else if (title.text().equals("Caractéristiques"))
+            else if (title.text().equals(Translator.getLabel(lg, "item.extract.caracteristiques")))
                 caracteristics = extractLinesFromTitle(title);
-            else if (title.text().equals("Conditions"))
+            else if (title.text().equals(Translator.getLabel(lg, "item.extract.conditions")))
                 conditions = extractLinesFromTitle(title);
-            else if (title.text().contains(name + " fait partie de")){
+            else if (title.text().contains(Translator.getLabel(lg, "item.extract.panoplie"))){
                 panoplie = title.getElementsByTag("a").first().text();
                 panoplieURL = title.getElementsByTag("a").first().attr("abs:href");
             }
-            else if (title.text().equals("Recette")){
+            else if (title.text().equals(Translator.getLabel(lg, "item.extract.recette"))){
                 lines = title.parent().getElementsByClass("ak-column");
                 tmp = new StringBuilder();
                 for (Element line : lines)

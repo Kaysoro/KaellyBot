@@ -91,7 +91,7 @@ public class AlmanaxCommand extends AbstractCommand{
     public String helpDetailed(Language lg, String prefixe) {
         return help(lg, prefixe)
                 + "\n" + prefixe + "`" + name + "` : " + Translator.getLabel(lg, "almanax.help.detailed.1")
-                + "\n" + prefixe + "`" + name + " `*`jj/mm/aaaa`* : " + Translator.getLabel(lg, "almanax.help.detailed.2")
+                + "\n" + prefixe + "`" + name + " `*`dd/mm/yyyy`* : " + Translator.getLabel(lg, "almanax.help.detailed.2")
                 + "\n" + prefixe + "`" + name + " `*`+days`* : " + Translator.getLabel(lg, "almanax.help.detailed.3")
                 + "\n" + prefixe + "`"  + name + " true` : " + Translator.getLabel(lg, "almanax.help.detailed.4")
                 + "\n" + prefixe + "`"  + name + " false` : " + Translator.getLabel(lg, "almanax.help.detailed.5") + "\n";

@@ -61,8 +61,9 @@ public class ItemCommand extends AbstractCommand{
                 try {
                     for (int i = 0; i < TypeEquipment.values().length; i++) {
                         TypeEquipment equip = TypeEquipment.values()[i];
-                        for (int j = 0; j < equip.getNames().length; j++) {
-                            String potentialName = Normalizer.normalize(equip.getNames()[j], Normalizer.Form.NFD)
+                        String[] names = equip.getNames(lg);
+                        for (int j = 0; j < names.length; j++) {
+                            String potentialName = Normalizer.normalize(names[j], Normalizer.Form.NFD)
                                     .replaceAll("\\p{InCombiningDiacriticalMarks}+", "").toLowerCase();
                             if (normalName.equals(potentialName)) {
                                 matcher.evaluateAll(getListItemFrom(getSearchURL(equip.getType().getUrl(lg),
@@ -146,14 +147,13 @@ public class ItemCommand extends AbstractCommand{
 
     @Override
     public String help(Language lg, String prefixe) {
-        return "**" + prefixe + name + "** renvoie les statistiques d'un item du jeu Dofus.";
+        return "**" + prefixe + name + "** " + Translator.getLabel(lg, "item.help");
     }
 
     @Override
     public String helpDetailed(Language lg, String prefixe) {
         return help(lg, prefixe)
-                + "\n" + prefixe + "`"  + name + " `*`item`* : renvoie les statistiques de l'item spécifié :"
-                + " son nom peut être approximatif s'il est suffisamment précis."
-                + "\n" + prefixe + "`"  + name + " -more `*`item`* : renvoie les statistiques détaillées de l'item spécifié.\n";
+                + "\n" + prefixe + "`"  + name + " `*`item`* : " + Translator.getLabel(lg, "item.help.detailed.1")
+                + "\n" + prefixe + "`"  + name + " -more `*`item`* : " + Translator.getLabel(lg, "item.help.detailed.2") + "\n";
     }
 }
