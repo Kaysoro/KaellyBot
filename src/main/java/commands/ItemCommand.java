@@ -60,8 +60,7 @@ public class ItemCommand extends AbstractCommand{
                 BestMatcher matcher = new BestMatcher(normalName);
 
                 try {
-                    for (int i = 0; i < TypeEquipment.values().length; i++) {
-                        TypeEquipment equip = TypeEquipment.values()[i];
+                    for (TypeEquipment equip : TypeEquipment.values()) {
                         String[] names = equip.getNames(lg);
                         for (String name : names) {
                             String potentialName = Normalizer.normalize(name, Normalizer.Form.NFD)

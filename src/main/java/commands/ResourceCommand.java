@@ -59,9 +59,8 @@ public class ResourceCommand extends AbstractCommand{
             BestMatcher matcher = new BestMatcher(normalName);
 
             try {
-                for (int i = 0; i < TypeResource.values().length; i++) {
-                    TypeResource equip = TypeResource.values()[i];
-                    String[] names = equip.getNames();
+                for (TypeResource equip : TypeResource.values()) {
+                    String[] names = equip.getNames(lg);
                     for (String name : names) {
                         String potentialName = Normalizer.normalize(name, Normalizer.Form.NFD)
                                 .replaceAll("\\p{InCombiningDiacriticalMarks}+", "").toLowerCase();
