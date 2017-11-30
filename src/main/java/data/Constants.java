@@ -71,11 +71,6 @@ public class Constants {
     public final static String game = "Dofus";
 
     /**
-     * Official Ankama Game URL
-     */
-    public final static String officialURL = "https://www.dofus.com";
-
-    /**
      * Official Ankama Game Logo
      */
     public final static String officialLogo = "https://s.ankama.com/www/static.ankama.com/g/modules/masterpage/block/header/navbar/dofus/logo.png";

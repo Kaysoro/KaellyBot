@@ -1,12 +1,13 @@
 package commands;
 
+import data.Embedded;
+import data.Item;
 import enums.Language;
 import enums.SuperTypeEquipment;
 import enums.TypeEquipment;
 import exceptions.NoExternalEmojiPermissionDiscordException;
 import sx.blah.discord.handle.obj.Permissions;
 import util.*;
-import data.*;
 import exceptions.ExceptionManager;
 import exceptions.ItemNotFoundDiscordException;
 import exceptions.TooMuchItemsDiscordException;
@@ -62,16 +63,16 @@ public class ItemCommand extends AbstractCommand{
                     for (int i = 0; i < TypeEquipment.values().length; i++) {
                         TypeEquipment equip = TypeEquipment.values()[i];
                         String[] names = equip.getNames(lg);
-                        for (int j = 0; j < names.length; j++) {
-                            String potentialName = Normalizer.normalize(names[j], Normalizer.Form.NFD)
+                        for (String name : names) {
+                            String potentialName = Normalizer.normalize(name, Normalizer.Form.NFD)
                                     .replaceAll("\\p{InCombiningDiacriticalMarks}+", "").toLowerCase();
                             if (normalName.equals(potentialName)) {
                                 matcher.evaluateAll(getListItemFrom(getSearchURL(equip.getType().getUrl(lg),
-                                        potentialName, equip.getTypeID()), message));
+                                        potentialName, equip.getTypeID(), lg), message));
                                 break;
                             } else if (normalName.contains(potentialName)) {
                                 matcher.evaluateAll(getListItemFrom(getSearchURL(equip.getType().getUrl(lg),
-                                        editedName.replace(potentialName, "").trim(), equip.getTypeID()), message));
+                                        editedName.replace(potentialName, "").trim(), equip.getTypeID(), lg), message));
                                 break;
                             }
                         }
@@ -79,10 +80,11 @@ public class ItemCommand extends AbstractCommand{
 
                     if (matcher.isEmpty())
                         for (SuperTypeEquipment type : SuperTypeEquipment.values())
-                            matcher.evaluateAll(getListItemFrom(getSearchURL(type.getUrl(lg), normalName, null), message));
+                            matcher.evaluateAll(getListItemFrom(getSearchURL(type.getUrl(lg), normalName, null, lg), message));
 
                     if (matcher.isUnique()) { // We have found it !
-                        Embedded item = Item.getItem(lg, Constants.officialURL + matcher.getBest().getRight());
+                        Embedded item = Item.getItem(lg, Translator.getLabel(lg, "game.url")
+                                + matcher.getBest().getRight());
                         if (m.group(1) != null)
                             Message.sendEmbed(message.getChannel(), item.getMoreEmbedObject(lg));
                         else
@@ -105,8 +107,8 @@ public class ItemCommand extends AbstractCommand{
         return false;
     }
 
-    private String getSearchURL(String SuperTypeURL, String text, String typeArg) throws UnsupportedEncodingException {
-        StringBuilder url = new StringBuilder(Constants.officialURL).append(SuperTypeURL)
+    private String getSearchURL(String SuperTypeURL, String text, String typeArg, Language lg) throws UnsupportedEncodingException {
+        StringBuilder url = new StringBuilder(Translator.getLabel(lg, "game.url")).append(SuperTypeURL)
                 .append("?").append(forName.toLowerCase()).append(URLEncoder.encode(text, "UTF-8"))
                 .append("&").append(forName.toUpperCase()).append(URLEncoder.encode(text, "UTF-8"))
                 .append("&").append(and).append("&").append(forLevelMin).append(levelMin)

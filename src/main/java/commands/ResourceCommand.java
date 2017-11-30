@@ -1,6 +1,5 @@
 package commands;
 
-import data.Constants;
 import data.Embedded;
 import data.Resource;
 import enums.Language;
@@ -62,16 +61,17 @@ public class ResourceCommand extends AbstractCommand{
             try {
                 for (int i = 0; i < TypeResource.values().length; i++) {
                     TypeResource equip = TypeResource.values()[i];
-                    for (int j = 0; j < equip.getNames().length; j++) {
-                        String potentialName = Normalizer.normalize(equip.getNames()[j], Normalizer.Form.NFD)
+                    String[] names = equip.getNames();
+                    for (String name : names) {
+                        String potentialName = Normalizer.normalize(name, Normalizer.Form.NFD)
                                 .replaceAll("\\p{InCombiningDiacriticalMarks}+", "").toLowerCase();
                         if (normalName.equals(potentialName)) {
                             matcher.evaluateAll(getListResourceFrom(getSearchURL(equip.getType().getUrl(lg),
-                                    potentialName, equip.getTypeID()), message));
+                                    potentialName, equip.getTypeID(), lg), message));
                             break;
                         } else if (normalName.contains(potentialName)) {
                             matcher.evaluateAll(getListResourceFrom(getSearchURL(equip.getType().getUrl(lg),
-                                    editedName.replace(potentialName, "").trim(), equip.getTypeID()), message));
+                                    editedName.replace(potentialName, "").trim(), equip.getTypeID(), lg), message));
                             break;
                         }
                     }
@@ -79,10 +79,11 @@ public class ResourceCommand extends AbstractCommand{
 
                 if (matcher.isEmpty())
                     for (SuperTypeResource type : SuperTypeResource.values())
-                        matcher.evaluateAll(getListResourceFrom(getSearchURL(type.getUrl(lg), normalName, null), message));
+                        matcher.evaluateAll(getListResourceFrom(getSearchURL(type.getUrl(lg), normalName, null, lg), message));
 
                 if (matcher.isUnique()) { // We have found it !
-                    Embedded resource = Resource.getResource(lg, Constants.officialURL + matcher.getBest().getRight());
+                    Embedded resource = Resource.getResource(lg, Translator.getLabel(lg, "game.url")
+                            + matcher.getBest().getRight());
                     if (m.group(1) != null)
                         Message.sendEmbed(message.getChannel(), resource.getMoreEmbedObject(lg));
                     else
@@ -102,8 +103,8 @@ public class ResourceCommand extends AbstractCommand{
         return false;
     }
 
-    private String getSearchURL(String SuperTypeURL, String text, String typeArg) throws UnsupportedEncodingException {
-        StringBuilder url = new StringBuilder(Constants.officialURL).append(SuperTypeURL)
+    private String getSearchURL(String SuperTypeURL, String text, String typeArg, Language lg) throws UnsupportedEncodingException {
+        StringBuilder url = new StringBuilder(Translator.getLabel(lg, "game.url")).append(SuperTypeURL)
                 .append("?").append(forName.toLowerCase()).append(URLEncoder.encode(text, "UTF-8"))
                 .append("&").append(forName.toUpperCase()).append(URLEncoder.encode(text, "UTF-8"))
                 .append("&").append(and).append("&").append(forLevelMin).append(levelMin)
@@ -144,14 +145,13 @@ public class ResourceCommand extends AbstractCommand{
 
     @Override
     public String help(Language lg, String prefixe) {
-        return "**" + prefixe + name + "** renvoie les statistiques d'une ressource du jeu Dofus.";
+        return "**" + prefixe + name + "** " + Translator.getLabel(lg, "resource.help");
     }
 
     @Override
     public String helpDetailed(Language lg, String prefixe) {
         return help(lg, prefixe)
-                + "\n" + prefixe + "`"  + name + " `*`resource`* : renvoie les statistiques d'une ressource spécifiée :"
-                + " son nom peut être approximatif s'il est suffisamment précis."
-                + "\n" + prefixe + "`"  + name + " -more `*`resource`* : renvoie les statistiques détaillées de la ressource spécifiée.\n";
+                + "\n" + prefixe + "`"  + name + " `*`resource`* : " + Translator.getLabel(lg, "resource.help.detailed.1")
+                + "\n" + prefixe + "`"  + name + " -more `*`resource`* : " + Translator.getLabel(lg, "resource.help.detailed.2") + "\n";
     }
 }

@@ -55,7 +55,8 @@ public class MonsterCommand extends AbstractCommand{
                     matcher.evaluateAll(getListMonsterFrom(getSearchURL(lg, editedName), message));
 
                     if (matcher.isUnique()) { // We have found it !
-                        Embedded monster = Monster.getMonster(lg, Constants.officialURL + matcher.getBest().getRight());
+                        Embedded monster = Monster.getMonster(lg, Translator.getLabel(lg, "game.url")
+                                + matcher.getBest().getRight());
                         if (m.group(1) != null)
                             Message.sendEmbed(message.getChannel(), monster.getMoreEmbedObject(lg));
                         else

@@ -14,7 +14,7 @@ import java.util.concurrent.TimeUnit;
 
 public class PortalFinder
 {
-    private final static Logger LOG = LoggerFactory.getLogger(RSSFinder.class);
+    private final static Logger LOG = LoggerFactory.getLogger(PortalFinder.class);
     private final static long DELTA = 20; // 20 minutes
     private static boolean isStarted = false;
 

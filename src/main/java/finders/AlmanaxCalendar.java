@@ -27,7 +27,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 public class AlmanaxCalendar {
-    private final static Logger LOG = LoggerFactory.getLogger(RSSFinder.class);
+    private final static Logger LOG = LoggerFactory.getLogger(AlmanaxCalendar.class);
     private static boolean isStarted = false;
 
     private static Map<String, AlmanaxCalendar> almanaxCalendar = null;

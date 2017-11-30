@@ -8,6 +8,7 @@ import sx.blah.discord.api.internal.json.objects.EmbedObject;
 import sx.blah.discord.util.EmbedBuilder;
 import util.EmojiManager;
 import util.JSoupManager;
+import util.Translator;
 import util.URLManager;
 
 import java.io.IOException;
@@ -51,17 +52,17 @@ public class Resource implements Embedded {
         builder.withThumbnail(skinURL);
 
         if (level != null && ! level.isEmpty())
-            builder.appendField(":star: Niveau :", level, true);
-        builder.appendField(":dagger: Type :", type, true);
+            builder.appendField(Translator.getLabel(lg, "resource.niveau"), level, true);
+        builder.appendField(Translator.getLabel(lg, "resource.type"), type, true);
 
         if (effects != null && ! effects.isEmpty())
-            builder.appendField(":cyclone: Effets :", effects, true);
+            builder.appendField(Translator.getLabel(lg, "resource.effets"), effects, true);
 
         if (bonus != null && ! bonus.isEmpty())
-            builder.appendField(":gear: Bonus :", bonus, true);
+            builder.appendField(Translator.getLabel(lg, "resource.bonus"), bonus, true);
 
         if (sorts != null && ! sorts.isEmpty())
-            builder.appendField(":key: Sorts :",sorts, true);
+            builder.appendField(Translator.getLabel(lg, "resource.sorts"),sorts, true);
 
         return builder.build();
     }
@@ -79,20 +80,20 @@ public class Resource implements Embedded {
         builder.withImage(skinURL);
 
         if (level != null && ! level.isEmpty())
-            builder.appendField(":star: Niveau :", level, true);
-        builder.appendField(":dagger: Type :", type, true);
+            builder.appendField(Translator.getLabel(lg, "resource.niveau"), level, true);
+        builder.appendField(Translator.getLabel(lg, "resource.type"), type, true);
 
         if (effects != null && ! effects.isEmpty())
-            builder.appendField(":cyclone: Effets :", effects, true);
+            builder.appendField(Translator.getLabel(lg, "resource.effets"), effects, true);
 
         if (bonus != null && ! bonus.isEmpty())
-            builder.appendField(":gear: Bonus :", bonus, true);
+            builder.appendField(Translator.getLabel(lg, "resource.bonus"), bonus, true);
 
         if (sorts != null && ! sorts.isEmpty())
-            builder.appendField(":key: Sorts :",sorts, true);
+            builder.appendField(Translator.getLabel(lg, "resource.sorts"),sorts, true);
 
         if (recipe != null)
-            builder.appendField(":hammer_pick: Recette :", recipe, true);
+            builder.appendField(Translator.getLabel(lg, "resource.recette"), recipe, true);
 
         return builder.build();
     }
@@ -101,7 +102,8 @@ public class Resource implements Embedded {
         Document doc = JSoupManager.getDocument(url);
         doc.setBaseUri(url);
         String name = doc.getElementsByClass("ak-return-link").first().text();
-        String level = doc.getElementsByClass("ak-encyclo-detail-level").first().text().replaceAll("Niveau : ", "");;
+        String level = doc.getElementsByClass("ak-encyclo-detail-level").first().text()
+                .replaceAll(Translator.getLabel(lg, "resource.extract.level") + " ", "");
         String type = doc.getElementsByClass("ak-encyclo-detail-type").last().children().last().text();
 
         String skinURL = doc.getElementsByClass("ak-encyclo-detail-illu").first()
@@ -117,15 +119,15 @@ public class Resource implements Embedded {
         Elements lines;
         StringBuilder tmp;
         for (Element title : titles)
-            if (title.text().equals("Description"))
+            if (title.text().equals(Translator.getLabel(lg, "resource.extract.description")))
                 description = title.parent().getElementsByClass("ak-panel-content").first().text();
-            else if (title.text().equals("Effets"))
+            else if (title.text().equals(Translator.getLabel(lg, "resource.extract.effets")))
                 effects = extractStatsFromTitle(lg, title);
-            else if (title.text().equals("Bonus"))
+            else if (title.text().equals(Translator.getLabel(lg, "resource.extract.bonus")))
                 bonus = extractLinesFromTitle(title);
-            else if (title.text().equals("Sorts"))
+            else if (title.text().equals(Translator.getLabel(lg, "resource.extract.sorts")))
                 sorts = title.parent().getElementsByClass("ak-panel-content").first().text();
-            else if (title.text().equals("Recette")){
+            else if (title.text().equals(Translator.getLabel(lg, "resource.extract.recette"))){
                 lines = title.parent().getElementsByClass("ak-column");
                 tmp = new StringBuilder();
                 for (Element line : lines)
