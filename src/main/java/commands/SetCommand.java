@@ -28,9 +28,11 @@ public class SetCommand extends AbstractCommand{
 
     private final static Logger LOG = LoggerFactory.getLogger(SetCommand.class);
     private final static String forName = "text=";
+    private DiscordException tooMuchSets;
 
     public SetCommand(){
         super("set", "\\s+(-more)?(.*)");
+        tooMuchSets = new TooMuchDiscordException("exception.toomuch.sets", "exception.toomuch.sets_found");
     }
 
     @Override
@@ -58,18 +60,22 @@ public class SetCommand extends AbstractCommand{
                             Message.sendEmbed(message.getChannel(), set.getMoreEmbedObject(lg));
                         else
                             Message.sendEmbed(message.getChannel(), set.getEmbedObject(lg));
-                    } else if (!matcher.isEmpty()) // Too much items
-                        new TooMuchSetsDiscordException().throwException(message, this, matcher.getBests());
+                    } else if (!matcher.isEmpty()) { // Too much sets
+                        List<String> names = new ArrayList<>();
+                        for(Pair<String, String> item : matcher.getBests())
+                            names.add(item.getLeft());
+                        tooMuchSets.throwException(message, this, lg, names);
+                    }
                     else // empty
-                        new SetNotFoundDiscordException().throwException(message, this);
+                        new SetNotFoundDiscordException().throwException(message, this, lg);
                 } catch (IOException e) {
-                    ExceptionManager.manageIOException(e, message, this, new SetNotFoundDiscordException());
+                    ExceptionManager.manageIOException(e, message, this, lg, new SetNotFoundDiscordException());
                 }
 
                 return true;
             }
             else
-                new NoExternalEmojiPermissionDiscordException().throwException(message, this);
+                new NoExternalEmojiPermissionDiscordException().throwException(message, this, lg);
         }
 
         return false;
@@ -83,6 +89,7 @@ public class SetCommand extends AbstractCommand{
 
     private List<Pair<String, String>> getListSetFrom(String url, IMessage message){
         List<Pair<String, String>> result = new ArrayList<>();
+        Language lg = Translator.getLanguageFrom(message.getChannel());
         try {
             Document doc = JSoupManager.getDocument(url);
             Elements elems = doc.getElementsByClass("ak-bg-odd");
@@ -93,10 +100,10 @@ public class SetCommand extends AbstractCommand{
                         element.child(1).select("a").attr("href")));
 
         } catch(IOException e){
-            ExceptionManager.manageIOException(e, message, this, new SetNotFoundDiscordException());
+            ExceptionManager.manageIOException(e, message, this, lg, new SetNotFoundDiscordException());
             return new ArrayList<>();
         }  catch (Exception e) {
-            ExceptionManager.manageException(e, message, this);
+            ExceptionManager.manageException(e, message, this, lg);
             return new ArrayList<>();
         }
 

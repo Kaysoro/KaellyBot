@@ -22,9 +22,12 @@ public class CommandCommand extends AbstractCommand{
 
     private final static Logger LOG = LoggerFactory.getLogger(CommandCommand.class);
 
+    private DiscordException tooMuchCmds;
+
     public CommandCommand(){
         super("cmd","\\s+(\\w+)\\s+(on|off|0|1|true|false)");
         setUsableInMP(false);
+        tooMuchCmds = new TooMuchDiscordException("exception.toomuch.cmds", "exception.toomuch.cmds_found");
     }
 
     @Override
@@ -58,7 +61,7 @@ public class CommandCommand extends AbstractCommand{
                                     + "* " + Translator.getLabel(lg, "announce.request.3"));
                         }
                         else
-                            new ForbiddenCommandFoundDiscordException().throwException(message, this);
+                            new ForbiddenCommandFoundDiscordException().throwException(message, this, lg);
                     }
                     else if (value.matches("true") || value.matches("0") || value.matches("on")){
                         if (guild.getForbiddenCommands().containsKey(command.getName())) {
@@ -67,18 +70,18 @@ public class CommandCommand extends AbstractCommand{
                                     + "* " + Translator.getLabel(lg, "announce.request.4"));
                         }
                         else
-                            new ForbiddenCommandNotFoundDiscordException().throwException(message, this);
+                            new ForbiddenCommandNotFoundDiscordException().throwException(message, this, lg);
                     }
                     else
-                        new BadUseCommandDiscordException().throwException(message, this);
+                        new BadUseCommandDiscordException().throwException(message, this, lg);
                 }
                 else if (potentialCmds.isEmpty())
-                    new CommandNotFoundDiscordException().throwException(message, this);
+                    new CommandNotFoundDiscordException().throwException(message, this, lg);
                 else
-                    new TooMuchPossibilitiesDiscordException().throwException(message, this);
+                    tooMuchCmds.throwException(message, this, lg);
             }
             else
-                new NotEnoughRightsDiscordException().throwException(message, this);
+                new NotEnoughRightsDiscordException().throwException(message, this, lg);
         }
         return false;
     }

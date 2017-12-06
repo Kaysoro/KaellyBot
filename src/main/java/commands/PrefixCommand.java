@@ -48,10 +48,10 @@ public class PrefixCommand extends AbstractCommand{
                     return true;
                 }
                 else
-                    new PrefixeOutOfBoundsDiscordException().throwException(message, this);
+                    new PrefixeOutOfBoundsDiscordException().throwException(message, this, lg);
             }
             else
-                new NotEnoughRightsDiscordException().throwException(message, this);
+                new NotEnoughRightsDiscordException().throwException(message, this, lg);
         }
         return false;
     }

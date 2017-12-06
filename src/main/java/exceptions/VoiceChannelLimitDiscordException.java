@@ -1,6 +1,7 @@
 package exceptions;
 
 import commands.Command;
+import enums.Language;
 import util.Message;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,7 +15,7 @@ public class VoiceChannelLimitDiscordException implements DiscordException {
     private final static Logger LOG = LoggerFactory.getLogger(VoiceChannelLimitDiscordException.class);
 
     @Override
-    public void throwException(IMessage message, Command command, Object... arguments) {
+    public void throwException(IMessage message, Command command, Language lg, Object... arguments) {
         Message.sendText(message.getChannel(), message.getAuthor().getVoiceStateForGuild(message.getGuild()).getChannel().getName()
                 + " est complet.");
     }

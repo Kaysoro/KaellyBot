@@ -5,12 +5,9 @@ import data.Item;
 import enums.Language;
 import enums.SuperTypeEquipment;
 import enums.TypeEquipment;
-import exceptions.NoExternalEmojiPermissionDiscordException;
+import exceptions.*;
 import sx.blah.discord.handle.obj.Permissions;
 import util.*;
-import exceptions.ExceptionManager;
-import exceptions.ItemNotFoundDiscordException;
-import exceptions.TooMuchItemsDiscordException;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -41,8 +38,11 @@ public class ItemCommand extends AbstractCommand{
     private final static String and = "EFFECTMAIN_and_or=AND";
     private final static String size = "size=";
 
+    private DiscordException tooMuchItems;
+
     public ItemCommand(){
         super("item", "\\s+(-more)?(.*)");
+        tooMuchItems = new TooMuchDiscordException("exception.toomuch.items", "exception.toomuch.items_found");
     }
 
     @Override
@@ -88,18 +88,22 @@ public class ItemCommand extends AbstractCommand{
                             Message.sendEmbed(message.getChannel(), item.getMoreEmbedObject(lg));
                         else
                             Message.sendEmbed(message.getChannel(), item.getEmbedObject(lg));
-                    } else if (!matcher.isEmpty()) // Too much items
-                        new TooMuchItemsDiscordException().throwException(message, this, matcher.getBests());
+                    } else if (!matcher.isEmpty()) { // Too much items
+                        List<String> names = new ArrayList<>();
+                        for(Pair<String, String> item : matcher.getBests())
+                            names.add(item.getLeft());
+                        tooMuchItems.throwException(message, this, lg, names);
+                    }
                     else // empty
-                        new ItemNotFoundDiscordException().throwException(message, this);
+                        new ItemNotFoundDiscordException().throwException(message, this, lg);
                 } catch (IOException e) {
-                    ExceptionManager.manageIOException(e, message, this, new ItemNotFoundDiscordException());
+                    ExceptionManager.manageIOException(e, message, this, lg, new ItemNotFoundDiscordException());
                 }
 
                 return true;
             }
             else
-                new NoExternalEmojiPermissionDiscordException().throwException(message, this);
+                new NoExternalEmojiPermissionDiscordException().throwException(message, this, lg);
         }
 
 
@@ -122,6 +126,7 @@ public class ItemCommand extends AbstractCommand{
 
     private List<Pair<String, String>> getListItemFrom(String url, IMessage message){
         List<Pair<String, String>> result = new ArrayList<>();
+        Language lg = Translator.getLanguageFrom(message.getChannel());
         try {
             Document doc = JSoupManager.getDocument(url);
             Elements elems = doc.getElementsByClass("ak-bg-odd");
@@ -132,10 +137,10 @@ public class ItemCommand extends AbstractCommand{
                         element.child(1).select("a").attr("href")));
 
         } catch(IOException e){
-            ExceptionManager.manageIOException(e, message, this, new ItemNotFoundDiscordException());
+            ExceptionManager.manageIOException(e, message, this, lg, new ItemNotFoundDiscordException());
             return new ArrayList<>();
         }  catch (Exception e) {
-            ExceptionManager.manageException(e, message, this);
+            ExceptionManager.manageException(e, message, this, lg);
             return new ArrayList<>();
         }
 

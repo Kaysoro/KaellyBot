@@ -32,6 +32,7 @@ public class TalkCommand extends AbstractCommand{
     @Override
     public boolean request(IMessage message) {
         if (super.request(message)) {
+            Language lg = Translator.getLanguageFrom(message.getChannel());
             Matcher m = getMatcher(message);
             m.find();
             String text = m.group(2).trim();
@@ -42,14 +43,14 @@ public class TalkCommand extends AbstractCommand{
             }
 
             if (lastChan == null){
-                new ChannelNotFoundDiscordException().throwException(message, this);
+                new ChannelNotFoundDiscordException().throwException(message, this, lg);
                 return false;
             }
 
             if (lastChan.getModifiedPermissions(ClientConfig.DISCORD().getOurUser()).contains(Permissions.SEND_MESSAGES))
                 Message.sendText(lastChan, text);
             else
-                new NoSendTextPermissionDiscordException().throwException(message, this);
+                new NoSendTextPermissionDiscordException().throwException(message, this, lg);
 
             return true;
         }

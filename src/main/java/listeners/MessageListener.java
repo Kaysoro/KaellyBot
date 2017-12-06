@@ -1,12 +1,14 @@
 package listeners;
 
 import commands.*;
+import enums.Language;
 import exceptions.UnknownErrorDiscordException;
 import util.ClientConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sx.blah.discord.api.events.EventSubscriber;
 import sx.blah.discord.handle.impl.events.guild.channel.message.MessageReceivedEvent;
+import util.Translator;
 
 /**
  * Created by steve on 14/07/2016.
@@ -21,6 +23,7 @@ public class MessageListener {
         @EventSubscriber
         public void onReady(MessageReceivedEvent event) {
             ClientConfig.setSentryContext(event.getGuild(), event.getAuthor(), event.getChannel(), event.getMessage());
+            Language lg = Translator.getLanguageFrom(event.getChannel());
 
             // If the authorId is a bot, message get ignored
             if (! event.getMessage().getAuthor().isBot())
@@ -28,7 +31,7 @@ public class MessageListener {
                     try {
                         command.request(event.getMessage());
                     } catch (Exception e){
-                        new UnknownErrorDiscordException().throwException(event.getMessage(), command);
+                        new UnknownErrorDiscordException().throwException(event.getMessage(), command, lg);
                         LOG.error("MessageListener.onReady", e);
                     }
         }

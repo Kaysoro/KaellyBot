@@ -1,13 +1,10 @@
 package commands;
 
 import enums.Language;
-import exceptions.NoExternalEmojiPermissionDiscordException;
+import exceptions.*;
 import sx.blah.discord.handle.obj.Permissions;
 import util.*;
 import data.*;
-import exceptions.ExceptionManager;
-import exceptions.MonsterNotFoundDiscordException;
-import exceptions.TooMuchMonstersDiscordException;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -32,8 +29,11 @@ public class MonsterCommand extends AbstractCommand{
     private final static Logger LOG = LoggerFactory.getLogger(MonsterCommand.class);
     private final static String forName = "text=";
 
+    private DiscordException tooMuchMonsters;
+
     public MonsterCommand(){
         super("monster", "\\s+(-more)?(.*)");
+        tooMuchMonsters = new TooMuchDiscordException("exception.toomuch.monsters", "exception.toomuch.monsters_found");
     }
 
     @Override
@@ -61,18 +61,22 @@ public class MonsterCommand extends AbstractCommand{
                             Message.sendEmbed(message.getChannel(), monster.getMoreEmbedObject(lg));
                         else
                             Message.sendEmbed(message.getChannel(), monster.getEmbedObject(lg));
-                    } else if (!matcher.isEmpty()) // Too much items
-                        new TooMuchMonstersDiscordException().throwException(message, this, matcher.getBests());
+                    } else if (!matcher.isEmpty()) { // Too much monsters
+                        List<String> names = new ArrayList<>();
+                        for (Pair<String, String> item : matcher.getBests())
+                            names.add(item.getLeft());
+                        tooMuchMonsters.throwException(message, this, lg, names);
+                    }
                     else // empty
-                        new MonsterNotFoundDiscordException().throwException(message, this);
+                        new MonsterNotFoundDiscordException().throwException(message, this, lg);
                 } catch (IOException e) {
-                    ExceptionManager.manageIOException(e, message, this, new MonsterNotFoundDiscordException());
+                    ExceptionManager.manageIOException(e, message, this, lg, new MonsterNotFoundDiscordException());
                 }
 
                 return true;
             }
             else
-                new NoExternalEmojiPermissionDiscordException().throwException(message, this);
+                new NoExternalEmojiPermissionDiscordException().throwException(message, this, lg);
         }
 
         return false;
@@ -86,6 +90,7 @@ public class MonsterCommand extends AbstractCommand{
 
     private List<Pair<String, String>> getListMonsterFrom(String url, IMessage message){
         List<Pair<String, String>> result = new ArrayList<>();
+        Language lg = Translator.getLanguageFrom(message.getChannel());
         try {
             Document doc = JSoupManager.getDocument(url);
             Elements elems = doc.getElementsByClass("ak-bg-odd");
@@ -96,10 +101,10 @@ public class MonsterCommand extends AbstractCommand{
                         element.child(1).select("a").attr("href")));
 
         } catch(IOException e){
-            ExceptionManager.manageIOException(e, message, this, new MonsterNotFoundDiscordException());
+            ExceptionManager.manageIOException(e, message, this, lg, new MonsterNotFoundDiscordException());
             return new ArrayList<>();
         }  catch (Exception e) {
-            ExceptionManager.manageException(e, message, this);
+            ExceptionManager.manageException(e, message, this, lg);
             return new ArrayList<>();
         }
 

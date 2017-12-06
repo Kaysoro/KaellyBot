@@ -4,10 +4,11 @@ import data.Guild;
 import data.ServerDofus;
 import data.User;
 import enums.Language;
+import exceptions.DiscordException;
+import exceptions.TooMuchDiscordException;
 import util.Message;
 import exceptions.NotEnoughRightsDiscordException;
 import exceptions.ServerNotFoundDiscordException;
-import exceptions.TooMuchServersDiscordException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sx.blah.discord.handle.obj.IMessage;
@@ -23,10 +24,12 @@ import java.util.regex.Matcher;
 public class ServerCommand extends AbstractCommand{
 
     private final static Logger LOG = LoggerFactory.getLogger(ServerCommand.class);
+    private DiscordException tooMuchServers;
 
     public ServerCommand(){
         super("server","(\\s+.+)?");
         setUsableInMP(false);
+        tooMuchServers = new TooMuchDiscordException("exception.toomuch.servers", "exception.toomuch.servers_found");
     }
 
     @Override
@@ -56,9 +59,9 @@ public class ServerCommand extends AbstractCommand{
                                     + " " + guild.getName() + " " + Translator.getLabel(lg, "server.request.2")
                                     + " " + result.get(0).getName() + ".");
                         } else if (result.isEmpty())
-                            new ServerNotFoundDiscordException().throwException(message, this);
+                            new ServerNotFoundDiscordException().throwException(message, this, lg);
                         else
-                            new TooMuchServersDiscordException().throwException(message, this, result);
+                            tooMuchServers.throwException(message, this, lg, result);
                     }
                     else {
                         guild.setServer(null);
@@ -67,7 +70,7 @@ public class ServerCommand extends AbstractCommand{
                     }
                 }
                 else
-                    new NotEnoughRightsDiscordException().throwException(message, this);
+                    new NotEnoughRightsDiscordException().throwException(message, this, lg);
             else {
                 if (guild.getServerDofus() != null)
                     Message.sendText(message.getChannel(), guild.getName() + " "

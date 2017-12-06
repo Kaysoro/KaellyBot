@@ -1,11 +1,12 @@
 package commands;
 
 import enums.Language;
+import exceptions.DiscordException;
+import exceptions.TooMuchDiscordException;
 import util.BestMatcher;
 import data.*;
 import util.Message;
 import exceptions.ExceptionManager;
-import exceptions.TooMuchTutosDiscordException;
 import exceptions.TutoNotFoundDiscordException;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jsoup.nodes.Document;
@@ -33,9 +34,11 @@ public class TutorialCommand extends AbstractCommand{
     private final static Logger LOG = LoggerFactory.getLogger(TutorialCommand.class);
     private final static String forName = "q=";
     private final static String filtered = "filter=page";
+    private DiscordException tooMuchTutos;
 
     public TutorialCommand(){
         super("tuto", "\\s+(.*)");
+        tooMuchTutos = new TooMuchDiscordException("exception.toomuch.tutos", "exception.toomuch.tutos_found");
     }
 
     @Override
@@ -50,17 +53,21 @@ public class TutorialCommand extends AbstractCommand{
             BestMatcher matcher = new BestMatcher(normalName);
 
             try {
-                matcher.evaluateAll(getListTutoFrom(getSearchURL(normalName), message));
+                matcher.evaluateAll(getListTutoFrom(getSearchURL(editedName), message));
 
                 if (matcher.isUnique())// We have found it !
                     Message.sendText(message.getChannel(), Translator.getLabel(lg, "tutorial.request") + " " +
                             Constants.dofusPourLesNoobURL + matcher.getBest().getRight());
-                else if (! matcher.isEmpty()) // Too much items
-                    new TooMuchTutosDiscordException().throwException(message, this, matcher.getBests());
+                else if (! matcher.isEmpty()) { // Too much tutos
+                    List<String> names = new ArrayList<>();
+                    for(Pair<String, String> item : matcher.getBests())
+                        names.add(item.getLeft());
+                    tooMuchTutos.throwException(message, this, lg, names);
+                }
                 else // empty
-                    new TutoNotFoundDiscordException().throwException(message, this);
+                    new TutoNotFoundDiscordException().throwException(message, this, lg);
             } catch(IOException e){
-                ExceptionManager.manageIOException(e, message, this, new TutoNotFoundDiscordException());
+                ExceptionManager.manageIOException(e, message, this, lg, new TutoNotFoundDiscordException());
             }
 
             return true;
@@ -79,6 +86,7 @@ public class TutorialCommand extends AbstractCommand{
 
     private List<Pair<String, String>> getListTutoFrom(String url, IMessage message){
         List<Pair<String, String>> result = new ArrayList<>();
+        Language lg = Translator.getLanguageFrom(message.getChannel());
 
         try {
             Document doc = JSoupManager.getDocument(url);
@@ -89,10 +97,10 @@ public class TutorialCommand extends AbstractCommand{
                         element.attr("href")));
 
         } catch(IOException e){
-            ExceptionManager.manageIOException(e, message, this, new TutoNotFoundDiscordException());
+            ExceptionManager.manageIOException(e, message, this, lg, new TutoNotFoundDiscordException());
             return new ArrayList<>();
         }  catch (Exception e) {
-            ExceptionManager.manageException(e, message, this);
+            ExceptionManager.manageException(e, message, this, lg);
             return new ArrayList<>();
         }
 

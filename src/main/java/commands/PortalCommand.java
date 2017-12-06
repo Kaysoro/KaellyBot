@@ -4,9 +4,10 @@ import data.Guild;
 import data.Portal;
 import data.Position;
 import enums.Language;
+import exceptions.DiscordException;
 import util.Message;
 import exceptions.PortalNotFoundDiscordException;
-import exceptions.TooMuchPossibilitiesDiscordException;
+import exceptions.TooMuchDiscordException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sx.blah.discord.handle.obj.IMessage;
@@ -23,10 +24,12 @@ import java.util.regex.Matcher;
 public class PortalCommand extends AbstractCommand{
 
     private final static Logger LOG = LoggerFactory.getLogger(PortalCommand.class);
+    private DiscordException tooMuchPortals;
 
     public PortalCommand(){
         super("pos", "(\\s+\\p{L}+)?(\\s+\\[?(-?\\d{1,2})\\s*[,|\\s]\\s*(-?\\d{1,2})\\]?)?(\\s+\\d{1,3})?");
         setUsableInMP(false);
+        tooMuchPortals = new TooMuchDiscordException("exception.toomuch.portals", "exception.toomuch.portals_found");
     }
 
     @Override
@@ -54,15 +57,15 @@ public class PortalCommand extends AbstractCommand{
                     Message.sendEmbed(message.getChannel(), portals.get(0).getEmbedObject(lg));
                 }
                 else if(portals.size() > 1)
-                    new TooMuchPossibilitiesDiscordException().throwException(message, this);
+                    tooMuchPortals.throwException(message, this, lg);
                 else
-                    new PortalNotFoundDiscordException().throwException(message, this);
+                    new PortalNotFoundDiscordException().throwException(message, this, lg);
             }
         }
         return false;
     }
 
-    public List<Portal> getPortal(String nameProposed, Guild guild){
+    private List<Portal> getPortal(String nameProposed, Guild guild){
         nameProposed = Normalizer.normalize(nameProposed, Normalizer.Form.NFD)
                 .replaceAll("\\p{InCombiningDiacriticalMarks}+", "").toLowerCase();
         nameProposed = nameProposed.replaceAll("\\W+", "");

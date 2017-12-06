@@ -4,9 +4,10 @@ import data.ChannelLanguage;
 import data.Guild;
 import data.User;
 import enums.Language;
+import exceptions.DiscordException;
 import exceptions.LanguageNotFoundDiscordException;
 import exceptions.NotEnoughRightsDiscordException;
-import exceptions.TooMuchLanguagesException;
+import exceptions.TooMuchDiscordException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sx.blah.discord.handle.obj.IMessage;
@@ -23,10 +24,12 @@ import java.util.regex.Matcher;
 public class LanguageCommand extends AbstractCommand{
 
     private final static Logger LOG = LoggerFactory.getLogger(LanguageCommand.class);
+    private DiscordException tooMuchLangs;
 
     public LanguageCommand(){
         super("lang", "(\\s+-channel)?(\\s+[A-Za-z]+)?");
         setUsableInMP(false);
+        tooMuchLangs = new TooMuchDiscordException("exception.toomuch.langs", "exception.toomuch.langs_found");
     }
 
     @Override
@@ -77,12 +80,12 @@ public class LanguageCommand extends AbstractCommand{
                         }
                     }
                     else if (langs.isEmpty())
-                        new LanguageNotFoundDiscordException().throwException(message, this);
+                        new LanguageNotFoundDiscordException().throwException(message, this, lg);
                     else
-                        new TooMuchLanguagesException().throwException(message, this);
+                        tooMuchLangs.throwException(message, this, lg);
 
                 } else {
-                    new NotEnoughRightsDiscordException().throwException(message, this);
+                    new NotEnoughRightsDiscordException().throwException(message, this, lg);
                     return false;
                 }
             }

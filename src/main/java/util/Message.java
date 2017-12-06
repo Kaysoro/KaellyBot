@@ -1,6 +1,7 @@
 package util;
 
 import data.Constants;
+import enums.Language;
 import exceptions.MissingPermissionDiscordException;
 import org.slf4j.LoggerFactory;
 import sx.blah.discord.api.internal.json.objects.EmbedObject;
@@ -13,6 +14,7 @@ import sx.blah.discord.util.*;
 public class Message {
 
     public static void sendText(IChannel channel, String content){
+        Language lg = Translator.getLanguageFrom(channel);
         RequestBuffer.request(() -> {
             try {
                 new MessageBuilder(ClientConfig.DISCORD())
@@ -29,7 +31,7 @@ public class Message {
                 LoggerFactory.getLogger(Message.class).warn(Constants.name
                         + " n'a pas les permissions pour appliquer cette requête.");
                 new MissingPermissionDiscordException()
-                        .throwException(channel.getFullMessageHistory().getLatestMessage(), null, e);
+                        .throwException(channel.getFullMessageHistory().getLatestMessage(), null, lg, e);
             } catch(Exception e){
                 ClientConfig.setSentryContext(channel.isPrivate()? null : channel.getGuild(), null, channel, null);
                 LoggerFactory.getLogger(Message.class).error(e.getMessage(),e );
@@ -39,6 +41,7 @@ public class Message {
     }
 
     public static void sendEmbed(IChannel channel, EmbedObject content){
+        Language lg = Translator.getLanguageFrom(channel);
         RequestBuffer.request(() -> {
             try {
                 new MessageBuilder(ClientConfig.DISCORD())
@@ -55,7 +58,7 @@ public class Message {
                 LoggerFactory.getLogger(Message.class).warn(Constants.name
                         + " n'a pas les permissions pour appliquer cette requête.");
                 new MissingPermissionDiscordException()
-                        .throwException(channel.getFullMessageHistory().getLatestMessage(), null, e);
+                        .throwException(channel.getFullMessageHistory().getLatestMessage(), null, lg, e);
             } catch(Exception e){
                 ClientConfig.setSentryContext(channel.isPrivate()? null : channel.getGuild(), null, channel, null);
                 LoggerFactory.getLogger(Message.class).error(e.getMessage(), e);

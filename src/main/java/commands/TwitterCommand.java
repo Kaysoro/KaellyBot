@@ -27,12 +27,11 @@ public class TwitterCommand extends AbstractCommand{
     @Override
     public boolean request(IMessage message) {
         if (super.request(message)) {
-
+            Language lg = Translator.getLanguageFrom(message.getChannel());
             //On check si la personne a bien les droits pour exécuter cette commande
             if (User.getUser(message.getGuild(), message.getAuthor()).getRights() >= User.RIGHT_MODERATOR) {
                 Matcher m = getMatcher(message);
                 m.find();
-                Language lg = Translator.getLanguageFrom(message.getChannel());
                 String value = m.group(1);
 
                 if (value.matches("\\s+true") || value.matches("\\s+0") || value.matches("\\s+on")){
@@ -41,7 +40,7 @@ public class TwitterCommand extends AbstractCommand{
                         Message.sendText(message.getChannel(), Translator.getLabel(lg, "twitter.request.1"));
                     }
                     else
-                        new TwitterFoundDiscordException().throwException(message, this);
+                        new TwitterFoundDiscordException().throwException(message, this, lg);
                 }
                 else if (value.matches("\\s+false") || value.matches("\\s+1") || value.matches("\\s+off")){
                     if (TwitterFinder.getTwitterChannels().containsKey(message.getChannel().getLongID())) {
@@ -49,13 +48,13 @@ public class TwitterCommand extends AbstractCommand{
                         Message.sendText(message.getChannel(), Translator.getLabel(lg, "twitter.request.2"));
                     }
                     else
-                        new TwitterNotFoundDiscordException().throwException(message, this);
+                        new TwitterNotFoundDiscordException().throwException(message, this, lg);
                 }
                 else
-                    new BadUseCommandDiscordException().throwException(message, this);
+                    new BadUseCommandDiscordException().throwException(message, this, lg);
             }
             else
-                new NotEnoughRightsDiscordException().throwException(message, this);
+                new NotEnoughRightsDiscordException().throwException(message, this, lg);
         }
         return false;
     }

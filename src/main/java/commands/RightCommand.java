@@ -40,7 +40,7 @@ public class RightCommand extends AbstractCommand{
             if (m.group(2) != null) { // Level precised : editing
 
                 if (m.group(1) == null){
-                    new BadUseCommandDiscordException().throwException(message, this);
+                    new BadUseCommandDiscordException().throwException(message, this, lg);
                     return false;
                 }
 
@@ -74,12 +74,12 @@ public class RightCommand extends AbstractCommand{
                         User target = User.getUser(message.getGuild(), ClientConfig.DISCORD().getUserByID(Long.parseLong(id)));
 
                         if (id.equals(message.getAuthor().getStringID())) {
-                            new AutoChangeRightsDiscordException().throwException(message, this);
+                            new AutoChangeRightsDiscordException().throwException(message, this, lg);
                             return false;
                         }
 
                         if (author.getRights() < target.getRights()) {
-                            new NotEnoughRightsDiscordException().throwException(message, this);
+                            new NotEnoughRightsDiscordException().throwException(message, this, lg);
                             return false;
                         }
 
@@ -90,7 +90,7 @@ public class RightCommand extends AbstractCommand{
                     }
                 } // Not an admin or a moderator
                 else {
-                    new NotEnoughRightsDiscordException().throwException(message, this);
+                    new NotEnoughRightsDiscordException().throwException(message, this, lg);
                     return false;
                 }
             } else { // Level is not precised : consulting
@@ -107,7 +107,7 @@ public class RightCommand extends AbstractCommand{
                                 .replace("{right}", String.valueOf(target.getRights())));
                     }
                     else
-                        new NoRightsForRolesDiscordException().throwException(message, this);
+                        new NoRightsForRolesDiscordException().throwException(message, this, lg);
                 }
                 else
                     Message.sendText(message.getChannel(), Translator.getLabel(lg, "right.request.5")

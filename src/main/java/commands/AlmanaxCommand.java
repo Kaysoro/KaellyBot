@@ -31,10 +31,10 @@ public class AlmanaxCommand extends AbstractCommand{
     @Override
     public boolean request(IMessage message) {
         if (super.request(message)) {
+            Language lg = Translator.getLanguageFrom(message.getChannel());
             try {
                 Date date = new Date();
                 Matcher m = getMatcher(message);
-                Language lg = Translator.getLanguageFrom(message.getChannel());
                 m.find();
 
                 if (m.group(1) != null && (m.group(1).matches("\\s+true") || m.group(1).matches("\\s+0") || m.group(1).matches("\\s+on")
@@ -55,9 +55,9 @@ public class AlmanaxCommand extends AbstractCommand{
                                 } else
                                     Message.sendText(message.getChannel(), Translator.getLabel(lg, "almanax.request.4"));
                         } else
-                            new NotEnoughRightsDiscordException().throwException(message, this);
+                            new NotEnoughRightsDiscordException().throwException(message, this, lg);
                     } else
-                        new NotUsableInMPDiscordException().throwException(message, this);
+                        new NotUsableInMPDiscordException().throwException(message, this, lg);
                 }
 
                 else if (m.group(1) != null && m.group(1).matches("\\s+\\+\\d")) {
@@ -71,12 +71,12 @@ public class AlmanaxCommand extends AbstractCommand{
                 }
 
             } catch (ParseException e) {
-                new IncorrectDateFormatDiscordException().throwException(message, this);
+                new IncorrectDateFormatDiscordException().throwException(message, this, lg);
                 return false;
             } catch (IOException e) {
-                ExceptionManager.manageIOException(e, message, this, new AlmanaxNotFoundDiscordException());
+                ExceptionManager.manageIOException(e, message, this, lg, new AlmanaxNotFoundDiscordException());
             } catch (Exception e) {
-                ExceptionManager.manageException(e, message, this);
+                ExceptionManager.manageException(e, message, this, lg);
             }
         }
         return false;

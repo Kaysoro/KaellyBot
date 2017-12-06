@@ -5,9 +5,10 @@ import data.Resource;
 import enums.Language;
 import enums.SuperTypeResource;
 import enums.TypeResource;
+import exceptions.DiscordException;
 import exceptions.ExceptionManager;
 import exceptions.ResourceNotFoundDiscordException;
-import exceptions.TooMuchResourcesDiscordException;
+import exceptions.TooMuchDiscordException;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -42,8 +43,11 @@ public class ResourceCommand extends AbstractCommand{
     private final static String and = "EFFECTMAIN_and_or=AND";
     private final static String size = "size=";
 
+    private DiscordException tooMuchRsrcs;
+
     public ResourceCommand(){
         super("resource", "\\s+(-more)?(.*)");
+        tooMuchRsrcs = new TooMuchDiscordException("exception.toomuch.resources", "exception.toomuch.resources_found");
     }
 
     @Override
@@ -87,12 +91,16 @@ public class ResourceCommand extends AbstractCommand{
                         Message.sendEmbed(message.getChannel(), resource.getMoreEmbedObject(lg));
                     else
                         Message.sendEmbed(message.getChannel(), resource.getEmbedObject(lg));
-                } else if (!matcher.isEmpty()) // Too much items
-                    new TooMuchResourcesDiscordException().throwException(message, this, matcher.getBests());
+                } else if (!matcher.isEmpty()) { // Too much items
+                    List<String> names = new ArrayList<>();
+                    for(Pair<String, String> item : matcher.getBests())
+                        names.add(item.getLeft());
+                    tooMuchRsrcs.throwException(message, this, lg, names);
+                }
                 else // empty
-                    new ResourceNotFoundDiscordException().throwException(message, this);
+                    new ResourceNotFoundDiscordException().throwException(message, this, lg);
             } catch (IOException e) {
-                ExceptionManager.manageIOException(e, message, this, new ResourceNotFoundDiscordException());
+                ExceptionManager.manageIOException(e, message, this, lg, new ResourceNotFoundDiscordException());
             }
 
             return true;
@@ -118,6 +126,7 @@ public class ResourceCommand extends AbstractCommand{
 
     private List<Pair<String, String>> getListResourceFrom(String url, IMessage message){
         List<Pair<String, String>> result = new ArrayList<>();
+        Language lg = Translator.getLanguageFrom(message.getChannel());
         try {
             Document doc = JSoupManager.getDocument(url);
             Elements elems = doc.getElementsByClass("ak-bg-odd");
@@ -128,10 +137,10 @@ public class ResourceCommand extends AbstractCommand{
                         element.child(1).select("a").attr("href")));
 
         } catch(IOException e){
-            ExceptionManager.manageIOException(e, message, this, new ResourceNotFoundDiscordException());
+            ExceptionManager.manageIOException(e, message, this, lg, new ResourceNotFoundDiscordException());
             return new ArrayList<>();
         }  catch (Exception e) {
-            ExceptionManager.manageException(e, message, this);
+            ExceptionManager.manageException(e, message, this, lg);
             return new ArrayList<>();
         }
 

@@ -1,7 +1,6 @@
 package commands;
 
 import data.Character;
-import data.Constants;
 import enums.Language;
 import util.JSoupManager;
 import data.ServerDofus;
@@ -39,8 +38,13 @@ public class WhoisCommand extends AbstractCommand{
     private final static String forLevelMax = "character_level_max=";
     private final static String forGuild = "guild_id[]=";
 
+    private DiscordException tooMuchCharacters;
+    private DiscordException tooMuchServers;
+
     public WhoisCommand(){
         super("whois","(\\s+[\\p{L}|-]+)(\\s+.+)?");
+        tooMuchCharacters = new TooMuchDiscordException("exception.toomuch.characters", "exception.toomuch.characters_found");
+        tooMuchServers = new TooMuchDiscordException("exception.toomuch.servers", "exception.toomuch.servers_found");
     }
 
     @Override
@@ -59,7 +63,7 @@ public class WhoisCommand extends AbstractCommand{
                         .append("?").append(forPseudo).append(URLEncoder.encode(pseudo, "UTF-8"));
 
             } catch (UnsupportedEncodingException e) {
-                ExceptionManager.manageException(e, message, this);
+                ExceptionManager.manageException(e, message, this, lg);
                 return false;
             }
 
@@ -75,9 +79,9 @@ public class WhoisCommand extends AbstractCommand{
                     url.append("&").append(forServer).append(result.get(0).getId());
                 else {
                     if (! result.isEmpty())
-                        new TooMuchServersDiscordException().throwException(message, this);
+                        tooMuchServers.throwException(message, this, lg);
                     else
-                        new ServerNotFoundDiscordException().throwException(message, this);
+                        new ServerNotFoundDiscordException().throwException(message, this, lg);
                     return false;
                 }
             }
@@ -108,19 +112,19 @@ public class WhoisCommand extends AbstractCommand{
                             Character characPage = Character.getCharacter(Translator.getLabel(lg, "game.url") + result.get(0));
                             Message.sendEmbed(message.getChannel(), characPage.getEmbedObject(lg));
                         } else
-                            new CharacterTooOldDiscordException().throwException(message, this);
+                            new CharacterTooOldDiscordException().throwException(message, this, lg);
                     }
                     else if (result.size() > 1)
-                        new TooMuchCharactersDiscordException().throwException(message, this, servers);
+                        tooMuchCharacters.throwException(message, this, lg, servers);
                     else
-                        new CharacterNotFoundDiscordException().throwException(message, this);
+                        new CharacterNotFoundDiscordException().throwException(message, this, lg);
                 }
                 else
-                    new CharacterNotFoundDiscordException().throwException(message, this);
+                    new CharacterNotFoundDiscordException().throwException(message, this, lg);
             } catch(IOException e){
-                ExceptionManager.manageIOException(e, message, this, new CharacterPageNotFoundDiscordException());
+                ExceptionManager.manageIOException(e, message, this, lg, new CharacterPageNotFoundDiscordException());
             }  catch (Exception e) {
-                ExceptionManager.manageException(e, message, this);
+                ExceptionManager.manageException(e, message, this, lg);
             }
         }
         return false;

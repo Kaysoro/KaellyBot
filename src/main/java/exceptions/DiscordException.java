@@ -1,6 +1,7 @@
 package exceptions;
 
 import commands.Command;
+import enums.Language;
 import sx.blah.discord.handle.obj.IMessage;
 
 /**
@@ -8,5 +9,5 @@ import sx.blah.discord.handle.obj.IMessage;
  */
 public interface DiscordException {
 
-    void throwException(IMessage message, Command command, Object... arguments);
+    void throwException(IMessage message, Command command, Language lg, Object... arguments);
 }

@@ -1,6 +1,5 @@
 package commands;
 
-import data.ChannelLanguage;
 import data.Constants;
 import data.Guild;
 import enums.Language;
@@ -9,8 +8,8 @@ import exceptions.CommandForbiddenDiscordException;
 import exceptions.NotUsableInMPDiscordException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import sx.blah.discord.handle.obj.IChannel;
 import sx.blah.discord.handle.obj.IMessage;
+import util.Translator;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -39,6 +38,7 @@ public abstract class AbstractCommand implements Command {
 
     @Override
     public boolean request(IMessage message) {
+        Language lg = Translator.getLanguageFrom(message.getChannel());
         Matcher m = getMatcher(message);
         boolean isFound = m.find();
 
@@ -50,19 +50,19 @@ public abstract class AbstractCommand implements Command {
         if(isFound) {
             // Mais n'est pas utilisable en MP
             if (! isUsableInMP() && message.getChannel().isPrivate()) {
-                new NotUsableInMPDiscordException().throwException(message, this);
+                new NotUsableInMPDiscordException().throwException(message, this, lg);
                 return false;
             }
             // Mais est désactivée par la guilde
             else if (! message.getChannel().isPrivate() && message.getAuthor().getLongID() != Constants.authorId
                 && isForbidden(Guild.getGuild(message.getGuild()))) {
-                new CommandForbiddenDiscordException().throwException(message, this);
+                new CommandForbiddenDiscordException().throwException(message, this, lg);
                 return false;
             }
         }
         // Mais est mal utilisée
         else if (message.getContent().startsWith(getPrefix(message) + getName()))
-            new BadUseCommandDiscordException().throwException(message, this);
+            new BadUseCommandDiscordException().throwException(message, this, lg);
 
         return isFound;
     }

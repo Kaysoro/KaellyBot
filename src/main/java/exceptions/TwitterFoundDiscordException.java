@@ -1,6 +1,7 @@
 package exceptions;
 
 import commands.Command;
+import enums.Language;
 import util.Message;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,7 +15,7 @@ public class TwitterFoundDiscordException implements DiscordException {
     private final static Logger LOG = LoggerFactory.getLogger(TwitterFoundDiscordException.class);
 
     @Override
-    public void throwException(IMessage message, Command command, Object... arguments) {
+    public void throwException(IMessage message, Command command, Language lg, Object... arguments) {
         Message.sendText(message.getChannel(), "Les tweets de @Dofusfr sont déjà postés ici.");
     }
 }

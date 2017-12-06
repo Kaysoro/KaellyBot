@@ -1,6 +1,7 @@
 package exceptions;
 
 import commands.Command;
+import enums.Language;
 import util.ClientConfig;
 import util.Translator;
 import util.Message;
@@ -18,7 +19,7 @@ public class MissingPermissionDiscordException implements DiscordException {
     private final static Logger LOG = LoggerFactory.getLogger(MissingPermissionDiscordException.class);
 
     @Override
-    public void throwException(IMessage message, Command command, Object... arguments) {
+    public void throwException(IMessage message, Command command, Language lg, Object... arguments) {
         StringBuilder st = new StringBuilder("Je ne peux pas écrire dans le salon *")
                 .append(message.getChannel().getName()).append("* puisqu'il me manque une ou plusieurs permissions.");
         if (arguments.length > 0){

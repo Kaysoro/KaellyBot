@@ -44,7 +44,7 @@ public class HelpCommand extends AbstractCommand{
                 }
 
             if (argumentFound && st.length() == 0)
-                new CommandNotFoundDiscordException().throwException(message, this);
+                new CommandNotFoundDiscordException().throwException(message, this, lg);
             else
                 Message.sendText(message.getChannel(), st.toString());
             }

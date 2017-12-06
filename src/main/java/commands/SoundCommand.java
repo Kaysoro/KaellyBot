@@ -34,18 +34,19 @@ public class SoundCommand extends AbstractCommand{
 
     @Override
     public boolean request(IMessage message) {
+        Language lg = Translator.getLanguageFrom(message.getChannel());
         if (super.request(message)) {
             IVoiceChannel voice = message.getAuthor().getVoiceStateForGuild(message.getGuild()).getChannel();
 
             if (voice == null)
-                new NotInVocalChannelDiscordException().throwException(message, this);
+                new NotInVocalChannelDiscordException().throwException(message, this, lg);
             else {
                 if (!voice.getModifiedPermissions(ClientConfig.DISCORD().getOurUser()).contains(Permissions.VOICE_CONNECT)
                         || !ClientConfig.DISCORD().getOurUser().getPermissionsForGuild(message.getGuild())
                         .contains(Permissions.VOICE_CONNECT))
-                    new NoVoiceConnectPermissionDiscordException().throwException(message, this);
+                    new NoVoiceConnectPermissionDiscordException().throwException(message, this, lg);
                 else if (voice.getConnectedUsers().size() >= voice.getUserLimit() && voice.getUserLimit() != 0)
-                    new VoiceChannelLimitDiscordException().throwException(message, this);
+                    new VoiceChannelLimitDiscordException().throwException(message, this, lg);
                 else {
                     try {
                         Matcher m = getMatcher(message);
@@ -62,7 +63,7 @@ public class SoundCommand extends AbstractCommand{
                                 playSound(voice, message, file);
                             }
                             else
-                                new SoundNotFoundDiscordException().throwException(message, this);
+                                new SoundNotFoundDiscordException().throwException(message, this, lg);
                         }
                         else { // random sound
 
@@ -71,7 +72,7 @@ public class SoundCommand extends AbstractCommand{
                         }
 
                     } catch (MissingPermissionsException e) {
-                        new NoVoiceConnectPermissionDiscordException().throwException(message, this);
+                        new NoVoiceConnectPermissionDiscordException().throwException(message, this, lg);
                     }
                 }
             }

@@ -1,6 +1,7 @@
 package exceptions;
 
 import commands.Command;
+import enums.Language;
 import util.ClientConfig;
 import org.jsoup.HttpStatusException;
 import org.slf4j.Logger;
@@ -23,7 +24,7 @@ public abstract class ExceptionManager {
     private static Logger LOG = LoggerFactory.getLogger(ExceptionManager.class);
 
 
-    public static void manageIOException(Exception e, IMessage message, Command command, DiscordException notFound){
+    public static void manageIOException(Exception e, IMessage message, Command command, Language lg, DiscordException notFound){
         // First we try parsing the exception message to see if it contains the response code
         Matcher exMsgStatusCodeMatcher = Pattern.compile("^Server returned HTTP response code: (\\d+)")
                 .matcher(e.getMessage());
@@ -31,26 +32,26 @@ public abstract class ExceptionManager {
             int statusCode = Integer.parseInt(exMsgStatusCodeMatcher.group(1));
             if (statusCode >= 500 && statusCode < 600) {
                 LOG.warn("manageIOException", e);
-                new DofusWebsiteInaccessibleDiscordException().throwException(message, command);
+                new DofusWebsiteInaccessibleDiscordException().throwException(message, command, lg);
             }
             else {
                 ClientConfig.setSentryContext(message.getGuild(),
                         message.getAuthor(), message.getChannel(), message);
                 LOG.error("manageIOException", e);
-                new UnknownErrorDiscordException().throwException(message, command);
+                new UnknownErrorDiscordException().throwException(message, command, lg);
             }
         } else if (e instanceof UnknownHostException || e instanceof SocketTimeoutException) {
-            new DofusWebsiteInaccessibleDiscordException().throwException(message, command);
+            new DofusWebsiteInaccessibleDiscordException().throwException(message, command, lg);
         } else if (e instanceof FileNotFoundException
                 || e instanceof HttpStatusException
                 || e instanceof NoRouteToHostException){
-            notFound.throwException(message, command);
+            notFound.throwException(message, command, lg);
         }
         else {
             ClientConfig.setSentryContext(message.getGuild(),
                     message.getAuthor(), message.getChannel(), message);
             LOG.error("manageIOException", e);
-            new UnknownErrorDiscordException().throwException(message, command);
+            new UnknownErrorDiscordException().throwException(message, command, lg);
         }
     }
 
@@ -76,11 +77,11 @@ public abstract class ExceptionManager {
 
     }
 
-    public static void manageException(Exception e, IMessage message, Command command){
+    public static void manageException(Exception e, IMessage message, Command command, Language lg){
         ClientConfig.setSentryContext(message.getGuild(),
                 message.getAuthor(), message.getChannel(), message);
         LOG.error("manageException", e);
-        new UnknownErrorDiscordException().throwException(message, command);
+        new UnknownErrorDiscordException().throwException(message, command, lg);
     }
 
     public static void manageSilentlyException(Exception e){

@@ -51,12 +51,12 @@ public class MapCommand extends AbstractCommand{
                 }
             }
             else {
-                new BadUseCommandDiscordException().throwException(message, this);
+                new BadUseCommandDiscordException().throwException(message, this, lg);
                 return false;
             }
 
             if (m.group(1) == null && maps.isEmpty()){
-                new BadUseCommandDiscordException().throwException(message, this);
+                new BadUseCommandDiscordException().throwException(message, this, lg);
                 return false;
             }
             else if (m.group(1) != null){
