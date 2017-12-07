@@ -40,11 +40,13 @@ public class WhoisCommand extends AbstractCommand{
 
     private DiscordException tooMuchCharacters;
     private DiscordException tooMuchServers;
+    private DiscordException notFoundCharacter;
 
     public WhoisCommand(){
         super("whois","(\\s+[\\p{L}|-]+)(\\s+.+)?");
         tooMuchCharacters = new TooMuchDiscordException("exception.toomuch.characters", "exception.toomuch.characters_found");
         tooMuchServers = new TooMuchDiscordException("exception.toomuch.servers", "exception.toomuch.servers_found");
+        notFoundCharacter = new NotFoundDiscordException("exception.toomuch.character", "exception.toomuch.character_found");
     }
 
     @Override
@@ -56,7 +58,7 @@ public class WhoisCommand extends AbstractCommand{
             Language lg = Translator.getLanguageFrom(message.getChannel());
             String pseudo = m.group(1).trim().toLowerCase();
 
-            StringBuilder url = null;
+            StringBuilder url;
             try {
                 url = new StringBuilder(Translator.getLabel(lg, "game.url"))
                         .append(Translator.getLabel(lg, "character.url"))
@@ -81,7 +83,7 @@ public class WhoisCommand extends AbstractCommand{
                     if (! result.isEmpty())
                         tooMuchServers.throwException(message, this, lg);
                     else
-                        new ServerNotFoundDiscordException().throwException(message, this, lg);
+                        notFoundCharacter.throwException(message, this, lg);
                     return false;
                 }
             }
@@ -117,10 +119,10 @@ public class WhoisCommand extends AbstractCommand{
                     else if (result.size() > 1)
                         tooMuchCharacters.throwException(message, this, lg, servers);
                     else
-                        new CharacterNotFoundDiscordException().throwException(message, this, lg);
+                        notFoundCharacter.throwException(message, this, lg);
                 }
                 else
-                    new CharacterNotFoundDiscordException().throwException(message, this, lg);
+                    notFoundCharacter.throwException(message, this, lg);
             } catch(IOException e){
                 ExceptionManager.manageIOException(e, message, this, lg, new CharacterPageNotFoundDiscordException());
             }  catch (Exception e) {

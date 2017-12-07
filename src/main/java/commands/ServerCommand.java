@@ -5,10 +5,10 @@ import data.ServerDofus;
 import data.User;
 import enums.Language;
 import exceptions.DiscordException;
+import exceptions.NotFoundDiscordException;
 import exceptions.TooMuchDiscordException;
 import util.Message;
 import exceptions.NotEnoughRightsDiscordException;
-import exceptions.ServerNotFoundDiscordException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sx.blah.discord.handle.obj.IMessage;
@@ -25,11 +25,13 @@ public class ServerCommand extends AbstractCommand{
 
     private final static Logger LOG = LoggerFactory.getLogger(ServerCommand.class);
     private DiscordException tooMuchServers;
+    private DiscordException notFoundServer;
 
     public ServerCommand(){
         super("server","(\\s+.+)?");
         setUsableInMP(false);
         tooMuchServers = new TooMuchDiscordException("exception.toomuch.servers", "exception.toomuch.servers_found");
+        notFoundServer = new NotFoundDiscordException("exception.notfound.server", "exception.notfound.server_found");
     }
 
     @Override
@@ -59,7 +61,7 @@ public class ServerCommand extends AbstractCommand{
                                     + " " + guild.getName() + " " + Translator.getLabel(lg, "server.request.2")
                                     + " " + result.get(0).getName() + ".");
                         } else if (result.isEmpty())
-                            new ServerNotFoundDiscordException().throwException(message, this, lg);
+                            notFoundServer.throwException(message, this, lg);
                         else
                             tooMuchServers.throwException(message, this, lg, result);
                     }

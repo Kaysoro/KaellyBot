@@ -23,9 +23,11 @@ import java.util.regex.Matcher;
 public class AlmanaxCommand extends AbstractCommand{
 
     private final static Logger LOG = LoggerFactory.getLogger(AlmanaxCommand.class);
+    private DiscordException notFound;
 
     public AlmanaxCommand(){
         super("almanax", "(\\s+\\d{2}/\\d{2}/\\d{4}|\\s+\\+\\d|\\s+true|\\s+false|\\s+0|\\s+1|\\s+on|\\s+off)?");
+        notFound = new BasicDiscordException("exception.basic.almanax");
     }
 
     @Override
@@ -74,7 +76,7 @@ public class AlmanaxCommand extends AbstractCommand{
                 new IncorrectDateFormatDiscordException().throwException(message, this, lg);
                 return false;
             } catch (IOException e) {
-                ExceptionManager.manageIOException(e, message, this, lg, new AlmanaxNotFoundDiscordException());
+                ExceptionManager.manageIOException(e, message, this, lg, notFound);
             } catch (Exception e) {
                 ExceptionManager.manageException(e, message, this, lg);
             }

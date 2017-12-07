@@ -3,8 +3,9 @@ package commands;
 import data.Constants;
 import data.Guild;
 import enums.Language;
+import exceptions.DiscordException;
+import exceptions.NotFoundDiscordException;
 import util.Message;
-import exceptions.CommandNotFoundDiscordException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sx.blah.discord.handle.obj.IMessage;
@@ -19,8 +20,11 @@ public class HelpCommand extends AbstractCommand{
 
     private final static Logger LOG = LoggerFactory.getLogger(HelpCommand.class);
 
+    private DiscordException notFoundCmd;
+
     public HelpCommand(){
         super("help","(\\s+.+)?");
+        notFoundCmd = new NotFoundDiscordException("exception.notfound.cmd", "exception.notfound.cmd_found");
     }
 
     @Override
@@ -44,7 +48,7 @@ public class HelpCommand extends AbstractCommand{
                 }
 
             if (argumentFound && st.length() == 0)
-                new CommandNotFoundDiscordException().throwException(message, this, lg);
+                notFoundCmd.throwException(message, this, lg);
             else
                 Message.sendText(message.getChannel(), st.toString());
             }

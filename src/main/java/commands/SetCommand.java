@@ -29,10 +29,12 @@ public class SetCommand extends AbstractCommand{
     private final static Logger LOG = LoggerFactory.getLogger(SetCommand.class);
     private final static String forName = "text=";
     private DiscordException tooMuchSets;
+    private DiscordException notFoundSet;
 
     public SetCommand(){
         super("set", "\\s+(-more)?(.*)");
         tooMuchSets = new TooMuchDiscordException("exception.toomuch.sets", "exception.toomuch.sets_found");
+        notFoundSet = new NotFoundDiscordException("exception.notfound.set", "exception.notfound.set_found");
     }
 
     @Override
@@ -67,9 +69,9 @@ public class SetCommand extends AbstractCommand{
                         tooMuchSets.throwException(message, this, lg, names);
                     }
                     else // empty
-                        new SetNotFoundDiscordException().throwException(message, this, lg);
+                        notFoundSet.throwException(message, this, lg);
                 } catch (IOException e) {
-                    ExceptionManager.manageIOException(e, message, this, lg, new SetNotFoundDiscordException());
+                    ExceptionManager.manageIOException(e, message, this, lg, notFoundSet);
                 }
 
                 return true;
@@ -100,7 +102,7 @@ public class SetCommand extends AbstractCommand{
                         element.child(1).select("a").attr("href")));
 
         } catch(IOException e){
-            ExceptionManager.manageIOException(e, message, this, lg, new SetNotFoundDiscordException());
+            ExceptionManager.manageIOException(e, message, this, lg, notFoundSet);
             return new ArrayList<>();
         }  catch (Exception e) {
             ExceptionManager.manageException(e, message, this, lg);

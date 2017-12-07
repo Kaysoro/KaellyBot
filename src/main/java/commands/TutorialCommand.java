@@ -2,12 +2,12 @@ package commands;
 
 import enums.Language;
 import exceptions.DiscordException;
+import exceptions.NotFoundDiscordException;
 import exceptions.TooMuchDiscordException;
 import util.BestMatcher;
 import data.*;
 import util.Message;
 import exceptions.ExceptionManager;
-import exceptions.TutoNotFoundDiscordException;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -35,10 +35,12 @@ public class TutorialCommand extends AbstractCommand{
     private final static String forName = "q=";
     private final static String filtered = "filter=page";
     private DiscordException tooMuchTutos;
+    private DiscordException notFoundTuto;
 
     public TutorialCommand(){
         super("tuto", "\\s+(.*)");
         tooMuchTutos = new TooMuchDiscordException("exception.toomuch.tutos", "exception.toomuch.tutos_found");
+        notFoundTuto = new NotFoundDiscordException("exception.toomuch.tuto", "exception.toomuch.tuto_found");
     }
 
     @Override
@@ -65,9 +67,9 @@ public class TutorialCommand extends AbstractCommand{
                     tooMuchTutos.throwException(message, this, lg, names);
                 }
                 else // empty
-                    new TutoNotFoundDiscordException().throwException(message, this, lg);
+                    notFoundTuto.throwException(message, this, lg);
             } catch(IOException e){
-                ExceptionManager.manageIOException(e, message, this, lg, new TutoNotFoundDiscordException());
+                ExceptionManager.manageIOException(e, message, this, lg, notFoundTuto);
             }
 
             return true;
@@ -77,11 +79,8 @@ public class TutorialCommand extends AbstractCommand{
     }
 
     private String getSearchURL(String text) throws UnsupportedEncodingException {
-        StringBuilder url = new StringBuilder(Constants.dofusPourLesNoobURL).append(Constants.dofusPourLesNoobSearch)
-                .append("?").append(forName.toLowerCase()).append(URLEncoder.encode(text, "UTF-8"))
-                .append("&").append(filtered);
-
-        return url.toString();
+        return Constants.dofusPourLesNoobURL + Constants.dofusPourLesNoobSearch + "?"
+            + forName.toLowerCase() + URLEncoder.encode(text, "UTF-8") + "&" + filtered;
     }
 
     private List<Pair<String, String>> getListTutoFrom(String url, IMessage message){
@@ -97,7 +96,7 @@ public class TutorialCommand extends AbstractCommand{
                         element.attr("href")));
 
         } catch(IOException e){
-            ExceptionManager.manageIOException(e, message, this, lg, new TutoNotFoundDiscordException());
+            ExceptionManager.manageIOException(e, message, this, lg, notFoundTuto);
             return new ArrayList<>();
         }  catch (Exception e) {
             ExceptionManager.manageException(e, message, this, lg);

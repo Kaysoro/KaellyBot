@@ -30,10 +30,12 @@ public class MonsterCommand extends AbstractCommand{
     private final static String forName = "text=";
 
     private DiscordException tooMuchMonsters;
+    private DiscordException notFoundMonster;
 
     public MonsterCommand(){
         super("monster", "\\s+(-more)?(.*)");
         tooMuchMonsters = new TooMuchDiscordException("exception.toomuch.monsters", "exception.toomuch.monsters_found");
+        notFoundMonster = new NotFoundDiscordException("exception.notfound.monster", "exception.notfound.monster_found");
     }
 
     @Override
@@ -68,9 +70,9 @@ public class MonsterCommand extends AbstractCommand{
                         tooMuchMonsters.throwException(message, this, lg, names);
                     }
                     else // empty
-                        new MonsterNotFoundDiscordException().throwException(message, this, lg);
+                        notFoundMonster.throwException(message, this, lg);
                 } catch (IOException e) {
-                    ExceptionManager.manageIOException(e, message, this, lg, new MonsterNotFoundDiscordException());
+                    ExceptionManager.manageIOException(e, message, this, lg, notFoundMonster);
                 }
 
                 return true;
@@ -101,7 +103,7 @@ public class MonsterCommand extends AbstractCommand{
                         element.child(1).select("a").attr("href")));
 
         } catch(IOException e){
-            ExceptionManager.manageIOException(e, message, this, lg, new MonsterNotFoundDiscordException());
+            ExceptionManager.manageIOException(e, message, this, lg, notFoundMonster);
             return new ArrayList<>();
         }  catch (Exception e) {
             ExceptionManager.manageException(e, message, this, lg);

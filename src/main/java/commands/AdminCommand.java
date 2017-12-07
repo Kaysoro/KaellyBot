@@ -2,7 +2,8 @@ package commands;
 
 import data.Constants;
 import enums.Language;
-import exceptions.CommandNotFoundDiscordException;
+import exceptions.DiscordException;
+import exceptions.NotFoundDiscordException;
 import util.Message;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,10 +18,12 @@ import java.util.regex.Matcher;
 public class AdminCommand extends AbstractCommand{
 
     private final static Logger LOG = LoggerFactory.getLogger(AdminCommand.class);
+    private DiscordException notFound;
 
     public AdminCommand(){
         super("admin", "(\\s+.+)?");
         setAdmin(true);
+        notFound = new NotFoundDiscordException("exception.notfound.cmd", "exception.notfound.cmd_found");
     }
 
     @Override
@@ -43,7 +46,7 @@ public class AdminCommand extends AbstractCommand{
                 }
 
             if (argumentFound && st.length() == 0)
-                new CommandNotFoundDiscordException().throwException(message, this, lg);
+                notFound.throwException(message, this, lg);
             else
                 Message.sendText(message.getChannel(), st.toString());
             return true;

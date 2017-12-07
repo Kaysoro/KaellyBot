@@ -6,9 +6,8 @@ import data.User;
 import enums.Job;
 import enums.Language;
 import exceptions.DiscordException;
+import exceptions.NotFoundDiscordException;
 import util.Message;
-import exceptions.JobNotFoundDiscordException;
-import exceptions.LevelNotFoundDiscordException;
 import exceptions.TooMuchDiscordException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,10 +27,15 @@ public class JobCommand extends AbstractCommand{
 
     private final static Logger LOG = LoggerFactory.getLogger(JobCommand.class);
     private DiscordException tooMuchJobs;
+    private DiscordException notFoundJob;
+    private DiscordException notFoundLevel;
+
     public JobCommand(){
         super("job", "(\\s+([\\p{L}|\\W]+|-all)(\\s+\\d{1,3})?)?");
         setUsableInMP(false);
         tooMuchJobs = new TooMuchDiscordException("exception.toomuch.jobs", "exception.toomuch.jobs_found");
+        notFoundJob = new NotFoundDiscordException("exception.notfound.job", "exception.notfound.job_found");
+        notFoundLevel = new NotFoundDiscordException("exception.notfound.level", "exception.notfound.level_found");
     }
 
     @Override
@@ -112,7 +116,7 @@ public class JobCommand extends AbstractCommand{
                 } else if (jobs.size() > 1)
                     tooMuchJobs.throwException(message, this, lg, jobs);
                 else
-                    new JobNotFoundDiscordException().throwException(message, this, lg);
+                    notFoundJob.throwException(message, this, lg);
             }
             else if (m.group(3) != null){ // add all jobs for the user
                 User author = User.getUser(message.getGuild(), message.getAuthor());
@@ -132,7 +136,7 @@ public class JobCommand extends AbstractCommand{
                             .replace("{user}", author.getName()));
             }
             else
-                new LevelNotFoundDiscordException().throwException(message, this, lg);
+                notFoundLevel.throwException(message, this, lg);
         }
 
         return false;

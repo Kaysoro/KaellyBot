@@ -5,8 +5,8 @@ import data.Portal;
 import data.Position;
 import enums.Language;
 import exceptions.DiscordException;
+import exceptions.NotFoundDiscordException;
 import util.Message;
-import exceptions.PortalNotFoundDiscordException;
 import exceptions.TooMuchDiscordException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,11 +25,13 @@ public class PortalCommand extends AbstractCommand{
 
     private final static Logger LOG = LoggerFactory.getLogger(PortalCommand.class);
     private DiscordException tooMuchPortals;
+    private DiscordException notFoundPortal;
 
     public PortalCommand(){
         super("pos", "(\\s+\\p{L}+)?(\\s+\\[?(-?\\d{1,2})\\s*[,|\\s]\\s*(-?\\d{1,2})\\]?)?(\\s+\\d{1,3})?");
         setUsableInMP(false);
         tooMuchPortals = new TooMuchDiscordException("exception.toomuch.portals", "exception.toomuch.portals_found");
+        notFoundPortal = new NotFoundDiscordException("exception.notfound.portal", "exception.notfound.portal_found");
     }
 
     @Override
@@ -59,7 +61,7 @@ public class PortalCommand extends AbstractCommand{
                 else if(portals.size() > 1)
                     tooMuchPortals.throwException(message, this, lg);
                 else
-                    new PortalNotFoundDiscordException().throwException(message, this, lg);
+                    notFoundPortal.throwException(message, this, lg);
             }
         }
         return false;

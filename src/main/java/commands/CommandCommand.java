@@ -23,11 +23,13 @@ public class CommandCommand extends AbstractCommand{
     private final static Logger LOG = LoggerFactory.getLogger(CommandCommand.class);
 
     private DiscordException tooMuchCmds;
+    private DiscordException notFoundCmd;
 
     public CommandCommand(){
         super("cmd","\\s+(\\w+)\\s+(on|off|0|1|true|false)");
         setUsableInMP(false);
         tooMuchCmds = new TooMuchDiscordException("exception.toomuch.cmds", "exception.toomuch.cmds_found");
+        notFoundCmd = new NotFoundDiscordException("exception.notfound.cmd", "exception.notfound.cmd_found");
     }
 
     @Override
@@ -76,7 +78,7 @@ public class CommandCommand extends AbstractCommand{
                         new BadUseCommandDiscordException().throwException(message, this, lg);
                 }
                 else if (potentialCmds.isEmpty())
-                    new CommandNotFoundDiscordException().throwException(message, this, lg);
+                    notFoundCmd.throwException(message, this, lg);
                 else
                     tooMuchCmds.throwException(message, this, lg);
             }

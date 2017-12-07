@@ -39,10 +39,12 @@ public class ItemCommand extends AbstractCommand{
     private final static String size = "size=";
 
     private DiscordException tooMuchItems;
+    private DiscordException notFoundItem;
 
     public ItemCommand(){
         super("item", "\\s+(-more)?(.*)");
         tooMuchItems = new TooMuchDiscordException("exception.toomuch.items", "exception.toomuch.items_found");
+        notFoundItem = new NotFoundDiscordException("exception.notfound.item", "exception.notfound.item_found");
     }
 
     @Override
@@ -95,9 +97,9 @@ public class ItemCommand extends AbstractCommand{
                         tooMuchItems.throwException(message, this, lg, names);
                     }
                     else // empty
-                        new ItemNotFoundDiscordException().throwException(message, this, lg);
+                        notFoundItem.throwException(message, this, lg);
                 } catch (IOException e) {
-                    ExceptionManager.manageIOException(e, message, this, lg, new ItemNotFoundDiscordException());
+                    ExceptionManager.manageIOException(e, message, this, lg, notFoundItem);
                 }
 
                 return true;
@@ -137,7 +139,7 @@ public class ItemCommand extends AbstractCommand{
                         element.child(1).select("a").attr("href")));
 
         } catch(IOException e){
-            ExceptionManager.manageIOException(e, message, this, lg, new ItemNotFoundDiscordException());
+            ExceptionManager.manageIOException(e, message, this, lg, notFoundItem);
             return new ArrayList<>();
         }  catch (Exception e) {
             ExceptionManager.manageException(e, message, this, lg);

@@ -26,10 +26,12 @@ public class SoundCommand extends AbstractCommand{
 
     private final static Logger LOG = LoggerFactory.getLogger(SoundCommand.class);
     private static List<File> sounds;
+    private DiscordException notFoundSound;
 
     public SoundCommand(){
         super("sound","(\\s+.+)?");
         setUsableInMP(false);
+        notFoundSound = new NotFoundDiscordException("exception.notfound.sound", "exception.notfound.sound_found");
     }
 
     @Override
@@ -63,7 +65,7 @@ public class SoundCommand extends AbstractCommand{
                                 playSound(voice, message, file);
                             }
                             else
-                                new SoundNotFoundDiscordException().throwException(message, this, lg);
+                                notFoundSound.throwException(message, this, lg);
                         }
                         else { // random sound
 

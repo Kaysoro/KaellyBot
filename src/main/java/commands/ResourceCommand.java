@@ -7,7 +7,7 @@ import enums.SuperTypeResource;
 import enums.TypeResource;
 import exceptions.DiscordException;
 import exceptions.ExceptionManager;
-import exceptions.ResourceNotFoundDiscordException;
+import exceptions.NotFoundDiscordException;
 import exceptions.TooMuchDiscordException;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jsoup.nodes.Document;
@@ -44,10 +44,12 @@ public class ResourceCommand extends AbstractCommand{
     private final static String size = "size=";
 
     private DiscordException tooMuchRsrcs;
+    private DiscordException notFoundRsrc;
 
     public ResourceCommand(){
         super("resource", "\\s+(-more)?(.*)");
         tooMuchRsrcs = new TooMuchDiscordException("exception.toomuch.resources", "exception.toomuch.resources_found");
+        notFoundRsrc = new NotFoundDiscordException("exception.notfound.resource", "exception.notfound.resource_found");
     }
 
     @Override
@@ -98,9 +100,9 @@ public class ResourceCommand extends AbstractCommand{
                     tooMuchRsrcs.throwException(message, this, lg, names);
                 }
                 else // empty
-                    new ResourceNotFoundDiscordException().throwException(message, this, lg);
+                    notFoundRsrc.throwException(message, this, lg);
             } catch (IOException e) {
-                ExceptionManager.manageIOException(e, message, this, lg, new ResourceNotFoundDiscordException());
+                ExceptionManager.manageIOException(e, message, this, lg, notFoundRsrc);
             }
 
             return true;
@@ -137,7 +139,7 @@ public class ResourceCommand extends AbstractCommand{
                         element.child(1).select("a").attr("href")));
 
         } catch(IOException e){
-            ExceptionManager.manageIOException(e, message, this, lg, new ResourceNotFoundDiscordException());
+            ExceptionManager.manageIOException(e, message, this, lg,notFoundRsrc);
             return new ArrayList<>();
         }  catch (Exception e) {
             ExceptionManager.manageException(e, message, this, lg);

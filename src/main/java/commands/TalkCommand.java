@@ -1,9 +1,10 @@
 package commands;
 
 import enums.Language;
+import exceptions.DiscordException;
+import exceptions.NotFoundDiscordException;
 import util.ClientConfig;
 import util.Message;
-import exceptions.ChannelNotFoundDiscordException;
 import exceptions.NoSendTextPermissionDiscordException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,12 +22,14 @@ public class TalkCommand extends AbstractCommand{
 
     private final static Logger LOG = LoggerFactory.getLogger(TalkCommand.class);
     private IChannel lastChan;
+    private DiscordException notFoundChan;
 
     public TalkCommand(){
         super("talk", "(\\s+\\d+)?(\\s+.+)");
         setAdmin(true);
 
         this.lastChan = null;
+        notFoundChan = new NotFoundDiscordException("exception.notfound.chan", "exception.notfound.chan_found");
     }
 
     @Override
@@ -43,7 +46,7 @@ public class TalkCommand extends AbstractCommand{
             }
 
             if (lastChan == null){
-                new ChannelNotFoundDiscordException().throwException(message, this, lg);
+                notFoundChan.throwException(message, this, lg);
                 return false;
             }
 
