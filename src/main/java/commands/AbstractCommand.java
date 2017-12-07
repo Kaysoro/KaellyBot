@@ -4,7 +4,8 @@ import data.Constants;
 import data.Guild;
 import enums.Language;
 import exceptions.BadUseCommandDiscordException;
-import exceptions.CommandForbiddenDiscordException;
+import exceptions.BasicDiscordException;
+import exceptions.DiscordException;
 import exceptions.NotUsableInMPDiscordException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,6 +22,7 @@ public abstract class AbstractCommand implements Command {
 
     private final static Logger LOG = LoggerFactory.getLogger(AbstractCommand.class);
 
+    private DiscordException commandForbidden;
     protected String name;
     protected String pattern;
     protected boolean isPublic;
@@ -34,6 +36,7 @@ public abstract class AbstractCommand implements Command {
         this.isPublic = true;
         this.isUsableInMP = true;
         this.isAdmin = false;
+        commandForbidden = new BasicDiscordException("exception.basic.command_forbidden");
     }
 
     @Override
@@ -56,7 +59,7 @@ public abstract class AbstractCommand implements Command {
             // Mais est désactivée par la guilde
             else if (! message.getChannel().isPrivate() && message.getAuthor().getLongID() != Constants.authorId
                 && isForbidden(Guild.getGuild(message.getGuild()))) {
-                new CommandForbiddenDiscordException().throwException(message, this, lg);
+                commandForbidden.throwException(message, this, lg);
                 return false;
             }
         }

@@ -15,7 +15,7 @@ public class Constants {
     /**
      * Application version
      */
-    public final static String version = "1.4.4.1";
+    public final static String version = "1.5.0";
 
     /**
      * Author id

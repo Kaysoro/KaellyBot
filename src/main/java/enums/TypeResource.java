@@ -7,7 +7,7 @@ import static enums.SuperTypeResource.*;
 /**
  * Created by steve on 07/06/2017.
  */
-public enum TypeResource {
+public enum TypeResource implements Type {
 
     HAVRE_SAC("", "resource.havre_sac", HAVEN_BAG),
 
@@ -106,7 +106,7 @@ public enum TypeResource {
 
     private String typeID;
     private String names;
-    private SuperTypeResource superType;
+    private SuperType superType;
 
     TypeResource(String typeID, String names, SuperTypeResource superType){
         this.typeID = typeID;
@@ -116,7 +116,7 @@ public enum TypeResource {
 
     public String[] getNames(Language lg){ return Translator.getLabel(lg, names).split(";");}
 
-    public SuperTypeResource getType(){
+    public SuperType getType(){
         return superType;
     }
 

@@ -5,10 +5,6 @@ import exceptions.*;
 import sx.blah.discord.handle.obj.Permissions;
 import util.*;
 import data.*;
-import org.apache.commons.lang3.tuple.Pair;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sx.blah.discord.handle.obj.IMessage;
@@ -17,25 +13,25 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.text.Normalizer;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.regex.Matcher;
 
 /**
  * Created by steve on 14/07/2016.
  */
-public class MonsterCommand extends AbstractCommand{
+public class MonsterCommand extends DofusRequestCommand{
 
     private final static Logger LOG = LoggerFactory.getLogger(MonsterCommand.class);
     private final static String forName = "text=";
 
     private DiscordException tooMuchMonsters;
     private DiscordException notFoundMonster;
+    private DiscordException noExternalEmojiPermission;
 
     public MonsterCommand(){
         super("monster", "\\s+(-more)?(.*)");
         tooMuchMonsters = new TooMuchDiscordException("exception.toomuch.monsters", "exception.toomuch.monsters_found");
         notFoundMonster = new NotFoundDiscordException("exception.notfound.monster", "exception.notfound.monster_found");
+        noExternalEmojiPermission = new BasicDiscordException("exception.basic.no_external_emoji_permission");
     }
 
     @Override
@@ -54,21 +50,17 @@ public class MonsterCommand extends AbstractCommand{
                 BestMatcher matcher = new BestMatcher(normalName);
 
                 try {
-                    matcher.evaluateAll(getListMonsterFrom(getSearchURL(lg, editedName), message));
+                    matcher.evaluateAll(getListRequestableFrom(getSearchURL(lg, editedName), message, notFoundMonster));
 
                     if (matcher.isUnique()) { // We have found it !
                         Embedded monster = Monster.getMonster(lg, Translator.getLabel(lg, "game.url")
-                                + matcher.getBest().getRight());
+                                + matcher.getBest().getUrl());
                         if (m.group(1) != null)
                             Message.sendEmbed(message.getChannel(), monster.getMoreEmbedObject(lg));
                         else
                             Message.sendEmbed(message.getChannel(), monster.getEmbedObject(lg));
-                    } else if (!matcher.isEmpty()) { // Too much monsters
-                        List<String> names = new ArrayList<>();
-                        for (Pair<String, String> item : matcher.getBests())
-                            names.add(item.getLeft());
-                        tooMuchMonsters.throwException(message, this, lg, names);
-                    }
+                    } else if (!matcher.isEmpty())  // Too much monsters
+                        tooMuchMonsters.throwException(message, this, lg, matcher.getBests());
                     else // empty
                         notFoundMonster.throwException(message, this, lg);
                 } catch (IOException e) {
@@ -78,7 +70,7 @@ public class MonsterCommand extends AbstractCommand{
                 return true;
             }
             else
-                new NoExternalEmojiPermissionDiscordException().throwException(message, this, lg);
+                noExternalEmojiPermission.throwException(message, this, lg);
         }
 
         return false;
@@ -88,29 +80,6 @@ public class MonsterCommand extends AbstractCommand{
         return Translator.getLabel(lg, "game.url") + Translator.getLabel(lg, "monster.url")
                 + "?" + forName.toLowerCase() + URLEncoder.encode(text, "UTF-8")
                 + "&" + forName.toUpperCase() + URLEncoder.encode(text, "UTF-8");
-    }
-
-    private List<Pair<String, String>> getListMonsterFrom(String url, IMessage message){
-        List<Pair<String, String>> result = new ArrayList<>();
-        Language lg = Translator.getLanguageFrom(message.getChannel());
-        try {
-            Document doc = JSoupManager.getDocument(url);
-            Elements elems = doc.getElementsByClass("ak-bg-odd");
-            elems.addAll(doc.getElementsByClass("ak-bg-even"));
-
-            for (Element element : elems)
-                result.add(Pair.of(element.child(1).text(),
-                        element.child(1).select("a").attr("href")));
-
-        } catch(IOException e){
-            ExceptionManager.manageIOException(e, message, this, lg, notFoundMonster);
-            return new ArrayList<>();
-        }  catch (Exception e) {
-            ExceptionManager.manageException(e, message, this, lg);
-            return new ArrayList<>();
-        }
-
-        return result;
     }
 
     private String removeUselessWords(String search){

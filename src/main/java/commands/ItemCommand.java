@@ -8,10 +8,6 @@ import enums.TypeEquipment;
 import exceptions.*;
 import sx.blah.discord.handle.obj.Permissions;
 import util.*;
-import org.apache.commons.lang3.tuple.Pair;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sx.blah.discord.handle.obj.IMessage;
@@ -20,14 +16,12 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.text.Normalizer;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.regex.Matcher;
 
 /**
  * Created by steve on 14/07/2016.
  */
-public class ItemCommand extends AbstractCommand{
+public class ItemCommand extends DofusEncyclopediaRequestCommand{
 
     private final static Logger LOG = LoggerFactory.getLogger(ItemCommand.class);
     private final static String forName = "text=";
@@ -40,11 +34,13 @@ public class ItemCommand extends AbstractCommand{
 
     private DiscordException tooMuchItems;
     private DiscordException notFoundItem;
+    private DiscordException noExternalEmojiPermission;
 
     public ItemCommand(){
         super("item", "\\s+(-more)?(.*)");
         tooMuchItems = new TooMuchDiscordException("exception.toomuch.items", "exception.toomuch.items_found");
         notFoundItem = new NotFoundDiscordException("exception.notfound.item", "exception.notfound.item_found");
+        noExternalEmojiPermission = new BasicDiscordException("exception.basic.no_external_emoji_permission");
     }
 
     @Override
@@ -58,44 +54,28 @@ public class ItemCommand extends AbstractCommand{
                     .contains(Permissions.USE_EXTERNAL_EMOJIS)) {
                 String normalName = Normalizer.normalize(m.group(2).trim(), Normalizer.Form.NFD)
                         .replaceAll("\\p{InCombiningDiacriticalMarks}+", "").toLowerCase();
-                String editedName = removeUselessWords(normalName);
                 BestMatcher matcher = new BestMatcher(normalName);
 
                 try {
                     for (TypeEquipment equip : TypeEquipment.values()) {
                         String[] names = equip.getNames(lg);
-                        for (String name : names) {
-                            String potentialName = Normalizer.normalize(name, Normalizer.Form.NFD)
-                                    .replaceAll("\\p{InCombiningDiacriticalMarks}+", "").toLowerCase();
-                            if (normalName.equals(potentialName)) {
-                                matcher.evaluateAll(getListItemFrom(getSearchURL(equip.getType().getUrl(lg),
-                                        potentialName, equip.getTypeID(), lg), message));
-                                break;
-                            } else if (normalName.contains(potentialName)) {
-                                matcher.evaluateAll(getListItemFrom(getSearchURL(equip.getType().getUrl(lg),
-                                        editedName.replace(potentialName, "").trim(), equip.getTypeID(), lg), message));
-                                break;
-                            }
-                        }
+                        foo(message, matcher, names, normalName, equip, notFoundItem);
                     }
 
                     if (matcher.isEmpty())
                         for (SuperTypeEquipment type : SuperTypeEquipment.values())
-                            matcher.evaluateAll(getListItemFrom(getSearchURL(type.getUrl(lg), normalName, null, lg), message));
+                            matcher.evaluateAll(getListRequestableFrom(
+                                    getSearchURL(type.getUrl(lg), normalName, null, lg), message, notFoundItem));
 
                     if (matcher.isUnique()) { // We have found it !
                         Embedded item = Item.getItem(lg, Translator.getLabel(lg, "game.url")
-                                + matcher.getBest().getRight());
+                                + matcher.getBest().getUrl());
                         if (m.group(1) != null)
                             Message.sendEmbed(message.getChannel(), item.getMoreEmbedObject(lg));
                         else
                             Message.sendEmbed(message.getChannel(), item.getEmbedObject(lg));
-                    } else if (!matcher.isEmpty()) { // Too much items
-                        List<String> names = new ArrayList<>();
-                        for(Pair<String, String> item : matcher.getBests())
-                            names.add(item.getLeft());
-                        tooMuchItems.throwException(message, this, lg, names);
-                    }
+                    } else if (!matcher.isEmpty()) // Too much items
+                        tooMuchItems.throwException(message, this, lg, matcher.getBests());
                     else // empty
                         notFoundItem.throwException(message, this, lg);
                 } catch (IOException e) {
@@ -105,14 +85,14 @@ public class ItemCommand extends AbstractCommand{
                 return true;
             }
             else
-                new NoExternalEmojiPermissionDiscordException().throwException(message, this, lg);
+                noExternalEmojiPermission.throwException(message, this, lg);
         }
 
 
         return false;
     }
 
-    private String getSearchURL(String SuperTypeURL, String text, String typeArg, Language lg) throws UnsupportedEncodingException {
+    protected String getSearchURL(String SuperTypeURL, String text, String typeArg, Language lg) throws UnsupportedEncodingException {
         StringBuilder url = new StringBuilder(Translator.getLabel(lg, "game.url")).append(SuperTypeURL)
                 .append("?").append(forName.toLowerCase()).append(URLEncoder.encode(text, "UTF-8"))
                 .append("&").append(forName.toUpperCase()).append(URLEncoder.encode(text, "UTF-8"))
@@ -124,33 +104,6 @@ public class ItemCommand extends AbstractCommand{
             url.append(typeArg);
 
         return url.toString();
-    }
-
-    private List<Pair<String, String>> getListItemFrom(String url, IMessage message){
-        List<Pair<String, String>> result = new ArrayList<>();
-        Language lg = Translator.getLanguageFrom(message.getChannel());
-        try {
-            Document doc = JSoupManager.getDocument(url);
-            Elements elems = doc.getElementsByClass("ak-bg-odd");
-            elems.addAll(doc.getElementsByClass("ak-bg-even"));
-
-            for (Element element : elems)
-                result.add(Pair.of(element.child(1).text(),
-                        element.child(1).select("a").attr("href")));
-
-        } catch(IOException e){
-            ExceptionManager.manageIOException(e, message, this, lg, notFoundItem);
-            return new ArrayList<>();
-        }  catch (Exception e) {
-            ExceptionManager.manageException(e, message, this, lg);
-            return new ArrayList<>();
-        }
-
-        return result;
-    }
-
-    private String removeUselessWords(String search){
-        return search.replaceAll("\\s+\\w{1,3}\\s+", " ");
     }
 
     @Override

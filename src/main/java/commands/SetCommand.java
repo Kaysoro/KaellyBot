@@ -5,10 +5,6 @@ import exceptions.*;
 import sx.blah.discord.handle.obj.Permissions;
 import util.*;
 import data.*;
-import org.apache.commons.lang3.tuple.Pair;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sx.blah.discord.handle.obj.IMessage;
@@ -17,24 +13,24 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.text.Normalizer;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.regex.Matcher;
 
 /**
  * Created by steve on 12/10/2016.
  */
-public class SetCommand extends AbstractCommand{
+public class SetCommand extends DofusRequestCommand{
 
     private final static Logger LOG = LoggerFactory.getLogger(SetCommand.class);
     private final static String forName = "text=";
     private DiscordException tooMuchSets;
     private DiscordException notFoundSet;
+    private DiscordException noExternalEmoji;
 
     public SetCommand(){
         super("set", "\\s+(-more)?(.*)");
         tooMuchSets = new TooMuchDiscordException("exception.toomuch.sets", "exception.toomuch.sets_found");
         notFoundSet = new NotFoundDiscordException("exception.notfound.set", "exception.notfound.set_found");
+        noExternalEmoji = new BasicDiscordException("exception.basic.no_external_emoji_permission");
     }
 
     @Override
@@ -53,21 +49,17 @@ public class SetCommand extends AbstractCommand{
                 BestMatcher matcher = new BestMatcher(normalName);
 
                 try {
-                    matcher.evaluateAll(getListSetFrom(getSearchURL(lg, editedName), message));
+                    matcher.evaluateAll(getListRequestableFrom(getSearchURL(lg, editedName), message, notFoundSet));
 
                     if (matcher.isUnique()) { // We have found it !
                         Embedded set = Set.getSet(lg, Translator.getLabel(lg, "game.url")
-                                + matcher.getBest().getRight());
+                                + matcher.getBest().getUrl());
                         if (m.group(1) != null)
                             Message.sendEmbed(message.getChannel(), set.getMoreEmbedObject(lg));
                         else
                             Message.sendEmbed(message.getChannel(), set.getEmbedObject(lg));
-                    } else if (!matcher.isEmpty()) { // Too much sets
-                        List<String> names = new ArrayList<>();
-                        for(Pair<String, String> item : matcher.getBests())
-                            names.add(item.getLeft());
-                        tooMuchSets.throwException(message, this, lg, names);
-                    }
+                    } else if (!matcher.isEmpty())  // Too much sets
+                        tooMuchSets.throwException(message, this, lg, matcher.getBests());
                     else // empty
                         notFoundSet.throwException(message, this, lg);
                 } catch (IOException e) {
@@ -77,7 +69,7 @@ public class SetCommand extends AbstractCommand{
                 return true;
             }
             else
-                new NoExternalEmojiPermissionDiscordException().throwException(message, this, lg);
+                noExternalEmoji.throwException(message, this, lg);
         }
 
         return false;
@@ -87,29 +79,6 @@ public class SetCommand extends AbstractCommand{
         return Translator.getLabel(lg, "game.url") + Translator.getLabel(lg, "set.url")
                 + "?" + forName.toLowerCase() + URLEncoder.encode(text, "UTF-8")
                 + "&" + forName.toUpperCase() + URLEncoder.encode(text, "UTF-8");
-    }
-
-    private List<Pair<String, String>> getListSetFrom(String url, IMessage message){
-        List<Pair<String, String>> result = new ArrayList<>();
-        Language lg = Translator.getLanguageFrom(message.getChannel());
-        try {
-            Document doc = JSoupManager.getDocument(url);
-            Elements elems = doc.getElementsByClass("ak-bg-odd");
-            elems.addAll(doc.getElementsByClass("ak-bg-even"));
-
-            for (Element element : elems)
-                result.add(Pair.of(element.child(1).text(),
-                        element.child(1).select("a").attr("href")));
-
-        } catch(IOException e){
-            ExceptionManager.manageIOException(e, message, this, lg, notFoundSet);
-            return new ArrayList<>();
-        }  catch (Exception e) {
-            ExceptionManager.manageException(e, message, this, lg);
-            return new ArrayList<>();
-        }
-
-        return result;
     }
 
     private String removeUselessWords(Language lg, String search){

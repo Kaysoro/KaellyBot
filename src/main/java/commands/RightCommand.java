@@ -2,12 +2,9 @@ package commands;
 
 import data.User;
 import enums.Language;
+import exceptions.*;
 import util.ClientConfig;
 import util.Message;
-import exceptions.AutoChangeRightsDiscordException;
-import exceptions.BadUseCommandDiscordException;
-import exceptions.NoRightsForRolesDiscordException;
-import exceptions.NotEnoughRightsDiscordException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sx.blah.discord.handle.obj.IMessage;
@@ -23,10 +20,12 @@ import java.util.regex.Matcher;
 public class RightCommand extends AbstractCommand{
 
     private final static Logger LOG = LoggerFactory.getLogger(RightCommand.class);
+    private DiscordException autoChangeRights;
 
     public RightCommand(){
         super("right", "(\\s+<@[!|&]?\\d+>)?(\\s+\\d)?");
         setUsableInMP(false);
+        autoChangeRights = new BasicDiscordException("exception.basic.autochange_rights");
     }
 
     @Override
@@ -74,7 +73,7 @@ public class RightCommand extends AbstractCommand{
                         User target = User.getUser(message.getGuild(), ClientConfig.DISCORD().getUserByID(Long.parseLong(id)));
 
                         if (id.equals(message.getAuthor().getStringID())) {
-                            new AutoChangeRightsDiscordException().throwException(message, this, lg);
+                            autoChangeRights.throwException(message, this, lg);
                             return false;
                         }
 

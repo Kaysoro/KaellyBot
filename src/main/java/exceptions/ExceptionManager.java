@@ -23,6 +23,8 @@ public abstract class ExceptionManager {
 
     private static Logger LOG = LoggerFactory.getLogger(ExceptionManager.class);
 
+    private static DiscordException gameWebsite503 = new AdvancedDiscordException("exception.basic.game_website_503",
+            new String[]{"game.url"});
 
     public static void manageIOException(Exception e, IMessage message, Command command, Language lg, DiscordException notFound){
         // First we try parsing the exception message to see if it contains the response code
@@ -32,7 +34,7 @@ public abstract class ExceptionManager {
             int statusCode = Integer.parseInt(exMsgStatusCodeMatcher.group(1));
             if (statusCode >= 500 && statusCode < 600) {
                 LOG.warn("manageIOException", e);
-                new DofusWebsiteInaccessibleDiscordException().throwException(message, command, lg);
+                gameWebsite503.throwException(message, command, lg);
             }
             else {
                 ClientConfig.setSentryContext(message.getGuild(),
@@ -41,7 +43,7 @@ public abstract class ExceptionManager {
                 new UnknownErrorDiscordException().throwException(message, command, lg);
             }
         } else if (e instanceof UnknownHostException || e instanceof SocketTimeoutException) {
-            new DofusWebsiteInaccessibleDiscordException().throwException(message, command, lg);
+            gameWebsite503.throwException(message, command, lg);
         } else if (e instanceof FileNotFoundException
                 || e instanceof HttpStatusException
                 || e instanceof NoRouteToHostException){

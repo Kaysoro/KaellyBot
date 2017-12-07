@@ -20,12 +20,16 @@ public class AvailableCommand extends AbstractCommand{
     private final static Logger LOG = LoggerFactory.getLogger(AvailableCommand.class);
     private DiscordException tooMuchCmds;
     private DiscordException notFoundCmd;
+    private DiscordException forbiddenCmdFound;
+    private DiscordException forbiddenCmdNotFound;
 
     public AvailableCommand(){
         super("available","\\s+(\\w+)\\s+(on|off|0|1|true|false)");
         setAdmin(true);
         tooMuchCmds = new TooMuchDiscordException("exception.toomuch.cmds", "exception.toomuch.cmds_found");
         notFoundCmd = new NotFoundDiscordException("exception.notfound.cmd", "exception.notfound.cmd_found");
+        forbiddenCmdFound = new BasicDiscordException("exception.basic.forbidden_command_found");
+        forbiddenCmdNotFound = new BasicDiscordException("exception.basic.forbidden_command_notfound");
     }
 
     @Override
@@ -55,7 +59,7 @@ public class AvailableCommand extends AbstractCommand{
                                 + "* " + Translator.getLabel(lg, "announce.request.3"));
                     }
                     else
-                        new ForbiddenCommandFoundDiscordException().throwException(message, this, lg);
+                        forbiddenCmdFound.throwException(message, this, lg);
                 }
                 else if (value.matches("true") || value.matches("0") || value.matches("on")){
                     if (! command.isPublic()) {
@@ -64,7 +68,7 @@ public class AvailableCommand extends AbstractCommand{
                                 + "* " + Translator.getLabel(lg, "announce.request.4"));
                     }
                     else
-                        new ForbiddenCommandNotFoundDiscordException().throwException(message, this, lg);
+                        forbiddenCmdNotFound.throwException(message, this, lg);
                 }
                 else
                     new BadUseCommandDiscordException().throwException(message, this, lg);

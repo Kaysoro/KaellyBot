@@ -1,7 +1,5 @@
 package util;
 
-import org.apache.commons.lang3.tuple.Pair;
-
 import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.List;
@@ -13,7 +11,7 @@ public class BestMatcher {
 
     private String base;
     private String[] pattern;
-    private List<Pair<String, String>> bestMatches;
+    private List<Requestable> bestMatches;
     private int bestPoint;
 
     public BestMatcher(String base){
@@ -25,9 +23,9 @@ public class BestMatcher {
         bestPoint = 0;
     }
 
-    public void evaluate(Pair<String, String> proposal){
+    public void evaluate(Requestable proposal){
         int points = 0;
-        String key = Normalizer.normalize(proposal.getKey().trim(), Normalizer.Form.NFD)
+        String key = Normalizer.normalize(proposal.getName().trim(), Normalizer.Form.NFD)
                 .replaceAll("\\p{InCombiningDiacriticalMarks}+", "").toLowerCase();
 
         if (! key.equals(base)) {
@@ -49,9 +47,9 @@ public class BestMatcher {
         }
     }
 
-    public void evaluateAll(List<Pair<String, String>> proposals){
-        for(Pair pair : proposals)
-            evaluate(pair);
+    public void evaluateAll(List<Requestable> proposals){
+        for(Requestable proposal : proposals)
+            evaluate(proposal);
     }
 
     public boolean isUnique(){
@@ -62,12 +60,12 @@ public class BestMatcher {
         return bestMatches.isEmpty();
     }
 
-    public List<Pair<String, String>> getBests(){
+    public List<Requestable> getBests(){
         return bestMatches;
     }
 
 
-    public Pair<String, String> getBest(){
+    public Requestable getBest(){
         if (isUnique())
             return bestMatches.get(0);
         else

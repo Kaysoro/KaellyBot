@@ -41,12 +41,16 @@ public class WhoisCommand extends AbstractCommand{
     private DiscordException tooMuchCharacters;
     private DiscordException tooMuchServers;
     private DiscordException notFoundCharacter;
+    private DiscordException characterPageInaccessible;
+    private DiscordException characterTooOld;
 
     public WhoisCommand(){
         super("whois","(\\s+[\\p{L}|-]+)(\\s+.+)?");
         tooMuchCharacters = new TooMuchDiscordException("exception.toomuch.characters", "exception.toomuch.characters_found");
         tooMuchServers = new TooMuchDiscordException("exception.toomuch.servers", "exception.toomuch.servers_found");
         notFoundCharacter = new NotFoundDiscordException("exception.toomuch.character", "exception.toomuch.character_found");
+        characterPageInaccessible = new BasicDiscordException("exception.basic.characterpage_inaccessible");
+        characterTooOld = new BasicDiscordException("exception.basic.character_too_old");
     }
 
     @Override
@@ -114,7 +118,7 @@ public class WhoisCommand extends AbstractCommand{
                             Character characPage = Character.getCharacter(Translator.getLabel(lg, "game.url") + result.get(0));
                             Message.sendEmbed(message.getChannel(), characPage.getEmbedObject(lg));
                         } else
-                            new CharacterTooOldDiscordException().throwException(message, this, lg);
+                            characterTooOld.throwException(message, this, lg);
                     }
                     else if (result.size() > 1)
                         tooMuchCharacters.throwException(message, this, lg, servers);
@@ -124,7 +128,7 @@ public class WhoisCommand extends AbstractCommand{
                 else
                     notFoundCharacter.throwException(message, this, lg);
             } catch(IOException e){
-                ExceptionManager.manageIOException(e, message, this, lg, new CharacterPageNotFoundDiscordException());
+                ExceptionManager.manageIOException(e, message, this, lg, characterPageInaccessible);
             }  catch (Exception e) {
                 ExceptionManager.manageException(e, message, this, lg);
             }

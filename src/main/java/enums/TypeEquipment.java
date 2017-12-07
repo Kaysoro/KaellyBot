@@ -7,7 +7,7 @@ import static enums.SuperTypeEquipment.*;
 /**
  * Created by steve on 07/06/2017.
  */
-public enum TypeEquipment {
+public enum TypeEquipment implements Type {
 
     AMULETTE("&type_id[]=1", "equip.amulette", EQUIPMENT),
     ARC("&type_id[]=2", "equip.arc", WEAPON),
@@ -36,7 +36,7 @@ public enum TypeEquipment {
 
     private String typeID;
     private String names;
-    private SuperTypeEquipment superType;
+    private SuperType superType;
 
     TypeEquipment(String typeID, String names, SuperTypeEquipment superType){
         this.typeID = typeID;
@@ -46,7 +46,7 @@ public enum TypeEquipment {
 
     public String[] getNames(Language lg){ return Translator.getLabel(lg, names).split(";");}
 
-    public SuperTypeEquipment getType(){
+    public SuperType getType(){
         return superType;
     }
 

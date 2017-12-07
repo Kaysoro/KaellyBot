@@ -2,7 +2,7 @@ package enums;
 
 import util.Translator;
 
-public enum SuperTypeResource {
+public enum SuperTypeResource implements SuperType{
 
     HAVEN_BAG("havenbag.url"),
     HARNESS("harness.url"),

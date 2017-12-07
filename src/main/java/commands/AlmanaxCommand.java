@@ -24,10 +24,12 @@ public class AlmanaxCommand extends AbstractCommand{
 
     private final static Logger LOG = LoggerFactory.getLogger(AlmanaxCommand.class);
     private DiscordException notFound;
+    private DiscordException incorrectDateFormat;
 
     public AlmanaxCommand(){
         super("almanax", "(\\s+\\d{2}/\\d{2}/\\d{4}|\\s+\\+\\d|\\s+true|\\s+false|\\s+0|\\s+1|\\s+on|\\s+off)?");
         notFound = new BasicDiscordException("exception.basic.almanax");
+        incorrectDateFormat = new BasicDiscordException("exception.basic.incorrect_date_format");
     }
 
     @Override
@@ -73,7 +75,7 @@ public class AlmanaxCommand extends AbstractCommand{
                 }
 
             } catch (ParseException e) {
-                new IncorrectDateFormatDiscordException().throwException(message, this, lg);
+               incorrectDateFormat.throwException(message, this, lg);
                 return false;
             } catch (IOException e) {
                 ExceptionManager.manageIOException(e, message, this, lg, notFound);

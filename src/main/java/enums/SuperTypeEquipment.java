@@ -5,7 +5,7 @@ import util.Translator;
 /**
  * Created by steve on 26/06/2017.
  */
-public enum SuperTypeEquipment {
+public enum SuperTypeEquipment implements SuperType {
     WEAPON("weapon.url"),
     EQUIPMENT("equipment.url"),
     PET("pet.url"),

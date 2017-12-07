@@ -4,19 +4,15 @@ import enums.Language;
 import exceptions.DiscordException;
 import exceptions.NotFoundDiscordException;
 import exceptions.TooMuchDiscordException;
-import util.BestMatcher;
+import util.*;
 import data.*;
-import util.Message;
 import exceptions.ExceptionManager;
-import org.apache.commons.lang3.tuple.Pair;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sx.blah.discord.handle.obj.IMessage;
-import util.JSoupManager;
-import util.Translator;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -59,13 +55,9 @@ public class TutorialCommand extends AbstractCommand{
 
                 if (matcher.isUnique())// We have found it !
                     Message.sendText(message.getChannel(), Translator.getLabel(lg, "tutorial.request") + " " +
-                            Constants.dofusPourLesNoobURL + matcher.getBest().getRight());
-                else if (! matcher.isEmpty()) { // Too much tutos
-                    List<String> names = new ArrayList<>();
-                    for(Pair<String, String> item : matcher.getBests())
-                        names.add(item.getLeft());
-                    tooMuchTutos.throwException(message, this, lg, names);
-                }
+                            Constants.dofusPourLesNoobURL + matcher.getBest().getUrl());
+                else if (! matcher.isEmpty())  // Too much tutos
+                    tooMuchTutos.throwException(message, this, lg, matcher.getBests());
                 else // empty
                     notFoundTuto.throwException(message, this, lg);
             } catch(IOException e){
@@ -83,8 +75,8 @@ public class TutorialCommand extends AbstractCommand{
             + forName.toLowerCase() + URLEncoder.encode(text, "UTF-8") + "&" + filtered;
     }
 
-    private List<Pair<String, String>> getListTutoFrom(String url, IMessage message){
-        List<Pair<String, String>> result = new ArrayList<>();
+    private List<Requestable> getListTutoFrom(String url, IMessage message){
+        List<Requestable> result = new ArrayList<>();
         Language lg = Translator.getLanguageFrom(message.getChannel());
 
         try {
@@ -92,7 +84,7 @@ public class TutorialCommand extends AbstractCommand{
             Elements elems = doc.getElementById("wsite-search-list").getElementsByTag("a");
 
             for (Element element : elems)
-                result.add(Pair.of(element.child(0).text(),
+                result.add(new Requestable(element.child(0).text(),
                         element.attr("href")));
 
         } catch(IOException e){
