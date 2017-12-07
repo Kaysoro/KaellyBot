@@ -10,8 +10,10 @@ import org.slf4j.LoggerFactory;
 import sx.blah.discord.api.events.EventSubscriber;
 import sx.blah.discord.handle.impl.events.ReadyEvent;
 import sx.blah.discord.handle.impl.events.guild.GuildCreateEvent;
+import sx.blah.discord.handle.obj.ActivityType;
 import sx.blah.discord.handle.obj.IGuild;
 import sx.blah.discord.handle.obj.IUser;
+import sx.blah.discord.handle.obj.StatusType;
 import util.ClientConfig;
 
 import java.util.ArrayList;
@@ -67,7 +69,7 @@ public class ReadyListener {
             }
 
         // Joue à...
-        ClientConfig.DISCORD().changePlayingText(Constants.discordInvite);
+        ClientConfig.DISCORD().changePresence(StatusType.ONLINE, ActivityType.WATCHING, Constants.discordInvite);
 
         LOG.info("Ecoute des flux RSS du site Dofus...");
         RSSFinder.start();
