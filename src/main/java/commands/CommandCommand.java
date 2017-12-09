@@ -26,6 +26,7 @@ public class CommandCommand extends AbstractCommand{
     private DiscordException notFoundCmd;
     private DiscordException forbiddenCmdFound;
     private DiscordException forbiddenCmdNotFound;
+    private DiscordException noEnoughRights;
 
     public CommandCommand(){
         super("cmd","\\s+(\\w+)\\s+(on|off|0|1|true|false)");
@@ -34,6 +35,7 @@ public class CommandCommand extends AbstractCommand{
         notFoundCmd = new NotFoundDiscordException("exception.notfound.cmd", "exception.notfound.cmd_found");
         forbiddenCmdFound = new BasicDiscordException("exception.basic.forbidden_command_found");
         forbiddenCmdNotFound = new BasicDiscordException("exception.basic.forbidden_command_notfound");
+        noEnoughRights = new BasicDiscordException("exception.basic.no_enough_rights");
     }
 
     @Override
@@ -87,7 +89,7 @@ public class CommandCommand extends AbstractCommand{
                     tooMuchCmds.throwException(message, this, lg);
             }
             else
-                new NotEnoughRightsDiscordException().throwException(message, this, lg);
+                noEnoughRights.throwException(message, this, lg);
         }
         return false;
     }

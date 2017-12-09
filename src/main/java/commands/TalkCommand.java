@@ -1,11 +1,11 @@
 package commands;
 
 import enums.Language;
+import exceptions.BasicDiscordException;
 import exceptions.DiscordException;
 import exceptions.NotFoundDiscordException;
 import util.ClientConfig;
 import util.Message;
-import exceptions.NoSendTextPermissionDiscordException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sx.blah.discord.handle.obj.IChannel;
@@ -23,6 +23,7 @@ public class TalkCommand extends AbstractCommand{
     private final static Logger LOG = LoggerFactory.getLogger(TalkCommand.class);
     private IChannel lastChan;
     private DiscordException notFoundChan;
+    private DiscordException noSendTextPermission;
 
     public TalkCommand(){
         super("talk", "(\\s+\\d+)?(\\s+.+)");
@@ -30,6 +31,7 @@ public class TalkCommand extends AbstractCommand{
 
         this.lastChan = null;
         notFoundChan = new NotFoundDiscordException("exception.notfound.chan", "exception.notfound.chan_found");
+        noSendTextPermission = new BasicDiscordException("exception.basic.no_send_text_permission");
     }
 
     @Override
@@ -53,7 +55,7 @@ public class TalkCommand extends AbstractCommand{
             if (lastChan.getModifiedPermissions(ClientConfig.DISCORD().getOurUser()).contains(Permissions.SEND_MESSAGES))
                 Message.sendText(lastChan, text);
             else
-                new NoSendTextPermissionDiscordException().throwException(message, this, lg);
+                noSendTextPermission.throwException(message, this, lg);
 
             return true;
         }

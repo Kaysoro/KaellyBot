@@ -21,11 +21,15 @@ public class RightCommand extends AbstractCommand{
 
     private final static Logger LOG = LoggerFactory.getLogger(RightCommand.class);
     private DiscordException autoChangeRights;
+    private DiscordException noRightsForRole;
+    private DiscordException noEnoughRights;
 
     public RightCommand(){
         super("right", "(\\s+<@[!|&]?\\d+>)?(\\s+\\d)?");
         setUsableInMP(false);
         autoChangeRights = new BasicDiscordException("exception.basic.autochange_rights");
+        noRightsForRole = new BasicDiscordException("exception.basic.no_rights_for_role");
+        noEnoughRights = new BasicDiscordException("exception.basic.no_enough_rights");
     }
 
     @Override
@@ -78,7 +82,7 @@ public class RightCommand extends AbstractCommand{
                         }
 
                         if (author.getRights() < target.getRights()) {
-                            new NotEnoughRightsDiscordException().throwException(message, this, lg);
+                            noEnoughRights.throwException(message, this, lg);
                             return false;
                         }
 
@@ -89,7 +93,7 @@ public class RightCommand extends AbstractCommand{
                     }
                 } // Not an admin or a moderator
                 else {
-                    new NotEnoughRightsDiscordException().throwException(message, this, lg);
+                    noEnoughRights.throwException(message, this, lg);
                     return false;
                 }
             } else { // Level is not precised : consulting
@@ -106,7 +110,7 @@ public class RightCommand extends AbstractCommand{
                                 .replace("{right}", String.valueOf(target.getRights())));
                     }
                     else
-                        new NoRightsForRolesDiscordException().throwException(message, this, lg);
+                        noRightsForRole.throwException(message, this, lg);
                 }
                 else
                     Message.sendText(message.getChannel(), Translator.getLabel(lg, "right.request.5")

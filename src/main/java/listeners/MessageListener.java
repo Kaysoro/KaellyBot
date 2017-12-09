@@ -2,7 +2,8 @@ package listeners;
 
 import commands.*;
 import enums.Language;
-import exceptions.UnknownErrorDiscordException;
+import exceptions.BasicDiscordException;
+import exceptions.DiscordException;
 import util.ClientConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,6 +17,7 @@ import util.Translator;
 public class MessageListener {
 
     private final static Logger LOG = LoggerFactory.getLogger(MessageListener.class);
+    private DiscordException unknown = new BasicDiscordException("exception.basic.unknown_error");
 
     public MessageListener(){
         super();
@@ -31,7 +33,7 @@ public class MessageListener {
                     try {
                         command.request(event.getMessage());
                     } catch (Exception e){
-                        new UnknownErrorDiscordException().throwException(event.getMessage(), command, lg);
+                        unknown.throwException(event.getMessage(), command, lg);
                         LOG.error("MessageListener.onReady", e);
                     }
         }

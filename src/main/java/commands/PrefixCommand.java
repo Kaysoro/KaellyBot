@@ -4,9 +4,10 @@ import data.Constants;
 import data.Guild;
 import data.User;
 import enums.Language;
+import exceptions.AdvancedDiscordException;
+import exceptions.BasicDiscordException;
+import exceptions.DiscordException;
 import util.Message;
-import exceptions.NotEnoughRightsDiscordException;
-import exceptions.PrefixeOutOfBoundsDiscordException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sx.blah.discord.handle.obj.IMessage;
@@ -20,10 +21,15 @@ import java.util.regex.Matcher;
 public class PrefixCommand extends AbstractCommand{
 
     private final static Logger LOG = LoggerFactory.getLogger(PrefixCommand.class);
+    private DiscordException noEnoughRights;
+    private DiscordException prefixeOutOfBounds;
 
     public PrefixCommand(){
         super("prefix","\\s+(.+)");
         setUsableInMP(false);
+        noEnoughRights = new BasicDiscordException("exception.basic.no_enough_rights");
+        prefixeOutOfBounds = new AdvancedDiscordException("exception.advanced.prefix_out_of_bound",
+                new String[]{String.valueOf(Constants.prefixeLimit)}, new Boolean[]{false});
     }
 
     @Override
@@ -48,10 +54,10 @@ public class PrefixCommand extends AbstractCommand{
                     return true;
                 }
                 else
-                    new PrefixeOutOfBoundsDiscordException().throwException(message, this, lg);
+                    prefixeOutOfBounds.throwException(message, this, lg);
             }
             else
-                new NotEnoughRightsDiscordException().throwException(message, this, lg);
+                noEnoughRights.throwException(message, this, lg);
         }
         return false;
     }

@@ -17,16 +17,28 @@ public class AdvancedDiscordException implements DiscordException {
 
     private String messageKey;
     private String[] parameters;
+    private Boolean[] translatable;
 
-    public AdvancedDiscordException(String message, String[] parameters){
+    public AdvancedDiscordException(String message, String[] parameters, Boolean[] translatable){
         this.messageKey = message;
         this.parameters = parameters;
+        this.translatable = translatable;
+        if (parameters == null)
+            parameters = new String[0];
+        if (translatable == null)
+            translatable = new Boolean[0];
+        if (parameters.length != translatable.length)
+            LOG.warn("parameters & translatable have not the same length.");
     }
+
     @Override
     public void throwException(IMessage message, Command command, Language lg, Object... arguments) {
         String content = Translator.getLabel(lg, messageKey);
-        for(String parameter : parameters)
-            content = content.replace("{" + parameter + "}", Translator.getLabel(lg, parameter));
+        for(int i = 0; i < parameters.length; i++)
+            if (translatable.length > i && translatable[i])
+                content = content.replace("{" + i + "}", Translator.getLabel(lg, parameters[i]));
+            else
+                content = content.replace("{" + i + "}", parameters[i]);
         Message.sendText(message.getChannel(), content);
     }
 }

@@ -24,7 +24,8 @@ public abstract class ExceptionManager {
     private static Logger LOG = LoggerFactory.getLogger(ExceptionManager.class);
 
     private static DiscordException gameWebsite503 = new AdvancedDiscordException("exception.basic.game_website_503",
-            new String[]{"game.url"});
+            new String[]{"game.url"}, new Boolean[]{true});
+    private static DiscordException unknown = new BasicDiscordException("exception.basic.unknown_error");
 
     public static void manageIOException(Exception e, IMessage message, Command command, Language lg, DiscordException notFound){
         // First we try parsing the exception message to see if it contains the response code
@@ -40,7 +41,7 @@ public abstract class ExceptionManager {
                 ClientConfig.setSentryContext(message.getGuild(),
                         message.getAuthor(), message.getChannel(), message);
                 LOG.error("manageIOException", e);
-                new UnknownErrorDiscordException().throwException(message, command, lg);
+                unknown.throwException(message, command, lg);
             }
         } else if (e instanceof UnknownHostException || e instanceof SocketTimeoutException) {
             gameWebsite503.throwException(message, command, lg);
@@ -53,7 +54,7 @@ public abstract class ExceptionManager {
             ClientConfig.setSentryContext(message.getGuild(),
                     message.getAuthor(), message.getChannel(), message);
             LOG.error("manageIOException", e);
-            new UnknownErrorDiscordException().throwException(message, command, lg);
+            unknown.throwException(message, command, lg);
         }
     }
 
@@ -83,7 +84,7 @@ public abstract class ExceptionManager {
         ClientConfig.setSentryContext(message.getGuild(),
                 message.getAuthor(), message.getChannel(), message);
         LOG.error("manageException", e);
-        new UnknownErrorDiscordException().throwException(message, command, lg);
+        unknown.throwException(message, command, lg);
     }
 
     public static void manageSilentlyException(Exception e){

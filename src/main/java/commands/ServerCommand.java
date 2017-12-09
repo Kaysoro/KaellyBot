@@ -4,11 +4,11 @@ import data.Guild;
 import data.ServerDofus;
 import data.User;
 import enums.Language;
+import exceptions.BasicDiscordException;
 import exceptions.DiscordException;
 import exceptions.NotFoundDiscordException;
 import exceptions.TooMuchDiscordException;
 import util.Message;
-import exceptions.NotEnoughRightsDiscordException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sx.blah.discord.handle.obj.IMessage;
@@ -26,12 +26,14 @@ public class ServerCommand extends AbstractCommand{
     private final static Logger LOG = LoggerFactory.getLogger(ServerCommand.class);
     private DiscordException tooMuchServers;
     private DiscordException notFoundServer;
+    private DiscordException noEnoughRights;
 
     public ServerCommand(){
         super("server","(\\s+.+)?");
         setUsableInMP(false);
         tooMuchServers = new TooMuchDiscordException("exception.toomuch.servers", "exception.toomuch.servers_found");
         notFoundServer = new NotFoundDiscordException("exception.notfound.server", "exception.notfound.server_found");
+        noEnoughRights = new BasicDiscordException("exception.basic.no_enough_rights");
     }
 
     @Override
@@ -72,7 +74,7 @@ public class ServerCommand extends AbstractCommand{
                     }
                 }
                 else
-                    new NotEnoughRightsDiscordException().throwException(message, this, lg);
+                    noEnoughRights.throwException(message, this, lg);
             else {
                 if (guild.getServerDofus() != null)
                     Message.sendText(message.getChannel(), guild.getName() + " "

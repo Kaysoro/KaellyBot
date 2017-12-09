@@ -25,11 +25,13 @@ public class AlmanaxCommand extends AbstractCommand{
     private final static Logger LOG = LoggerFactory.getLogger(AlmanaxCommand.class);
     private DiscordException notFound;
     private DiscordException incorrectDateFormat;
+    private DiscordException noEnoughRights;
 
     public AlmanaxCommand(){
         super("almanax", "(\\s+\\d{2}/\\d{2}/\\d{4}|\\s+\\+\\d|\\s+true|\\s+false|\\s+0|\\s+1|\\s+on|\\s+off)?");
         notFound = new BasicDiscordException("exception.basic.almanax");
         incorrectDateFormat = new BasicDiscordException("exception.basic.incorrect_date_format");
+        noEnoughRights = new BasicDiscordException("exception.basic.no_enough_rights");
     }
 
     @Override
@@ -59,9 +61,9 @@ public class AlmanaxCommand extends AbstractCommand{
                                 } else
                                     Message.sendText(message.getChannel(), Translator.getLabel(lg, "almanax.request.4"));
                         } else
-                            new NotEnoughRightsDiscordException().throwException(message, this, lg);
+                            noEnoughRights.throwException(message, this, lg);
                     } else
-                        new NotUsableInMPDiscordException().throwException(message, this, lg);
+                        notUsableInMp.throwException(message, this, lg);
                 }
 
                 else if (m.group(1) != null && m.group(1).matches("\\s+\\+\\d")) {

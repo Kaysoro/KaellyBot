@@ -1,13 +1,10 @@
 package commands;
 
 import enums.Language;
+import exceptions.*;
 import finders.RSSFinder;
 import data.User;
 import util.Message;
-import exceptions.BadUseCommandDiscordException;
-import exceptions.NotEnoughRightsDiscordException;
-import exceptions.RSSFoundDiscordException;
-import exceptions.RSSNotFoundDiscordException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sx.blah.discord.handle.obj.IMessage;
@@ -22,9 +19,16 @@ public class RSSCommand extends AbstractCommand{
 
     private final static Logger LOG = LoggerFactory.getLogger(RSSCommand.class);
 
+    private DiscordException noEnoughRights;
+    private DiscordException rssFound;
+    private DiscordException rssNotFound;
+
     public RSSCommand(){
         super("rss","(\\s+true|\\s+false|\\s+0|\\s+1|\\s+on|\\s+off)");
         setUsableInMP(false);
+        noEnoughRights = new BasicDiscordException("exception.basic.no_enough_rights");
+        rssFound = new BasicDiscordException("exception.basic.rss_found");
+        rssNotFound = new BasicDiscordException("exception.basic.rss_not_found");
     }
 
     @Override
@@ -44,7 +48,7 @@ public class RSSCommand extends AbstractCommand{
                         Message.sendText(message.getChannel(), Translator.getLabel(lg, "rss.request.1"));
                     }
                     else
-                        new RSSFoundDiscordException().throwException(message, this, lg);
+                        rssFound.throwException(message, this, lg);
                 }
                 else if (value.matches("\\s+false") || value.matches("\\s+1") || value.matches("\\s+off"))
                     if (RSSFinder.getRSSFinders().containsKey(message.getChannel().getStringID())){
@@ -52,11 +56,11 @@ public class RSSCommand extends AbstractCommand{
                         Message.sendText(message.getChannel(), Translator.getLabel(lg, "rss.request.2"));
                     }
                     else
-                        new RSSNotFoundDiscordException().throwException(message, this, lg);
+                        rssNotFound.throwException(message, this, lg);
                 else
                     new BadUseCommandDiscordException().throwException(message, this, lg);
             } else
-                new NotEnoughRightsDiscordException().throwException(message, this, lg);
+                noEnoughRights.throwException(message, this, lg);
         }
         return false;
     }

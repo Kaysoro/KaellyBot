@@ -6,7 +6,6 @@ import enums.Language;
 import exceptions.BadUseCommandDiscordException;
 import exceptions.BasicDiscordException;
 import exceptions.DiscordException;
-import exceptions.NotUsableInMPDiscordException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sx.blah.discord.handle.obj.IMessage;
@@ -22,7 +21,9 @@ public abstract class AbstractCommand implements Command {
 
     private final static Logger LOG = LoggerFactory.getLogger(AbstractCommand.class);
 
-    private DiscordException commandForbidden;
+    protected DiscordException commandForbidden;
+    protected DiscordException notUsableInMp;
+
     protected String name;
     protected String pattern;
     protected boolean isPublic;
@@ -37,6 +38,7 @@ public abstract class AbstractCommand implements Command {
         this.isUsableInMP = true;
         this.isAdmin = false;
         commandForbidden = new BasicDiscordException("exception.basic.command_forbidden");
+        notUsableInMp = new BasicDiscordException("exception.basic.not_usable_in_mp");
     }
 
     @Override
@@ -53,7 +55,7 @@ public abstract class AbstractCommand implements Command {
         if(isFound) {
             // Mais n'est pas utilisable en MP
             if (! isUsableInMP() && message.getChannel().isPrivate()) {
-                new NotUsableInMPDiscordException().throwException(message, this, lg);
+                notUsableInMp.throwException(message, this, lg);
                 return false;
             }
             // Mais est désactivée par la guilde

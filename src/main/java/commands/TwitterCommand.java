@@ -18,10 +18,16 @@ import java.util.regex.Matcher;
 public class TwitterCommand extends AbstractCommand{
 
     private final static Logger LOG = LoggerFactory.getLogger(TwitterCommand.class);
+    private DiscordException noEnoughRights;
+    private DiscordException twitterFound;
+    private DiscordException twitterNotFound;
 
     public TwitterCommand(){
         super("twitter", "(\\s+true|\\s+false|\\s+0|\\s+1|\\s+on|\\s+off)");
         setUsableInMP(false);
+        noEnoughRights = new BasicDiscordException("exception.basic.no_enough_rights");
+        twitterFound = new BasicDiscordException("exception.basic.tweet_found");
+        twitterNotFound = new BasicDiscordException("exception.basic.tweet_not_found");
     }
 
     @Override
@@ -40,7 +46,7 @@ public class TwitterCommand extends AbstractCommand{
                         Message.sendText(message.getChannel(), Translator.getLabel(lg, "twitter.request.1"));
                     }
                     else
-                        new TwitterFoundDiscordException().throwException(message, this, lg);
+                        twitterFound.throwException(message, this, lg);
                 }
                 else if (value.matches("\\s+false") || value.matches("\\s+1") || value.matches("\\s+off")){
                     if (TwitterFinder.getTwitterChannels().containsKey(message.getChannel().getLongID())) {
@@ -48,13 +54,13 @@ public class TwitterCommand extends AbstractCommand{
                         Message.sendText(message.getChannel(), Translator.getLabel(lg, "twitter.request.2"));
                     }
                     else
-                        new TwitterNotFoundDiscordException().throwException(message, this, lg);
+                        twitterNotFound.throwException(message, this, lg);
                 }
                 else
                     new BadUseCommandDiscordException().throwException(message, this, lg);
             }
             else
-                new NotEnoughRightsDiscordException().throwException(message, this, lg);
+                noEnoughRights.throwException(message, this, lg);
         }
         return false;
     }
