@@ -1,6 +1,6 @@
 package exceptions;
 
-import commands.Command;
+import commands.model.Command;
 import enums.Language;
 import util.ClientConfig;
 import util.Translator;
@@ -17,18 +17,18 @@ import sx.blah.discord.util.MissingPermissionsException;
 public class MissingPermissionDiscordException implements DiscordException {
 
     private final static Logger LOG = LoggerFactory.getLogger(MissingPermissionDiscordException.class);
+    private final static String PERMISSION_PREFIX = "permission.";
 
     @Override
     public void throwException(IMessage message, Command command, Language lg, Object... arguments) {
-        StringBuilder st = new StringBuilder("Je ne peux pas écrire dans le salon *")
-                .append(message.getChannel().getName()).append("* puisqu'il me manque une ou plusieurs permissions.");
+        StringBuilder st = new StringBuilder(Translator.getLabel(lg, "exception.missing_permission")
+                .replace("{channel.name}", message.getChannel().getName()));
         if (arguments.length > 0){
             st.delete(st.length() - 1, st.length()).append(" : ");
             MissingPermissionsException e = (MissingPermissionsException) arguments[0];
 
-            for(Permissions p : e.getMissingPermissions()){
-                st.append(Translator.getFrenchNameFor(p).toLowerCase()).append(", ");
-            }
+            for(Permissions p : e.getMissingPermissions())
+                st.append(Translator.getLabel(lg, PERMISSION_PREFIX + p.name().toLowerCase())).append(", ");
             st.delete(st.length() - 2, st.length()).append(".");
         }
 

@@ -1,6 +1,6 @@
 package exceptions;
 
-import commands.Command;
+import commands.model.Command;
 import enums.Language;
 import util.ClientConfig;
 import org.jsoup.HttpStatusException;

@@ -1,6 +1,7 @@
 package listeners;
 
 import commands.*;
+import commands.model.Command;
 import enums.Language;
 import exceptions.BasicDiscordException;
 import exceptions.DiscordException;

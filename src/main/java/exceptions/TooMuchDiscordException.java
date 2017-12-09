@@ -1,6 +1,6 @@
 package exceptions;
 
-import commands.Command;
+import commands.model.Command;
 import enums.Language;
 import util.Message;
 import org.slf4j.Logger;

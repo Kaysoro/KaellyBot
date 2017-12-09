@@ -1,6 +1,6 @@
 package data;
 
-import commands.Command;
+import commands.model.Command;
 import commands.CommandManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

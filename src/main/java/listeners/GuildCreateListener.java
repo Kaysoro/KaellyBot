@@ -1,6 +1,11 @@
 package listeners;
 
-import commands.*;
+import commands.classic.AlmanaxCommand;
+import commands.classic.HelpCommand;
+import commands.config.LanguageCommand;
+import commands.config.RSSCommand;
+import commands.config.ServerCommand;
+import commands.config.TwitterCommand;
 import enums.Language;
 import util.ClientConfig;
 import data.Constants;
@@ -49,7 +54,7 @@ public class GuildCreateListener {
                         .replaceAll("\\{name\\}", Constants.name)
                         .replaceAll("\\{game\\}", Constants.game)
                         .replaceAll("\\{prefix\\}", Constants.prefixCommand)
-                        .replaceAll("\\{help\\}", new HelpCommand().getName())
+                        .replaceAll("\\{help\\}", HelpCommand.NAME)
                         .replaceAll("\\{server\\}", new ServerCommand().getName())
                         .replaceAll("\\{lang\\}", new LanguageCommand().getName())
                         .replaceAll("\\{twitter\\}", new TwitterCommand().getName())
@@ -66,8 +71,8 @@ public class GuildCreateListener {
                     Message.sendText(event.getGuild().getOwner().getOrCreatePMChannel(), customMessage);
 
                 Message.sendText(ClientConfig.DISCORD().getChannelByID(Constants.chanReportID),
-                        "[NEW] **" + guild.getName() + "**, +" + event.getGuild().getUsers().size()
-                                +  " utilisateurs");
+                        "[NEW] **" + guild.getName() + "** (" + guild.getLanguage().getAbrev() + "), +"
+                                + event.getGuild().getUsers().size() +  " utilisateurs");
 
             }
         }

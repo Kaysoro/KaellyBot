@@ -1,5 +1,13 @@
 package commands;
 
+import commands.admin.AdminCommand;
+import commands.admin.AnnounceCommand;
+import commands.admin.AvailableCommand;
+import commands.admin.TalkCommand;
+import commands.classic.*;
+import commands.config.*;
+import commands.model.Command;
+
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;

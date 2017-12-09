@@ -32,13 +32,9 @@ public class ClientConfig {
     private ClientConfig(){
         super();
         Properties prop = new Properties();
+        String config = System.getProperty("user.dir") + File.separator + FILENAME;
 
-        try {
-            String config = System.getProperty("user.dir") + File.separator + FILENAME;
-            config = URLDecoder.decode(config, "UTF-8");
-
-            FileInputStream file = new FileInputStream(config);
-
+        try (FileInputStream file = new FileInputStream(URLDecoder.decode(config, "UTF-8"))){
             prop.load(file);
             file.close();
 
@@ -82,7 +78,7 @@ public class ClientConfig {
             }
     }
 
-    public static ClientConfig getInstance(){
+    public static synchronized ClientConfig getInstance(){
         if (instance == null)
             instance = new ClientConfig();
         return instance;

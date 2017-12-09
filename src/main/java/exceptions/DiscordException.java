@@ -1,6 +1,6 @@
 package exceptions;
 
-import commands.Command;
+import commands.model.Command;
 import enums.Language;
 import sx.blah.discord.handle.obj.IMessage;
 
