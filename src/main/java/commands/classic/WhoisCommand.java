@@ -116,7 +116,8 @@ public class WhoisCommand extends AbstractCommand {
                                 .getResponse(Translator.getLabel(lg, "game.url") + result.get(0));
 
                         if (!response.url().getPath().endsWith(Translator.getLabel(lg, "whois.request"))) {
-                            Character characPage = Character.getCharacter(Translator.getLabel(lg, "game.url") + result.get(0));
+                            Character characPage = Character.getCharacter(Translator.getLabel(lg, "game.url")
+                                    + result.get(0), lg);
                             Message.sendEmbed(message.getChannel(), characPage.getEmbedObject(lg));
                         } else
                             characterTooOld.throwException(message, this, lg);

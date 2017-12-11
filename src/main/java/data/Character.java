@@ -84,14 +84,15 @@ public class Character implements Embedded {
         return getEmbedObject(lg);
     }
 
-    public static Character getCharacter(String url) throws IOException {
+    public static Character getCharacter(String url, Language lg) throws IOException {
         Document doc = JSoupManager.getDocument(url);
         String bigSkinURL = doc.getElementsByClass("ak-entitylook").first().attr("style");
         bigSkinURL = bigSkinURL.substring(bigSkinURL.indexOf("https://"), bigSkinURL.indexOf(")"));
         String littleSkinURL = doc.getElementsByClass("ak-entitylook").last().toString();
         littleSkinURL = littleSkinURL.substring(littleSkinURL.indexOf("https://"), littleSkinURL.indexOf(")"));
         String pseudo = doc.getElementsByClass("ak-return-link").first().text();
-        String level = doc.getElementsByClass("ak-directories-level").first().text();
+        String level = doc.getElementsByClass("ak-directories-level").first().text()
+                .replace(Translator.getLabel(lg, "whois.extract.level"), "").trim();
         String classe = doc.getElementsByClass("ak-directories-breed").first().text();
         String server = doc.getElementsByClass("ak-directories-server-name").first().text();
         String score = doc.getElementsByClass("ak-score-text").first().text();
