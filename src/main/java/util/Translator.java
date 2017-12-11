@@ -128,7 +128,13 @@ public class Translator {
         }
 
         String value = labels.get(lang).getProperty(property);
-        if (value == null || value.trim().isEmpty()) return property;
+        if (value == null || value.trim().isEmpty())
+            if (Constants.defaultLanguage != lang) {
+                LoggerFactory.getLogger(Translator.class).warn("Missing label in " + lang.getAbrev() + " : " + property);
+                return getLabel(Constants.defaultLanguage, property);
+            }
+            else
+                return property;
         return value;
     }
 }
