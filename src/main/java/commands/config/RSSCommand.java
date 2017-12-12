@@ -28,8 +28,8 @@ public class RSSCommand extends AbstractCommand {
         super("rss","(\\s+true|\\s+false|\\s+0|\\s+1|\\s+on|\\s+off)");
         setUsableInMP(false);
         noEnoughRights = new BasicDiscordException("exception.basic.no_enough_rights");
-        rssFound = new BasicDiscordException("exception.basic.rss_found");
-        rssNotFound = new BasicDiscordException("exception.basic.rss_not_found");
+        rssFound = new AdvancedDiscordException("exception.advanced.rss_found", new String[]{"game.url"}, new Boolean[]{true});
+        rssNotFound = new AdvancedDiscordException("exception.advanced.rss_not_found", new String[]{"game.url"}, new Boolean[]{true});
     }
 
     @Override
