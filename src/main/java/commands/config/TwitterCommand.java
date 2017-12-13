@@ -44,7 +44,8 @@ public class TwitterCommand extends AbstractCommand {
                 if (value.matches("\\s+true") || value.matches("\\s+0") || value.matches("\\s+on")){
                     if (! TwitterFinder.getTwitterChannels().containsKey(message.getChannel().getLongID())) {
                         new TwitterFinder(message.getGuild().getLongID(), message.getChannel().getLongID()).addToDatabase();
-                        Message.sendText(message.getChannel(), Translator.getLabel(lg, "twitter.request.1"));
+                        Message.sendText(message.getChannel(), Translator.getLabel(lg, "twitter.request.1")
+                                .replace("{twitter.name}", Translator.getLabel(lg, "twitter.name")));
                     }
                     else
                         twitterFound.throwException(message, this, lg);
@@ -52,7 +53,8 @@ public class TwitterCommand extends AbstractCommand {
                 else if (value.matches("\\s+false") || value.matches("\\s+1") || value.matches("\\s+off")){
                     if (TwitterFinder.getTwitterChannels().containsKey(message.getChannel().getLongID())) {
                         TwitterFinder.getTwitterChannels().get(message.getChannel().getLongID()).removeToDatabase();
-                        Message.sendText(message.getChannel(), Translator.getLabel(lg, "twitter.request.2"));
+                        Message.sendText(message.getChannel(), Translator.getLabel(lg, "twitter.request.2")
+                                .replace("{twitter.name}", Translator.getLabel(lg, "twitter.name")));
                     }
                     else
                         twitterNotFound.throwException(message, this, lg);
@@ -68,13 +70,15 @@ public class TwitterCommand extends AbstractCommand {
 
     @Override
     public String help(Language lg, String prefixe) {
-        return "**" + prefixe + name + "** " + Translator.getLabel(lg, "twitter.help");
+        return "**" + prefixe + name + "** " + Translator.getLabel(lg, "twitter.help")
+                .replace("{twitter.name}", Translator.getLabel(lg, "twitter.name"));
     }
 
     @Override
     public String helpDetailed(Language lg, String prefixe) {
         return help(lg, prefixe)
                 + "\n" + prefixe + "`"  + name + " true` : " + Translator.getLabel(lg, "twitter.help.detailed.1")
+                    .replace("{twitter.name}", Translator.getLabel(lg, "twitter.name"))
                 + "\n" + prefixe + "`"  + name + " false` : " + Translator.getLabel(lg, "twitter.help.detailed.2") + "\n";
     }
 }

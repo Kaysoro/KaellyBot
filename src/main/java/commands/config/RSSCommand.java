@@ -1,6 +1,7 @@
 package commands.config;
 
 import commands.model.AbstractCommand;
+import data.Constants;
 import enums.Language;
 import exceptions.*;
 import finders.RSSFinder;
@@ -46,7 +47,8 @@ public class RSSCommand extends AbstractCommand {
 
                     if (!RSSFinder.getRSSFinders().containsKey(message.getChannel().getStringID())) {
                         new RSSFinder(message.getGuild().getStringID(), message.getChannel().getStringID()).addToDatabase();
-                        Message.sendText(message.getChannel(), Translator.getLabel(lg, "rss.request.1"));
+                        Message.sendText(message.getChannel(), Translator.getLabel(lg, "rss.request.1")
+                                .replace("{game.url}", Translator.getLabel(lg, "game.url")));
                     }
                     else
                         rssFound.throwException(message, this, lg);
@@ -54,7 +56,8 @@ public class RSSCommand extends AbstractCommand {
                 else if (value.matches("\\s+false") || value.matches("\\s+1") || value.matches("\\s+off"))
                     if (RSSFinder.getRSSFinders().containsKey(message.getChannel().getStringID())){
                         RSSFinder.getRSSFinders().get(message.getChannel().getStringID()).removeToDatabase();
-                        Message.sendText(message.getChannel(), Translator.getLabel(lg, "rss.request.2"));
+                        Message.sendText(message.getChannel(), Translator.getLabel(lg, "rss.request.2")
+                                .replace("{game.url}", Translator.getLabel(lg, "game.url")));
                     }
                     else
                         rssNotFound.throwException(message, this, lg);
@@ -68,13 +71,15 @@ public class RSSCommand extends AbstractCommand {
 
     @Override
     public String help(Language lg, String prefixe) {
-        return "**" + prefixe + name + "** " + Translator.getLabel(lg, "rss.help");
+        return "**" + prefixe + name + "** " + Translator.getLabel(lg, "rss.help")
+                .replace("{game}", Constants.game);
     }
 
     @Override
     public String helpDetailed(Language lg, String prefixe) {
         return help(lg, prefixe)
                 + "\n" + prefixe + "`"  + name + " true` : " + Translator.getLabel(lg, "rss.help.detailed.1")
+                .replace("{game.url}", Translator.getLabel(lg, "game.url"))
                 + "\n" + prefixe + "`"  + name + " false` : " + Translator.getLabel(lg, "rss.help.detailed.2") + "\n";
     }
 }

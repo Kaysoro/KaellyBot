@@ -1,6 +1,7 @@
 package commands.config;
 
 import commands.model.AbstractCommand;
+import data.Constants;
 import data.Guild;
 import data.ServerDofus;
 import data.User;
@@ -61,6 +62,7 @@ public class ServerCommand extends AbstractCommand {
                             guild.setServer(result.get(0));
                             guild.mergePortals(result.get(0).getSweetPortals());
                             Message.sendText(message.getChannel(), Translator.getLabel(lg, "server.request.1")
+                                    .replace("{game}", Constants.game)
                                     + " " + guild.getName() + " " + Translator.getLabel(lg, "server.request.2")
                                     + " " + result.get(0).getName() + ".");
                         } else if (result.isEmpty())
@@ -71,7 +73,8 @@ public class ServerCommand extends AbstractCommand {
                     else {
                         guild.setServer(null);
                         Message.sendText(message.getChannel(), guild.getName()
-                                + " " + Translator.getLabel(lg, "server.request.3"));
+                                + " " + Translator.getLabel(lg, "server.request.3")
+                                .replace("{game}", Constants.game));
                     }
                 }
                 else
@@ -83,7 +86,8 @@ public class ServerCommand extends AbstractCommand {
                             + guild.getServerDofus().getName() + ".");
                 else
                     Message.sendText(message.getChannel(), guild.getName()
-                            + " " + Translator.getLabel(lg, "server.request.5"));
+                            + " " + Translator.getLabel(lg, "server.request.5")
+                            .replace("{game}", Constants.game));
             }
         }
         return false;
@@ -91,14 +95,18 @@ public class ServerCommand extends AbstractCommand {
 
     @Override
     public String help(Language lg, String prefixe) {
-        return "**" + prefixe + name + "** " + Translator.getLabel(lg, "server.help");
+        return "**" + prefixe + name + "** " + Translator.getLabel(lg, "server.help")
+                .replace("{game}", Constants.game);
     }
 
     @Override
     public String helpDetailed(Language lg, String prefixe) {
         return help(lg, prefixe)
                 + "\n" + prefixe + "`"  + name + "` : " + Translator.getLabel(lg, "server.help.detailed.1")
+                    .replace("{game}", Constants.game)
                 + "\n" + prefixe + "`"  + name + " `*`server`* : " + Translator.getLabel(lg, "server.help.detailed.2")
-                + "\n" + prefixe + "`"  + name + " `*`-reset`* : " + Translator.getLabel(lg, "server.help.detailed.3") + "\n";
+                    .replace("{game}", Constants.game)
+                + "\n" + prefixe + "`"  + name + " `*`-reset`* : " + Translator.getLabel(lg, "server.help.detailed.3")
+                    .replace("{game}", Constants.game) + "\n";
     }
 }
