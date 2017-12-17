@@ -36,7 +36,6 @@ public class ClientConfig {
 
         try (FileInputStream file = new FileInputStream(URLDecoder.decode(config, "UTF-8"))){
             prop.load(file);
-            file.close();
 
             try {
                 DISCORD = new ClientBuilder()
