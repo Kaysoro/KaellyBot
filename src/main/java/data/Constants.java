@@ -18,6 +18,11 @@ public class Constants {
     public final static String version = "1.5.0";
 
     /**
+     * Changelog
+     */
+    public final static String changelog = "https://i.imgur.com/9RzHtLP.jpg";
+
+    /**
      * Author id
      */
     public final static long authorId = 162842827183751169L;

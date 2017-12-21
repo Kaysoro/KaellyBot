@@ -42,7 +42,8 @@ public class AboutCommand extends AbstractCommand {
                     .withColor(new Random().nextInt(16777216))
                     .withThumbnail(ClientConfig.DISCORD().getApplicationIconURL())
                     .withAuthorName(author.getName())
-                    .withAuthorIcon(author.getAvatarURL());
+                    .withAuthorIcon(author.getAvatarURL())
+                    .withImage(Constants.changelog);;
 
             builder.appendField(Translator.getLabel(lg, "about.invite.title"),
                     Translator.getLabel(lg, "about.invite.desc")
@@ -62,12 +63,6 @@ public class AboutCommand extends AbstractCommand {
             .appendField(Translator.getLabel(lg, "about.free.title"),
                     Translator.getLabel(lg, "about.free.desc")
                         .replace("{paypal}", Constants.paypal), true);
-
-            try {
-                IChannel news = ClientConfig.DISCORD().getChannelByID(Constants.newsChan);
-                builder.appendField(Translator.getLabel(lg, "about.changelog.title"),
-                        news.getFullMessageHistory().getLatestMessage().getContent(), true);
-            } catch(Exception e) {LOG.error("AboutCommand.request", e);}
 
             StringBuilder st = new StringBuilder();
             for(Donator donator : Donator.values())

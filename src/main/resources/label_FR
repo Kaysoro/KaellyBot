@@ -391,7 +391,6 @@ about.opensource.title=<:github:372093338628784148> Open source :
 about.opensource.desc=L'intégralité du code source est sous licence GPL-3.0 et accessible sur [Github]({git}).
 about.free.title=:money_with_wings: Gratuit :
 about.free.desc=L'ensemble des fonctionnalités sont gratuites. Il vous est possible de participer financièrement mais n'allez pas vous mettre dans le rouge ! [Paypal]({paypal})
-about.changelog.title=:bookmark_tabs: Changelog :
 about.donators.title=:ok_woman: Donateurs
 about.help=donne des informations sur {name} et un moyen d'obtenir de l'aide.
 admin.help=explique le fonctionnement de chaque commande admin de {name}.
