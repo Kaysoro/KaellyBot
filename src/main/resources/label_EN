@@ -1,9 +1,9 @@
 ToDo : Change welcome message + website link
 welcome.message=Hi and thanks you for the invite ! I'm {name}, a bot dedicated to the {game} game; I have some commands in my hands which can interest you and allow me to show you game's items or character pages or manage jobs' book!\nWant to know more ? Write `{prefix}{help}` to get the entire list ! :blush:\n\n{owner}, as the administrator of {guild}, you hold a set of rights dedicated to set up me. Use the command `{prefix}{lang}` to choose a language or the commands `{prefix}{twitter}`, `{prefix}{almanax}` and `{prefix}{rss}` to gather a maximum of {game} news.\n\nSounds good, no ? I hope we gonna have fun together ! :smile:
 game.url=http://www.dofus-touch.com
-almanax.url=http://www.krosmoz.com/en/almanax?game=dofustouch
+almanax.url=http://www.krosmoz.com/en/almanax?game=dofustouch&
 feed.url=/en/rss/news.xml
-twitter.id=83587596
+twitter.id=3947817100
 twitter.name=@DOFUSTouch_EN
 character.url=/en/mmorpg/community/directories/character-pages
 weapon.url=/en/mmorpg/encyclopedia/weapons
