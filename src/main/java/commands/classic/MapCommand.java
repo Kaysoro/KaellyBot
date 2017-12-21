@@ -66,7 +66,7 @@ public class MapCommand extends AbstractCommand {
             }
 
             String number = maps.get(new Random().nextInt(maps.size()));
-            String url = Constants.turnamentMapImg.replace("{number}", number);
+            String url = Constants.tournamentMapImg.replace("{number}", number);
 
             String[] punchlines = Translator.getLabel(lg, "map.punchline").split(";");
             String punchline = punchlines[new Random().nextInt(punchlines.length)];

@@ -130,20 +130,6 @@ public class CommandPatternTest extends TestCase {
         assertFalse(pattern.matcher(Constants.prefixCommand + "monster").find());
     }
 
-    public void testPortalCommand(){
-        Command cmd = new PortalCommand();
-        Pattern pattern = Pattern.compile("^" + Constants.prefixCommand + cmd.getName() + cmd.getPattern() + "$");
-
-        assertTrue(pattern.matcher(Constants.prefixCommand + "pos").find());
-        assertTrue(pattern.matcher(Constants.prefixCommand + "pos dimension").find());
-        assertTrue(pattern.matcher(Constants.prefixCommand + "pos dimensiôn").find());
-        assertTrue(pattern.matcher(Constants.prefixCommand + "pos dimension [1,-1]").find());
-        assertTrue(pattern.matcher(Constants.prefixCommand + "pos dimension -1 1").find());
-        assertTrue(pattern.matcher(Constants.prefixCommand + "pos dimension 1,-1 1").find());
-        assertTrue(pattern.matcher(Constants.prefixCommand + "pos dimension [1,-1] 1").find());
-        assertTrue(pattern.matcher(Constants.prefixCommand + "pos dimension 1").find());
-    }
-
     public void testRightCommand(){
         Command cmd = new RightCommand();
         Pattern pattern = Pattern.compile("^" + Constants.prefixCommand + cmd.getName() + cmd.getPattern() + "$");
@@ -199,15 +185,6 @@ public class CommandPatternTest extends TestCase {
         assertTrue(pattern.matcher(Constants.prefixCommand + "set tést test").find());
         assertTrue(pattern.matcher(Constants.prefixCommand + "set -more tést test").find());
         assertFalse(pattern.matcher(Constants.prefixCommand + "set").find());
-    }
-
-    public void testServerCommand(){
-        Command cmd = new ServerCommand();
-        Pattern pattern = Pattern.compile("^" + Constants.prefixCommand + cmd.getName() + cmd.getPattern() + "$");
-
-        assertTrue(pattern.matcher(Constants.prefixCommand + "server").find());
-        assertTrue(pattern.matcher(Constants.prefixCommand + "server dofus").find());
-        assertTrue(pattern.matcher(Constants.prefixCommand + "server -reset").find());
     }
 
     public void testSoundCommand(){

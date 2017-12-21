@@ -39,13 +39,11 @@ public class CommandManager {
         addCommand(new LanguageCommand());
         addCommand(new MapCommand());
         addCommand(new MonsterCommand());
-        addCommand(new PortalCommand());
         addCommand(new PrefixCommand());
         addCommand(new RandomCommand());
         addCommand(new ResourceCommand());
         addCommand(new RightCommand());
         addCommand(new RSSCommand());
-        addCommand(new ServerCommand());
         addCommand(new SetCommand());
         addCommand(new SoundCommand());
         addCommand(new TutorialCommand());

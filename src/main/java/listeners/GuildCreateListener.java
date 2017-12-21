@@ -4,7 +4,6 @@ import commands.classic.AlmanaxCommand;
 import commands.classic.HelpCommand;
 import commands.config.LanguageCommand;
 import commands.config.RSSCommand;
-import commands.config.ServerCommand;
 import commands.config.TwitterCommand;
 import enums.Language;
 import util.ClientConfig;
@@ -55,7 +54,6 @@ public class GuildCreateListener {
                         .replaceAll("\\{game\\}", Constants.game)
                         .replaceAll("\\{prefix\\}", Constants.prefixCommand)
                         .replaceAll("\\{help\\}", HelpCommand.NAME)
-                        .replaceAll("\\{server\\}", new ServerCommand().getName())
                         .replaceAll("\\{lang\\}", new LanguageCommand().getName())
                         .replaceAll("\\{twitter\\}", new TwitterCommand().getName())
                         .replaceAll("\\{almanax\\}", new AlmanaxCommand().getName())

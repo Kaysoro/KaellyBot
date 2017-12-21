@@ -4,25 +4,40 @@ import util.Translator;
 
 public enum Job {
 
+    // ToDo : Update this list with Dofus Touch Job
     ALCHIMISTE("job.alchimiste"),
     BIJOUTIER("job.bijoutier"),
+    BOUCHER("job.boucher"),
+    BOULANGER("job.boulanger"),
     BRICOLEUR("job.bricoleur"),
     BUCHERON("job.bucheron"),
     CHASSEUR("job.chasseur"),
     CORDOMAGE("job.cordomage"),
     CORDONNIER("job.cordonnier"),
     COSTUMAGE("job.costumage"),
-    FACONNEUR("job.faconneur"),
-    FORGEMAGE("job.forgemage"),
-    FORGERON("job.forgeron"),
+    FORGEMAGEEPEES("job.forgemageepees"),
+    FORGEMAGEDAGUES("job.forgemagedagues"),
+    FORGEMAGEHACHES("job.forgemagehaches"),
+    FORGEMAGEMARTEAUX("job.forgemagemarteaux"),
+    FORGEMAGEPELLES("job.forgemagepelles"),
+    FORGEUREPEES("job.forgeurepees"),
+    FORGEURBOUCLIERS("job.forgeurboucliers"),
+    FORGEURDAGUES("job.forgeurdagues"),
+    FORGEURHACHES("job.forgeurhaches"),
+    FORGEURMARTEAUX("job.forgeurmarteaux"),
+    FORGEURPELLES("job.forgeurpelles"),
     JOAILLOMAGE("job.joaillomage"),
     MINEUR("job.mineur"),
     PAYSAN("job.paysan"),
     PECHEUR("job.pecheur"),
-    SCULPTEMAGE("job.sculptemage"),
-    SCULPTEUR("job.sculpteur"),
-    TAILLEUR("job.tailleur"),
-    FACOMAGE("job.facomage");
+    POISSONNIER("job.poissonnier"),
+    SCULPTEMAGEARCS("job.sculptemagearcs"),
+    SCULPTEMAGEBAGUETTES("job.sculptemagebaguettes"),
+    SCULPTEMAGEBATONS("job.sculptemagebatons"),
+    SCULPTEURARCS("job.sculpteurarcs"),
+    SCULPTEURBAGUETTES("job.sculpteurbaguettes"),
+    SCULPTEURBATONS("job.sculpteurbatons"),
+    TAILLEUR("job.tailleur");
 
     private String name;
 

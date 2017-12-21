@@ -9,14 +9,18 @@ public class Constants {
 
     /**
      * Application name
-     */
-    public final static String name = "Kaelly";
+     */ // ToDo : Done change bot name for Dofus Touch
+    public final static String name = "KaellyTouch";
 
     /**
      * Application version
-     */
+     */ // ToDo : changer version for 1.0.0 for launch ?
     public final static String version = "1.5.0";
 
+    /**
+     * Changelog
+     */
+    public final static String changelog = "https://i.imgur.com/9RzHtLP.jpg";
     /**
      * Author id
      */
@@ -34,17 +38,17 @@ public class Constants {
 
     /**
      * URL for Kaelly twitter account
-     */
+     */ // Todo : New Twitter account for version Touch ?
     public final static String twitterAccount = "https://twitter.com/KaellyBot";
 
     /**
      * URL for github KaellyBot repository
-     */
+     */ // ToDo : Change link for branch Touch ?
     public final static String git = "https://github.com/Kaysoro/KaellyBot";
 
     /**
      * Official link invite
-     */
+     */ // ToDo : Change this link
     public final static String invite = "https://discordapp.com/oauth2/authorize?&client_id=202916641414184960&scope=bot";
 
     /**
@@ -61,18 +65,18 @@ public class Constants {
      * prefix used for command call.
      * WARN : it is injected into regex expression.
      * If you use special characters as '$', don't forget to prefix it with '\\' like this : "\\$"
-     */
+     */ // ToDo : change default prefix
     public final static String prefixCommand = "!";
 
     public final static Language defaultLanguage = Language.FR;
     /**
      * Game desserved
-     */
-    public final static String game = "Dofus";
+     */ // ToDo : Done change game deserved
+    public final static String game = "Dofus Touch";
 
     /**
      * Official Ankama Game Logo
-     */
+     */ // ToDo : Dofus Touch has different logo ?
     public final static String officialLogo = "https://s.ankama.com/www/static.ankama.com/g/modules/masterpage/block/header/navbar/dofus/logo.png";
 
     /**
@@ -85,12 +89,8 @@ public class Constants {
      */
     public final static String dofusPourLesNoobSearch = "/apps/search";
 
-    /**
-     * Portal URL
-     */
-    public final static String sweetPortals = "http://www.sweet.ovh/portails/";
-
-    public final static String turnamentMapImg = "https://dofus-tournaments.fr/_default/src/img/maps/A{number}.jpg";
+    // ToDo : Check if pertinent for Dofus Touch
+    public final static String tournamentMapImg = "https://dofus-tournaments.fr/_default/src/img/maps/A{number}.jpg";
 
     /**
      * Twitter Icon from Wikipedia
@@ -114,12 +114,12 @@ public class Constants {
 
     /**
      * User or channel dedicated to receive error logs.
-     */
+     */ // ToDo : Change channel report for DT ?
     public final static long chanReportID = 321197720629149698L;
 
     /**
      * Official changelog
-     */
+     */ // ToDo : change for DT
     public final static long newsChan = 330475075381886976L;
 
     /**

@@ -2,7 +2,6 @@ package listeners;
 
 import data.*;
 import finders.AlmanaxCalendar;
-import finders.PortalFinder;
 import finders.RSSFinder;
 import finders.TwitterFinder;
 import org.slf4j.Logger;
@@ -39,7 +38,6 @@ public class ReadyListener {
         ClientConfig.DISCORD().getDispatcher().registerListener(new UserBanListener());
         ClientConfig.DISCORD().getDispatcher().registerListener(new UserJoinListener());
         ClientConfig.DISCORD().getDispatcher().registerListener(new UserLeaveListener());
-
         ClientConfig.DISCORD().getDispatcher().registerListener(new TrackFinishListener());
 
         LOG.info("Check des guildes et des utilisateurs");
@@ -73,9 +71,6 @@ public class ReadyListener {
 
         LOG.info("Ecoute des flux RSS du site Dofus...");
         RSSFinder.start();
-
-        LOG.info("Récupération des positions de portails...");
-        PortalFinder.start();
 
         LOG.info("Lancement du calendrier Almanax...");
         AlmanaxCalendar.start();

@@ -21,7 +21,6 @@ public class Guild {
     private static Map<String, Guild> guilds;
     private String id;
     private String name;
-    private List<Portal> portals;
     private Map<String, CommandForbidden> commands;
     private String prefixe;
     private ServerDofus server;
@@ -38,7 +37,6 @@ public class Guild {
         commands = CommandForbidden.getForbiddenCommands(this);
         this.language = lang;
         this.server = ServerDofus.getServersMap().get(serverDofus);
-        portals = Portal.getPortals(this);
     }
 
     public synchronized void addToDatabase(){
@@ -56,21 +54,12 @@ public class Guild {
                 request.setString(3, prefixe);
                 request.executeUpdate();
 
-                for(String portal : Portal.getPortals().keySet()) {
-                    request = connection.prepareStatement("INSERT INTO Portal_Guild"
-                            + "(name_portal, id_guild) VALUES (?, ?);");
-                    request.setString(1, portal);
-                    request.setString(2, id);
-                    request.executeUpdate();
-                }
-
             } catch (SQLException e) {
                 ClientConfig.setSentryContext(ClientConfig.DISCORD().getGuildByID(Long.parseLong(getId())), null, null, null);
                 LOG.error(e.getMessage());
             }
         }
 
-        portals = Portal.getPortals(this);
 
         if (! User.getUsers().containsKey(id))
             User.getUsers().put(id, new ConcurrentHashMap<>());
@@ -235,26 +224,11 @@ public class Guild {
         return language;
     }
 
-    public List<Portal> getPortals(){
-        return portals;
-    }
-
     public Map<String, CommandForbidden> getForbiddenCommands(){
         return commands;
     }
 
     public ServerDofus getServerDofus() {
         return server;
-    }
-
-    public void mergePortals(List<Portal> newPortals){
-        for(Portal newPortal : newPortals)
-            for(Portal portal : portals)
-                portal.merge(newPortal);
-    }
-
-    public void resetPortals() {
-        for(Portal portal : portals)
-            portal.reset();
     }
 }

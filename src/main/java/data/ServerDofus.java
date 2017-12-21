@@ -15,7 +15,7 @@ import java.util.Map;
 
 /**
  * Created by steve on 20/04/2017.
- */
+ */ // ToDo : Delete because it is not useful for DT
 public class ServerDofus {
 
     private static List<ServerDofus> servers;
@@ -24,14 +24,12 @@ public class ServerDofus {
     private String name;
     private String id;
     private String sweetId;
-    private List<Portal> sweetPortals;
     private long lastSweetRefresh;
 
     public ServerDofus(String name, String id, String sweetId) {
         this.name = name;
         this.id = id;
         this.sweetId = sweetId;
-        sweetPortals = new ArrayList<>();
         lastSweetRefresh = 0;
     }
 
@@ -82,15 +80,6 @@ public class ServerDofus {
 
     public String getSweetId(){
         return sweetId;
-    }
-
-    public List<Portal> getSweetPortals(){
-        return sweetPortals;
-    }
-
-    public void setSweetPortals(List<Portal> sweetPortals) {
-        this.lastSweetRefresh = System.currentTimeMillis();
-        this.sweetPortals = sweetPortals;
     }
 
     public long getLastSweetRefresh(){
