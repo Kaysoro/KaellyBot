@@ -62,14 +62,14 @@ public class CommandCommand extends AbstractCommand {
                     String value = m.group(2);
 
                     if (command instanceof CommandCommand){
-                        Message.sendText(message.getChannel(), Translator.getLabel(lg, "announce.request.1"));
+                        Message.sendText(message.getChannel(), Translator.getLabel(lg, "command.request.1"));
                         return false;
                     }
                     if (value.matches("false") || value.matches("1") || value.matches("off")){
                         if (! guild.getForbiddenCommands().containsKey(command.getName())) {
                             new CommandForbidden(command, guild).addToDatabase();
-                            Message.sendText(message.getChannel(), Translator.getLabel(lg, "announce.request.2") + " *" + commandName
-                                    + "* " + Translator.getLabel(lg, "announce.request.3"));
+                            Message.sendText(message.getChannel(), Translator.getLabel(lg, "command.request.2") + " *" + commandName
+                                    + "* " + Translator.getLabel(lg, "command.request.3"));
                         }
                         else
                             forbiddenCmdFound.throwException(message, this, lg);
@@ -77,8 +77,8 @@ public class CommandCommand extends AbstractCommand {
                     else if (value.matches("true") || value.matches("0") || value.matches("on")){
                         if (guild.getForbiddenCommands().containsKey(command.getName())) {
                             guild.getForbiddenCommands().get(command.getName()).removeToDatabase();
-                            Message.sendText(message.getChannel(), Translator.getLabel(lg, "announce.request.2") + " *" + commandName
-                                    + "* " + Translator.getLabel(lg, "announce.request.4"));
+                            Message.sendText(message.getChannel(), Translator.getLabel(lg, "command.request.2") + " *" + commandName
+                                    + "* " + Translator.getLabel(lg, "command.request.4"));
                         }
                         else
                             forbiddenCmdNotFound.throwException(message, this, lg);
