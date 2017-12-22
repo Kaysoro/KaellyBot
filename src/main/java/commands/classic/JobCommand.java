@@ -166,8 +166,8 @@ public class JobCommand extends AbstractCommand {
     public String helpDetailed(Language lg, String prefixe) {
         return help(lg, prefixe)
                 + "\n" + prefixe + "`"  + name + "` : " + Translator.getLabel(lg, "job.help.detailed.1")
-                + "\n" + prefixe + "`"  + name + " `*`métier`* : " + Translator.getLabel(lg, "job.help.detailed.2")
-                + "\n" + prefixe + "`"  + name + " `*`métier niveau`* : " + Translator.getLabel(lg, "job.help.detailed.3")
-                + "\n" + prefixe + "`"  + name + " -all `*`niveau`* : " + Translator.getLabel(lg, "job.help.detailed.4") + "\n";
+                + "\n" + prefixe + "`"  + name + " `*`job`* : " + Translator.getLabel(lg, "job.help.detailed.2")
+                + "\n" + prefixe + "`"  + name + " `*`job level`* : " + Translator.getLabel(lg, "job.help.detailed.3")
+                + "\n" + prefixe + "`"  + name + " -all `*`level`* : " + Translator.getLabel(lg, "job.help.detailed.4") + "\n";
     }
 }

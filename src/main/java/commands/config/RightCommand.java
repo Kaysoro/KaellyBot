@@ -132,6 +132,6 @@ public class RightCommand extends AbstractCommand {
         return help(lg, prefixe)
                 + "\n" + prefixe + "`"  + name + "` : " + Translator.getLabel(lg, "right.help.detailed.1")
                 + "\n" + prefixe + "`"  + name + " `*`@pseudo`* : " + Translator.getLabel(lg, "right.help.detailed.2")
-                + "\n" + prefixe + "`"  + name + " `*`@pseudo niveau`* : " + Translator.getLabel(lg, "right.help.detailed.3") + "\n";
+                + "\n" + prefixe + "`"  + name + " `*`@pseudo level`* : " + Translator.getLabel(lg, "right.help.detailed.3") + "\n";
     }
 }

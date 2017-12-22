@@ -96,7 +96,7 @@ public class MonsterCommand extends DofusRequestCommand {
     @Override
     public String helpDetailed(Language lg, String prefixe) {
         return help(lg, prefixe)
-                + "\n" + prefixe + "`"  + name + " `*`monstre`* : " + Translator.getLabel(lg, "monster.help.detailed.1")
-                + "\n" + prefixe + "`"  + name + " -more `*`monstre`* : " + Translator.getLabel(lg, "monster.help.detailed.2") + "\n";
+                + "\n" + prefixe + "`"  + name + " `*`monster`* : " + Translator.getLabel(lg, "monster.help.detailed.1")
+                + "\n" + prefixe + "`"  + name + " -more `*`monster`* : " + Translator.getLabel(lg, "monster.help.detailed.2") + "\n";
     }
 }
