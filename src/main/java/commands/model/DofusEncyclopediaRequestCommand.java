@@ -16,8 +16,8 @@ public abstract class DofusEncyclopediaRequestCommand extends DofusRequestComman
         super(name, pattern);
     }
 
-    protected void foo(IMessage message, BestMatcher matcher, String[] names, String normalName, Type type,
-                    DiscordException notFound) throws UnsupportedEncodingException{
+    protected void gatherData(IMessage message, BestMatcher matcher, String[] names, String normalName, Type type,
+                              DiscordException notFound) throws UnsupportedEncodingException{
         Language lg = Translator.getLanguageFrom(message.getChannel());
         String editedName = removeUselessWords(normalName);
 

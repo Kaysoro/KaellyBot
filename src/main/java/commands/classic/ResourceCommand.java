@@ -60,7 +60,7 @@ public class ResourceCommand extends DofusEncyclopediaRequestCommand {
             try {
                 for (TypeResource resource : TypeResource.values()) {
                     String[] names = resource.getNames(lg);
-                    foo(message, matcher, names, normalName, resource, notFoundRsrc);
+                    gatherData(message, matcher, names, normalName, resource, notFoundRsrc);
                 }
 
                 if (matcher.isEmpty())

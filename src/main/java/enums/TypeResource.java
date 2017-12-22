@@ -9,7 +9,7 @@ import static enums.SuperTypeResource.*;
  */
 public enum TypeResource implements Type {
 
-    HAVRE_SAC("", "resource.havre_sac", HAVEN_BAG),
+    //HAVRE_SAC("", "resource.havre_sac", HAVEN_BAG),
 
     HARNACHEMENT("", "resource.harnachement", HARNESS),
 
@@ -54,7 +54,7 @@ public enum TypeResource implements Type {
     PEAU("&type_id[]=59", "resource.peau", RESOURCE),
     PELUCHE("&type_id[]=61", "resource.peluche", RESOURCE),
     PIERRE_BRUTE("&type_id[]=51", "resource.pierre_brute", RESOURCE),
-    PIERRE_PRECIEUSE("&type_id[]=50", "pierre_precieuse", RESOURCE),
+    PIERRE_PRECIEUSE("&type_id[]=50", "resource.pierre_precieuse", RESOURCE),
     PLANCHE("&type_id[]=95", "resource.planche", RESOURCE),
     PLANTE("&type_id[]=36", "resource.plante", RESOURCE),
     PLUME("&type_id[]=53", "resource.plume", RESOURCE),

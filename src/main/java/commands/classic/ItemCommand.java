@@ -60,7 +60,7 @@ public class ItemCommand extends DofusEncyclopediaRequestCommand {
                 try {
                     for (TypeEquipment equip : TypeEquipment.values()) {
                         String[] names = equip.getNames(lg);
-                        foo(message, matcher, names, normalName, equip, notFoundItem);
+                        gatherData(message, matcher, names, normalName, equip, notFoundItem);
                     }
 
                     if (matcher.isEmpty())

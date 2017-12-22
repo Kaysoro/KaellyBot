@@ -102,7 +102,9 @@ public class Resource implements Embedded {
         Document doc = JSoupManager.getDocument(url);
         doc.setBaseUri(url);
         String name = doc.getElementsByClass("ak-return-link").first().text();
-        String level = doc.getElementsByClass("ak-encyclo-detail-level").first().text()
+        String level = null;
+        if (! doc.getElementsByClass("ak-encyclo-detail-level").isEmpty())
+            level = doc.getElementsByClass("ak-encyclo-detail-level").first().text()
                 .replaceAll(Translator.getLabel(lg, "resource.extract.level") + " ", "");
         String type = doc.getElementsByClass("ak-encyclo-detail-type").last().children().last().text();
 
