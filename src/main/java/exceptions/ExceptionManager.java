@@ -23,7 +23,7 @@ public abstract class ExceptionManager {
 
     private static Logger LOG = LoggerFactory.getLogger(ExceptionManager.class);
 
-    private static DiscordException gameWebsite503 = new AdvancedDiscordException("exception.basic.game_website_503",
+    private static DiscordException gameWebsite503 = new AdvancedDiscordException("exception.advanced.game_website_503",
             new String[]{"game.url"}, new Boolean[]{true});
     private static DiscordException unknown = new BasicDiscordException("exception.basic.unknown_error");
 
