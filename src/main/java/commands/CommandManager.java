@@ -37,7 +37,6 @@ public class CommandManager {
         addCommand(new ItemCommand());
         addCommand(new JobCommand());
         addCommand(new LanguageCommand());
-        addCommand(new MapCommand());
         addCommand(new MonsterCommand());
         addCommand(new PrefixCommand());
         addCommand(new RandomCommand());

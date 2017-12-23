@@ -15,7 +15,7 @@ import java.util.Map;
 
 /**
  * Created by steve on 20/04/2017.
- */ // ToDo : Delete because it is not useful for DT
+ */
 public class ServerDofus {
 
     private static List<ServerDofus> servers;
@@ -23,14 +23,10 @@ public class ServerDofus {
     private static boolean initialized = false;
     private String name;
     private String id;
-    private String sweetId;
-    private long lastSweetRefresh;
 
-    public ServerDofus(String name, String id, String sweetId) {
+    public ServerDofus(String name, String id) {
         this.name = name;
         this.id = id;
-        this.sweetId = sweetId;
-        lastSweetRefresh = 0;
     }
 
     private synchronized static void initialize(){
@@ -42,13 +38,12 @@ public class ServerDofus {
         Connection connection = connexion.getConnection();
 
         try {
-            PreparedStatement query = connection.prepareStatement("SELECT name, id_dofus, id_sweet FROM Server");
+            PreparedStatement query = connection.prepareStatement("SELECT name, id_dofus FROM Server");
             ResultSet resultSet = query.executeQuery();
 
             while (resultSet.next()) {
                 ServerDofus sd = new ServerDofus(resultSet.getString("name"),
-                        resultSet.getString("id_dofus"),
-                        resultSet.getString("id_sweet"));
+                        resultSet.getString("id_dofus"));
                 servers.add(sd);
                 serversMap.put(sd.getName(), sd);
             }
@@ -78,11 +73,4 @@ public class ServerDofus {
         return id;
     }
 
-    public String getSweetId(){
-        return sweetId;
-    }
-
-    public long getLastSweetRefresh(){
-        return lastSweetRefresh;
-    }
 }

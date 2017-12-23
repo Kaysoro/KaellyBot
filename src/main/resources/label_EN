@@ -1,5 +1,4 @@
-ToDo : Change welcome message + website link
-welcome.message=Hi and thanks you for the invite ! I'm {name}, a bot dedicated to the {game} game; I have some commands in my hands which can interest you and allow me to show you game's items or character pages or manage jobs' book!\nWant to know more ? Write `{prefix}{help}` to get the entire list ! :blush:\n\n{owner}, as the administrator of {guild}, you hold a set of rights dedicated to set up me. Use the command `{prefix}{lang}` to choose a language or the commands `{prefix}{twitter}`, `{prefix}{almanax}` and `{prefix}{rss}` to gather a maximum of {game} news.\n\nSounds good, no ? I hope we gonna have fun together ! :smile:
+welcome.message=Hi and thank you for the invite ! I'm {name}, a bot dedicated to the {game} game; I have some commands in my hands which can interest you and allow me to show you game's items or character pages or manage jobs's book!\nWant to know more ? Write `{prefix}{help}` to get the entire list ! :blush:\n\n{owner}, as the administrator of {guild}, you hold a set of rights dedicated to set up me. Use the command `{prefix}{lang}` to choose a language or the commands `{prefix}{twitter}`, `{prefix}{almanax}` and `{prefix}{rss}` to gather a maximum of {game} news.\n\nSounds good, no ? I hope we gonna have fun together ! :smile:
 game.url=http://www.dofus-touch.com
 almanax.url=http://www.krosmoz.com/en/almanax?game=dofustouch&
 feed.url=/en/rss/news.xml
@@ -406,7 +405,7 @@ almanax.request.1=The almanax will be posted here automatically.
 almanax.request.2=The almanax is already posted here.
 almanax.request.3=The almanax will not be posted here anymore.
 almanax.request.4=The almanax is not posted here.
-almanax.help=give the bonus and quest of a specific date.
+almanax.help=gives the bonus and quest of a specific date.
 almanax.help.detailed.1=gives the bonus and quest of today.
 almanax.help.detailed.2=gives the bonus and quest of the specified date.
 almanax.help.detailed.3=gives a list of the bonus and quest of the upcoming day (up to 9 days).
@@ -477,12 +476,6 @@ lang.request.3=is in
 lang.help=changes the used language
 lang.help.detailed.1=changes the server language
 lang.help.detailed.2=changes the language for a specified channel (priority over the language of the server)
-map.embed.title=Map
-map.help=draws a Goultarminator map or or among those specified in parameter.
-map.help.detailed.1=draws a Goultarminator map between I and XVII.
-map.help.detailed.2=draws a map among those specified in parameter. Roman numerals or numeric only.
-map.help.detailed.3=draws a map among those no specified in parameter. Roman numerals or numeric only.
-map.punchline=Ah! sorry :smirk:;Oh! It promises :joy:;CHAMPAGNE! :champagne:;Hihi :relaxed:;It gonna be terrible. :sunglasses:;Good luck. BIIIIIIIIIP BIIIIIIIP :telephone_receiver:;Ouuuuh! Red team gonna undergo! :open_mouth:;It's simply a collective hallucination! :dizzy_face:;After this draw, don't come stutter, Blue team! :kissing:;This fight will be really dirty! :underage:;Don't criticize too much my draw, if you continue I draw in loop the map IX.;Is it me or does it smell like melon? :melon:;Oh no waaaay... It will still last over an hour... :weary:;Challenge: statue. How's that, *nooo* ? Oh come on, for the beauty of the game! :relieved:;I wanted to draw a cool map, and I remembered participants didn't deserve that. :rolling_eyes:;Mmmmmmh, that's the smell of butchery! :horse:;Wecome in hell :smiling_imp:;Deads in perspective! :skull:;:puissance: It's time to the the-the-the-dual! :puissance:
 monster.help=displays statistics from a {game} monster.
 monster.help.detailed.1=displays statistics from a specified monster: its name can be approximative if it's enough precise.
 monster.help.detailed.2=displays detailed statistics from a specified monster.

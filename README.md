@@ -1,7 +1,7 @@
-# KaellyTouchBOT [![Build Status](https://travis-ci.org/Kaysoro/KaellyBot.svg?branch=Touch)](https://travis-ci.org/Kaysoro/KaellyBot) [![Dependency Status](https://www.versioneye.com/user/projects/587eb975452b8300313609ee/badge.svg?style=flat)](https://www.versioneye.com/user/projects/587eb975452b8300313609ee) [![Coverage Status](https://coveralls.io/repos/github/Kaysoro/KaellyBot/badge.svg?branch=master)](https://coveralls.io/github/Kaysoro/KaellyBot?branch=Touch)
+# KaellyTOUCH [![Build Status](https://travis-ci.org/Kaysoro/KaellyBot.svg?branch=Touch)](https://travis-ci.org/Kaysoro/KaellyBot) [![Dependency Status](https://www.versioneye.com/user/projects/587eb975452b8300313609ee/badge.svg?style=flat)](https://www.versioneye.com/user/projects/587eb975452b8300313609ee) [![Coverage Status](https://coveralls.io/repos/github/Kaysoro/KaellyBot/badge.svg?branch=master)](https://coveralls.io/github/Kaysoro/KaellyBot?branch=Touch)
 KaellyBOT est destinée à fournir des commandes utiles à la communauté de DOFUS ! L'intégralité de son code est libre d'accès. Si vous avez des questions, des suggestions ou que vous souhaitez juste passer un coucou, rejoignez le serveur discord du support : [![Support Server Invite](https://img.shields.io/badge/Join-KaellyBOT%20Support-7289DA.svg?style=flat)](https://discord.gg/CyJCFDk)
 
-## Ajoutez KaellyBOT à votre serveur : [![Official Kaelly Invite](https://img.shields.io/badge/Add-KaellyBOT-0199FE.svg?style=flat)](https://discordapp.com/oauth2/authorize?&client_id=202916641414184960&scope=bot)
+## Ajoutez KaellyTOUCH à votre serveur : [![Official Kaelly Invite](https://img.shields.io/badge/Add-KaellyBOT-0199FE.svg?style=flat)](https://discordapp.com/oauth2/authorize?&client_id=202916641414184960&scope=bot)
 
 ## Commandes
 
@@ -47,25 +47,12 @@ Gère un annuaire d'artisans.
 Change la langue utilisée pour communiquer avec Kaelly parmi la liste suivante : FR, EN, SP.  
 `!lang` : renseigne la langue du serveur et du salon.    
 `!lang lang` : met à jour la langue du serveur.    
-`!lang -channel lang` : met à jour la langue du salon (prioritaire au serveur).  
-
-
-### Map
-Tire au hasard une carte du Goultarminator.  
-`!map` : tire au hasard une carte du Goultarminator ou bien parmi celles spécifiées en paramètre.  
-`!map map1 map2 ...` : tire une carte parmi celles spécifiées en paramètre. Nombres romains ou numériques uniquement.  
+`!lang -channel lang` : met à jour la langue du salon (prioritaire au serveur).
 
 ### Monster
 Renvoie les statistiques d'un monstre du jeu Dofus.  
 `!monster monstre` : renvoie les statistiques du monstre spécifié : son nom peut être approximatif s'il est suffisamment précis.    
 `!monster -more monstre` : renvoie les statistiques détaillés du monstre spécifié.  
-
-### Pos (Dimensions)
-Gère les positions de portails de dimension.  
-`!pos dimension` : donne la position du portail de la dimension désirée.  
-`!pos dimension [POS, POS]` : met à jour la position du portail de la dimension spécifiée.  
-`!pos dimension [POS, POS] nombre d'utilisations` : met à jour la position et le nombre d'utilisations de la dimension spécifiée. Indiquer 0 en nombre d'utilisations permet de réinitialiser le portail.  
-`!pos dimension nombre d'utilisations` : met à jour le nombre d'utilisations de la dimension spécifiée.  
 
 ### Prefix
 Change le préfixe utilisé pour invoquer une commande. Niveau modérateur minimum requis.  
@@ -93,12 +80,6 @@ Autorise ou non Kaelly à poster du contenu RSS dans un salon.
 `!rss true` : poste les news à partir du flux RSS de Dofus.com. Fonctionne aussi avec `on` et `0`.  
 `!rss false` : ne poste plus les flux RSS dans le salon. Fonctionne aussi avec `off` et `1`.  
 
-### Server
-Permet de déterminer à quel serveur Dofus correspond ce serveur Discord.  
-`!server` : affiche le serveur Dofus rattaché au serveur Discord.  
-`!server server` : permet de déterminer à quel serveur Dofus correspond ce serveur Discord.  
-`!server -reset` : permet de se détacher d'un quelconque serveur Dofus.  
-
 ### Set
 Renvoie les statistiques d'une panoplie du jeu Dofus.  
 `!set set` : renvoie les statistiques de la panoplie spécifiée : son nom peut être approximatif s'il est suffisamment précis.    
@@ -125,9 +106,10 @@ Affiche la page personnelle d'un joueur.
 
 # Participer au projet
 
-## Modifier KaellyBOT
+## Modifier KaellyTOUCH
 
-Tout le monde peut aider au développement de KaellyBOT ! Proposez des suggestions, remontez des bugs sur le support ou bien développez des évolutions en proposant vos pulls request : https://github.com/Kaysoro/KaellyBot/pulls.
+Tout le monde peut aider au développement de KaellyTOUCH ! Proposez des suggestions, remontez des bugs sur le support ou bien développez des évolutions en proposant vos pulls request : https://github.com/Kaysoro/KaellyBot/pulls.
+
 
 ## Créer votre Bot
 Attention, cette section est avant tout réservée à un public averti : si vous ne maîtrisez pas un minimum l'informatique, veuillez utiliser le bot officiel dont le lien est disponible plus haut. Dans le cas contraire, un support moindre sera apporté, mais il faudra savoir se débrouiller un minimum soi-même !  

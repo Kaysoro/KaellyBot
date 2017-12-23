@@ -26,14 +26,14 @@ public class JobUser {
 
     public JobUser(String name, int level, User user){
         this.name = name;
-        if (level > 100) // ToDo : Done change level max for Dofus Touch
+        if (level > 100)
             level = 100;
         this.level = level;
         this.user = user;
     }
 
     public synchronized void setLevel(int level){
-        if (level > 100) // ToDo : Done change level max for Dofus Touch
+        if (level > 100)
             level = 100;
         this.level = level;
 

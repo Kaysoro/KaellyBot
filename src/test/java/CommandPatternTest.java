@@ -108,18 +108,6 @@ public class CommandPatternTest extends TestCase {
         assertTrue(pattern.matcher(Constants.prefixCommand + "lang").find());
     }
 
-    public void testMapCommand(){
-        Command cmd = new MapCommand();
-        Pattern pattern = Pattern.compile("^" + Constants.prefixCommand + cmd.getName() + cmd.getPattern() + "$");
-
-        assertTrue(pattern.matcher(Constants.prefixCommand + "map").find());
-        assertTrue(pattern.matcher(Constants.prefixCommand + "map I II III").find());
-        assertTrue(pattern.matcher(Constants.prefixCommand + "map 1 2 3").find());
-        assertTrue(pattern.matcher(Constants.prefixCommand + "map i ii iii").find());
-        assertTrue(pattern.matcher(Constants.prefixCommand + "map 1 ii III").find());
-        assertFalse(pattern.matcher(Constants.prefixCommand + "map un deûx trôis").find());
-    }
-
     public void testMonsterCommand(){
         Command cmd = new MonsterCommand();
         Pattern pattern = Pattern.compile("^" + Constants.prefixCommand + cmd.getName() + cmd.getPattern() + "$");

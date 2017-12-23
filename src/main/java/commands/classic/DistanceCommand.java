@@ -69,6 +69,6 @@ public class DistanceCommand extends AbstractCommand {
     @Override
     public String helpDetailed(Language lg, String prefixe) {
         return help(lg, prefixe)
-                + "\n" + prefixe + "`"  + name + "` [POS, POS]` : " + Translator.getLabel(lg, "distance.help") + "\n";
+                + "\n" + prefixe + "`"  + name + " [POS, POS]` : " + Translator.getLabel(lg, "distance.help") + "\n";
     }
 }
