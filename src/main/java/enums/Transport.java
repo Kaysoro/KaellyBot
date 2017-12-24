@@ -4,7 +4,7 @@ import data.Position;
 import util.Translator;
 
 public enum Transport {
-    // ToDo : Change this list for DT. Not all zaap presents ?
+
     // Zaaps
     BORD_DE_LA_FORET_MALEFIQUE("transport.type.zaap", "transport.zone.amakna", "transport.souszone.bord_foret_malefique", new Position(-1, 13), true),
     CHATEAU_D_AMAKNA("transport.type.zaap", "transport.zone.amakna", "transport.souszone.chateau_amakna", new Position(3,-5), true),

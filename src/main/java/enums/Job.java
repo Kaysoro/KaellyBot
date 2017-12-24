@@ -4,7 +4,6 @@ import util.Translator;
 
 public enum Job {
 
-    // ToDo : Update this list with Dofus Touch Job
     ALCHIMISTE("job.alchimiste"),
     BIJOUTIER("job.bijoutier"),
     BOUCHER("job.boucher"),
