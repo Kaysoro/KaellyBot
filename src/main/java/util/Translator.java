@@ -104,7 +104,8 @@ public class Translator {
         }
 
         try {
-            return better.getKey();
+            if (better.getKey() != null)
+                return better.getKey();
         } catch(NullPointerException e){
             LoggerFactory.getLogger(Translator.class).warn("Translator.detectLanguage", e);
         }
