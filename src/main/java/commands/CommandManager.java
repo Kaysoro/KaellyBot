@@ -1,9 +1,6 @@
 package commands;
 
-import commands.admin.AdminCommand;
-import commands.admin.AnnounceCommand;
-import commands.admin.AvailableCommand;
-import commands.admin.TalkCommand;
+import commands.admin.*;
 import commands.classic.*;
 import commands.config.*;
 import commands.model.Command;
@@ -53,6 +50,7 @@ public class CommandManager {
         addCommand(new AdminCommand());
         addCommand(new AvailableCommand());
         addCommand(new AnnounceCommand());
+        addCommand(new StatCommand());
         addCommand(new TalkCommand());
     }
 
