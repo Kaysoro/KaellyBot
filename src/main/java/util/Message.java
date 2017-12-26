@@ -30,8 +30,7 @@ public class Message {
             } catch(MissingPermissionsException e){
                 LoggerFactory.getLogger(Message.class).warn(Constants.name
                         + " n'a pas les permissions pour appliquer cette requête.");
-                new MissingPermissionDiscordException()
-                        .throwException(channel.getFullMessageHistory().getLatestMessage(), null, lg, e);
+                new MissingPermissionDiscordException().throwException(channel, lg, e);
             } catch(Exception e){
                 ClientConfig.setSentryContext(channel.isPrivate()? null : channel.getGuild(), null, channel, null);
                 LoggerFactory.getLogger(Message.class).error(e.getMessage(),e );
@@ -57,8 +56,7 @@ public class Message {
             } catch(MissingPermissionsException e){
                 LoggerFactory.getLogger(Message.class).warn(Constants.name
                         + " n'a pas les permissions pour appliquer cette requête.");
-                new MissingPermissionDiscordException()
-                        .throwException(channel.getFullMessageHistory().getLatestMessage(), null, lg, e);
+                new MissingPermissionDiscordException().throwException(channel, lg, e);
             } catch(Exception e){
                 ClientConfig.setSentryContext(channel.isPrivate()? null : channel.getGuild(), null, channel, null);
                 LoggerFactory.getLogger(Message.class).error(e.getMessage(), e);
