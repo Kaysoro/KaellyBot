@@ -65,11 +65,13 @@ public class Translator {
     private static List<String> getReformatedMessages(IChannel channel){
         List<String> result = new ArrayList<>();
 
-        IMessage[] messages = channel.getMessageHistory(MAX_MESSAGES_READ).asArray();
-        for(IMessage message : messages) {
-            String content = message.getContent().replaceAll(":\\w+:", "").trim();
-            if (content.length() > MAX_CHARACTER_ACCEPTANCE)
-                result.add(content);
+        if (channel != null) {
+            IMessage[] messages = channel.getMessageHistory(MAX_MESSAGES_READ).asArray();
+            for (IMessage message : messages) {
+                String content = message.getContent().replaceAll(":\\w+:", "").trim();
+                if (content.length() > MAX_CHARACTER_ACCEPTANCE)
+                    result.add(content);
+            }
         }
         return result;
     }
