@@ -86,8 +86,9 @@ public class Almanax implements Embedded{
         for (int i = 1; i <= occurrence; i++) {
             firstDate = DateUtils.addDays(new Date(), i);
             Almanax almanax = Almanax.get(lg, firstDate);
-            builder.appendField(discordToBot.format(firstDate) + Translator.getLabel(lg, "almanax.embed.bonus"), almanax.getBonus(), true);
-            builder.appendField(discordToBot.format(firstDate) + Translator.getLabel(lg, "almanax.embed.offrande"), almanax.getOffrande(), true);
+            builder.appendField(discordToBot.format(firstDate), Translator.getLabel(lg, "almanax.embed.bonus")
+                    + " " + almanax.getBonus() +"\n" + Translator.getLabel(lg, "almanax.embed.offrande")
+                    + " " + almanax.getOffrande(), true);
         }
 
         return builder.build();
