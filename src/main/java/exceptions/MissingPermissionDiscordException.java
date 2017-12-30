@@ -2,6 +2,7 @@ package exceptions;
 
 import commands.model.Command;
 import enums.Language;
+import sx.blah.discord.handle.obj.IChannel;
 import util.ClientConfig;
 import util.Translator;
 import util.Message;
@@ -21,20 +22,20 @@ public class MissingPermissionDiscordException implements DiscordException {
 
     @Override
     public void throwException(IMessage message, Command command, Language lg, Object... arguments) {
+        throwException(message.getChannel(), lg, (MissingPermissionsException) arguments[0]);
+    }
+
+    public void throwException(IChannel channel, Language lg, MissingPermissionsException e) {
         StringBuilder st = new StringBuilder(Translator.getLabel(lg, "exception.missing_permission")
-                .replace("{channel.name}", message.getChannel().getName()));
-        if (arguments.length > 0){
-            st.delete(st.length() - 1, st.length()).append(" : ");
-            MissingPermissionsException e = (MissingPermissionsException) arguments[0];
+                .replace("{channel.name}", channel.getName()));
 
-            for(Permissions p : e.getMissingPermissions())
-                st.append(Translator.getLabel(lg, PERMISSION_PREFIX + p.name().toLowerCase())).append(", ");
-            st.delete(st.length() - 2, st.length()).append(".");
-        }
+        for(Permissions p : e.getMissingPermissions())
+            st.append(Translator.getLabel(lg, PERMISSION_PREFIX + p.name().toLowerCase())).append(", ");
+        st.delete(st.length() - 2, st.length()).append(".");
 
-        if (message.getChannel().getModifiedPermissions(ClientConfig.DISCORD().getOurUser()).contains(Permissions.SEND_MESSAGES))
-            Message.sendText(message.getChannel(), st.toString());
+        if (channel.getModifiedPermissions(ClientConfig.DISCORD().getOurUser()).contains(Permissions.SEND_MESSAGES))
+            Message.sendText(channel, st.toString());
         else
-            Message.sendText(message.getGuild().getOwner().getOrCreatePMChannel(), st.toString());
+            Message.sendText(channel.getGuild().getOwner().getOrCreatePMChannel(), st.toString());
     }
 }
