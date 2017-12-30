@@ -1,7 +1,4 @@
-import commands.admin.AdminCommand;
-import commands.admin.AnnounceCommand;
-import commands.admin.AvailableCommand;
-import commands.admin.TalkCommand;
+import commands.admin.*;
 import commands.classic.*;
 import commands.config.*;
 import commands.model.Command;
@@ -265,5 +262,12 @@ public class CommandPatternTest extends TestCase {
         assertTrue(pattern.matcher(Constants.prefixCommand + "talk test").find());
         assertTrue(pattern.matcher(Constants.prefixCommand + "talk 5681 test").find());
         assertFalse(pattern.matcher(Constants.prefixCommand + "talk").find());
+    }
+
+    public void testStatCommand(){
+        Command cmd = new StatCommand();
+        Pattern pattern = Pattern.compile(("^" + Constants.prefixCommand + cmd.getName() + cmd.getPattern() + "$"));
+
+        assertTrue(pattern.matcher(Constants.prefixCommand + "stat").find());
     }
 }
