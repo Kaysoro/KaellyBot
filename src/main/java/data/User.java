@@ -189,6 +189,8 @@ public class User {
 
         if (user == null && forceCache){
             user = new User(discordUser.getStringID(), discordUser.getDisplayName(discordGuild), guild);
+            if (discordGuild.getOwner().getLongID() == discordUser.getLongID())
+                user.rights = RIGHT_ADMIN;
             user.addToDatabase();
         }
 
