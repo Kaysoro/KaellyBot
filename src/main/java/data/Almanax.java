@@ -45,7 +45,7 @@ public class Almanax implements Embedded{
         EmbedBuilder builder = new EmbedBuilder();
 
         builder.withTitle(Translator.getLabel(lg, "almanax.embed.title.1") + " " + day);
-        builder.withUrl(Translator.getLabel(lg, "almanax.url") + day);
+        builder.withUrl(Translator.getLabel(lg, "almanax.url") + day + "?game=dofustouch");
 
         builder.withColor(new Random().nextInt(16777216));
         builder.withThumbnail(ressourceURL);
@@ -61,7 +61,7 @@ public class Almanax implements Embedded{
         EmbedBuilder builder = new EmbedBuilder();
 
         builder.withTitle(Translator.getLabel(lg, "almanax.embed.title.1") + " " + day);
-        builder.withUrl(Translator.getLabel(lg, "almanax.url") + day);
+        builder.withUrl(Translator.getLabel(lg, "almanax.url") + day + "?game=dofustouch");
         builder.withDescription(quest);
 
         builder.withColor(new Random().nextInt(16777216));
@@ -104,7 +104,7 @@ public class Almanax implements Embedded{
 
     private static Almanax gatheringOnlineData(Language lg, String date) throws IOException {
         LOG.info("connecting to " + Translator.getLabel(lg, "almanax.url") + date + " ...");
-        Document doc = JSoupManager.getDocument(Translator.getLabel(lg, "almanax.url") + date);
+        Document doc = JSoupManager.getDocument(Translator.getLabel(lg, "almanax.url") + date + "?game=dofustouch");
 
         String bonus = doc.getElementsByClass("more").first()
                 .clone().getElementsByClass("more-infos").empty().parents().first().text();
