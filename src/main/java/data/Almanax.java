@@ -103,7 +103,7 @@ public class Almanax implements Embedded{
     }
 
     private static Almanax gatheringOnlineData(Language lg, String date) throws IOException {
-        LOG.info("connecting to " + Translator.getLabel(lg, "almanax.url") + date + " ...");
+        LOG.info("connecting to " + Translator.getLabel(lg, "almanax.url") + date + "?game=dofustouch" + " ...");
         Document doc = JSoupManager.getDocument(Translator.getLabel(lg, "almanax.url") + date + "?game=dofustouch");
 
         String bonus = doc.getElementsByClass("more").first()
