@@ -12,10 +12,10 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" name="Maven: org.apache.commons:commons-lang3:3.6" level="project" />
-    <orderEntry type="library" name="Maven: org.jsoup:jsoup:1.11.1" level="project" />
-    <orderEntry type="library" name="Maven: org.xerial:sqlite-jdbc:3.20.1" level="project" />
-    <orderEntry type="library" name="Maven: com.github.austinv11:Discord4j:shaded:dev-2.9.3-ga7394f3-5" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.commons:commons-lang3:3.7" level="project" />
+    <orderEntry type="library" name="Maven: org.jsoup:jsoup:1.11.2" level="project" />
+    <orderEntry type="library" name="Maven: org.xerial:sqlite-jdbc:3.21.0.1" level="project" />
+    <orderEntry type="library" name="Maven: com.github.austinv11:Discord4j:shaded:dev-2.9.3-g0880ff4-11" level="project" />
     <orderEntry type="library" name="Maven: org.slf4j:slf4j-api:1.7.25" level="project" />
     <orderEntry type="library" name="Maven: org.apache.httpcomponents:httpcore:4.4.8" level="project" />
     <orderEntry type="library" name="Maven: org.apache.httpcomponents:httpclient:4.5.4" level="project" />
@@ -48,14 +48,13 @@
     <orderEntry type="library" name="Maven: org.json:json:20170516" level="project" />
     <orderEntry type="library" name="Maven: com.koloboke:koloboke-impl-common-jdk8:1.0.0" level="project" />
     <orderEntry type="library" name="Maven: com.koloboke:koloboke-api-jdk8:1.0.0" level="project" />
-    <orderEntry type="library" name="Maven: com.rometools:rome:1.8.0" level="project" />
-    <orderEntry type="library" name="Maven: com.rometools:rome-utils:1.8.0" level="project" />
+    <orderEntry type="library" name="Maven: com.rometools:rome:1.9.0" level="project" />
+    <orderEntry type="library" name="Maven: com.rometools:rome-utils:1.9.0" level="project" />
     <orderEntry type="library" name="Maven: org.jdom:jdom2:2.0.6" level="project" />
     <orderEntry type="library" name="Maven: ch.qos.logback:logback-classic:1.2.3" level="project" />
     <orderEntry type="library" name="Maven: ch.qos.logback:logback-core:1.2.3" level="project" />
-    <orderEntry type="library" name="Maven: io.sentry:sentry-logback:1.6.1" level="project" />
-    <orderEntry type="library" name="Maven: io.sentry:sentry:1.6.1" level="project" />
-    <orderEntry type="library" name="Maven: org.w3c:dom:2.3.0-jaxb-1.0.6" level="project" />
+    <orderEntry type="library" name="Maven: io.sentry:sentry-logback:1.6.3" level="project" />
+    <orderEntry type="library" name="Maven: io.sentry:sentry:1.6.3" level="project" />
     <orderEntry type="library" name="Maven: org.twitter4j:twitter4j-stream:4.0.6" level="project" />
     <orderEntry type="library" name="Maven: org.twitter4j:twitter4j-core:4.0.6" level="project" />
     <orderEntry type="library" name="Maven: com.optimaize.languagedetector:language-detector:0.6" level="project" />
