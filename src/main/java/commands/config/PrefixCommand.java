@@ -7,7 +7,7 @@ import data.User;
 import enums.Language;
 import exceptions.AdvancedDiscordException;
 import exceptions.BasicDiscordException;
-import exceptions.DiscordException;
+import sx.blah.discord.util.DiscordException;
 import util.Message;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,8 +22,8 @@ import java.util.regex.Matcher;
 public class PrefixCommand extends AbstractCommand {
 
     private final static Logger LOG = LoggerFactory.getLogger(PrefixCommand.class);
-    private DiscordException noEnoughRights;
-    private DiscordException prefixeOutOfBounds;
+    private exceptions.DiscordException noEnoughRights;
+    private exceptions.DiscordException prefixeOutOfBounds;
 
     public PrefixCommand(){
         super("prefix","\\s+(.+)");
@@ -48,10 +48,16 @@ public class PrefixCommand extends AbstractCommand {
                     Guild.getGuild(message.getGuild()).setPrefixe(newPrefix);
                     Message.sendText(message.getChannel(), Translator.getLabel(lg, "prefix.request.1")
                         .replace("{prefix}", getPrefixMdEscaped(message)));
-                    Message.sendText(message.getGuild().getOwner().getOrCreatePMChannel(),
-                            Translator.getLabel(lg, "prefix.request.2")
-                                    .replace("{prefix}", getPrefixMdEscaped(message))
-                                    .replace("{guild.name}", message.getGuild().getName()));
+
+                    try {
+                        Message.sendText(message.getGuild().getOwner().getOrCreatePMChannel(),
+                                Translator.getLabel(lg, "prefix.request.2")
+                                        .replace("{prefix}", getPrefixMdEscaped(message))
+                                        .replace("{guild.name}", message.getGuild().getName()));
+                    } catch (DiscordException e){
+                        LOG.warn("request", "Impossible de contacter l'administrateur de la guilde ["
+                                + message.getGuild().getName() + "].");
+                    }
                     return true;
                 }
                 else
