@@ -6,7 +6,7 @@
 
     <groupId>com.github.kaysoro</groupId>
     <artifactId>Kaelly</artifactId>
-    <version>1.0</version>
+    <version>1.0.0</version>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -78,17 +78,17 @@
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
-            <version>3.6</version>
+            <version>3.7</version>
         </dependency>
         <dependency>
             <groupId>org.jsoup</groupId>
             <artifactId>jsoup</artifactId>
-            <version>1.11.1</version>
+            <version>1.11.2</version>
         </dependency>
         <dependency>
             <groupId>org.xerial</groupId>
             <artifactId>sqlite-jdbc</artifactId>
-            <version>3.20.1</version>
+            <version>3.21.0.1</version>
         </dependency>
         <dependency>
             <groupId>com.github.austinv11</groupId>
@@ -99,7 +99,7 @@
         <dependency>
             <groupId>com.rometools</groupId>
             <artifactId>rome</artifactId>
-            <version>1.8.0</version>
+            <version>1.9.0</version>
         </dependency>
         <dependency>
             <groupId>ch.qos.logback</groupId>
@@ -109,12 +109,7 @@
         <dependency>
             <groupId>io.sentry</groupId>
             <artifactId>sentry-logback</artifactId>
-            <version>1.6.1</version>
-        </dependency>
-        <dependency>
-            <groupId>org.w3c</groupId>
-            <artifactId>dom</artifactId>
-            <version>2.3.0-jaxb-1.0.6</version>
+            <version>1.6.3</version>
         </dependency>
         <dependency>
             <groupId>org.twitter4j</groupId>
