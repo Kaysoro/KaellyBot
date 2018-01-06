@@ -48,25 +48,30 @@ public class AlmanaxCalendar {
 
             scheduler.scheduleAtFixedRate(() -> {
                 boolean success = false;
+                Map<Language, Almanax> almanax = new HashMap<>();
 
                 while(!success)
                     try {
-                        Map<Language, Almanax> almanax = new HashMap<>();
+                        almanax.clear();
                         for(Language lg : Language.values())
                             almanax.put(lg, Almanax.get(lg, new Date()));
-
-                        for(AlmanaxCalendar calendar : getAlmanaxCalendars().values()){
-                            IChannel chan = ClientConfig.DISCORD().getChannelByID(Long.parseLong(calendar.getChan()));
-                            Language lg = Translator.getLanguageFrom(chan);
-                            if (chan != null && ! chan.isDeleted())
-                                Message.sendEmbed(chan, almanax.get(lg).getMoreEmbedObject(lg));
-                        }
                         success = true;
                     } catch (IOException e) {
                         ExceptionManager.manageSilentlyIOException(e);
                         try { Thread.sleep(300000); // 5min
                         } catch (InterruptedException e1) {}
                     }
+
+                for(AlmanaxCalendar calendar : getAlmanaxCalendars().values()){
+                    try {
+                        IChannel chan = ClientConfig.DISCORD().getChannelByID(Long.parseLong(calendar.getChan()));
+                        Language lg = Translator.getLanguageFrom(chan);
+                        if (chan != null && ! chan.isDeleted())
+                            Message.sendEmbed(chan, almanax.get(lg).getMoreEmbedObject(lg));
+                    } catch (Exception e){
+                        LOG.error("AlmanaxCalendar", e);
+                    }
+                }
             }, firstDelay, period, TimeUnit.MINUTES);
         }
     }

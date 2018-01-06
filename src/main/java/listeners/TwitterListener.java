@@ -1,6 +1,8 @@
 package listeners;
 
 import enums.Language;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import sx.blah.discord.api.internal.json.objects.EmbedObject;
 import sx.blah.discord.handle.obj.IChannel;
 import util.ClientConfig;
@@ -18,6 +20,7 @@ import java.util.Map;
 
 public class TwitterListener extends StatusAdapter {
 
+    private final static Logger LOG = LoggerFactory.getLogger(TwitterListener.class);
     private Map<Long, Language> twitterIDs;
 
     public TwitterListener(){
@@ -32,13 +35,16 @@ public class TwitterListener extends StatusAdapter {
         Language language = twitterIDs.get(status.getUser().getId());
         if (twitterIDs.containsKey(status.getUser().getId()) && (status.getInReplyToScreenName() == null
                 || twitterIDs.containsKey(status.getInReplyToUserId())))
-            for (TwitterFinder twitterFinder : TwitterFinder.getTwitterChannels().values()) {
-                IChannel chan = ClientConfig.DISCORD().getChannelByID(twitterFinder.getChannelId());
+            for (TwitterFinder twitterFinder : TwitterFinder.getTwitterChannels().values())
+                try {
+                    IChannel chan = ClientConfig.DISCORD().getChannelByID(twitterFinder.getChannelId());
 
-                if (TwitterFinder.getTwitterChannels().containsKey(twitterFinder.getChannelId())
-                        && Translator.getLanguageFrom(chan).equals(language))
-                    Message.sendEmbed(chan, createEmbedFor(status));
-            }
+                    if (TwitterFinder.getTwitterChannels().containsKey(twitterFinder.getChannelId())
+                            && Translator.getLanguageFrom(chan).equals(language))
+                        Message.sendEmbed(chan, createEmbedFor(status));
+                } catch (Exception e) {
+                    LOG.error("onStatus", e);
+                }
     }
 
     public EmbedObject createEmbedFor(Status status){
