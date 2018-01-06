@@ -36,6 +36,11 @@ public class MissingPermissionDiscordException implements DiscordException {
         if (channel.getModifiedPermissions(ClientConfig.DISCORD().getOurUser()).contains(Permissions.SEND_MESSAGES))
             Message.sendText(channel, st.toString());
         else
-            Message.sendText(channel.getGuild().getOwner().getOrCreatePMChannel(), st.toString());
+            try {
+                Message.sendText(channel.getGuild().getOwner().getOrCreatePMChannel(), st.toString());
+            } catch (sx.blah.discord.util.DiscordException de) {
+                LOG.warn("throwExpcetion", "Impossible de contacter l'administrateur de la guilde ["
+                        + channel.getGuild().getName() + "].");
+            }
     }
 }
