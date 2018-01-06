@@ -3,6 +3,7 @@ package commands.admin;
 import commands.model.AbstractCommand;
 import data.Constants;
 import enums.Language;
+import sx.blah.discord.util.DiscordException;
 import util.ClientConfig;
 import util.Message;
 import org.slf4j.Logger;
@@ -36,11 +37,18 @@ public class AnnounceCommand extends AbstractCommand {
 
             if (m.group(1) != null) {
                 for (IGuild guild : ClientConfig.DISCORD().getGuilds())
-                    if (guild.getDefaultChannel().getModifiedPermissions(ClientConfig.DISCORD().getOurUser())
-                            .contains(Permissions.SEND_MESSAGES))
-                        Message.sendText(guild.getDefaultChannel(), text);
-                    else
-                        Message.sendText(guild.getOwner().getOrCreatePMChannel(), text);
+                    try {
+                        if (guild.getDefaultChannel().getModifiedPermissions(ClientConfig.DISCORD().getOurUser())
+                                .contains(Permissions.SEND_MESSAGES))
+                            Message.sendText(guild.getDefaultChannel(), text);
+                        else
+                            Message.sendText(guild.getOwner().getOrCreatePMChannel(), text);
+                    } catch (DiscordException e) {
+                        LOG.warn("onReady", "Impossible de contacter l'administrateur de la guilde ["
+                                + guild.getName() + "].");
+                    } catch (Exception e2) {
+                        LOG.warn("onReady", e2);
+                    }
 
                 Message.sendText(message.getChannel(), Translator.getLabel(lg, "announce.request.1") + " "
                         + ClientConfig.DISCORD().getGuilds().size() + " " + Translator.getLabel(lg, "announce.request.2")

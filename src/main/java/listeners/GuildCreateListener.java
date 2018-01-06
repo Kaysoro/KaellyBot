@@ -6,6 +6,7 @@ import commands.config.LanguageCommand;
 import commands.config.RSSCommand;
 import commands.config.TwitterCommand;
 import enums.Language;
+import sx.blah.discord.util.DiscordException;
 import util.ClientConfig;
 import data.Constants;
 import data.Guild;
@@ -65,8 +66,12 @@ public class GuildCreateListener {
                         .getModifiedPermissions(ClientConfig.DISCORD().getOurUser())
                         .contains(Permissions.SEND_MESSAGES))
                     Message.sendText(event.getGuild().getDefaultChannel(), customMessage);
-                else
+                else try {
                     Message.sendText(event.getGuild().getOwner().getOrCreatePMChannel(), customMessage);
+                } catch (DiscordException e) {
+                    LOG.warn("onReady", "Impossible de contacter l'administrateur de la guilde ["
+                            + guild.getName() + "].");
+                }
 
                 Message.sendText(ClientConfig.DISCORD().getChannelByID(Constants.chanReportID),
                         "[NEW] **" + guild.getName() + "** (" + guild.getLanguage().getAbrev() + "), +"
