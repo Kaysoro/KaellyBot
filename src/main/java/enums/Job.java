@@ -2,6 +2,9 @@ package enums;
 
 import util.Translator;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public enum Job {
 
     ALCHIMISTE("job.alchimiste"),
@@ -24,6 +27,7 @@ public enum Job {
     TAILLEUR("job.tailleur"),
     FACOMAGE("job.facomage");
 
+    private static Map<String, Job> jobs;
     private String name;
 
     Job(String name){this.name = name;}
@@ -34,5 +38,23 @@ public enum Job {
 
     public String getLabel(Language lg){
         return Translator.getLabel(lg, getName());
+    }
+
+    /**
+     *
+     * @param name Nom du métier
+     * @return L'énumération Job correspondant à name
+     * @throws IllegalArgumentException si aucun Job n'est trouvé pour le nom proposé.
+     */
+    public static synchronized Job getJob(String name){
+        if (jobs == null){
+            jobs = new HashMap<>();
+            for(Job job : Job.values())
+                jobs.put(job.getName(), job);
+        }
+
+        if (jobs.containsKey(name))
+            return jobs.get(name);
+        throw new IllegalArgumentException("Aucun métier trouvé pour \"" + name + "\".");
     }
 }

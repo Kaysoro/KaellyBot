@@ -9,6 +9,7 @@ import exceptions.DiscordException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sx.blah.discord.handle.obj.IMessage;
+import sx.blah.discord.handle.obj.Permissions;
 import util.Translator;
 
 import java.util.regex.Matcher;
@@ -100,6 +101,19 @@ public abstract class AbstractCommand implements Command {
                 .replaceAll("~", "\\~")          //Strike
                 .replaceAll("\\`", "\\\\`");         //Code
         return prefix;
+    }
+
+    /**
+     * Retourne true si l'utilisateur a les droits nécessaires, false le cas échéant
+     * @param message Message reçu
+     * @return true si l'utilisateur a les droits nécessaires, false le cas échéant
+     */
+    protected boolean isUserHasEnoughRights(IMessage message){
+        if (! message.getChannel().isPrivate())
+            return message.getAuthor().getLongID() == Constants.authorId
+                    || message.getAuthor().getPermissionsForGuild(message.getGuild()).contains(Permissions.MANAGE_SERVER)
+                    || message.getChannel().getModifiedPermissions(message.getAuthor()).contains(Permissions.MANAGE_SERVER);
+        return false;
     }
 
     @Override

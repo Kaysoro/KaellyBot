@@ -3,7 +3,6 @@ package commands.config;
 import commands.model.AbstractCommand;
 import data.ChannelLanguage;
 import data.Guild;
-import data.User;
 import enums.Language;
 import exceptions.BasicDiscordException;
 import exceptions.DiscordException;
@@ -40,13 +39,12 @@ public class LanguageCommand extends AbstractCommand {
     @Override
     public boolean request(IMessage message) {
         if (super.request(message)) {
-            User author = User.getUser(message.getGuild(), message.getAuthor());
             Language lg = Translator.getLanguageFrom(message.getChannel());
             Matcher m = getMatcher(message);
             m.find();
 
             if (m.group(2) != null) { // Ajouts
-                if (author.getRights() >= User.RIGHT_MODERATOR) {
+                if (isUserHasEnoughRights(message)) {
                     List<Language> langs = new ArrayList<>();
                     for(Language lang : Language.values())
                         if (m.group(2).trim().toUpperCase().equals(lang.getAbrev()))

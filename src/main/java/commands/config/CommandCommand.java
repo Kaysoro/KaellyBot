@@ -5,7 +5,6 @@ import commands.model.AbstractCommand;
 import commands.model.Command;
 import data.CommandForbidden;
 import data.Guild;
-import data.User;
 import enums.Language;
 import util.Message;
 import exceptions.*;
@@ -44,10 +43,9 @@ public class CommandCommand extends AbstractCommand {
     @Override
     public boolean request(IMessage message) {
         if (super.request(message)) {
-            User author = User.getUser(message.getGuild(), message.getAuthor());
             Language lg = Translator.getLanguageFrom(message.getChannel());
 
-            if (author.getRights() >= User.RIGHT_MODERATOR) {
+            if (isUserHasEnoughRights(message)) {
                 Guild guild = Guild.getGuild(message.getGuild());
                 Matcher m = getMatcher(message);
                 m.find();

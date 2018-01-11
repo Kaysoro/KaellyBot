@@ -69,11 +69,7 @@ public class Guild {
                 LOG.error(e.getMessage());
             }
         }
-
         portals = Portal.getPortals(this);
-
-        if (! User.getUsers().containsKey(id))
-            User.getUsers().put(id, new ConcurrentHashMap<>());
     }
 
     public synchronized void removeToDatabase() {
@@ -93,9 +89,6 @@ public class Guild {
                 LOG.error(e.getMessage());
             }
         }
-
-        if (User.getUsers().containsKey(id))
-            User.getUsers().remove(id);
     }
 
     public synchronized void setName(String name){

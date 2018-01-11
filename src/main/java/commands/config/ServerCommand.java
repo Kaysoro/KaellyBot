@@ -4,7 +4,6 @@ import commands.model.AbstractCommand;
 import data.Constants;
 import data.Guild;
 import data.ServerDofus;
-import data.User;
 import enums.Language;
 import exceptions.BasicDiscordException;
 import exceptions.DiscordException;
@@ -41,13 +40,12 @@ public class ServerCommand extends AbstractCommand {
     @Override
     public boolean request(IMessage message) {
         if (super.request(message)) {
-            User author = User.getUser(message.getGuild(), message.getAuthor());
             Guild guild = Guild.getGuild(message.getGuild());
             Language lg = Translator.getLanguageFrom(message.getChannel());
             Matcher m = getMatcher(message);
             m.find();
             if (m.group(1) != null)
-                if (author.getRights() >= User.RIGHT_MODERATOR) {
+                if (isUserHasEnoughRights(message)) {
                     String serverName = m.group(1).replaceAll("^\\s+", "").toLowerCase();
 
                     if (! serverName.equals("-reset")) {

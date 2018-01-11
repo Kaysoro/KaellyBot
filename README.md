@@ -49,7 +49,6 @@ Change la langue utilisée pour communiquer avec Kaelly parmi la liste suivante 
 `!lang lang` : met à jour la langue du serveur.    
 `!lang -channel lang` : met à jour la langue du salon (prioritaire au serveur).  
 
-
 ### Map
 Tire au hasard une carte du Goultarminator.  
 `!map` : tire au hasard une carte du Goultarminator ou bien parmi celles spécifiées en paramètre.  
@@ -81,12 +80,6 @@ Commande tirant des valeurs aléatoires.
 Renvoie les statistiques d'une ressource du jeu Dofus.  
 `!resource resource` : renvoie les statistiques de la ressource spécifiée : son nom peut être approximatif s'il est suffisamment précis.    
 `!resource -more resource` : renvoie les statistiques détaillés de la ressource spécifiée.  
-
-### Right
-Gère les droits d'administration de Kaelly.  
-`!right` : donne le niveau d'administration de l'auteur de la requête.  
-`!right @pseudo` : donne le niveau d'administration de l'utilisateur ou d'un groupe spécifié.  
-`!right @pseudo niveau` : change le niveau d'administration d'un utilisateur ou d'un groupe spécifié.  
 
 ### RSS
 Autorise ou non Kaelly à poster du contenu RSS dans un salon.  

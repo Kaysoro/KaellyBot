@@ -141,18 +141,6 @@ public class CommandPatternTest extends TestCase {
         assertTrue(pattern.matcher(Constants.prefixCommand + "pos dimension 1").find());
     }
 
-    public void testRightCommand(){
-        Command cmd = new RightCommand();
-        Pattern pattern = Pattern.compile("^" + Constants.prefixCommand + cmd.getName() + cmd.getPattern() + "$");
-
-        assertTrue(pattern.matcher(Constants.prefixCommand + "right").find());
-        assertTrue(pattern.matcher(Constants.prefixCommand + "right <@!1234>").find());
-        assertTrue(pattern.matcher(Constants.prefixCommand + "right <@1234>").find());
-        assertTrue(pattern.matcher(Constants.prefixCommand + "right <@&1234>").find());
-        assertTrue(pattern.matcher(Constants.prefixCommand + "right <@!1234> 1").find());
-        assertTrue(pattern.matcher(Constants.prefixCommand + "right <@&1234> 1").find());
-    }
-
     public void testTutorialCommand(){
         Command cmd = new TutorialCommand();
         Pattern pattern = Pattern.compile("^" + Constants.prefixCommand + cmd.getName() + cmd.getPattern() + "$");

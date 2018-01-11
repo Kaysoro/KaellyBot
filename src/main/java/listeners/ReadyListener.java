@@ -12,7 +12,6 @@ import sx.blah.discord.handle.impl.events.ReadyEvent;
 import sx.blah.discord.handle.impl.events.guild.GuildCreateEvent;
 import sx.blah.discord.handle.obj.ActivityType;
 import sx.blah.discord.handle.obj.IGuild;
-import sx.blah.discord.handle.obj.IUser;
 import sx.blah.discord.handle.obj.StatusType;
 import util.ClientConfig;
 
@@ -32,30 +31,16 @@ public class ReadyListener {
         LOG.info("Ajout des différents listeners");
         ClientConfig.DISCORD().getDispatcher().registerListener(new GuildCreateListener());
         ClientConfig.DISCORD().getDispatcher().registerListener(new GuildLeaveListener());
-        ClientConfig.DISCORD().getDispatcher().registerListener(new GuildTransferOwnershipListener());
         ClientConfig.DISCORD().getDispatcher().registerListener(new GuildUpdateListener());
         ClientConfig.DISCORD().getDispatcher().registerListener(new ChannelDeleteListener());
-        ClientConfig.DISCORD().getDispatcher().registerListener(new NickNameChangeListener());
-        ClientConfig.DISCORD().getDispatcher().registerListener(new UserBanListener());
-        ClientConfig.DISCORD().getDispatcher().registerListener(new UserJoinListener());
-        ClientConfig.DISCORD().getDispatcher().registerListener(new UserLeaveListener());
-
         ClientConfig.DISCORD().getDispatcher().registerListener(new TrackFinishListener());
 
-        LOG.info("Check des guildes et des utilisateurs");
+        LOG.info("Check des guildes");
         for(IGuild guild : ClientConfig.DISCORD().getGuilds())
-            if (Guild.getGuilds().containsKey(guild.getStringID())) {
-                // La guilde existe déjà : on s'assure de mettre à jour l'ensemble des données durant l'absence.
-                if (!guild.getName().equals(Guild.getGuild(guild).getName()))
-                    Guild.getGuild(guild).setName(guild.getName());
-
-                for (IUser discordUser : guild.getUsers()){
-                    User user = User.getUser(guild, discordUser);
-                    if (!discordUser.getDisplayName(guild).equals(user.getName()))
-                        user.setName(discordUser.getDisplayName(guild));
-                }
-            }
-            else // La guilde n'existe pas, on lève un évent pour le prendre en compte !
+            if (Guild.getGuilds().containsKey(guild.getStringID())
+                    && !guild.getName().equals(Guild.getGuild(guild).getName()))
+                Guild.getGuild(guild).setName(guild.getName());
+            else
                 ClientConfig.DISCORD().getDispatcher().dispatch(new GuildCreateEvent(guild));
 
         // Check des guildes éventuellement supprimé durant l'absence
