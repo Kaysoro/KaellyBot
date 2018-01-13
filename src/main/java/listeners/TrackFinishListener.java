@@ -1,5 +1,7 @@
 package listeners;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import util.ClientConfig;
 import sx.blah.discord.api.events.EventSubscriber;
 import sx.blah.discord.handle.obj.IGuild;
@@ -10,13 +12,19 @@ import sx.blah.discord.util.audio.events.TrackFinishEvent;
  */
 public class TrackFinishListener {
 
+    private final static Logger LOG = LoggerFactory.getLogger(TrackFinishListener.class);
+
     @EventSubscriber
     public void onTrackFinish(TrackFinishEvent event) {
-        ClientConfig.setSentryContext(event.getPlayer().getGuild(), null, null, null);
-        IGuild guild = event.getPlayer().getGuild();
+        try {
+            IGuild guild = event.getPlayer().getGuild();
 
-        if (! event.getNewTrack().isPresent())
+            if (!event.getNewTrack().isPresent())
                 ClientConfig.DISCORD().getOurUser()
                         .getVoiceStateForGuild(guild).getChannel().leave();
+        } catch(Exception e){
+            ClientConfig.setSentryContext(event.getPlayer().getGuild(), null, null, null);
+            LOG.error("onTrackFinish", e);
+        }
     }
 }
