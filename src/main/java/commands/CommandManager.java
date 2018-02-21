@@ -38,7 +38,6 @@ public class CommandManager {
         addCommand(new PrefixCommand());
         addCommand(new RandomCommand());
         addCommand(new ResourceCommand());
-        addCommand(new RightCommand());
         addCommand(new RSSCommand());
         addCommand(new SetCommand());
         addCommand(new SoundCommand());

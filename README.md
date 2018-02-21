@@ -69,12 +69,6 @@ Renvoie les statistiques d'une ressource du jeu Dofus.
 `!resource resource` : renvoie les statistiques de la ressource spécifiée : son nom peut être approximatif s'il est suffisamment précis.    
 `!resource -more resource` : renvoie les statistiques détaillés de la ressource spécifiée.  
 
-### Right
-Gère les droits d'administration de Kaelly.  
-`!right` : donne le niveau d'administration de l'auteur de la requête.  
-`!right @pseudo` : donne le niveau d'administration de l'utilisateur ou d'un groupe spécifié.  
-`!right @pseudo niveau` : change le niveau d'administration d'un utilisateur ou d'un groupe spécifié.  
-
 ### RSS
 Autorise ou non Kaelly à poster du contenu RSS dans un salon.  
 `!rss true` : poste les news à partir du flux RSS de Dofus.com. Fonctionne aussi avec `on` et `0`.  

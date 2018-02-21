@@ -44,7 +44,6 @@ public class GuildCreateListener {
                     new User(user.getStringID(), user.getDisplayName(event.getGuild()), User.RIGHT_INVITE, guild)
                             .addToDatabase();
 
-                User.getUser(event.getGuild(), event.getGuild().getOwner()).changeRight(User.RIGHT_ADMIN);
                 Language lg = guild.getLanguage();
                 LOG.info("La guilde " + guild.getId() + " - " + guild.getName() + " a ajouté "   + Constants.name);
 

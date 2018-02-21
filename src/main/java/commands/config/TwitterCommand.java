@@ -3,7 +3,6 @@ package commands.config;
 import commands.model.AbstractCommand;
 import enums.Language;
 import finders.TwitterFinder;
-import data.User;
 import util.Message;
 import exceptions.*;
 import org.slf4j.Logger;
@@ -36,7 +35,7 @@ public class TwitterCommand extends AbstractCommand {
         if (super.request(message)) {
             Language lg = Translator.getLanguageFrom(message.getChannel());
             //On check si la personne a bien les droits pour exécuter cette commande
-            if (User.getUser(message.getGuild(), message.getAuthor()).getRights() >= User.RIGHT_MODERATOR) {
+            if (isUserHasEnoughRights(message)) {
                 Matcher m = getMatcher(message);
                 m.find();
                 String value = m.group(1);

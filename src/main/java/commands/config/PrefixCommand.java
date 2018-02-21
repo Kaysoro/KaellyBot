@@ -3,7 +3,6 @@ package commands.config;
 import commands.model.AbstractCommand;
 import data.Constants;
 import data.Guild;
-import data.User;
 import enums.Language;
 import exceptions.AdvancedDiscordException;
 import exceptions.BasicDiscordException;
@@ -37,9 +36,8 @@ public class PrefixCommand extends AbstractCommand {
     public boolean request(IMessage message) {
         if (super.request(message)) {
             Language lg = Translator.getLanguageFrom(message.getChannel());
-            User author = User.getUser(message.getGuild(), message.getAuthor());
 
-            if (author.getRights() >= User.RIGHT_MODERATOR) {
+            if (isUserHasEnoughRights(message)) {
                 Matcher m = getMatcher(message);
                 m.find();
                 String newPrefix = m.group(1).trim();

@@ -4,7 +4,6 @@ import commands.model.AbstractCommand;
 import data.Almanax;
 import enums.Language;
 import finders.AlmanaxCalendar;
-import data.User;
 import util.Message;
 import exceptions.*;
 import org.slf4j.Logger;
@@ -47,8 +46,7 @@ public class AlmanaxCommand extends AbstractCommand {
                 if (m.group(1) != null && (m.group(1).matches("\\s+true") || m.group(1).matches("\\s+0") || m.group(1).matches("\\s+on")
                         || m.group(1).matches("\\s+false") || m.group(1).matches("\\s+1") || m.group(1).matches("\\s+off"))) {
                     if (! message.getChannel().isPrivate()){
-                        User user = User.getUser(message.getGuild(), message.getAuthor());
-                        if (user.getRights() >= User.RIGHT_MODERATOR) {
+                        if (isUserHasEnoughRights(message)) {
                             if (m.group(1).matches("\\s+true") || m.group(1).matches("\\s+0") || m.group(1).matches("\\s+on"))
                                 if (!AlmanaxCalendar.getAlmanaxCalendars().containsKey(message.getChannel().getStringID())) {
                                     new AlmanaxCalendar(message.getGuild().getStringID(), message.getChannel().getStringID()).addToDatabase();
