@@ -67,7 +67,7 @@ Commande tirant des valeurs aléatoires.
 ### Resource
 Renvoie les statistiques d'une ressource du jeu Dofus.  
 `!resource resource` : renvoie les statistiques de la ressource spécifiée : son nom peut être approximatif s'il est suffisamment précis.    
-`!resource -more resource` : renvoie les statistiques détaillés de la ressource spécifiée.  
+`!resource -more resource` : renvoie les statistiques détaillés de la ressource spécifiée.
 
 ### RSS
 Autorise ou non Kaelly à poster du contenu RSS dans un salon.  

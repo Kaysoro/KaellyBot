@@ -49,7 +49,7 @@ public class JobCommand extends AbstractCommand {
             if (m.group(1) == null){
                 StringBuilder st = new StringBuilder(Translator.getLabel(lg, "job.request.1")).append(" :\n```");
                 for(Job job : Job.values())
-                    st.append("\n- ").append(job.getLabel(lg));
+                    st.append("\n- ").append(job.getLabel(lg).replace("{0}", ""));
                 st.append("```");
                 Message.sendText(message.getChannel(), st.toString());
             }
@@ -67,13 +67,13 @@ public class JobCommand extends AbstractCommand {
 
                         if (author.getJob(jobs.get(0)) > 0)
                             Message.sendText(message.getChannel(), Translator.getLabel(lg, "job.request.2")
-                                .replace("{user}", author.getName())
-                                .replace("{job}", Translator.getLabel(lg, jobs.get(0)))
-                                .replace("{level}", String.valueOf(author.getJob(jobs.get(0)))));
+                                    .replace("{user}", author.getName())
+                                    .replace("{job}", Translator.getLabel(lg, jobs.get(0)).replace("{0}", ""))
+                                    .replace("{level}", String.valueOf(author.getJob(jobs.get(0)))));
                         else
                             Message.sendText(message.getChannel(), Translator.getLabel(lg, "job.request.3")
                                     .replace("{user}", author.getName())
-                                    .replace("{job}", Translator.getLabel(lg, jobs.get(0))));
+                                    .replace("{job}", Translator.getLabel(lg, jobs.get(0)).replace("{0}", "")));
                     } else { // Consultation
                         List<User> artisans = new ArrayList<>();
 
@@ -84,19 +84,19 @@ public class JobCommand extends AbstractCommand {
                         }
 
                         artisans.sort((User o1, User o2)->{
-                                if (o2.getJob(jobs.get(0)) != o1.getJob(jobs.get(0)))
-                                    return o2.getJob(jobs.get(0)) - o1.getJob(jobs.get(0));
-                                return o1.getName().compareTo(o2.getName());
-                            }
+                                    if (o2.getJob(jobs.get(0)) != o1.getJob(jobs.get(0)))
+                                        return o2.getJob(jobs.get(0)) - o1.getJob(jobs.get(0));
+                                    return o1.getName().compareTo(o2.getName());
+                                }
                         );
 
                         StringBuilder st = new StringBuilder();
 
                         if (!artisans.isEmpty()) {
                             st.append(Translator.getLabel(lg, "job.request.4")
-                                    .replace("{job}", Translator.getLabel(lg, jobs.get(0)))
+                                    .replace("{job}", Translator.getLabel(lg, jobs.get(0)).replace("{0}", "s"))
                                     .replace("{guild}",  message.getGuild().getName()))
-                              .append("\n```");
+                                    .append("\n```");
 
                             for (User user : artisans) {
                                 st.append("\n").append(user.getName());
@@ -110,7 +110,7 @@ public class JobCommand extends AbstractCommand {
                             st.append("```");
                         } else
                             st.append(Translator.getLabel(lg, "job.request.5")
-                                    .replace("{job}", Translator.getLabel(lg, jobs.get(0))));
+                                    .replace("{job}", Translator.getLabel(lg, jobs.get(0)).replace("{0}", "")));
 
                         Message.sendText(message.getChannel(), st.toString());
                     }
@@ -150,7 +150,7 @@ public class JobCommand extends AbstractCommand {
         List<String> jobs = new ArrayList<>();
 
         for(Job job : Job.values())
-            if (Normalizer.normalize(job.getLabel(lg), Normalizer.Form.NFD)
+            if (Normalizer.normalize(job.getLabel(lg).replace("{0}", ""), Normalizer.Form.NFD)
                     .replaceAll("\\p{InCombiningDiacriticalMarks}+", "")
                     .toLowerCase().replaceAll("\\W+", "").startsWith(nameProposed))
                 jobs.add(job.getName());

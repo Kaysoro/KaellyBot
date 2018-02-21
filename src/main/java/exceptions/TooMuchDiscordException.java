@@ -36,15 +36,15 @@ public class TooMuchDiscordException implements DiscordException {
     @Override
     public void throwException(IMessage message, Command command, Language lg, Object... arguments) {
         StringBuilder st = new StringBuilder(Translator.getLabel(lg, "exception.toomuch")
-                            .replace("{object}", Translator.getLabel(lg, objectKey))
-                            .replace("{found}", Translator.getLabel(lg, foundKey)));
+                .replace("{object}", Translator.getLabel(lg, objectKey))
+                .replace("{found}", Translator.getLabel(lg, foundKey)));
 
         if (arguments.length > 0) {
             st.append(": ");
             List<Object> objects = (List<Object>) arguments[0];
             for (Object object : objects)
                 if (isTranslatable)
-                    st.append(Translator.getLabel(lg, object.toString())).append(", ");
+                    st.append(Translator.getLabel(lg, object.toString()).replace("{0}", "")).append(", ");
                 else
                     st.append(object.toString()).append(", ");
             st.delete(st.length() - 2, st.length()).append(".");
