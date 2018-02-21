@@ -4,6 +4,7 @@ import commands.model.AbstractCommand;
 import enums.Language;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import sx.blah.discord.handle.obj.IGuild;
 import sx.blah.discord.handle.obj.IMessage;
 import util.ClientConfig;
 import util.Message;
@@ -29,9 +30,15 @@ public class StatCommand extends AbstractCommand {
             Matcher m = getMatcher(message);
             m.find();
             Language lg = Translator.getLanguageFrom(message.getChannel());
+
+            int totalUser = 0;
+            for(IGuild guild : ClientConfig.DISCORD().getGuilds())
+                totalUser += guild.getUsers().size();
+
             String answer = Translator.getLabel(lg, "stat.request")
                     .replace("{guilds.size}", String.valueOf(ClientConfig.DISCORD().getGuilds().size()))
-                    .replace("{users.size}", String.valueOf(ClientConfig.DISCORD().getUsers().size()));
+                    .replace("{users.size}", String.valueOf(ClientConfig.DISCORD().getUsers().size()))
+                    .replace("{users_max.size}", String.valueOf(totalUser));
             Message.sendText(message.getChannel(), answer);
         }
 

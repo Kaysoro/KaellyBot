@@ -45,45 +45,48 @@ public class SoundCommand extends AbstractCommand {
     public boolean request(IMessage message) {
         Language lg = Translator.getLanguageFrom(message.getChannel());
         if (super.request(message)) {
-            IVoiceChannel voice = message.getAuthor().getVoiceStateForGuild(message.getGuild()).getChannel();
+            try {
+                IVoiceChannel voice = message.getAuthor().getVoiceStateForGuild(message.getGuild()).getChannel();
 
-            if (voice == null)
-                notInVocalChannel.throwException(message, this, lg);
-            else {
-                if (!voice.getModifiedPermissions(ClientConfig.DISCORD().getOurUser()).contains(Permissions.VOICE_CONNECT)
-                        || !ClientConfig.DISCORD().getOurUser().getPermissionsForGuild(message.getGuild())
-                        .contains(Permissions.VOICE_CONNECT))
-                    noVoiceConnect.throwException(message, this, lg);
-                else if (voice.getConnectedUsers().size() >= voice.getUserLimit() && voice.getUserLimit() != 0)
-                    channelLimit.throwException(message, this, lg);
+                if (voice == null)
+                    notInVocalChannel.throwException(message, this, lg);
                 else {
-                    try {
-                        Matcher m = getMatcher(message);
-                        m.find();
-                        if(m.group(1) != null){ // Specific sound
-                            String value = m.group(1).trim().toLowerCase();
-                            List<File> files = new ArrayList<>();
-                            for(File file : getSounds())
-                                if (file.getName().toLowerCase().startsWith(value))
-                                    files.add(file);
+                    if (!voice.getModifiedPermissions(ClientConfig.DISCORD().getOurUser()).contains(Permissions.VOICE_CONNECT)
+                            || !ClientConfig.DISCORD().getOurUser().getPermissionsForGuild(message.getGuild())
+                            .contains(Permissions.VOICE_CONNECT))
+                        noVoiceConnect.throwException(message, this, lg);
+                    else if (voice.getConnectedUsers().size() >= voice.getUserLimit() && voice.getUserLimit() != 0)
+                        channelLimit.throwException(message, this, lg);
+                    else {
+                        try {
+                            Matcher m = getMatcher(message);
+                            m.find();
+                            if (m.group(1) != null) { // Specific sound
+                                String value = m.group(1).trim().toLowerCase();
+                                List<File> files = new ArrayList<>();
+                                for (File file : getSounds())
+                                    if (file.getName().toLowerCase().startsWith(value))
+                                        files.add(file);
 
-                            if (! files.isEmpty()){
-                                File file = files.get(new Random().nextInt(files.size()));
+                                if (!files.isEmpty()) {
+                                    File file = files.get(new Random().nextInt(files.size()));
+                                    playSound(voice, message, file);
+                                } else
+                                    notFoundSound.throwException(message, this, lg);
+                            } else { // random sound
+
+                                File file = getSounds().get(new Random().nextInt(getSounds().size()));
                                 playSound(voice, message, file);
                             }
-                            else
-                                notFoundSound.throwException(message, this, lg);
-                        }
-                        else { // random sound
 
-                            File file = getSounds().get(new Random().nextInt(getSounds().size()));
-                            playSound(voice, message, file);
+                        } catch (MissingPermissionsException e) {
+                            noVoiceConnect.throwException(message, this, lg);
                         }
-
-                    } catch (MissingPermissionsException e) {
-                        noVoiceConnect.throwException(message, this, lg);
                     }
                 }
+            } catch (Exception e){
+                ClientConfig.setSentryContext(message.getGuild(), message.getAuthor(), message.getChannel(), message);
+                LOG.error("request", e);
             }
         }
 
