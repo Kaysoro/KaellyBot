@@ -19,10 +19,18 @@ public class TooMuchDiscordException implements DiscordException {
 
     private String objectKey;
     private String foundKey;
+    private boolean isTranslatable;
 
     public TooMuchDiscordException(String objectKey, String foundKey){
         this.objectKey = objectKey;
         this.foundKey = foundKey;
+        this.isTranslatable = false;
+    }
+
+    public TooMuchDiscordException(String objectKey, String foundKey, boolean isTranslatable){
+        this.objectKey = objectKey;
+        this.foundKey = foundKey;
+        this.isTranslatable = isTranslatable;
     }
 
     @Override
@@ -35,7 +43,10 @@ public class TooMuchDiscordException implements DiscordException {
             st.append(": ");
             List<Object> objects = (List<Object>) arguments[0];
             for (Object object : objects)
-                st.append(object.toString()).append(", ");
+                if (isTranslatable)
+                    st.append(Translator.getLabel(lg, object.toString())).append(", ");
+                else
+                    st.append(object.toString()).append(", ");
             st.delete(st.length() - 2, st.length()).append(".");
         }
         else {
