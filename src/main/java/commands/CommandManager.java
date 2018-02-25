@@ -26,8 +26,9 @@ public class CommandManager {
         commands = new CopyOnWriteArrayList<>();
 
         // Basics commands
-        addCommand(new AlmanaxCommand());
         addCommand(new AboutCommand());
+        addCommand(new AlignmentCommand());
+        addCommand(new AlmanaxCommand());
         addCommand(new CommandCommand());
         addCommand(new DistanceCommand());
         addCommand(new HelpCommand());

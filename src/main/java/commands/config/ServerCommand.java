@@ -15,6 +15,7 @@ import org.slf4j.LoggerFactory;
 import sx.blah.discord.handle.obj.IMessage;
 import util.Translator;
 
+import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -46,12 +47,18 @@ public class ServerCommand extends AbstractCommand {
             m.find();
             if (m.group(1) != null)
                 if (isUserHasEnoughRights(message)) {
-                    String serverName = m.group(1).replaceAll("^\\s+", "").toLowerCase();
+                    String serverName = m.group(1).toLowerCase().trim();
 
                     if (! serverName.equals("-reset")) {
+                        serverName = Normalizer.normalize(serverName, Normalizer.Form.NFD)
+                                .replaceAll("\\p{InCombiningDiacriticalMarks}+", "")
+                                .replaceAll("\\W+", "").trim();
                         List<ServerDofus> result = new ArrayList<>();
                         for (ServerDofus server : ServerDofus.getServersDofus())
-                            if (server.getName().toLowerCase().startsWith(serverName))
+                            if (Normalizer.normalize(server.getName(), Normalizer.Form.NFD)
+                                    .replaceAll("\\p{InCombiningDiacriticalMarks}+", "")
+                                    .replaceAll("\\W+", "").toLowerCase().trim()
+                                    .startsWith(serverName))
                                 result.add(server);
 
                         if (result.size() == 1) {

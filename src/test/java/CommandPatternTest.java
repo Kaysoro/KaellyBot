@@ -29,6 +29,20 @@ public class CommandPatternTest extends TestCase {
         assertTrue(pattern.matcher(Constants.prefixCommand + "almanax 1").find());
     }
 
+    public void testAlignmentCommand(){
+        Command cmd = new AlignmentCommand();
+        Pattern pattern = Pattern.compile("^" + Constants.prefixCommand + cmd.getName() + cmd.getPattern() + "$");
+
+        assertTrue(pattern.matcher(Constants.prefixCommand + "align").find());
+        assertTrue(pattern.matcher(Constants.prefixCommand + "align bonta oeil 20").find());
+        assertTrue(pattern.matcher(Constants.prefixCommand + "align bonta oeil 20 oto mustam").find());
+        assertTrue(pattern.matcher(Constants.prefixCommand + "align -user 145618941615").find());
+        assertTrue(pattern.matcher(Constants.prefixCommand + "align -user 145618941615 oto mustam").find());
+        assertTrue(pattern.matcher(Constants.prefixCommand + "align -user 145618941615 bonta oeil 100").find());
+        assertTrue(pattern.matcher(Constants.prefixCommand + "align -user 145618941615 bonta oeil 0 ilyzaelle").find());
+        assertTrue(pattern.matcher(Constants.prefixCommand + "align > 20").find());
+    }
+
     public void testAboutCommand(){
         Command cmd = new AboutCommand();
         Pattern pattern = Pattern.compile("^" + Constants.prefixCommand + cmd.getName() + cmd.getPattern() + "$");
