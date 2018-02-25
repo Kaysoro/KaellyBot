@@ -11,6 +11,7 @@ import sx.blah.discord.api.events.EventSubscriber;
 import sx.blah.discord.handle.impl.events.guild.GuildLeaveEvent;
 import sx.blah.discord.handle.obj.IChannel;
 import util.ClientConfig;
+import util.Reporter;
 
 /**
  * Created by steve on 14/07/2016.
@@ -23,9 +24,9 @@ public class GuildLeaveListener {
         super();
     }
 
-        @EventSubscriber
-        public void onReady(GuildLeaveEvent event) {
-            ClientConfig.setSentryContext(event.getGuild(), null, null, null);
+    @EventSubscriber
+    public void onReady(GuildLeaveEvent event) {
+        try {
             Guild guild = Guild.getGuild(event.getGuild(), false);
             if (guild != null) {
                 guild.removeToDatabase();
@@ -61,5 +62,9 @@ public class GuildLeaveListener {
             Message.sendText(ClientConfig.DISCORD().getChannelByID(Constants.chanReportID),
                     "[LOSE] **" + event.getGuild().getName() + "**, -" + event.getGuild().getUsers().size()
                             +  " utilisateurs");
+        } catch(Exception e){
+            Reporter.report(e, event.getGuild());
+            LOG.error("onReady", e);
         }
+    }
 }

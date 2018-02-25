@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import util.ClientConfig;
 import util.Connexion;
+import util.Reporter;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -65,8 +66,8 @@ public class JobUser {
 
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
-            ClientConfig.setSentryContext(null, ClientConfig.DISCORD().getUserByID(idUser), null,null);
-            LOG.error(e.getMessage());
+            Reporter.report(e, ClientConfig.DISCORD().getUserByID(idUser));
+            LOG.error("setLevel", e);
         }
     }
 
@@ -90,9 +91,8 @@ public class JobUser {
 
                 preparedStatement.executeUpdate();
             } catch (SQLException e) {
-                ClientConfig.setSentryContext(ClientConfig.DISCORD().getGuildByID(idUser),
-                        ClientConfig.DISCORD().getUserByID(idUser), null,null);
-                LOG.error(e.getMessage());
+                Reporter.report(e, ClientConfig.DISCORD().getUserByID(idUser));
+                LOG.error("addToDatabase", e);
             }
         }
     }
@@ -124,8 +124,8 @@ public class JobUser {
                     jobs.put(Triple.of(idUser, server, job), new JobUser(idUser, server, job, level));
                 }
             } catch (SQLException e) {
-                ClientConfig.setSentryContext(null, null, null,null);
-                LOG.error(e.getMessage());
+                Reporter.report(e);
+                LOG.error("getJobs", e);
             }
         }
 

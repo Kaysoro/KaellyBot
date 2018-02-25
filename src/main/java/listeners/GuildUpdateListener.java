@@ -1,11 +1,11 @@
 package listeners;
 
-import util.ClientConfig;
 import data.Guild;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sx.blah.discord.api.events.EventSubscriber;
 import sx.blah.discord.handle.impl.events.guild.GuildUpdateEvent;
+import util.Reporter;
 
 /**
  * Created by steve on 14/07/2016.
@@ -15,10 +15,14 @@ public class GuildUpdateListener {
 
     @EventSubscriber
     public void onReady(GuildUpdateEvent event) {
-        ClientConfig.setSentryContext(event.getGuild(), null, null, null);
-        if (! event.getOldGuild().getName().equals(event.getNewGuild().getName())){
-            Guild.getGuild(event.getNewGuild()).setName(event.getNewGuild().getName());
-            LOG.info("'" + event.getOldGuild().getName() + "' renommé en '" + event.getNewGuild().getName() + "'");
+        try {
+            if (! event.getOldGuild().getName().equals(event.getNewGuild().getName())){
+                Guild.getGuild(event.getNewGuild()).setName(event.getNewGuild().getName());
+                LOG.info("'" + event.getOldGuild().getName() + "' renommé en '" + event.getNewGuild().getName() + "'");
+            }
+        } catch(Exception e){
+            Reporter.report(e, event.getGuild());
+            LOG.error("onReady", e);
         }
     }
 }

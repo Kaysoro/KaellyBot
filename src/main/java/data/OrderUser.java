@@ -2,12 +2,12 @@ package data;
 
 import enums.City;
 import enums.Order;
-import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import util.ClientConfig;
 import util.Connexion;
 import util.Quadruple;
+import util.Reporter;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -72,8 +72,8 @@ public class OrderUser {
 
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
-            ClientConfig.setSentryContext(null, ClientConfig.DISCORD().getUserByID(idUser), null,null);
-            LOG.error(e.getMessage());
+            Reporter.report(e, ClientConfig.DISCORD().getUserByID(idUser));
+            LOG.error("setLevel", e);
         }
     }
 
@@ -98,9 +98,8 @@ public class OrderUser {
 
                 preparedStatement.executeUpdate();
             } catch (SQLException e) {
-                ClientConfig.setSentryContext(ClientConfig.DISCORD().getGuildByID(idUser),
-                        ClientConfig.DISCORD().getUserByID(idUser), null,null);
-                LOG.error(e.getMessage());
+                Reporter.report(e, ClientConfig.DISCORD().getUserByID(idUser));
+                LOG.error("addToDatabase", e);
             }
         }
     }
@@ -133,8 +132,8 @@ public class OrderUser {
                     orders.put(Quadruple.of(idUser, server, city, order), new OrderUser(idUser, server, city, order, level));
                 }
             } catch (SQLException e) {
-                ClientConfig.setSentryContext(null, null, null,null);
-                LOG.error(e.getMessage());
+                Reporter.report(e);
+                LOG.error("getOrders", e);
             }
         }
 

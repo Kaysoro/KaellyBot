@@ -10,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sx.blah.discord.handle.obj.IMessage;
 import sx.blah.discord.handle.obj.Permissions;
+import util.Reporter;
 import util.Translator;
 
 import java.util.regex.Matcher;
@@ -44,32 +45,37 @@ public abstract class AbstractCommand implements Command {
 
     @Override
     public boolean request(IMessage message) {
-        Language lg = Translator.getLanguageFrom(message.getChannel());
-        Matcher m = getMatcher(message);
-        boolean isFound = m.find();
+        boolean isFound = false;
+        try {
+            Language lg = Translator.getLanguageFrom(message.getChannel());
+            Matcher m = getMatcher(message);
+            isFound = m.find();
 
-        // Caché si la fonction est désactivée/réservée aux admin et que l'auteur n'est pas super-admin
-        if ((! isPublic() || isAdmin()) && message.getAuthor().getLongID() != Constants.authorId)
-            return false;
+            // Caché si la fonction est désactivée/réservée aux admin et que l'auteur n'est pas super-admin
+            if ((!isPublic() || isAdmin()) && message.getAuthor().getLongID() != Constants.authorId)
+                return false;
 
-        // La commande est trouvée
-        if(isFound) {
-            // Mais n'est pas utilisable en MP
-            if (! isUsableInMP() && message.getChannel().isPrivate()) {
-                notUsableInMp.throwException(message, this, lg);
-                return false;
+            // La commande est trouvée
+            if (isFound) {
+                // Mais n'est pas utilisable en MP
+                if (!isUsableInMP() && message.getChannel().isPrivate()) {
+                    notUsableInMp.throwException(message, this, lg);
+                    return false;
+                }
+                // Mais est désactivée par la guilde
+                else if (!message.getChannel().isPrivate() && message.getAuthor().getLongID() != Constants.authorId
+                        && isForbidden(Guild.getGuild(message.getGuild()))) {
+                    commandForbidden.throwException(message, this, lg);
+                    return false;
+                }
             }
-            // Mais est désactivée par la guilde
-            else if (! message.getChannel().isPrivate() && message.getAuthor().getLongID() != Constants.authorId
-                && isForbidden(Guild.getGuild(message.getGuild()))) {
-                commandForbidden.throwException(message, this, lg);
-                return false;
-            }
+            // Mais est mal utilisée
+            else if (message.getContent().startsWith(getPrefix(message) + getName()))
+                new BadUseCommandDiscordException().throwException(message, this, lg);
+        } catch(Exception e){
+            Reporter.report(e, message.getGuild(), message.getChannel(), message.getAuthor(), message.getContent());
+            LOG.error("request", e);
         }
-        // Mais est mal utilisée
-        else if (message.getContent().startsWith(getPrefix(message) + getName()))
-            new BadUseCommandDiscordException().throwException(message, this, lg);
-
         return isFound;
     }
 
@@ -109,11 +115,9 @@ public abstract class AbstractCommand implements Command {
      * @return true si l'utilisateur a les droits nécessaires, false le cas échéant
      */
     protected boolean isUserHasEnoughRights(IMessage message){
-        if (! message.getChannel().isPrivate())
-            return message.getAuthor().getLongID() == Constants.authorId
-                    || message.getAuthor().getPermissionsForGuild(message.getGuild()).contains(Permissions.MANAGE_SERVER)
-                    || message.getChannel().getModifiedPermissions(message.getAuthor()).contains(Permissions.MANAGE_SERVER);
-        return false;
+        return ! message.getChannel().isPrivate() && (message.getAuthor().getLongID() == Constants.authorId
+                || message.getAuthor().getPermissionsForGuild(message.getGuild()).contains(Permissions.MANAGE_SERVER)
+                || message.getChannel().getModifiedPermissions(message.getAuthor()).contains(Permissions.MANAGE_SERVER));
     }
 
     @Override

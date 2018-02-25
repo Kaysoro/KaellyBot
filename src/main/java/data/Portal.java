@@ -10,10 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sx.blah.discord.api.internal.json.objects.EmbedObject;
 import sx.blah.discord.util.EmbedBuilder;
-import util.ClientConfig;
-import util.Connexion;
-import util.JSoupManager;
-import util.Translator;
+import util.*;
 
 import java.io.IOException;
 import java.sql.Connection;
@@ -125,8 +122,8 @@ public class Portal implements Embedded{
                     portals.put(portal.getName(), portal);
                 }
             } catch (SQLException e) {
-                ClientConfig.setSentryContext(null,null, null, null);
-                LOG.error(e.getMessage());
+                Reporter.report(e);
+                LOG.error("getPortals", e);
             }
         }
 
@@ -165,9 +162,8 @@ public class Portal implements Embedded{
             }
 
         } catch (SQLException e) {
-            ClientConfig.setSentryContext(ClientConfig.DISCORD().getGuildByID(Long.parseLong(g.getId())),
-                    null, null, null);
-            LOG.error(e.getMessage());
+            Reporter.report(e, ClientConfig.DISCORD().getGuildByID(Long.parseLong(g.getId())));
+            LOG.error("getPortals", e);
         }
 
         return portals;
@@ -203,9 +199,8 @@ public class Portal implements Embedded{
 
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
-            ClientConfig.setSentryContext(ClientConfig.DISCORD().getGuildByID(Long.parseLong(guild.getId())),
-                    null, null, null);
-            LOG.error(e.getMessage());
+            Reporter.report(e, ClientConfig.DISCORD().getGuildByID(Long.parseLong(guild.getId())));
+            LOG.error("setUtilisation", e);
         }
     }
 
@@ -241,9 +236,8 @@ public class Portal implements Embedded{
 
                 preparedStatement.executeUpdate();
             } catch (SQLException e) {
-                ClientConfig.setSentryContext(ClientConfig.DISCORD().getGuildByID(Long.parseLong(guild.getId())),
-                        null, null, null);
-                LOG.error(e.getMessage());
+                Reporter.report(e, ClientConfig.DISCORD().getGuildByID(Long.parseLong(guild.getId())));
+                LOG.error("setCoordonate", e);
             }
         }
     }

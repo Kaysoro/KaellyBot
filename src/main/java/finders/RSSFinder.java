@@ -2,13 +2,10 @@ package finders;
 
 import data.RSS;
 import enums.Language;
-import util.Message;
+import util.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sx.blah.discord.handle.obj.IChannel;
-import util.ClientConfig;
-import util.Connexion;
-import util.Translator;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -59,9 +56,9 @@ public class RSSFinder {
 
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
-            ClientConfig.setSentryContext(ClientConfig.DISCORD().getGuildByID(Long.parseLong(getGuildId())),
-                    null, ClientConfig.DISCORD().getChannelByID(Long.parseLong(getChan())), null);
-            LOG.error(e.getMessage());
+            Reporter.report(e, ClientConfig.DISCORD().getGuildByID(Long.parseLong(getGuildId())),
+                    ClientConfig.DISCORD().getChannelByID(Long.parseLong(getChan())));
+            LOG.error("setLastRSS", e);
         }
     }
 
@@ -80,9 +77,9 @@ public class RSSFinder {
 
                 preparedStatement.executeUpdate();
             } catch (SQLException e) {
-                ClientConfig.setSentryContext(ClientConfig.DISCORD().getGuildByID(Long.parseLong(getGuildId())),
-                        null, ClientConfig.DISCORD().getChannelByID(Long.parseLong(getChan())), null);
-                LOG.error(e.getMessage());
+                Reporter.report(e, ClientConfig.DISCORD().getGuildByID(Long.parseLong(getGuildId())),
+                        ClientConfig.DISCORD().getChannelByID(Long.parseLong(getChan())));
+                LOG.error("addToDatabase", e);
             }
         }
     }
@@ -99,9 +96,9 @@ public class RSSFinder {
             request.executeUpdate();
 
         } catch (SQLException e) {
-            ClientConfig.setSentryContext(ClientConfig.DISCORD().getGuildByID(Long.parseLong(getGuildId())),
-                    null, ClientConfig.DISCORD().getChannelByID(Long.parseLong(getChan())), null);
-            LOG.error(getChan() + " : " + e.getMessage());
+            Reporter.report(e, ClientConfig.DISCORD().getGuildByID(Long.parseLong(getGuildId())),
+                    ClientConfig.DISCORD().getChannelByID(Long.parseLong(getChan())));
+            LOG.error("removeToDatabase", e);
         }
     }
 
@@ -131,8 +128,8 @@ public class RSSFinder {
                     }
                 }
             } catch (SQLException e) {
-                ClientConfig.setSentryContext(null, null, null, null);
-                LOG.error(e.getMessage());
+                Reporter.report(e);
+                LOG.error("getRSSFinders", e);
             }
         }
 

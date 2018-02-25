@@ -17,6 +17,7 @@ import org.slf4j.LoggerFactory;
 import sx.blah.discord.api.events.EventSubscriber;
 import sx.blah.discord.handle.impl.events.guild.GuildCreateEvent;
 import sx.blah.discord.handle.obj.Permissions;
+import util.Reporter;
 import util.Translator;
 
 /**
@@ -30,17 +31,16 @@ public class GuildCreateListener {
         super();
     }
 
-        @EventSubscriber
-        public void onReady(GuildCreateEvent event) {
-            ClientConfig.setSentryContext(event.getGuild(), null, null, null);
-
-            if(!Guild.getGuilds().containsKey(event.getGuild().getStringID())) {
+    @EventSubscriber
+    public void onReady(GuildCreateEvent event) {
+        try {
+            if (!Guild.getGuilds().containsKey(event.getGuild().getStringID())) {
                 Guild guild = new Guild(event.getGuild().getStringID(), event.getGuild().getName(),
                         Translator.detectLanguage(event.getGuild().getDefaultChannel()));
                 guild.addToDatabase();
 
                 Language lg = guild.getLanguage();
-                LOG.info("La guilde " + guild.getId() + " - " + guild.getName() + " a ajouté "   + Constants.name);
+                LOG.info("La guilde " + guild.getId() + " - " + guild.getName() + " a ajouté " + Constants.name);
 
                 String customMessage = Translator.getLabel(lg, "welcome.message");
 
@@ -57,21 +57,25 @@ public class GuildCreateListener {
                         .replaceAll("\\{owner\\}", event.getGuild().getOwner().mention())
                         .replaceAll("\\{guild\\}", event.getGuild().getName());
 
-                if(event.getGuild().getDefaultChannel() != null && event.getGuild().getDefaultChannel()
+                if (event.getGuild().getDefaultChannel() != null && event.getGuild().getDefaultChannel()
                         .getModifiedPermissions(ClientConfig.DISCORD().getOurUser())
                         .contains(Permissions.SEND_MESSAGES))
                     Message.sendText(event.getGuild().getDefaultChannel(), customMessage);
                 else try {
-                        Message.sendText(event.getGuild().getOwner().getOrCreatePMChannel(), customMessage);
-                    } catch(DiscordException e){
-                        LOG.warn("onReady", "Impossible de contacter l'administrateur de la guilde ["
-                                + guild.getName() + "].");
-                    }
+                    Message.sendText(event.getGuild().getOwner().getOrCreatePMChannel(), customMessage);
+                } catch (DiscordException e) {
+                    LOG.warn("onReady", "Impossible de contacter l'administrateur de la guilde ["
+                            + guild.getName() + "].");
+                }
 
                 Message.sendText(ClientConfig.DISCORD().getChannelByID(Constants.chanReportID),
                         "[NEW] **" + guild.getName() + "** (" + guild.getLanguage().getAbrev() + "), +"
-                                + event.getGuild().getUsers().size() +  " utilisateurs");
+                                + event.getGuild().getUsers().size() + " utilisateurs");
 
             }
+        } catch(Exception e){
+            Reporter.report(e, event.getGuild());
+            LOG.error("onReady", e);
         }
+    }
 }

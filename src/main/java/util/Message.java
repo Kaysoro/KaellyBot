@@ -25,14 +25,14 @@ public class Message {
                 LoggerFactory.getLogger(Message.class).warn(e.getMessage(),e );
                 throw e;
             } catch (DiscordException e){
-                ClientConfig.setSentryContext(channel.isPrivate()? null : channel.getGuild(), null, channel, null);
+                Reporter.report(e, channel.isPrivate()? null : channel.getGuild(), channel);
                 LoggerFactory.getLogger(Message.class).error(e.getMessage(), e);
             } catch(MissingPermissionsException e){
                 LoggerFactory.getLogger(Message.class).warn(Constants.name
                         + " n'a pas les permissions pour appliquer cette requête.");
                 new MissingPermissionDiscordException().throwException(channel, lg, e);
             } catch(Exception e){
-                ClientConfig.setSentryContext(channel.isPrivate()? null : channel.getGuild(), null, channel, null);
+                Reporter.report(e, channel.isPrivate()? null : channel.getGuild(), channel);
                 LoggerFactory.getLogger(Message.class).error(e.getMessage(),e );
             }
             return null;
@@ -51,14 +51,14 @@ public class Message {
                 LoggerFactory.getLogger(Message.class).warn(e.getMessage(), e);
                 throw e;
             } catch (DiscordException e){
-                ClientConfig.setSentryContext(channel.isPrivate()? null : channel.getGuild(), null, channel, null);
+                Reporter.report(e, channel.isPrivate()? null : channel.getGuild(), channel);
                 LoggerFactory.getLogger(Message.class).error(e.getMessage(), e);
             } catch(MissingPermissionsException e){
                 LoggerFactory.getLogger(Message.class).warn(Constants.name
                         + " n'a pas les permissions pour appliquer cette requête.");
                 new MissingPermissionDiscordException().throwException(channel, lg, e);
             } catch(Exception e){
-                ClientConfig.setSentryContext(channel.isPrivate()? null : channel.getGuild(), null, channel, null);
+                Reporter.report(e, channel.isPrivate()? null : channel.getGuild(), channel);
                 LoggerFactory.getLogger(Message.class).error(e.getMessage(), e);
             }
             return null;

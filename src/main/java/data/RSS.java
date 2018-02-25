@@ -11,7 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sx.blah.discord.api.internal.json.objects.EmbedObject;
 import sx.blah.discord.util.EmbedBuilder;
-import util.ClientConfig;
+import util.Reporter;
 import util.Translator;
 
 import java.io.IOException;
@@ -59,8 +59,8 @@ public class RSS implements Comparable<RSS>, Embedded {
                         entry.getPublishedDate().getTime()));
             }
         } catch (FeedException e){
-            ClientConfig.setSentryContext(null,null, null, null);
-            LOG.error(e.getMessage());
+            Reporter.report(e);
+            LOG.error("getRSSFeeds", e);
         } catch(IOException e){
             ExceptionManager.manageSilentlyIOException(e);
         } catch(Exception e){
@@ -83,17 +83,12 @@ public class RSS implements Comparable<RSS>, Embedded {
     }
 
     public String toStringDiscord(){
-        StringBuilder st = new StringBuilder(getTitle()).append(" (")
-                .append(dateFormat.format(new Date(getDate()))).append(")\n")
-                .append(getUrl());
-        return st.toString();
+        return getTitle() + " (" + dateFormat.format(new Date(getDate())) + ")\n" + getUrl();
     }
 
     @Override
     public String toString(){
-        StringBuilder st = new StringBuilder(getTitle()).append(" (")
-                .append(dateFormat.format(new Date(getDate()))).append(")\n");
-        return st.toString();
+        return getTitle() + " (" + dateFormat.format(new Date(getDate())) + ")\n";
     }
 
     @Override

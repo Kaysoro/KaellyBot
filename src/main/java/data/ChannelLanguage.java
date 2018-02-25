@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 import sx.blah.discord.handle.obj.IChannel;
 import util.ClientConfig;
 import util.Connexion;
+import util.Reporter;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -51,8 +52,8 @@ public class ChannelLanguage {
                     }
                 }
             } catch (SQLException e) {
-                ClientConfig.setSentryContext(null, null, null, null);
-                LOG.error(e.getMessage());
+                Reporter.report(e);
+                LOG.error("getChannlLanguages", e);
             }
         }
         return channelLanguages;
@@ -72,9 +73,9 @@ public class ChannelLanguage {
 
                 preparedStatement.executeUpdate();
             } catch (SQLException e) {
-                ClientConfig.setSentryContext(ClientConfig.DISCORD().getChannelByID(getChannelId()).getGuild(),
-                        null, ClientConfig.DISCORD().getChannelByID(getChannelId()), null);
-                LOG.error(e.getMessage());
+                Reporter.report(e, ClientConfig.DISCORD().getChannelByID(getChannelId()).getGuild(),
+                        ClientConfig.DISCORD().getChannelByID(getChannelId()));
+                LOG.error("addToDatabase", e);
             }
         }
     }
@@ -91,9 +92,9 @@ public class ChannelLanguage {
             preparedStatement.setString(2, String.valueOf(getChannelId()));
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
-            ClientConfig.setSentryContext(ClientConfig.DISCORD().getChannelByID(getChannelId()).getGuild(),
-                    null, ClientConfig.DISCORD().getChannelByID(getChannelId()), null);
-            LOG.error(e.getMessage());
+            Reporter.report(e, ClientConfig.DISCORD().getChannelByID(getChannelId()).getGuild(),
+                    ClientConfig.DISCORD().getChannelByID(getChannelId()));
+            LOG.error("setLanguage", e);
         }
     }
 
@@ -109,9 +110,9 @@ public class ChannelLanguage {
             request.executeUpdate();
 
         } catch (SQLException e) {
-            ClientConfig.setSentryContext(ClientConfig.DISCORD().getChannelByID(getChannelId()).getGuild(),
-                    null, ClientConfig.DISCORD().getChannelByID(getChannelId()), null);
-            LOG.error(getChannelId() + " : " + e.getMessage());
+            Reporter.report(e, ClientConfig.DISCORD().getChannelByID(getChannelId()).getGuild(),
+                    ClientConfig.DISCORD().getChannelByID(getChannelId()));
+            LOG.error("removeToDatabase", e);
         }
     }
 

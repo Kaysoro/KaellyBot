@@ -4,8 +4,8 @@ import enums.Language;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sx.blah.discord.handle.obj.IGuild;
-import util.ClientConfig;
 import util.Connexion;
+import util.Reporter;
 
 import java.sql.*;
 import java.util.List;
@@ -65,7 +65,7 @@ public class Guild {
                 }
 
             } catch (SQLException e) {
-                ClientConfig.setSentryContext(ClientConfig.DISCORD().getGuildByID(Long.parseLong(getId())), null, null, null);
+                Reporter.report(e);
                 LOG.error(e.getMessage());
             }
         }
@@ -85,7 +85,7 @@ public class Guild {
                 request.executeUpdate();
 
             } catch (SQLException e) {
-                ClientConfig.setSentryContext(ClientConfig.DISCORD().getGuildByID(Long.parseLong(getId())), null, null, null);
+                Reporter.report(e);
                 LOG.error(e.getMessage());
             }
         }
@@ -104,7 +104,7 @@ public class Guild {
             preparedStatement.setString(2, id);
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
-            ClientConfig.setSentryContext(ClientConfig.DISCORD().getGuildByID(Long.parseLong(getId())), null, null, null);
+            Reporter.report(e);
             LOG.error(e.getMessage());
         }
     }
@@ -122,7 +122,7 @@ public class Guild {
             preparedStatement.setString(2, id);
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
-            ClientConfig.setSentryContext(ClientConfig.DISCORD().getGuildByID(Long.parseLong(getId())), null, null, null);
+            Reporter.report(e);
             LOG.error(e.getMessage());
         }
     }
@@ -142,7 +142,7 @@ public class Guild {
 
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
-            ClientConfig.setSentryContext(ClientConfig.DISCORD().getGuildByID(Long.parseLong(getId())), null, null, null);
+            Reporter.report(e);
             LOG.error(e.getMessage());
         }
     }
@@ -161,7 +161,7 @@ public class Guild {
 
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
-            ClientConfig.setSentryContext(ClientConfig.DISCORD().getGuildByID(Long.parseLong(getId())), null, null, null);
+            Reporter.report(e);
             LOG.error(e.getMessage());
         }
     }
@@ -192,7 +192,7 @@ public class Guild {
                     guilds.put(id, new Guild(id, name, prefixe, Language.valueOf(lang), server));
                 }
             } catch (SQLException e) {
-                ClientConfig.setSentryContext(null, null, null, null);
+                Reporter.report(e);
                 LOG.error(e.getMessage());
             }
         }

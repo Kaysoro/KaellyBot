@@ -30,10 +30,10 @@ public class Connexion {
 			connection = DriverManager.getConnection("jdbc:sqlite:" + Constants.database,config.toProperties());
 
 		} catch (ClassNotFoundException e) {
-			ClientConfig.setSentryContext(null,null, null,null);
+			Reporter.report(e);
             LOG.error("Librairie SQLite non trouvé.");
 		} catch (SQLException e) {
-			ClientConfig.setSentryContext(null,null, null,null);
+			Reporter.report(e);
             LOG.error("Erreur lors de la connexion à la base de données");
 		}
 	}
@@ -44,7 +44,7 @@ public class Connexion {
 			statement.close();
             LOG.info("Fermeture de la connexion");
 		} catch (SQLException e) {
-			ClientConfig.setSentryContext(null,null, null,null);
+			Reporter.report(e);
             LOG.error("Erreur lors de la fermeture de la connexion");
 		}
 	}
@@ -62,7 +62,7 @@ public class Connexion {
 		try {
 			resultat = statement.executeQuery(requet);
 		} catch (SQLException e) {
-			ClientConfig.setSentryContext(null,null, null,null);
+			Reporter.report(e);
 			LOG.error("Erreur dans la requête : " + requet);
 		}
 		return resultat;
