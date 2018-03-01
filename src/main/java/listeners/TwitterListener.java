@@ -44,7 +44,7 @@ public class TwitterListener extends StatusAdapter {
                             && Translator.getLanguageFrom(chan).equals(language))
                         Message.sendEmbed(chan, createEmbedFor(status));
                 } catch(Exception e){
-                    Reporter.report(e, twitterFinder.getChannelId());
+                    Reporter.report(e, ClientConfig.DISCORD().getChannelByID(twitterFinder.getChannelId()));
                     LOG.error("onStatus", e);
                 }
     }

@@ -1,5 +1,6 @@
 package util;
 
+import io.sentry.Sentry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sx.blah.discord.api.ClientBuilder;
@@ -41,6 +42,9 @@ public class ClientConfig {
                     LOG.error("Impossible de se connecter à Discord : verifiez votre token dans "
                             + FILENAME + " ainsi que votre connexion.");
             }
+
+            if (! prop.get("sentry.dsn").equals(""))
+                Sentry.init(prop.getProperty("sentry.dsn"));
 
             if (! prop.get("twitter.consumer_key").equals("") && ! prop.get("twitter.consumer_secret").equals("")
             && ! prop.get("twitter.access_token").equals("") && ! prop.get("twitter.access_token_secret").equals("")) {

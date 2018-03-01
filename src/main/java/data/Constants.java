@@ -118,9 +118,14 @@ public class Constants {
     public final static int prefixeLimit = 3;
 
     /**
-     * User or channel dedicated to receive error logs.
+     * User or channel dedicated to receive info logs.
      */
     public final static long chanReportID = 321197720629149698L;
+
+    /**
+     * User or channel dedicated to receive error logs.
+     */
+    public final static long chanErrorID = 358201712600678400L;
 
     /**
      * Official changelog

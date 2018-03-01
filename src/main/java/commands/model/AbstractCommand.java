@@ -73,7 +73,7 @@ public abstract class AbstractCommand implements Command {
             else if (message.getContent().startsWith(getPrefix(message) + getName()))
                 new BadUseCommandDiscordException().throwException(message, this, lg);
         } catch(Exception e){
-            Reporter.report(e, message.getGuild(), message.getChannel(), message.getAuthor(), message.getContent());
+            Reporter.report(e, message.getGuild(), message.getChannel(), message.getAuthor(), message);
             LOG.error("request", e);
         }
         return isFound;
