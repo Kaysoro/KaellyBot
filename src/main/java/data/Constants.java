@@ -15,7 +15,7 @@ public class Constants {
     /**
      * Application version
      */
-    public final static String version = "1.0.0";
+    public final static String version = "1.0.1";
 
     /**
      * Changelog
@@ -63,6 +63,11 @@ public class Constants {
      * Database name
      */
     public final static String database = "bdd.sqlite";
+
+    /**
+     * Path to the database (can be left empty)
+     */
+    public final static String database_path = "";
 
     /**
      * prefix used for command call.

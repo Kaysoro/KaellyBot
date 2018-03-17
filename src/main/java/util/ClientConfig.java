@@ -30,9 +30,13 @@ public class ClientConfig {
     private TwitterStream TWITTER;
 
     private ClientConfig(){
+        this(System.getProperty("user.dir"));
+    }
+
+    private ClientConfig(String path){
         super();
         Properties prop = new Properties();
-        String config = System.getProperty("user.dir") + File.separator + FILENAME;
+        String config = path + File.separator + FILENAME;
 
         try (FileInputStream file = new FileInputStream(URLDecoder.decode(config, "UTF-8"))){
             prop.load(file);
@@ -43,15 +47,15 @@ public class ClientConfig {
                         .withRecommendedShardCount()
                         .login();
             } catch(DiscordException e){
-                    LOG.error("Impossible de se connecter à Discord : verifiez votre token dans "
-                            + FILENAME + " ainsi que votre connexion.");
+                LOG.error("Impossible de se connecter à Discord : verifiez votre token dans "
+                        + FILENAME + " ainsi que votre connexion.");
             }
 
             if (! prop.get("sentry.dsn").equals(""))
                 Sentry.init(prop.getProperty("sentry.dsn"));
 
             if (! prop.get("twitter.consumer_key").equals("") && ! prop.get("twitter.consumer_secret").equals("")
-            && ! prop.get("twitter.access_token").equals("") && ! prop.get("twitter.access_token_secret").equals("")) {
+                    && ! prop.get("twitter.access_token").equals("") && ! prop.get("twitter.access_token_secret").equals("")) {
                 ConfigurationBuilder cb = new ConfigurationBuilder();
                 cb.setDebugEnabled(false)
                         .setOAuthConsumerKey(prop.getProperty("twitter.consumer_key"))
@@ -66,15 +70,21 @@ public class ClientConfig {
                 TWITTER = null;
             }
 
-            } catch(FileNotFoundException e){
-                LOG.error("Fichier de configuration non trouvé.");
-                TWITTER = null;
-            } catch (UnsupportedEncodingException e) {
-                LOG.error(e.getMessage());
-            } catch (IOException e) {
-                LOG.error("IOException rencontré : " + e.getMessage());
-                TWITTER = null;
-            }
+        } catch(FileNotFoundException e){
+            LOG.error("Fichier de configuration non trouvé.");
+            TWITTER = null;
+        } catch (UnsupportedEncodingException e) {
+            LOG.error(e.getMessage());
+        } catch (IOException e) {
+            LOG.error("IOException rencontré : " + e.getMessage());
+            TWITTER = null;
+        }
+    }
+
+    public static synchronized ClientConfig getInstance(String path){
+        if (instance == null)
+            instance = new ClientConfig(path);
+        return instance;
     }
 
     public static synchronized ClientConfig getInstance(){
@@ -85,6 +95,9 @@ public class ClientConfig {
 
     public static TwitterStream TWITTER() {
         return getInstance().TWITTER;
+    }
+    public static IDiscordClient DISCORD(String path) {
+        return getInstance(path).DISCORD;
     }
     public static IDiscordClient DISCORD() {
         return getInstance().DISCORD;

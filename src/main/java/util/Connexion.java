@@ -1,5 +1,6 @@
 package util;
 
+import java.io.File;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -16,18 +17,23 @@ public class Connexion {
 	private static Connexion instance = null;
 	private Connection connection = null;
 	private Statement statement = null;
+    private static String database_path = System.getProperty("user.dir") + File.separator;
 
 	public void connect() {
+        if (! Constants.database_path.trim().isEmpty()) {
+            database_path = Constants.database_path + File.separator;
+        }
+
 		try {
 			Class.forName("org.sqlite.JDBC");
-			connection = DriverManager.getConnection("jdbc:sqlite:" + Constants.database);
+			connection = DriverManager.getConnection("jdbc:sqlite:" + database_path + Constants.database);
 
 			statement = connection.createStatement();
 			LOG.info("Connexion à " + Constants.database + " avec succès");
 
 			SQLiteConfig config = new SQLiteConfig();  
 			config.enforceForeignKeys(true);  
-			connection = DriverManager.getConnection("jdbc:sqlite:" + Constants.database,config.toProperties());
+			connection = DriverManager.getConnection("jdbc:sqlite:" + database_path + Constants.database, config.toProperties());
 
 		} catch (ClassNotFoundException e) {
 			ClientConfig.setSentryContext(null,null, null,null);
