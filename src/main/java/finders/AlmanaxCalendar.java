@@ -2,14 +2,11 @@ package finders;
 
 import data.Almanax;
 import enums.Language;
-import util.Message;
+import util.*;
 import exceptions.ExceptionManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sx.blah.discord.handle.obj.IChannel;
-import util.ClientConfig;
-import util.Connexion;
-import util.Translator;
 
 import java.io.IOException;
 import java.sql.Connection;
@@ -59,7 +56,9 @@ public class AlmanaxCalendar {
                     } catch (IOException e) {
                         ExceptionManager.manageSilentlyIOException(e);
                         try { Thread.sleep(300000); // 5min
-                        } catch (InterruptedException e1) {}
+                        } catch (InterruptedException e1) {
+                            LOG.error("start", e1);
+                        }
                     }
 
                 for(AlmanaxCalendar calendar : getAlmanaxCalendars().values()){
@@ -90,10 +89,9 @@ public class AlmanaxCalendar {
 
                 preparedStatement.executeUpdate();
             } catch (SQLException e) {
-                ClientConfig.setSentryContext(ClientConfig.DISCORD().getGuildByID(Long.parseLong(getGuildId())),
-                        null, ClientConfig.DISCORD().getChannelByID(Long.parseLong(getChan())),
-                        null);
-                LOG.error(e.getMessage());
+                Reporter.report(e, ClientConfig.DISCORD().getGuildByID(Long.parseLong(getGuildId())),
+                        ClientConfig.DISCORD().getChannelByID(Long.parseLong(getChan())));
+                LOG.error("addToDatabase", e);
             }
         }
     }
@@ -110,10 +108,9 @@ public class AlmanaxCalendar {
             request.executeUpdate();
 
         } catch (SQLException e) {
-            ClientConfig.setSentryContext(ClientConfig.DISCORD().getGuildByID(Long.parseLong(getGuildId())),
-                    null, ClientConfig.DISCORD().getChannelByID(Long.parseLong(getChan())),
-                    null);
-            LOG.error(getChan() + " : " + e.getMessage());
+            Reporter.report(e, ClientConfig.DISCORD().getGuildByID(Long.parseLong(getGuildId())),
+                    ClientConfig.DISCORD().getChannelByID(Long.parseLong(getChan())));
+            LOG.error("removeToDatabase", e);
         }
     }
 
@@ -142,8 +139,8 @@ public class AlmanaxCalendar {
                     }
                 }
             } catch (SQLException e) {
-                ClientConfig.setSentryContext(null,null, null, null);
-                LOG.error(e.getMessage());
+                Reporter.report(e);
+                LOG.error("getAlmanaxCalendars", e);
             }
         }
 

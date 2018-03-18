@@ -4,13 +4,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import util.ClientConfig;
 import util.Connexion;
+import util.Reporter;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -62,9 +61,8 @@ public class JobUser {
 
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
-            ClientConfig.setSentryContext(ClientConfig.DISCORD().getGuildByID(Long.parseLong(user.getGuild().getId())),
-                    ClientConfig.DISCORD().getUserByID(Long.parseLong(user.getId())), null,null);
-            LOG.error(e.getMessage());
+            Reporter.report(e, ClientConfig.DISCORD().getUserByID(Long.parseLong(user.getId())));
+            LOG.error("setLevel", e);
         }
     }
 
@@ -84,9 +82,8 @@ public class JobUser {
 
                 preparedStatement.executeUpdate();
             } catch (SQLException e) {
-                ClientConfig.setSentryContext(ClientConfig.DISCORD().getGuildByID(Long.parseLong(user.getGuild().getId())),
-                        ClientConfig.DISCORD().getUserByID(Long.parseLong(user.getId())), null,null);
-                LOG.error(e.getMessage());
+                Reporter.report(e, ClientConfig.DISCORD().getUserByID(Long.parseLong(user.getId())));
+                LOG.error("addToDatabase", e);
             }
         }
     }
@@ -114,9 +111,8 @@ public class JobUser {
                 jobs.put(name, new JobUser(name, level, user));
             }
         } catch (SQLException e) {
-            ClientConfig.setSentryContext(ClientConfig.DISCORD().getGuildByID(Long.parseLong(user.getGuild().getId())),
-                    ClientConfig.DISCORD().getUserByID(Long.parseLong(user.getId())), null,null);
-            LOG.error(e.getMessage());
+            Reporter.report(e);
+            LOG.error("getJobs", e);
         }
 
         return jobs;

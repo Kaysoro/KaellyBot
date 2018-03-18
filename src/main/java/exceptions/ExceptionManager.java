@@ -2,11 +2,11 @@ package exceptions;
 
 import commands.model.Command;
 import enums.Language;
-import util.ClientConfig;
 import org.jsoup.HttpStatusException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sx.blah.discord.handle.obj.IMessage;
+import util.Reporter;
 
 import java.io.FileNotFoundException;
 import java.lang.*;
@@ -38,8 +38,7 @@ public abstract class ExceptionManager {
                 gameWebsite503.throwException(message, command, lg);
             }
             else {
-                ClientConfig.setSentryContext(message.getGuild(),
-                        message.getAuthor(), message.getChannel(), message);
+                Reporter.report(e, message.getGuild(), message.getChannel(), message.getAuthor(), message.getContent());
                 LOG.error("manageIOException", e);
                 unknown.throwException(message, command, lg);
             }
@@ -51,15 +50,14 @@ public abstract class ExceptionManager {
             notFound.throwException(message, command, lg);
         }
         else {
-            ClientConfig.setSentryContext(message.getGuild(),
-                    message.getAuthor(), message.getChannel(), message);
+            Reporter.report(e, message.getGuild(), message.getChannel(), message.getAuthor(), message.getContent());
             LOG.error("manageIOException", e);
             unknown.throwException(message, command, lg);
         }
     }
 
     public static void manageSilentlyIOException(Exception e){
-        ClientConfig.setSentryContext(null, null, null, null);
+        Reporter.report(e);
         // First we try parsing the exception message to see if it contains the response code
         Matcher exMsgStatusCodeMatcher = Pattern.compile("^Server returned HTTP response code: (\\d+)")
                 .matcher(e.getMessage());
@@ -81,14 +79,13 @@ public abstract class ExceptionManager {
     }
 
     public static void manageException(Exception e, IMessage message, Command command, Language lg){
-        ClientConfig.setSentryContext(message.getGuild(),
-                message.getAuthor(), message.getChannel(), message);
+        Reporter.report(e, message.getGuild(), message.getChannel(), message.getAuthor(), message.getContent());
         LOG.error("manageException", e);
         unknown.throwException(message, command, lg);
     }
 
     public static void manageSilentlyException(Exception e){
-        ClientConfig.setSentryContext(null, null, null, null);
+        Reporter.report(e);
         LOG.error("manageSilentlyException", e);
     }
 }

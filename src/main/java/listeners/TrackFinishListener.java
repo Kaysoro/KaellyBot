@@ -6,6 +6,7 @@ import util.ClientConfig;
 import sx.blah.discord.api.events.EventSubscriber;
 import sx.blah.discord.handle.obj.IGuild;
 import sx.blah.discord.util.audio.events.TrackFinishEvent;
+import util.Reporter;
 
 /**
  * Created by steve on 15/01/2017.
@@ -23,7 +24,7 @@ public class TrackFinishListener {
                 ClientConfig.DISCORD().getOurUser()
                         .getVoiceStateForGuild(guild).getChannel().leave();
         } catch(Exception e){
-            ClientConfig.setSentryContext(event.getPlayer().getGuild(), null, null, null);
+            Reporter.report(e, event.getPlayer().getGuild());
             LOG.error("onTrackFinish", e);
         }
     }

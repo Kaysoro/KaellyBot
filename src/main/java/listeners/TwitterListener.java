@@ -13,6 +13,7 @@ import sx.blah.discord.util.EmbedBuilder;
 import twitter4j.MediaEntity;
 import twitter4j.Status;
 import twitter4j.StatusAdapter;
+import util.Reporter;
 import util.Translator;
 
 import java.util.HashMap;
@@ -43,6 +44,7 @@ public class TwitterListener extends StatusAdapter {
                             && Translator.getLanguageFrom(chan).equals(language))
                         Message.sendEmbed(chan, createEmbedFor(status));
                 } catch (Exception e) {
+                    Reporter.report(e, twitterFinder.getChannelId());
                     LOG.error("onStatus", e);
                 }
     }

@@ -11,6 +11,7 @@ import sx.blah.discord.handle.obj.IVoiceChannel;
 import sx.blah.discord.handle.obj.Permissions;
 import sx.blah.discord.util.MissingPermissionsException;
 import sx.blah.discord.util.audio.AudioPlayer;
+import util.Reporter;
 import util.Translator;
 
 import javax.sound.sampled.UnsupportedAudioFileException;
@@ -85,7 +86,7 @@ public class SoundCommand extends AbstractCommand {
                     }
                 }
             } catch (Exception e){
-                ClientConfig.setSentryContext(message.getGuild(), message.getAuthor(), message.getChannel(), message);
+                Reporter.report(e, message.getGuild(), message.getAuthor(), message.getChannel(), message.getContent());
                 LOG.error("request", e);
             }
         }
@@ -99,10 +100,8 @@ public class SoundCommand extends AbstractCommand {
             AudioPlayer.getAudioPlayerForGuild(message.getGuild()).queue(file).getMetadata()
                     .put(file.getName(), file.toString());
         } catch (IOException | UnsupportedAudioFileException e) {
-            ClientConfig.setSentryContext(message.getGuild(),
-                    message.getAuthor(), message.getChannel(),
-                    message);
-            LOG.error(e.getMessage());
+            Reporter.report(e, message.getGuild(), message.getAuthor(), message.getChannel(), message.getContent());
+            LOG.error("playSound", e);
         }
     }
 

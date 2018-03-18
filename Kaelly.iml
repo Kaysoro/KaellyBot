@@ -54,8 +54,6 @@
     <orderEntry type="library" name="Maven: org.jdom:jdom2:2.0.6" level="project" />
     <orderEntry type="library" name="Maven: ch.qos.logback:logback-classic:1.2.3" level="project" />
     <orderEntry type="library" name="Maven: ch.qos.logback:logback-core:1.2.3" level="project" />
-    <orderEntry type="library" name="Maven: io.sentry:sentry-logback:1.6.4" level="project" />
-    <orderEntry type="library" name="Maven: io.sentry:sentry:1.6.4" level="project" />
     <orderEntry type="library" name="Maven: org.twitter4j:twitter4j-stream:4.0.6" level="project" />
     <orderEntry type="library" name="Maven: org.twitter4j:twitter4j-core:4.0.6" level="project" />
     <orderEntry type="library" name="Maven: com.optimaize.languagedetector:language-detector:0.6" level="project" />

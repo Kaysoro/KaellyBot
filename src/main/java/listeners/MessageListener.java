@@ -5,11 +5,11 @@ import commands.model.Command;
 import enums.Language;
 import exceptions.BasicDiscordException;
 import exceptions.DiscordException;
-import util.ClientConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sx.blah.discord.api.events.EventSubscriber;
 import sx.blah.discord.handle.impl.events.guild.channel.message.MessageReceivedEvent;
+import util.Reporter;
 import util.Translator;
 
 /**
@@ -23,19 +23,24 @@ public class MessageListener {
     public MessageListener(){
         super();
     }
-        @EventSubscriber
-        public void onReady(MessageReceivedEvent event) {
-            ClientConfig.setSentryContext(event.getGuild(), event.getAuthor(), event.getChannel(), event.getMessage());
+    @EventSubscriber
+    public void onReady(MessageReceivedEvent event) {
+        try {
             Language lg = Translator.getLanguageFrom(event.getChannel());
 
             // If the authorId is a bot, message get ignored
-            if (! event.getMessage().getAuthor().isBot())
-                for(Command command : CommandManager.getCommands())
+            if (!event.getMessage().getAuthor().isBot()) {
+                for (Command command : CommandManager.getCommands())
                     try {
                         command.request(event.getMessage());
-                    } catch (Exception e){
+                    } catch (Exception e) {
                         unknown.throwException(event.getMessage(), command, lg);
                         LOG.error("MessageListener.onReady", e);
                     }
+            }
+        } catch (Exception e) {
+            Reporter.report(e, event.getGuild(), event.getAuthor(), event.getChannel(), event.getMessage());
+            LOG.error("onReady", e);
         }
+    }
 }

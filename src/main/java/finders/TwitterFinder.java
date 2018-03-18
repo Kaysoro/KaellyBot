@@ -1,6 +1,5 @@
 package finders;
 
-import data.Constants;
 import enums.Language;
 import listeners.TwitterListener;
 import org.slf4j.Logger;
@@ -9,14 +8,13 @@ import sx.blah.discord.handle.obj.IChannel;
 import twitter4j.FilterQuery;
 import util.ClientConfig;
 import util.Connexion;
+import util.Reporter;
 import util.Translator;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -57,8 +55,8 @@ public class TwitterFinder{
                     }
                 }
             } catch (SQLException e) {
-                ClientConfig.setSentryContext(null, null, null, null);
-                LOG.error(e.getMessage());
+                Reporter.report(e);
+                LOG.error("getTwitterChannels", e);
             }
         }
         return twitterChannels;
@@ -78,9 +76,9 @@ public class TwitterFinder{
 
                 preparedStatement.executeUpdate();
             } catch (SQLException e) {
-                ClientConfig.setSentryContext(ClientConfig.DISCORD().getGuildByID(getGuildId()),
-                        null, ClientConfig.DISCORD().getChannelByID(getChannelId()), null);
-                LOG.error(e.getMessage());
+                Reporter.report(e, ClientConfig.DISCORD().getGuildByID(getGuildId()),
+                        ClientConfig.DISCORD().getChannelByID(getChannelId()));
+                LOG.error("addToDabase", e);
             }
         }
     }
@@ -97,9 +95,9 @@ public class TwitterFinder{
             request.executeUpdate();
 
         } catch (SQLException e) {
-            ClientConfig.setSentryContext(ClientConfig.DISCORD().getGuildByID(getGuildId()),
-                    null, ClientConfig.DISCORD().getChannelByID(getChannelId()), null);
-            LOG.error(getChannelId() + " : " + e.getMessage());
+            Reporter.report(e, ClientConfig.DISCORD().getGuildByID(getGuildId()),
+                    ClientConfig.DISCORD().getChannelByID(getChannelId()));
+            LOG.error("removeToDatabase", e);
         }
     }
 

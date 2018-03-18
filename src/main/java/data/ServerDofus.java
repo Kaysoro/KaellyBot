@@ -1,8 +1,9 @@
 package data;
 
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import util.ClientConfig;
 import util.Connexion;
+import util.Reporter;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -18,6 +19,7 @@ import java.util.Map;
  */
 public class ServerDofus {
 
+    private final static Logger LOG = LoggerFactory.getLogger(ServerDofus.class);
     private static List<ServerDofus> servers;
     private static Map<String, ServerDofus> serversMap;
     private static boolean initialized = false;
@@ -48,8 +50,8 @@ public class ServerDofus {
                 serversMap.put(sd.getName(), sd);
             }
         } catch (SQLException e) {
-            ClientConfig.setSentryContext(null, null, null, null);
-            LoggerFactory.getLogger(ServerDofus.class).error(e.getMessage());
+            Reporter.report(e);
+            LOG.error("initialize", e);
         }
     }
 
