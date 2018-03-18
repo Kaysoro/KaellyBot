@@ -38,7 +38,7 @@ public abstract class ExceptionManager {
                 gameWebsite503.throwException(message, command, lg);
             }
             else {
-                Reporter.report(e, message.getGuild(), message.getChannel(), message.getAuthor(), message.getContent());
+                Reporter.report(e, message.getGuild(), message.getChannel(), message.getAuthor(), message);
                 LOG.error("manageIOException", e);
                 unknown.throwException(message, command, lg);
             }
@@ -50,7 +50,7 @@ public abstract class ExceptionManager {
             notFound.throwException(message, command, lg);
         }
         else {
-            Reporter.report(e, message.getGuild(), message.getChannel(), message.getAuthor(), message.getContent());
+            Reporter.report(e, message.getGuild(), message.getChannel(), message.getAuthor(), message);
             LOG.error("manageIOException", e);
             unknown.throwException(message, command, lg);
         }
@@ -79,7 +79,7 @@ public abstract class ExceptionManager {
     }
 
     public static void manageException(Exception e, IMessage message, Command command, Language lg){
-        Reporter.report(e, message.getGuild(), message.getChannel(), message.getAuthor(), message.getContent());
+        Reporter.report(e, message.getGuild(), message.getChannel(), message.getAuthor(), message);
         LOG.error("manageException", e);
         unknown.throwException(message, command, lg);
     }

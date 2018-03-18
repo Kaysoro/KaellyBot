@@ -25,22 +25,18 @@ public class MessageListener {
     }
     @EventSubscriber
     public void onReady(MessageReceivedEvent event) {
-        try {
-            Language lg = Translator.getLanguageFrom(event.getChannel());
+        Language lg = Translator.getLanguageFrom(event.getChannel());
 
-            // If the authorId is a bot, message get ignored
-            if (!event.getMessage().getAuthor().isBot()) {
-                for (Command command : CommandManager.getCommands())
-                    try {
-                        command.request(event.getMessage());
-                    } catch (Exception e) {
-                        unknown.throwException(event.getMessage(), command, lg);
-                        LOG.error("MessageListener.onReady", e);
-                    }
-            }
-        } catch (Exception e) {
-            Reporter.report(e, event.getGuild(), event.getAuthor(), event.getChannel(), event.getMessage());
-            LOG.error("onReady", e);
+        // If the authorId is a bot, message get ignored
+        if (!event.getMessage().getAuthor().isBot()) {
+            for (Command command : CommandManager.getCommands())
+                try {
+                    command.request(event.getMessage());
+                } catch (Exception e) {
+                    unknown.throwException(event.getMessage(), command, lg);
+                    Reporter.report(e, event.getGuild(), event.getChannel(), event.getAuthor(), event.getMessage());
+                    LOG.error("onReady", e);
+                }
         }
     }
 }

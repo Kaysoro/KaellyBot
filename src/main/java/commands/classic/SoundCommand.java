@@ -86,7 +86,7 @@ public class SoundCommand extends AbstractCommand {
                     }
                 }
             } catch (Exception e){
-                Reporter.report(e, message.getGuild(), message.getAuthor(), message.getChannel(), message.getContent());
+                Reporter.report(e, message.getGuild(), message.getChannel(), message.getAuthor(), message);
                 LOG.error("request", e);
             }
         }
@@ -100,7 +100,7 @@ public class SoundCommand extends AbstractCommand {
             AudioPlayer.getAudioPlayerForGuild(message.getGuild()).queue(file).getMetadata()
                     .put(file.getName(), file.toString());
         } catch (IOException | UnsupportedAudioFileException e) {
-            Reporter.report(e, message.getGuild(), message.getAuthor(), message.getChannel(), message.getContent());
+            Reporter.report(e, message.getGuild(), message.getChannel(), message.getAuthor(), message);
             LOG.error("playSound", e);
         }
     }
