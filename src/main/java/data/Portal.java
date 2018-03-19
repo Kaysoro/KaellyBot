@@ -33,6 +33,8 @@ public class Portal implements Embedded{
     private final static long LIMIT = 172800000;
     private final static Pattern sweetDateFormat = Pattern.compile("(\\d+\\s+j\\s+)?(\\d+\\s+h\\s+)?(\\d+\\s+min)");
 
+    private final static int NB_UTILISATION_MAX = 128;
+
     private static Map<String, Portal> portals;
 
     private String name;
@@ -184,6 +186,8 @@ public class Portal implements Embedded{
 
         if (utilisation == 0)
             reset();
+        else if (this.utilisation > NB_UTILISATION_MAX)
+            this.utilisation = NB_UTILISATION_MAX;
         Connexion connexion = Connexion.getInstance();
         Connection connection = connexion.getConnection();
 
