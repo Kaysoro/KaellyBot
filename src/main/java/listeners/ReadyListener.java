@@ -33,7 +33,8 @@ public class ReadyListener {
         ClientConfig.DISCORD().getDispatcher().registerListener(new GuildLeaveListener());
         ClientConfig.DISCORD().getDispatcher().registerListener(new GuildUpdateListener());
         ClientConfig.DISCORD().getDispatcher().registerListener(new ChannelDeleteListener());
-        ClientConfig.DISCORD().getDispatcher().registerListener(new TrackFinishListener());
+        ClientConfig.DISCORD().getDispatcher().registerListener(new UserVoiceChannelMoveListener());
+        ClientConfig.DISCORD().getDispatcher().registerListener(new UserVoiceChannelLeaveListener());
 
         LOG.info("Check des guildes");
         for(IGuild guild : ClientConfig.DISCORD().getGuilds())
