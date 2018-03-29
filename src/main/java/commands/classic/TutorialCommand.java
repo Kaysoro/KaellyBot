@@ -37,7 +37,7 @@ public class TutorialCommand extends AbstractCommand {
     public TutorialCommand(){
         super("tuto", "\\s+(.*)");
         tooMuchTutos = new TooMuchDiscordException("exception.toomuch.tutos", "exception.toomuch.tutos_found");
-        notFoundTuto = new NotFoundDiscordException("exception.toomuch.tuto", "exception.toomuch.tuto_found");
+        notFoundTuto = new NotFoundDiscordException("exception.notfound.tuto", "exception.notfound.tuto_found");
     }
 
     @Override
