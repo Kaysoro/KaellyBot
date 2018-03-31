@@ -20,7 +20,7 @@ public class StatCommand extends AbstractCommand {
     private final static Logger LOG = LoggerFactory.getLogger(StatCommand.class);
 
     public StatCommand(){
-        super("stat","");
+        super("stats","");
         setAdmin(true);
     }
 

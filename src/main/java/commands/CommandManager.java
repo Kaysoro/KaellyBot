@@ -31,6 +31,7 @@ public class CommandManager {
         addCommand(new AlmanaxCommand());
         addCommand(new CommandCommand());
         addCommand(new DistanceCommand());
+        addCommand(new GuildCommand());
         addCommand(new HelpCommand());
         addCommand(new ItemCommand());
         addCommand(new JobCommand());

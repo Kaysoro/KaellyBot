@@ -75,6 +75,17 @@ public class CommandPatternTest extends TestCase {
         assertFalse(pattern.matcher(Constants.prefixCommand + "dist").find());
     }
 
+    public void testGuildCommand(){
+        Command cmd = new GuildCommand();
+        Pattern pattern = Pattern.compile("^" + Constants.prefixCommand + cmd.getName() + cmd.getPattern() + "$");
+
+        assertTrue(pattern.matcher(Constants.prefixCommand + "guild La Feuille Verte").find());
+        assertTrue(pattern.matcher(Constants.prefixCommand + "guild La-Feuil' [Verte]").find());
+        assertTrue(pattern.matcher(Constants.prefixCommand + "guild La Feuille Verte -serv Furye").find());
+        assertTrue(pattern.matcher(Constants.prefixCommand + "guild La-Feuil' [Verte] -serv Furye").find());
+        assertFalse(pattern.matcher(Constants.prefixCommand + "guild").find());
+    }
+
     public void testHelpCommand(){
         Command cmd = new HelpCommand();
         Pattern pattern = Pattern.compile("^" + Constants.prefixCommand + cmd.getName() + cmd.getPattern() + "$");
@@ -305,6 +316,6 @@ public class CommandPatternTest extends TestCase {
         Command cmd = new StatCommand();
         Pattern pattern = Pattern.compile("^" + Constants.prefixCommand + cmd.getName() + cmd.getPattern() + "$");
 
-        assertTrue(pattern.matcher(Constants.prefixCommand + "stat").find());
+        assertTrue(pattern.matcher(Constants.prefixCommand + "stats").find());
     }
 }
