@@ -33,8 +33,8 @@ public class ServerCommand extends AbstractCommand {
     public ServerCommand(){
         super("server","(\\s+.+)?");
         setUsableInMP(false);
-        tooMuchServers = new TooMuchDiscordException("exception.toomuch.servers", "exception.toomuch.servers_found");
-        notFoundServer = new NotFoundDiscordException("exception.notfound.server", "exception.notfound.server_found");
+        tooMuchServers = new TooMuchDiscordException("server");
+        notFoundServer = new NotFoundDiscordException("server");
         noEnoughRights = new BasicDiscordException("exception.basic.no_enough_rights");
     }
 

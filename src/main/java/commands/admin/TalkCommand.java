@@ -31,7 +31,7 @@ public class TalkCommand extends AbstractCommand {
         setAdmin(true);
 
         this.lastChan = null;
-        notFoundChan = new NotFoundDiscordException("exception.notfound.chan", "exception.notfound.chan_found");
+        notFoundChan = new NotFoundDiscordException("chan");
         noSendTextPermission = new BasicDiscordException("exception.basic.no_send_text_permission");
     }
 

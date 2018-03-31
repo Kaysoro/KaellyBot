@@ -31,8 +31,8 @@ public class LanguageCommand extends AbstractCommand {
     public LanguageCommand(){
         super("lang", "(\\s+-channel)?(\\s+[A-Za-z]+)?");
         setUsableInMP(false);
-        tooMuchLangs = new TooMuchDiscordException("exception.toomuch.langs", "exception.toomuch.langs_found");
-        notFoundLang = new NotFoundDiscordException("exception.notfound.lang", "exception.notfound.lang_found");
+        tooMuchLangs = new TooMuchDiscordException("lang");
+        notFoundLang = new NotFoundDiscordException("lang");
         noEnoughRights = new BasicDiscordException("exception.basic.no_enough_rights");
     }
 

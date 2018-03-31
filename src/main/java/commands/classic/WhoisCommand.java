@@ -48,10 +48,10 @@ public class WhoisCommand extends AbstractCommand {
 
     public WhoisCommand(){
         super("whois","(\\s+[\\p{L}|-]+)(\\s+.+)?");
-        tooMuchCharacters = new TooMuchDiscordException("exception.toomuch.characters", "exception.toomuch.characters_found");
-        tooMuchServers = new TooMuchDiscordException("exception.toomuch.servers", "exception.toomuch.servers_found");
-        notFoundServer = new NotFoundDiscordException("exception.notfound.server", "exception.notfound.server_found");
-        notFoundCharacter = new NotFoundDiscordException("exception.notfound.character", "exception.notfound.character_found");
+        tooMuchCharacters = new TooMuchDiscordException("character");
+        notFoundCharacter = new NotFoundDiscordException("character");
+        tooMuchServers = new TooMuchDiscordException("server");
+        notFoundServer = new NotFoundDiscordException("server");
         characterPageInaccessible = new BasicDiscordException("exception.basic.characterpage_inaccessible");
         characterTooOld = new BasicDiscordException("exception.basic.character_too_old");
     }

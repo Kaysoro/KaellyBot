@@ -30,8 +30,8 @@ public class AvailableCommand extends AbstractCommand {
     public AvailableCommand(){
         super("available","\\s+(\\w+)\\s+(on|off|0|1|true|false)");
         setAdmin(true);
-        tooMuchCmds = new TooMuchDiscordException("exception.toomuch.cmds", "exception.toomuch.cmds_found");
-        notFoundCmd = new NotFoundDiscordException("exception.notfound.cmd", "exception.notfound.cmd_found");
+        tooMuchCmds = new TooMuchDiscordException("cmd");
+        notFoundCmd = new NotFoundDiscordException("cmd");
         forbiddenCmdFound = new BasicDiscordException("exception.basic.forbidden_command_found");
         forbiddenCmdNotFound = new BasicDiscordException("exception.basic.forbidden_command_notfound");
     }

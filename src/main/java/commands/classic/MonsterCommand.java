@@ -30,8 +30,8 @@ public class MonsterCommand extends DofusRequestCommand {
 
     public MonsterCommand(){
         super("monster", "\\s+(-more)?(.*)");
-        tooMuchMonsters = new TooMuchDiscordException("exception.toomuch.monsters", "exception.toomuch.monsters_found");
-        notFoundMonster = new NotFoundDiscordException("exception.notfound.monster", "exception.notfound.monster_found");
+        tooMuchMonsters = new TooMuchDiscordException("monster");
+        notFoundMonster = new NotFoundDiscordException("monster");
         noExternalEmojiPermission = new BasicDiscordException("exception.basic.no_external_emoji_permission");
     }
 

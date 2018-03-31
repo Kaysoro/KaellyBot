@@ -33,9 +33,9 @@ public class JobCommand extends AbstractCommand {
     public JobCommand(){
         super("job", "(\\s+([\\p{L}|\\W]+|-all)(\\s+\\d{1,3})?)?");
         setUsableInMP(false);
-        tooMuchJobs = new TooMuchDiscordException("exception.toomuch.jobs", "exception.toomuch.jobs_found", true);
-        notFoundJob = new NotFoundDiscordException("exception.notfound.job", "exception.notfound.job_found");
-        notFoundLevel = new NotFoundDiscordException("exception.notfound.level", "exception.notfound.level_found");
+        tooMuchJobs = new TooMuchDiscordException("job", true);
+        notFoundJob = new NotFoundDiscordException("job");
+        notFoundLevel = new NotFoundDiscordException("level");
     }
 
     @Override

@@ -31,8 +31,8 @@ public class PortalCommand extends AbstractCommand {
     public PortalCommand(){
         super("pos", "(\\s+\\p{L}+)?(\\s+\\[?(-?\\d{1,2})\\s*[,|\\s]\\s*(-?\\d{1,2})\\]?)?(\\s+\\d{1,3})?");
         setUsableInMP(false);
-        tooMuchPortals = new TooMuchDiscordException("exception.toomuch.portals", "exception.toomuch.portals_found");
-        notFoundPortal = new NotFoundDiscordException("exception.notfound.portal", "exception.notfound.portal_found");
+        tooMuchPortals = new TooMuchDiscordException("portal");
+        notFoundPortal = new NotFoundDiscordException("portal");
     }
 
     @Override

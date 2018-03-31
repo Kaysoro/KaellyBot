@@ -42,14 +42,14 @@ public class AlignmentCommand extends AbstractCommand {
     public AlignmentCommand(){
         super("align", "(.*)");
         setUsableInMP(false);
-        notFoundFilter = new NotFoundDiscordException("exception.notfound.filter", "exception.notfound.filter_found");
-        tooMuchCities = new TooMuchDiscordException("exception.toomuch.cities", "exception.toomuch.cities_found", true);
-        notFoundCity = new NotFoundDiscordException("exception.notfound.city", "exception.notfound.city_found");
-        tooMuchOrders = new TooMuchDiscordException("exception.toomuch.orders", "exception.toomuch.orders_found", true);
-        notFoundOrder = new NotFoundDiscordException("exception.notfound.order", "exception.notfound.order_found");
-        tooMuchServers = new TooMuchDiscordException("exception.toomuch.servers", "exception.toomuch.servers_found", true);
-        notFoundServer = new NotFoundDiscordException("exception.notfound.server", "exception.notfound.server_found");
-        notFoundGuildServer = new NotFoundDiscordException("exception.notfound.guild_server", "exception.notfound.guild_server_found");
+        notFoundFilter = new NotFoundDiscordException("filter");
+        tooMuchCities = new TooMuchDiscordException("city", true);
+        notFoundCity = new NotFoundDiscordException("city");
+        tooMuchOrders = new TooMuchDiscordException("order", true);
+        notFoundOrder = new NotFoundDiscordException("order");
+        tooMuchServers = new TooMuchDiscordException("server", true);
+        notFoundServer = new NotFoundDiscordException("server");
+        notFoundGuildServer = new NotFoundDiscordException("guild_server");
         noEnoughRights = new BasicDiscordException("exception.basic.no_enough_rights");
         badUse = new BadUseCommandDiscordException();
     }

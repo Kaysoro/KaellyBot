@@ -28,7 +28,7 @@ public class HelpCommand extends AbstractCommand {
 
     public HelpCommand(){
         super(NAME,"(\\s+.+)?");
-        notFoundCmd = new NotFoundDiscordException("exception.notfound.cmd", "exception.notfound.cmd_found");
+        notFoundCmd = new NotFoundDiscordException("cmd");
     }
 
     @Override
