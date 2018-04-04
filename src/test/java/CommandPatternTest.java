@@ -43,6 +43,17 @@ public class CommandPatternTest extends TestCase {
         assertTrue(pattern.matcher(Constants.prefixCommand + "align > 20").find());
     }
 
+    public void testAllianceCommand(){
+        Command cmd = new AllianceCommand();
+        Pattern pattern = Pattern.compile("^" + Constants.prefixCommand + cmd.getName() + cmd.getPattern() + "$");
+
+        assertTrue(pattern.matcher(Constants.prefixCommand + "alliance La Fratrie des Oublies").find());
+        assertTrue(pattern.matcher(Constants.prefixCommand + "alliance La-Fratrie' [Oublies]").find());
+        assertTrue(pattern.matcher(Constants.prefixCommand + "alliance La Fratrie Oublies -serv Furye").find());
+        assertTrue(pattern.matcher(Constants.prefixCommand + "alliance La-Fratrie' [Oublies] -serv Furye").find());
+        assertFalse(pattern.matcher(Constants.prefixCommand + "alliance").find());
+    }
+
     public void testAboutCommand(){
         Command cmd = new AboutCommand();
         Pattern pattern = Pattern.compile("^" + Constants.prefixCommand + cmd.getName() + cmd.getPattern() + "$");

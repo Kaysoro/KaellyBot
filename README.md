@@ -10,6 +10,11 @@ Cette commande est destinée à expliciter les commandes de Kaelly avec des exem
 `!help` explique de manière succincte chaque commande.  
 `!help command` explique de façon détaillée la commande spécifiée.  
 
+### Alliance
+Affiche la page d'une alliance.  
+`!alliance *nom*` : donne la page d'alliance associée au nom. Celui-ci doit être exact.  
+`!alliance *nom -serv server*` : est à utiliser lorsque le nom ne suffit pas pour déterminer la fiche d'une alliance.  
+
 ### Almanax
 Donne des informations relatives à l'Almanax.  
 `!almanax` : donne le bonus et l'offrande du jour actuel.  
@@ -30,6 +35,12 @@ Autorise ou non l'utilisation d'une commande de Kaelly.
 ### Dist
 Renvoie le transport le plus proche à vol d'oiseau.  
 `!dist [POS, POS]` : renvoie le transport le plus proche de la position indiquée à vol d'oiseau.  
+
+### Guild
+Affiche la page d'une guilde.  
+`!guild *name*` : donne la page d'une guilde associée au nom. Celui-ci doit être exact.  
+`!guild *name -serv server*` : est à utiliser lorsque le nom ne suffit pas pour déterminer la fiche d'une guilde.  
+
 
 ### Item
 Renvoie les statistiques d'un item du jeu Dofus.  
