@@ -4,17 +4,15 @@ import enums.City;
 import enums.Order;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import util.ClientConfig;
-import util.Connexion;
-import util.Quadruple;
-import util.Reporter;
+import sx.blah.discord.handle.obj.IUser;
+import util.*;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by steve on 19/02/2018.
@@ -22,7 +20,8 @@ import java.util.concurrent.ConcurrentHashMap;
 public class OrderUser {
 
     private final static Logger LOG = LoggerFactory.getLogger(OrderUser.class);
-    private static Map<Quadruple<Long, ServerDofus, City, Order>, OrderUser> orders;
+    private static MultiKeySearch<OrderUser> orders;
+    private static final int NUMBER_FIELD = 4;
     private City city;
     private Order order;
     private long idUser;
@@ -81,8 +80,8 @@ public class OrderUser {
      * Ajoute à la base de donnée l'objet si celui-ci n'y est pas déjà.
      */
     public synchronized void addToDatabase(){
-        if (! getOrders().containsKey(Quadruple.of(idUser, server, city, order)) && level > 0) {
-            getOrders().put(Quadruple.of(idUser, server, city, order), this);
+        if (! getOrders().containsKeys(idUser, server, city, order) && level > 0) {
+            getOrders().add(this, idUser, server, city, order);
             Connexion connexion = Connexion.getInstance();
             Connection connection = connexion.getConnection();
 
@@ -112,9 +111,9 @@ public class OrderUser {
         return server;
     }
 
-    public static synchronized Map<Quadruple<Long, ServerDofus, City, Order>, OrderUser> getOrders(){
+    public static synchronized MultiKeySearch<OrderUser> getOrders(){
         if(orders == null){
-            orders = new ConcurrentHashMap<>();
+            orders = new MultiKeySearch<>(NUMBER_FIELD);
             Connexion connexion = Connexion.getInstance();
             Connection connection = connexion.getConnection();
 
@@ -129,14 +128,55 @@ public class OrderUser {
                     City city = City.getCity(resultSet.getString("name_city"));
                     Order order = Order.getOrder(resultSet.getString("name_order"));
                     int level = resultSet.getInt("level");
-                    orders.put(Quadruple.of(idUser, server, city, order), new OrderUser(idUser, server, city, order, level));
+                    orders.add(new OrderUser(idUser, server, city, order, level), idUser, server, city, order);
                 }
             } catch (SQLException e) {
                 Reporter.report(e);
                 LOG.error("getOrders", e);
             }
         }
-
         return orders;
+    }
+
+    /**
+     * @param user Joueur de la guilde
+     * @param server Serveur dofus
+     * @return Liste des résultats de la recherche
+     */
+    public static List<OrderUser> getOrdersFromUser(IUser user, ServerDofus server){
+        return getOrders().get(user.getLongID(), server, null, null);
+    }
+
+    /**
+     * @param users Joueurs de la guilde
+     * @param server Serveur dofus
+     * @param level Niveau pallier
+     * @return Liste des résultats de la recherche
+     */
+    public static List<OrderUser> getOrdersFromLevel(List<IUser> users, ServerDofus server, int level){
+        List<OrderUser> result = new ArrayList<>();
+        for(IUser user : users) {
+            List<OrderUser> potentials = getOrders().get(user.getLongID(), server, null, null);
+            for(OrderUser order : potentials)
+                if (order.getLevel() >= level)
+                    result.add(order);
+        }
+        return result;
+    }
+
+    /**
+     * @param users Joueurs de la guilde
+     * @param server Serveur dofus
+     * @param city Cité (Brakmar ou Bonta)
+     * @param order Ordre (coeur, oeil, esprit)
+     * @return Liste des résultats de la recherche
+     */
+    public static List<OrderUser> getOrdersFromCityOrOrder(List<IUser> users, ServerDofus server, City city, Order order){
+        List<OrderUser> result = new ArrayList<>();
+        for(IUser user : users) {
+            List<OrderUser> potentials = getOrders().get(user.getLongID(), server, city, order);
+            result.addAll(potentials);
+        }
+        return result;
     }
 }
