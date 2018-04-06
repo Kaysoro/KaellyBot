@@ -20,7 +20,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class MultiKeySearch<V> implements Serializable {
 
-    private Map<String, V> collection;
+    private Map<String, V>  collection;
     private Multimap<Object, V>[] multimaps;
     private int keysNumber;
 
@@ -69,6 +69,14 @@ public class MultiKeySearch<V> implements Serializable {
     public boolean containsKeys(Object... args){
         if(args.length != keysNumber)
             throw new IllegalArgumentException("keys size is not the ");
+        //TODO
+        return true;
+    }
+
+    /**
+     * @return True si aucune clef(s)/valeur n'a été ajouté, false le cas échéant
+     */
+    public boolean isEmpty(){
         //TODO
         return true;
     }
