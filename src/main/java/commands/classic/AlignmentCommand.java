@@ -10,6 +10,7 @@ import enums.Order;
 import exceptions.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import sx.blah.discord.api.internal.json.objects.EmbedObject;
 import sx.blah.discord.handle.obj.IMessage;
 import sx.blah.discord.handle.obj.IUser;
 import util.Message;
@@ -71,15 +72,16 @@ public class AlignmentCommand extends AbstractCommand {
                 int level = Integer.parseInt(m.group(1));
                 if (m.group(2) != null) {
                     servers = findServer(m.group(2));
-                    if (!checkData(servers, tooMuchServers, notFoundServer, message, lg)) return false;
+                    if (checkData(servers, tooMuchServers, notFoundServer, message, lg)) return false;
                     server = servers.get(0);
                 } else if (server == null){
                     notFoundServer.throwException(message, this, lg);
                     return false;
                 }
-                List<OrderUser> orders = OrderUser.getOrdersFromLevel(message.getGuild().getUsers(), server, level);
-                Message.sendText(message.getChannel(), "Consultation filtré par niveau : " + orders);
-                // TODO
+                List<EmbedObject> embeds = OrderUser.getOrdersFromLevel(message.getGuild().getUsers(), server, level,
+                        message.getGuild(), lg);
+                for(EmbedObject embed : embeds)
+                    Message.sendEmbed(message.getChannel(), embed);
             }
             else {
                 // L'utilisateur concerné est-il l'auteur de la commande ?
@@ -94,45 +96,50 @@ public class AlignmentCommand extends AbstractCommand {
                     boolean found = (m = Pattern.compile("(.+)").matcher(content)).matches();
                     if (found) {
                         servers = findServer(m.group(1));
-                        if (!checkData(servers, tooMuchServers, notFoundServer, message, lg)) return false;
+                        if (checkData(servers, tooMuchServers, notFoundServer, message, lg)) return false;
                         server = servers.get(0);
                     } else if (server == null){
                         notFoundServer.throwException(message, this, lg);
                         return false;
                     }
-                    List<OrderUser> orders = OrderUser.getOrdersFromUser(user, server);
-                    Message.sendText(message.getChannel(), "Consultation des données utilisateur : " + orders);
-                    // TODO
+                    List<EmbedObject> embeds = OrderUser.getOrdersFromUser(user, server, message.getGuild(), lg);
+                    for(EmbedObject embed : embeds)
+                        Message.sendEmbed(message.getChannel(), embed);
                 }
                 // Enregistrement des données
                 else if((m = Pattern.compile("(\\p{L}+)\\s+(\\p{L}+)\\s+(\\d{1,3})(\\s+.+)?").matcher(content)).matches()){
                     if(user == message.getAuthor()) {
                         // Parsing des données et traitement des divers exceptions
                         List<City> cities = findCity(m.group(1), lg);
-                        if (! checkData(cities, tooMuchCities, notFoundCity, message, lg)) return false;
+                        if (checkData(cities, tooMuchCities, notFoundCity, message, lg)) return false;
                         city = cities.get(0);
                         List<Order> orders = findOrder(m.group(2), lg);
-                        if (! checkData(orders, tooMuchOrders, notFoundOrder, message, lg)) return false;
+                        if (checkData(orders, tooMuchOrders, notFoundOrder, message, lg)) return false;
                         order = orders.get(0);
                         int level = Integer.parseInt(m.group(3));
 
                         if (m.group(4) != null) {
                             servers = findServer(m.group(4));
-                            if (!checkData(servers, tooMuchServers, notFoundServer, message, lg)) return false;
+                            if (checkData(servers, tooMuchServers, notFoundServer, message, lg)) return false;
                             server = servers.get(0);
                         } else if (server == null){
                             notFoundServer.throwException(message, this, lg);
                             return false;
                         }
-                        if(OrderUser.getOrders().containsKeys(user.getLongID(), server, city, order))
+                        if(OrderUser.getOrders().containsKeys(user.getLongID(), server, city, order)) {
                             OrderUser.getOrders().get(user.getLongID(), server, city, order).get(0).setLevel(level);
-                        else
+                            if (level != 0)
+                                Message.sendText(message.getChannel(), Translator.getLabel(lg, "align.update"));
+                            else
+                                Message.sendText(message.getChannel(), Translator.getLabel(lg, "align.reset"));
+                        }
+                        else {
                             new OrderUser(user.getLongID(), server, city, order, level).addToDatabase();
-
-                        if (level != 0)
-                            Message.sendText(message.getChannel(), "align.save");
-                        else
-                            Message.sendText(message.getChannel(), "align.reset");
+                            if (level != 0)
+                                Message.sendText(message.getChannel(), Translator.getLabel(lg, "align.save"));
+                            else
+                                Message.sendText(message.getChannel(), Translator.getLabel(lg, "align.no_reset"));
+                        }
                     }
                     else
                         badUse.throwException(message, this, lg);
@@ -142,7 +149,7 @@ public class AlignmentCommand extends AbstractCommand {
                 else if((m = Pattern.compile("(\\p{L}+)(\\s+\\p{L}+)?(\\s+[\\p{L}|\\W]+)?").matcher(content)).matches()){
                     if (m.group(3) != null) {
                         servers = findServer(m.group(3));
-                        if (!checkData(servers, tooMuchServers, notFoundServer, message, lg)) return false;
+                        if (checkData(servers, tooMuchServers, notFoundServer, message, lg)) return false;
                         server = servers.get(0);
                     }
 
@@ -151,7 +158,7 @@ public class AlignmentCommand extends AbstractCommand {
                         boolean is2Server = false;
                         if (m.group(3) == null){
                             servers = findServer(m.group(2));
-                            if (!checkData(servers, tooMuchServers, notFoundServer, message, lg)) return false;
+                            if (checkData(servers, tooMuchServers, notFoundServer, message, lg)) return false;
                             server = servers.get(0);
                             is2Server = true;
                         }
@@ -174,10 +181,10 @@ public class AlignmentCommand extends AbstractCommand {
                         }
                         else {
                             List<City> cities = findCity(m.group(1).trim(), lg);
-                            if (!checkData(cities, tooMuchCities, notFoundCity, message, lg)) return false;
+                            if (checkData(cities, tooMuchCities, notFoundCity, message, lg)) return false;
                             city = cities.get(0);
                             List<Order> orders = findOrder(m.group(2).trim(), lg);
-                            if (!checkData(orders, tooMuchOrders, notFoundOrder, message, lg)) return false;
+                            if (checkData(orders, tooMuchOrders, notFoundOrder, message, lg)) return false;
                             order = orders.get(0);
                         }
                     }
@@ -202,11 +209,11 @@ public class AlignmentCommand extends AbstractCommand {
                         return false;
                     }
 
-                    List<OrderUser> result = OrderUser
-                            .getOrdersFromCityOrOrder(message.getGuild().getUsers(), server, city, order);
-                    Message.sendText(message.getChannel(),
-                            "Consultation filtré par cité et/ou par ordre : " + result);
-                    // TODO
+                    List<EmbedObject> embeds = OrderUser
+                            .getOrdersFromCityOrOrder(message.getGuild().getUsers(), server, city, order,
+                                    message.getGuild(), lg);
+                    for(EmbedObject embed : embeds)
+                        Message.sendEmbed(message.getChannel(), embed);
                 }
                 else
                     badUse.throwException(message, this, lg);
@@ -216,7 +223,7 @@ public class AlignmentCommand extends AbstractCommand {
     }
 
     /**
-     * Renvoie True si la liste contient un seul élément, sinon jette une DiscordException puis renvoie False.
+     * Renvoie True si la liste ne contient pas un seul élément et jette une DiscordException, sinon renvoie False.
      * @param list List d'ojbets à vérifier
      * @param tooMuch Exception à jeter si la liste a plus d'un objet
      * @param notFound Exception à jeter si la liste est vide
@@ -228,13 +235,13 @@ public class AlignmentCommand extends AbstractCommand {
     private <T> boolean checkData(List<T> list, DiscordException tooMuch, DiscordException notFound, IMessage message, Language lg){
         if (list.size() > 1){
             tooMuch.throwException(message, this, lg);
-            return false;
+            return true;
         }
         else if(list.isEmpty()){
             notFound.throwException(message, this, lg);
-            return false;
+            return true;
         }
-        return true;
+        return false;
     }
 
     /**
