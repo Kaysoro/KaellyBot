@@ -158,9 +158,11 @@ public class AlignmentCommand extends AbstractCommand {
                         boolean is2Server = false;
                         if (m.group(3) == null){
                             servers = findServer(m.group(2));
-                            if (checkData(servers, tooMuchServers, notFoundServer, message, lg)) return false;
-                            server = servers.get(0);
-                            is2Server = true;
+                            if (! servers.isEmpty()) {
+                                if (checkData(servers, tooMuchServers, notFoundServer, message, lg)) return false;
+                                server = servers.get(0);
+                                is2Server = true;
+                            }
                         }
 
                         if (is2Server){
@@ -189,7 +191,7 @@ public class AlignmentCommand extends AbstractCommand {
                         }
                     }
                     else {
-                        // Est-ce un ordre ? une cité ?
+                        // Is an order ? a city ?
                         List<City> cities = findCity(m.group(1).trim(), lg);
                         List<Order> orders = findOrder(m.group(1).trim(), lg);
                         if (cities.isEmpty() && orders.isEmpty()){

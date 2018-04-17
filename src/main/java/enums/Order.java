@@ -7,15 +7,20 @@ import java.util.Map;
 
 public enum Order {
 
-    COEUR("order.heart"), ESPRIT("order.spirit"), OEIL("order.eye");
+    COEUR("order.heart", ":heart:"), ESPRIT("order.spirit", ":ghost:"), OEIL("order.eye", ":eye:");
 
     private static Map<String, Order> orders;
     private String name;
+    private String logo;
 
-    Order(String name){ this.name = name;}
+    Order(String name, String logo){ this.name = name; this.logo = logo;}
 
     public String getName(){
         return name;
+    }
+
+    public String getLogo(){
+        return logo;
     }
 
     public String getLabel(Language lg){
