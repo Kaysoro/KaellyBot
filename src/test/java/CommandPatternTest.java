@@ -135,14 +135,12 @@ public class CommandPatternTest {
         Command cmd = new JobCommand();
         Pattern pattern = Pattern.compile("^" + Constants.prefixCommand + cmd.getName() + cmd.getPattern() + "$");
 
-        assertTrue(pattern.matcher(Constants.prefixCommand + "job job").find());
-        assertTrue(pattern.matcher(Constants.prefixCommand + "job job 1").find());
-        assertTrue(pattern.matcher(Constants.prefixCommand + "job job 78").find());
-        assertTrue(pattern.matcher(Constants.prefixCommand + "job job 200").find());
-        assertTrue(pattern.matcher(Constants.prefixCommand + "job pêcheur 200").find());
-        assertTrue(pattern.matcher(Constants.prefixCommand + "job forgeur d'épée 200").find());
-        assertTrue(pattern.matcher(Constants.prefixCommand + "job -all 200").find());
         assertTrue(pattern.matcher(Constants.prefixCommand + "job").find());
+        assertTrue(pattern.matcher(Constants.prefixCommand + "job -serv furye").find());
+        assertTrue(pattern.matcher(Constants.prefixCommand + "job @user -serv furye").find());
+        assertTrue(pattern.matcher(Constants.prefixCommand + "job > 100 job1, job2, job3 -serv furye").find());
+        assertTrue(pattern.matcher(Constants.prefixCommand + "job job1, job2, job3 -serv furye").find());
+        assertTrue(pattern.matcher(Constants.prefixCommand + "job job1, job2, job3 200 -serv furye").find());
     }
 
     @Test

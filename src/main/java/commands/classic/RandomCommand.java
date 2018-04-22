@@ -3,8 +3,6 @@ package commands.classic;
 import commands.model.AbstractCommand;
 import enums.Language;
 import util.Message;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import sx.blah.discord.handle.obj.IMessage;
 import util.Translator;
 
@@ -16,42 +14,34 @@ import java.util.regex.Matcher;
  */
 public class RandomCommand extends AbstractCommand {
 
-    private final static Logger LOG = LoggerFactory.getLogger(RandomCommand.class);
-
     public RandomCommand(){
         super("rdm","(\\s+.+)?");
     }
 
     @Override
-    public boolean request(IMessage message) {
-        if (super.request(message)) {
-            Language lg = Translator.getLanguageFrom(message.getChannel());
-            Matcher m = getMatcher(message);
-            m.find();
-            if (m.group(1) == null) {
-                boolean value = new Random().nextBoolean();
-                Message.sendText(message.getChannel(), value ? Translator.getLabel(lg, "random.request.1") :
-                        Translator.getLabel(lg, "random.request.2") + " !");
-            }
-            else if (m.group(1).matches("\\s+-?\\d+")){
-                try {
-                    int limit = Integer.parseInt(m.group(1).trim());
-                    if (limit > 0)
-                        Message.sendText(message.getChannel(),new Random().nextInt(limit) + " !");
-                    else
-                        Message.sendText(message.getChannel(), Translator.getLabel(lg, "random.request.3"));
-                } catch(NumberFormatException e){
-                    Message.sendText(message.getChannel(), Translator.getLabel(lg, "random.request.4")
-                            + " " + Integer.MAX_VALUE + ").");
-                }
-            }
-            else {
-                String value = m.group(1).trim();
-                String[] values = value.split("\\s+");
-                Message.sendText(message.getChannel(), values[new Random().nextInt(values.length)] + " !");
+    public void request(IMessage message, Matcher m, Language lg) {
+        if (m.group(1) == null) {
+            boolean value = new Random().nextBoolean();
+            Message.sendText(message.getChannel(), value ? Translator.getLabel(lg, "random.request.1") :
+                    Translator.getLabel(lg, "random.request.2") + " !");
+        }
+        else if (m.group(1).matches("\\s+-?\\d+")){
+            try {
+                int limit = Integer.parseInt(m.group(1).trim());
+                if (limit > 0)
+                    Message.sendText(message.getChannel(),new Random().nextInt(limit) + " !");
+                else
+                    Message.sendText(message.getChannel(), Translator.getLabel(lg, "random.request.3"));
+            } catch(NumberFormatException e){
+                Message.sendText(message.getChannel(), Translator.getLabel(lg, "random.request.4")
+                        + " " + Integer.MAX_VALUE + ").");
             }
         }
-        return false;
+        else {
+            String value = m.group(1).trim();
+            String[] values = value.split("\\s+");
+            Message.sendText(message.getChannel(), values[new Random().nextInt(values.length)] + " !");
+        }
     }
 
     @Override

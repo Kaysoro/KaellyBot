@@ -1,66 +1,157 @@
 package commands.classic;
 
-import commands.model.AbstractCommand;
-import data.Constants;
+import commands.model.FetchCommand;
+import data.Guild;
 import data.JobUser;
+import data.ServerDofus;
 import enums.Job;
 import enums.Language;
-import exceptions.BasicDiscordException;
-import exceptions.DiscordException;
-import exceptions.NotFoundDiscordException;
+import sx.blah.discord.api.internal.json.objects.EmbedObject;
+import sx.blah.discord.handle.obj.IUser;
 import util.Message;
-import exceptions.TooMuchDiscordException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import sx.blah.discord.handle.obj.IMessage;
 import util.Translator;
 
 import java.text.Normalizer;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Created by steve on 14/07/2016.
  */
-public class JobCommand extends AbstractCommand {
-
-    private final static Logger LOG = LoggerFactory.getLogger(JobCommand.class);
-    private DiscordException tooMuchJobs;
-    private DiscordException notFoundJob;
-    private DiscordException notFoundLevel;
+public class JobCommand extends FetchCommand {
 
     public JobCommand(){
-        super("job", "(\\s+([\\p{L}|\\W]+|-all)(\\s+\\d{1,3})?)?");
+        super("job", "(.*)");
         setUsableInMP(false);
-        tooMuchJobs = new TooMuchDiscordException("job", true);
-        notFoundJob = new NotFoundDiscordException("job");
-        notFoundLevel = new NotFoundDiscordException("level");
     }
 
     @Override
-    public boolean request(IMessage message) {
-        if (super.request(message)) {
-            Language lg = Translator.getLanguageFrom(message.getChannel());
-            Matcher m = getMatcher(message);
-            m.find();
-            // TODO
-            new BasicDiscordException("exception.basic.in_developpment");
+    protected void request(IMessage message, Matcher m, Language lg) {
+        String content = m.group(1).trim();
+
+        // Initialisation du Filtre
+        IUser user = message.getAuthor();
+        ServerDofus server = Guild.getGuild(message.getGuild()).getServerDofus();
+        List<ServerDofus> servers;
+
+        // L'utilisateur concerné est-il l'auteur de la commande ?
+        if(Pattern.compile("^<@[!|&]?\\d+>").matcher(content).find()){
+            content = content.replaceFirst("<@[!|&]?\\d+>", "").trim();
+            user = message.getMentions().get(0);
         }
-        return false;
+
+        //Consultation des données filtrés par utilisateur
+        if (!findServer(content).isEmpty() && Pattern.compile("(.+)").matcher(content).matches()
+                || content.isEmpty()){
+            boolean found = (m = Pattern.compile("(.+)").matcher(content)).matches();
+            if (found) {
+                servers = findServer(m.group(1));
+                if (checkData(servers, tooMuchServers, notFoundServer, message, lg)) return;
+                server = servers.get(0);
+            } else if (server == null){
+                notFoundServer.throwException(message, this, lg);
+                return;
+            }
+
+            List<EmbedObject> embeds = JobUser.getJobsFromUser(user, server, message.getGuild(), lg);
+            for(EmbedObject embed : embeds)
+                Message.sendEmbed(message.getChannel(), embed);
+        }
+        // Enregistrement des données
+        else if((m = Pattern.compile("(-all|(\\p{L}+\\s*,?\\s*)+)\\s+(\\d{1,3})(\\s+.+)?").matcher(content)).matches()) {
+            if (user == message.getAuthor()) {
+                // Parsing des données et traitement des divers exceptions
+                Set<Job> jobs;
+                StringBuilder found = new StringBuilder();
+                StringBuilder notFound = new StringBuilder();
+                StringBuilder tooMuch = new StringBuilder();
+                if (! m.group(1).equals("-all")) {
+                    jobs = new HashSet<>();
+                    String[] proposals = m.group(1).split(",|\\s+");
+                    for(String proposal : proposals)
+                        if (!proposal.trim().isEmpty()){
+                            List<Job> tmp = getJob(lg, proposal);
+                            if (tmp.size() == 1) {
+                                jobs.add(tmp.get(0));
+                                found.append(tmp.get(0).getLabel(lg)).append(", ");
+                            }
+                            else if (tmp.isEmpty())
+                                notFound.append("*").append(proposal).append("*, ");
+                            else
+                                tooMuch.append("*").append(proposal).append("*, ");
+                        }
+                } else
+                    jobs = new HashSet<>(Arrays.asList(Job.values()));
+
+                // Avant d'aller plus loin, on test si on a au moins un métier de trouvé
+                if (jobs.isEmpty()){
+                    Message.sendText(message.getChannel(), Translator.getLabel(lg, "job.noone"));
+                    return;
+                }
+
+                if (found.length() > 0)
+                    found.setLength(found.length() - 2);
+                if (notFound.length() > 0)
+                    notFound.setLength(notFound.length() - 2);
+                if (tooMuch.length() > 0)
+                    tooMuch.setLength(tooMuch.length() - 2);
+
+                int level = Integer.parseInt(m.group(3));
+
+                if (m.group(4) != null) {
+                    servers = findServer(m.group(4));
+                    if (checkData(servers, tooMuchServers, notFoundServer, message, lg)) return;
+                    server = servers.get(0);
+                } else if (server == null) {
+                    notFoundServer.throwException(message, this, lg);
+                    return;
+                }
+
+                for (Job job : jobs)
+                    if (JobUser.containsKeys(user.getLongID(), server, job))
+                        JobUser.get(user.getLongID(), server, job).get(0).setLevel(level);
+                    else
+                        new JobUser(user.getLongID(), server,job, level).addToDatabase();
+
+                StringBuilder st = new StringBuilder();
+
+                if (jobs.size() < Job.values().length)
+                    st.append(Translator.getLabel(lg, level > 0 ? "job.save" : "job.reset")
+                            .replace("{jobs}", found.toString()));
+                else
+                    st.append(Translator.getLabel(lg, level > 0 ? "job.all_save" : "job.all_reset"));
+
+                if (notFound.length() > 0)
+                    st.append("\n").append(Translator.getLabel(lg, "job.not_found")
+                            .replace("{jobs}", notFound.toString()));
+                if (tooMuch.length() > 0)
+                    st.append("\n").append(Translator.getLabel(lg, "job.too_much")
+                            .replace("{jobs}", tooMuch.toString()));
+
+                Message.sendText(message.getChannel(), st.toString());
+            } else
+                badUse.throwException(message, this, lg);
+        }
+
+        // TODO consultation with filters
+
+        else
+            badUse.throwException(message, this, lg);
     }
 
-    private List<String> getJob(Language lg, String nameProposed){
+    private List<Job> getJob(Language lg, String nameProposed){
         nameProposed = Normalizer.normalize(nameProposed, Normalizer.Form.NFD)
                 .replaceAll("\\p{InCombiningDiacriticalMarks}+", "").toLowerCase();
         nameProposed = nameProposed.replaceAll("\\W+", "");
-        List<String> jobs = new ArrayList<>();
+        List<Job> jobs = new ArrayList<>();
 
         for(Job job : Job.values())
             if (Normalizer.normalize(job.getLabel(lg), Normalizer.Form.NFD)
                     .replaceAll("\\p{InCombiningDiacriticalMarks}+", "")
                     .toLowerCase().replaceAll("\\W+", "").startsWith(nameProposed))
-                jobs.add(job.getName());
+                jobs.add(job);
         return jobs;
     }
 
@@ -72,9 +163,11 @@ public class JobCommand extends AbstractCommand {
     @Override
     public String helpDetailed(Language lg, String prefixe) {
         return help(lg, prefixe)
-                + "\n" + prefixe + "`"  + name + "` : " + Translator.getLabel(lg, "job.help.detailed.1")
-                + "\n" + prefixe + "`"  + name + " `*`job`* : " + Translator.getLabel(lg, "job.help.detailed.2")
-                + "\n" + prefixe + "`"  + name + " `*`job level`* : " + Translator.getLabel(lg, "job.help.detailed.3")
-                + "\n" + prefixe + "`"  + name + " -all `*`level`* : " + Translator.getLabel(lg, "job.help.detailed.4") + "\n";
+                + "\n" + prefixe + "`"  + name + " `*`server`* : " + Translator.getLabel(lg, "job.help.detailed.1")
+                + "\n" + prefixe + "`"  + name + " `*`@user server`* : " + Translator.getLabel(lg, "job.help.detailed.2")
+                + "\n" + prefixe + "`"  + name + " `*`job1, job2, job3 server`* : " + Translator.getLabel(lg, "job.help.detailed.3")
+                + "\n" + prefixe + "`"  + name + " > `*`level job1, job2, job3 server`* : " + Translator.getLabel(lg, "job.help.detailed.4")
+                + "\n" + prefixe + "`"  + name + " `*`job1, job2, job3 level server`* : " + Translator.getLabel(lg, "job.help.detailed.5")
+                + "\n" + prefixe + "`"  + name + " -all `*`level server`* : " + Translator.getLabel(lg, "job.help.detailed.6") + "\n";
     }
 }

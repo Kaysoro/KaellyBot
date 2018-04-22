@@ -10,8 +10,6 @@ import exceptions.DiscordException;
 import exceptions.ExceptionManager;
 import exceptions.NotFoundDiscordException;
 import exceptions.TooMuchDiscordException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import sx.blah.discord.handle.obj.IMessage;
 import util.BestMatcher;
 import util.Message;
@@ -28,7 +26,6 @@ import java.util.regex.Matcher;
  */
 public class ResourceCommand extends DofusEncyclopediaRequestCommand {
 
-    private final static Logger LOG = LoggerFactory.getLogger(ResourceCommand.class);
     private final static String forName = "text=";
     private final static String forLevelMin = "object_level_min=";
     private final static String levelMin = "1";
@@ -47,47 +44,36 @@ public class ResourceCommand extends DofusEncyclopediaRequestCommand {
     }
 
     @Override
-    public boolean request(IMessage message) {
-        if (super.request(message)){
-            Matcher m = getMatcher(message);
-            Language lg = Translator.getLanguageFrom(message.getChannel());
-            m.find();
+    public void request(IMessage message, Matcher m, Language lg) {
+        String normalName = Normalizer.normalize(m.group(2).trim(), Normalizer.Form.NFD)
+                .replaceAll("\\p{InCombiningDiacriticalMarks}+", "").toLowerCase();
+        BestMatcher matcher = new BestMatcher(normalName);
 
-            String normalName = Normalizer.normalize(m.group(2).trim(), Normalizer.Form.NFD)
-                    .replaceAll("\\p{InCombiningDiacriticalMarks}+", "").toLowerCase();
-            BestMatcher matcher = new BestMatcher(normalName);
-
-            try {
-                for (TypeResource resource : TypeResource.values()) {
-                    String[] names = resource.getNames(lg);
-                    gatherData(message, matcher, names, normalName, resource, notFoundRsrc);
-                }
-
-                if (matcher.isEmpty())
-                    for (SuperTypeResource type : SuperTypeResource.values())
-                        matcher.evaluateAll(getListRequestableFrom(
-                                getSearchURL(type.getUrl(lg), normalName, null, lg), message, notFoundRsrc));
-
-                if (matcher.isUnique()) { // We have found it !
-                    Embedded resource = Resource.getResource(lg, Translator.getLabel(lg, "game.url")
-                            + matcher.getBest().getUrl());
-                    if (m.group(1) != null)
-                        Message.sendEmbed(message.getChannel(), resource.getMoreEmbedObject(lg));
-                    else
-                        Message.sendEmbed(message.getChannel(), resource.getEmbedObject(lg));
-                } else if (!matcher.isEmpty()) // Too much items
-                    tooMuchRsrcs.throwException(message, this, lg, matcher.getBests());
-                else // empty
-                    notFoundRsrc.throwException(message, this, lg);
-            } catch (IOException e) {
-                ExceptionManager.manageIOException(e, message, this, lg, notFoundRsrc);
+        try {
+            for (TypeResource resource : TypeResource.values()) {
+                String[] names = resource.getNames(lg);
+                gatherData(message, matcher, names, normalName, resource, notFoundRsrc);
             }
 
-            return true;
+            if (matcher.isEmpty())
+                for (SuperTypeResource type : SuperTypeResource.values())
+                    matcher.evaluateAll(getListRequestableFrom(
+                            getSearchURL(type.getUrl(lg), normalName, null, lg), message, notFoundRsrc));
+
+            if (matcher.isUnique()) { // We have found it !
+                Embedded resource = Resource.getResource(lg, Translator.getLabel(lg, "game.url")
+                        + matcher.getBest().getUrl());
+                if (m.group(1) != null)
+                    Message.sendEmbed(message.getChannel(), resource.getMoreEmbedObject(lg));
+                else
+                    Message.sendEmbed(message.getChannel(), resource.getEmbedObject(lg));
+            } else if (!matcher.isEmpty()) // Too much items
+                tooMuchRsrcs.throwException(message, this, lg, matcher.getBests());
+            else // empty
+                notFoundRsrc.throwException(message, this, lg);
+        } catch (IOException e) {
+            ExceptionManager.manageIOException(e, message, this, lg, notFoundRsrc);
         }
-
-
-        return false;
     }
 
     protected String getSearchURL(String SuperTypeURL, String text, String typeArg, Language lg) throws UnsupportedEncodingException {

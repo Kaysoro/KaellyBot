@@ -9,8 +9,6 @@ import exceptions.DiscordException;
 import exceptions.NotFoundDiscordException;
 import util.Message;
 import exceptions.TooMuchDiscordException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import sx.blah.discord.handle.obj.IMessage;
 import util.Translator;
 
@@ -24,7 +22,6 @@ import java.util.regex.Matcher;
  */
 public class PortalCommand extends AbstractCommand {
 
-    private final static Logger LOG = LoggerFactory.getLogger(PortalCommand.class);
     private DiscordException tooMuchPortals;
     private DiscordException notFoundPortal;
 
@@ -36,36 +33,30 @@ public class PortalCommand extends AbstractCommand {
     }
 
     @Override
-    public boolean request(IMessage message) {
-        if (super.request(message)) {
-            Matcher m = getMatcher(message);
-            Language lg = Translator.getLanguageFrom(message.getChannel());
-            m.find();
-            if (m.group(1) == null && m.group(5) == null) { // No dimension precised
-                for(Portal pos : Guild.getGuild(message.getGuild()).getPortals())
-                        Message.sendEmbed(message.getChannel(), pos.getEmbedObject(lg));
-            }
-            else {
-                List<Portal> portals = new ArrayList<>();
-                if (m.group(1) != null)
-                    portals = getPortal(m.group(1), Guild.getGuild(message.getGuild()));
-                if (portals.size() == 1) {
-                    if (m.group(2) != null)
-                        portals.get(0).setCoordonate(Position.parse("[" + m.group(3) + "," + m.group(4) + "]"),
-                                message.getAuthor().getDisplayName(message.getGuild()));
-                    if (m.group(5) != null)
-                        portals.get(0).setUtilisation(Integer.parseInt(m.group(5).replaceAll("\\s", "")),
-                                message.getAuthor().getDisplayName(message.getGuild()));
-
-                    Message.sendEmbed(message.getChannel(), portals.get(0).getEmbedObject(lg));
-                }
-                else if(portals.size() > 1)
-                    tooMuchPortals.throwException(message, this, lg);
-                else
-                    notFoundPortal.throwException(message, this, lg);
-            }
+    public void request(IMessage message, Matcher m, Language lg) {
+        if (m.group(1) == null && m.group(5) == null) { // No dimension precised
+            for(Portal pos : Guild.getGuild(message.getGuild()).getPortals())
+                    Message.sendEmbed(message.getChannel(), pos.getEmbedObject(lg));
         }
-        return false;
+        else {
+            List<Portal> portals = new ArrayList<>();
+            if (m.group(1) != null)
+                portals = getPortal(m.group(1), Guild.getGuild(message.getGuild()));
+            if (portals.size() == 1) {
+                if (m.group(2) != null)
+                    portals.get(0).setCoordonate(Position.parse("[" + m.group(3) + "," + m.group(4) + "]"),
+                            message.getAuthor().getDisplayName(message.getGuild()));
+                if (m.group(5) != null)
+                    portals.get(0).setUtilisation(Integer.parseInt(m.group(5).replaceAll("\\s", "")),
+                            message.getAuthor().getDisplayName(message.getGuild()));
+
+                Message.sendEmbed(message.getChannel(), portals.get(0).getEmbedObject(lg));
+            }
+            else if(portals.size() > 1)
+                tooMuchPortals.throwException(message, this, lg);
+            else
+                notFoundPortal.throwException(message, this, lg);
+        }
     }
 
     private List<Portal> getPortal(String nameProposed, Guild guild){

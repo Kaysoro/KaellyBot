@@ -1,6 +1,5 @@
 package commands.model;
 
-import commands.model.AbstractCommand;
 import enums.Language;
 import exceptions.DiscordException;
 import exceptions.ExceptionManager;

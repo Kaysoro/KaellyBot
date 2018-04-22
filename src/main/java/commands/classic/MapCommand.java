@@ -3,11 +3,8 @@ package commands.classic;
 import commands.model.AbstractCommand;
 import data.Constants;
 import enums.Language;
-import exceptions.BadUseCommandDiscordException;
 import sx.blah.discord.util.EmbedBuilder;
 import util.Message;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import sx.blah.discord.handle.obj.IMessage;
 import util.Translator;
 
@@ -19,7 +16,6 @@ import java.util.regex.Matcher;
  */
 public class MapCommand extends AbstractCommand {
 
-    private final static Logger LOG = LoggerFactory.getLogger(MapCommand.class);
     private static final int[] decimal = {1, 4, 5, 9, 10, 40, 50, 90, 100, 400, 500, 900, 1000};
     private static final String[] letters = {"I", "IV", "V", "IX", "X", "XL", "L", "XC", "C", "CD", "D", "CM", "M"};
 
@@ -30,57 +26,50 @@ public class MapCommand extends AbstractCommand {
     }
 
     @Override
-    public boolean request(IMessage message) {
-        if (super.request(message)) {
-            Language lg = Translator.getLanguageFrom(message.getChannel());
-            List<String> classicMaps = new ArrayList<>();
-            for(int i = 1; i < 18; i++)
-                classicMaps.add(String.valueOf(i));
-            List<String> maps = new ArrayList<>();
+    public void request(IMessage message, Matcher m, Language lg) {
+        List<String> classicMaps = new ArrayList<>();
+        for(int i = 1; i < 18; i++)
+            classicMaps.add(String.valueOf(i));
+        List<String> maps = new ArrayList<>();
 
-            Matcher m = getMatcher(message);
-            m.find();
-
-            if (m.group(1) == null && m.group(2) == null)
-                maps.addAll(classicMaps);
-            else if (m.group(2) != null){
-                String[] text = m.group(2).trim().toUpperCase().split("\\s+");
-                for(String value : text){
-                    value = getNumberValue(value);
-                    if (value != null)
-                        maps.add(value);
-                }
+        if (m.group(1) == null && m.group(2) == null)
+            maps.addAll(classicMaps);
+        else if (m.group(2) != null){
+            String[] text = m.group(2).trim().toUpperCase().split("\\s+");
+            for(String value : text){
+                value = getNumberValue(value);
+                if (value != null)
+                    maps.add(value);
             }
-            else {
-                new BadUseCommandDiscordException().throwException(message, this, lg);
-                return false;
-            }
-
-            if (m.group(1) == null && maps.isEmpty()){
-                new BadUseCommandDiscordException().throwException(message, this, lg);
-                return false;
-            }
-            else if (m.group(1) != null){
-                classicMaps.removeAll(maps);
-                maps = classicMaps;
-            }
-
-            String number = maps.get(new Random().nextInt(maps.size()));
-            String url = Constants.turnamentMapImg.replace("{number}", number);
-
-            String[] punchlines = Translator.getLabel(lg, "map.punchline").split(";");
-            String punchline = punchlines[new Random().nextInt(punchlines.length)];
-            EmbedBuilder builder = new EmbedBuilder();
-
-            builder.withTitle(Translator.getLabel(lg, "map.embed.title") + " " + numberToRoman(number));
-            builder.withDescription(punchline);
-            builder.withImage(url);
-            builder.withColor(new Random().nextInt(16777216));
-            builder.withImage(url);
-
-            Message.sendEmbed(message.getChannel(), builder.build());
         }
-        return false;
+        else {
+            badUse.throwException(message, this, lg);
+            return;
+        }
+
+        if (m.group(1) == null && maps.isEmpty()){
+            badUse.throwException(message, this, lg);
+            return;
+        }
+        else if (m.group(1) != null){
+            classicMaps.removeAll(maps);
+            maps = classicMaps;
+        }
+
+        String number = maps.get(new Random().nextInt(maps.size()));
+        String url = Constants.turnamentMapImg.replace("{number}", number);
+
+        String[] punchlines = Translator.getLabel(lg, "map.punchline").split(";");
+        String punchline = punchlines[new Random().nextInt(punchlines.length)];
+        EmbedBuilder builder = new EmbedBuilder();
+
+        builder.withTitle(Translator.getLabel(lg, "map.embed.title") + " " + numberToRoman(number));
+        builder.withDescription(punchline);
+        builder.withImage(url);
+        builder.withColor(new Random().nextInt(16777216));
+        builder.withImage(url);
+
+        Message.sendEmbed(message.getChannel(), builder.build());
     }
 
     @Override
@@ -120,7 +109,7 @@ public class MapCommand extends AbstractCommand {
         }
     }
 
-    public static String getNumberValue(String value)
+    private static String getNumberValue(String value)
     {
         value = value.trim().toUpperCase();
         if (value.equals("I") || value.equals("1"))

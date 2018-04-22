@@ -20,10 +20,6 @@ public class MessageListener {
     private final static Logger LOG = LoggerFactory.getLogger(MessageListener.class);
     private DiscordException unknown = new BasicDiscordException("exception.basic.unknown_error");
 
-    public MessageListener(){
-        super();
-    }
-
     @EventSubscriber
     public void onReady(MessageReceivedEvent event) {
         Language lg = Translator.getLanguageFrom(event.getChannel());

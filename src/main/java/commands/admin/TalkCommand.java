@@ -7,8 +7,6 @@ import exceptions.DiscordException;
 import exceptions.NotFoundDiscordException;
 import util.ClientConfig;
 import util.Message;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import sx.blah.discord.handle.obj.IChannel;
 import sx.blah.discord.handle.obj.IMessage;
 import sx.blah.discord.handle.obj.Permissions;
@@ -21,7 +19,6 @@ import java.util.regex.Matcher;
  */
 public class TalkCommand extends AbstractCommand {
 
-    private final static Logger LOG = LoggerFactory.getLogger(TalkCommand.class);
     private IChannel lastChan;
     private DiscordException notFoundChan;
     private DiscordException noSendTextPermission;
@@ -36,31 +33,20 @@ public class TalkCommand extends AbstractCommand {
     }
 
     @Override
-    public boolean request(IMessage message) {
-        if (super.request(message)) {
-            Language lg = Translator.getLanguageFrom(message.getChannel());
-            Matcher m = getMatcher(message);
-            m.find();
-            String text = m.group(2).trim();
+    public void request(IMessage message, Matcher m, Language lg) {
+        String text = m.group(2).trim();
 
-            if (m.group(1) != null){
-                long value = Long.parseLong(m.group(1).trim());
-                lastChan = ClientConfig.DISCORD().getChannelByID(value);
-            }
-
-            if (lastChan == null){
-                notFoundChan.throwException(message, this, lg);
-                return false;
-            }
-
-            if (lastChan.getModifiedPermissions(ClientConfig.DISCORD().getOurUser()).contains(Permissions.SEND_MESSAGES))
-                Message.sendText(lastChan, text);
-            else
-                noSendTextPermission.throwException(message, this, lg);
-
-            return true;
+        if (m.group(1) != null){
+            long value = Long.parseLong(m.group(1).trim());
+            lastChan = ClientConfig.DISCORD().getChannelByID(value);
         }
-        return false;
+
+        if (lastChan == null)
+            notFoundChan.throwException(message, this, lg);
+        else if (lastChan.getModifiedPermissions(ClientConfig.DISCORD().getOurUser()).contains(Permissions.SEND_MESSAGES))
+            Message.sendText(lastChan, text);
+        else
+            noSendTextPermission.throwException(message, this, lg);
     }
 
     @Override

@@ -14,7 +14,7 @@ public interface Command {
     String getPattern();
     Matcher getMatcher(IMessage message);
     String getPrefix(IMessage message);
-    boolean request(IMessage message);
+    void request(IMessage message);
 
     /**
      * Is the command usable in MP?

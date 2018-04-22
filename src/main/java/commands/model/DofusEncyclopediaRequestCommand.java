@@ -37,7 +37,7 @@ public abstract class DofusEncyclopediaRequestCommand extends DofusRequestComman
         }
     }
 
-    protected String removeUselessWords(String search){
+    private String removeUselessWords(String search){
         return search.replaceAll("\\s+\\w{1,3}\\s+", " ");
     }
 

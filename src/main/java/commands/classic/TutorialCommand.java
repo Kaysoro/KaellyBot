@@ -11,8 +11,6 @@ import exceptions.ExceptionManager;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import sx.blah.discord.handle.obj.IMessage;
 
 import java.io.IOException;
@@ -28,7 +26,6 @@ import java.util.regex.Matcher;
  */
 public class TutorialCommand extends AbstractCommand {
 
-    private final static Logger LOG = LoggerFactory.getLogger(TutorialCommand.class);
     private final static String forName = "q=";
     private final static String filtered = "filter=page";
     private DiscordException tooMuchTutos;
@@ -41,34 +38,25 @@ public class TutorialCommand extends AbstractCommand {
     }
 
     @Override
-    public boolean request(IMessage message) {
-        if (super.request(message)){
-            Matcher m = getMatcher(message);
-            m.find();
-            Language lg = Translator.getLanguageFrom(message.getChannel());
-            String normalName = Normalizer.normalize(m.group(1).trim(), Normalizer.Form.NFD)
-                    .replaceAll("\\p{InCombiningDiacriticalMarks}+", "").toLowerCase();
-            String editedName = removeUselessWords(normalName);
-            BestMatcher matcher = new BestMatcher(normalName);
+    public void request(IMessage message, Matcher m, Language lg) {
+        String normalName = Normalizer.normalize(m.group(1).trim(), Normalizer.Form.NFD)
+                .replaceAll("\\p{InCombiningDiacriticalMarks}+", "").toLowerCase();
+        String editedName = removeUselessWords(normalName);
+        BestMatcher matcher = new BestMatcher(normalName);
 
-            try {
-                matcher.evaluateAll(getListTutoFrom(getSearchURL(editedName), message));
+        try {
+            matcher.evaluateAll(getListTutoFrom(getSearchURL(editedName), message));
 
-                if (matcher.isUnique())// We have found it !
-                    Message.sendText(message.getChannel(), Translator.getLabel(lg, "tutorial.request") + " " +
-                            Constants.dofusPourLesNoobURL + matcher.getBest().getUrl());
-                else if (! matcher.isEmpty())  // Too much tutos
-                    tooMuchTutos.throwException(message, this, lg, matcher.getBests());
-                else // empty
-                    notFoundTuto.throwException(message, this, lg);
-            } catch(IOException e){
-                ExceptionManager.manageIOException(e, message, this, lg, notFoundTuto);
-            }
-
-            return true;
+            if (matcher.isUnique())// We have found it !
+                Message.sendText(message.getChannel(), Translator.getLabel(lg, "tutorial.request") + " " +
+                        Constants.dofusPourLesNoobURL + matcher.getBest().getUrl());
+            else if (! matcher.isEmpty())  // Too much tutos
+                tooMuchTutos.throwException(message, this, lg, matcher.getBests());
+            else // empty
+                notFoundTuto.throwException(message, this, lg);
+        } catch(IOException e){
+            ExceptionManager.manageIOException(e, message, this, lg, notFoundTuto);
         }
-
-        return false;
     }
 
     private String getSearchURL(String text) throws UnsupportedEncodingException {

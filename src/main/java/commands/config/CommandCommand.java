@@ -8,8 +8,6 @@ import data.Guild;
 import enums.Language;
 import util.Message;
 import exceptions.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import sx.blah.discord.handle.obj.IMessage;
 import util.Translator;
 
@@ -21,8 +19,6 @@ import java.util.regex.Matcher;
  * Created by steve on 14/07/2016.
  */
 public class CommandCommand extends AbstractCommand {
-
-    private final static Logger LOG = LoggerFactory.getLogger(CommandCommand.class);
 
     private DiscordException tooMuchCmds;
     private DiscordException notFoundCmd;
@@ -41,58 +37,51 @@ public class CommandCommand extends AbstractCommand {
     }
 
     @Override
-    public boolean request(IMessage message) {
-        if (super.request(message)) {
-            Language lg = Translator.getLanguageFrom(message.getChannel());
+    public void request(IMessage message, Matcher m, Language lg) {
+        if (isUserHasEnoughRights(message)) {
+            Guild guild = Guild.getGuild(message.getGuild());
+            List<Command> potentialCmds = new ArrayList<>();
+            String commandName = m.group(1).trim();
+            for (Command command : CommandManager.getCommands())
+                if (command.isPublic() && !command.isAdmin() && command.getName().contains(commandName))
+                    potentialCmds.add(command);
 
-            if (isUserHasEnoughRights(message)) {
-                Guild guild = Guild.getGuild(message.getGuild());
-                Matcher m = getMatcher(message);
-                m.find();
-                List<Command> potentialCmds = new ArrayList<>();
-                String commandName = m.group(1).trim();
-                for (Command command : CommandManager.getCommands())
-                    if (command.isPublic() && !command.isAdmin() && command.getName().contains(commandName))
-                        potentialCmds.add(command);
+            if (potentialCmds.size() == 1){
+                Command command = potentialCmds.get(0);
+                String value = m.group(2);
 
-                if (potentialCmds.size() == 1){
-                    Command command = potentialCmds.get(0);
-                    String value = m.group(2);
-
-                    if (command instanceof CommandCommand){
-                        Message.sendText(message.getChannel(), Translator.getLabel(lg, "command.request.1"));
-                        return false;
-                    }
-                    if (value.matches("false") || value.matches("1") || value.matches("off")){
-                        if (! guild.getForbiddenCommands().containsKey(command.getName())) {
-                            new CommandForbidden(command, guild).addToDatabase();
-                            Message.sendText(message.getChannel(), Translator.getLabel(lg, "command.request.2") + " *" + commandName
-                                    + "* " + Translator.getLabel(lg, "command.request.3"));
-                        }
-                        else
-                            forbiddenCmdFound.throwException(message, this, lg);
-                    }
-                    else if (value.matches("true") || value.matches("0") || value.matches("on")){
-                        if (guild.getForbiddenCommands().containsKey(command.getName())) {
-                            guild.getForbiddenCommands().get(command.getName()).removeToDatabase();
-                            Message.sendText(message.getChannel(), Translator.getLabel(lg, "command.request.2") + " *" + commandName
-                                    + "* " + Translator.getLabel(lg, "command.request.4"));
-                        }
-                        else
-                            forbiddenCmdNotFound.throwException(message, this, lg);
+                if (command instanceof CommandCommand){
+                    Message.sendText(message.getChannel(), Translator.getLabel(lg, "command.request.1"));
+                    return;
+                }
+                if (value.matches("false") || value.matches("1") || value.matches("off")){
+                    if (! guild.getForbiddenCommands().containsKey(command.getName())) {
+                        new CommandForbidden(command, guild).addToDatabase();
+                        Message.sendText(message.getChannel(), Translator.getLabel(lg, "command.request.2") + " *" + commandName
+                                + "* " + Translator.getLabel(lg, "command.request.3"));
                     }
                     else
-                        new BadUseCommandDiscordException().throwException(message, this, lg);
+                        forbiddenCmdFound.throwException(message, this, lg);
                 }
-                else if (potentialCmds.isEmpty())
-                    notFoundCmd.throwException(message, this, lg);
+                else if (value.matches("true") || value.matches("0") || value.matches("on")){
+                    if (guild.getForbiddenCommands().containsKey(command.getName())) {
+                        guild.getForbiddenCommands().get(command.getName()).removeToDatabase();
+                        Message.sendText(message.getChannel(), Translator.getLabel(lg, "command.request.2") + " *" + commandName
+                                + "* " + Translator.getLabel(lg, "command.request.4"));
+                    }
+                    else
+                        forbiddenCmdNotFound.throwException(message, this, lg);
+                }
                 else
-                    tooMuchCmds.throwException(message, this, lg);
+                    badUse.throwException(message, this, lg);
             }
+            else if (potentialCmds.isEmpty())
+                notFoundCmd.throwException(message, this, lg);
             else
-                noEnoughRights.throwException(message, this, lg);
+                tooMuchCmds.throwException(message, this, lg);
         }
-        return false;
+        else
+            noEnoughRights.throwException(message, this, lg);
     }
 
     @Override

@@ -27,6 +27,7 @@ public class OrderUser implements Comparable<OrderUser> {
     private final static Logger LOG = LoggerFactory.getLogger(OrderUser.class);
     private static MultiKeySearch<OrderUser> orders;
     private static final int NUMBER_FIELD = 4;
+    private static final int LEVEL_MAX = 100;
     private City city;
     private Order order;
     private long idUser;
@@ -37,16 +38,16 @@ public class OrderUser implements Comparable<OrderUser> {
     public OrderUser(long idUser, ServerDofus server, City city, Order order, int level){
         this.city = city;
         this.order = order;
-        if (level > 100)
-            level = 100;
+        if (level > LEVEL_MAX)
+            level = LEVEL_MAX;
         this.level = level;
         this.idUser = idUser;
         this.server = server;
     }
 
     public synchronized void setLevel(int level){
-        if (level > 100)
-            level = 100;
+        if (level > LEVEL_MAX)
+            level = LEVEL_MAX;
         this.level = level;
 
         Connexion connexion = Connexion.getInstance();
@@ -124,7 +125,7 @@ public class OrderUser implements Comparable<OrderUser> {
         return server;
     }
 
-    public static synchronized MultiKeySearch<OrderUser> getOrders(){
+    private static synchronized MultiKeySearch<OrderUser> getOrders(){
         if(orders == null){
             orders = new MultiKeySearch<>(NUMBER_FIELD);
             Connexion connexion = Connexion.getInstance();
@@ -149,6 +150,30 @@ public class OrderUser implements Comparable<OrderUser> {
             }
         }
         return orders;
+    }
+
+    /**
+     * if JobUser instance contains keys
+     * @param user User id
+     * @param server Dofus server
+     * @param city City (eg. BONTA or BRAKMAR)
+     * @param order Order (eg. HEART, SPIRIT, EYES)
+     * @return true if it contains
+     */
+    public static boolean containsKeys(long user, ServerDofus server, City city, Order order){
+        return getOrders().containsKeys(user, server, city, order);
+    }
+
+    /**
+     * getData with all the keys
+     * @param user User id
+     * @param server Dofus server
+     * @param city City (eg. BONTA or BRAKMAR)
+     * @param order Order (eg. HEART, SPIRIT, EYES)
+     * @return List of JobUser
+     */
+    public static List<OrderUser> get(long user, ServerDofus server, City city, Order order){
+        return getOrders().get(user, server, city, order);
     }
 
     /**

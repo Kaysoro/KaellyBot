@@ -10,8 +10,6 @@ import exceptions.DiscordException;
 import exceptions.NotFoundDiscordException;
 import exceptions.TooMuchDiscordException;
 import util.Message;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import sx.blah.discord.handle.obj.IMessage;
 import util.Translator;
 
@@ -25,7 +23,6 @@ import java.util.regex.Matcher;
  */
 public class ServerCommand extends AbstractCommand {
 
-    private final static Logger LOG = LoggerFactory.getLogger(ServerCommand.class);
     private DiscordException tooMuchServers;
     private DiscordException notFoundServer;
     private DiscordException noEnoughRights;
@@ -39,63 +36,58 @@ public class ServerCommand extends AbstractCommand {
     }
 
     @Override
-    public boolean request(IMessage message) {
-        if (super.request(message)) {
-            Guild guild = Guild.getGuild(message.getGuild());
-            Language lg = Translator.getLanguageFrom(message.getChannel());
-            Matcher m = getMatcher(message);
-            m.find();
-            if (m.group(1) != null)
-                if (isUserHasEnoughRights(message)) {
-                    String serverName = m.group(1).toLowerCase().trim();
+    public void request(IMessage message, Matcher m, Language lg) {
+        Guild guild = Guild.getGuild(message.getGuild());
 
-                    if (! serverName.equals("-reset")) {
-                        serverName = Normalizer.normalize(serverName, Normalizer.Form.NFD)
+        if (m.group(1) != null)
+            if (isUserHasEnoughRights(message)) {
+                String serverName = m.group(1).toLowerCase().trim();
+
+                if (! serverName.equals("-reset")) {
+                    serverName = Normalizer.normalize(serverName, Normalizer.Form.NFD)
+                            .replaceAll("\\p{InCombiningDiacriticalMarks}+", "")
+                            .replaceAll("\\W+", "").trim();
+                    List<ServerDofus> result = new ArrayList<>();
+                    for (ServerDofus server : ServerDofus.getServersDofus())
+                        if (Normalizer.normalize(server.getName(), Normalizer.Form.NFD)
                                 .replaceAll("\\p{InCombiningDiacriticalMarks}+", "")
-                                .replaceAll("\\W+", "").trim();
-                        List<ServerDofus> result = new ArrayList<>();
-                        for (ServerDofus server : ServerDofus.getServersDofus())
-                            if (Normalizer.normalize(server.getName(), Normalizer.Form.NFD)
-                                    .replaceAll("\\p{InCombiningDiacriticalMarks}+", "")
-                                    .replaceAll("\\W+", "").toLowerCase().trim()
-                                    .startsWith(serverName))
-                                result.add(server);
+                                .replaceAll("\\W+", "").toLowerCase().trim()
+                                .startsWith(serverName))
+                            result.add(server);
 
-                        if (result.size() == 1) {
-                            if (guild.getServerDofus() != null && guild.getServerDofus() != result.get(0))
-                                guild.resetPortals();
-                            guild.setServer(result.get(0));
-                            guild.mergePortals(result.get(0).getSweetPortals());
-                            Message.sendText(message.getChannel(), Translator.getLabel(lg, "server.request.1")
-                                    .replace("{game}", Constants.game)
-                                    + " " + guild.getName() + " " + Translator.getLabel(lg, "server.request.2")
-                                    + " " + result.get(0).getName() + ".");
-                        } else if (result.isEmpty())
-                            notFoundServer.throwException(message, this, lg);
-                        else
-                            tooMuchServers.throwException(message, this, lg, result);
-                    }
-                    else {
-                        guild.setServer(null);
-                        Message.sendText(message.getChannel(), guild.getName()
-                                + " " + Translator.getLabel(lg, "server.request.3")
-                                .replace("{game}", Constants.game));
-                    }
+                    if (result.size() == 1) {
+                        if (guild.getServerDofus() != null && guild.getServerDofus() != result.get(0))
+                            guild.resetPortals();
+                        guild.setServer(result.get(0));
+                        guild.mergePortals(result.get(0).getSweetPortals());
+                        Message.sendText(message.getChannel(), Translator.getLabel(lg, "server.request.1")
+                                .replace("{game}", Constants.game)
+                                + " " + guild.getName() + " " + Translator.getLabel(lg, "server.request.2")
+                                + " " + result.get(0).getName() + ".");
+                    } else if (result.isEmpty())
+                        notFoundServer.throwException(message, this, lg);
+                    else
+                        tooMuchServers.throwException(message, this, lg, result);
                 }
-                else
-                    noEnoughRights.throwException(message, this, lg);
-            else {
-                if (guild.getServerDofus() != null)
-                    Message.sendText(message.getChannel(), guild.getName() + " "
-                            + Translator.getLabel(lg, "server.request.4") + " "
-                            + guild.getServerDofus().getName() + ".");
-                else
+                else {
+                    guild.setServer(null);
                     Message.sendText(message.getChannel(), guild.getName()
-                            + " " + Translator.getLabel(lg, "server.request.5")
+                            + " " + Translator.getLabel(lg, "server.request.3")
                             .replace("{game}", Constants.game));
+                }
             }
+            else
+                noEnoughRights.throwException(message, this, lg);
+        else {
+            if (guild.getServerDofus() != null)
+                Message.sendText(message.getChannel(), guild.getName() + " "
+                        + Translator.getLabel(lg, "server.request.4") + " "
+                        + guild.getServerDofus().getName() + ".");
+            else
+                Message.sendText(message.getChannel(), guild.getName()
+                        + " " + Translator.getLabel(lg, "server.request.5")
+                        .replace("{game}", Constants.game));
         }
-        return false;
     }
 
     @Override
