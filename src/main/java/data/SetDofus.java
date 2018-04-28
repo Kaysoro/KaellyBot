@@ -19,7 +19,7 @@ import java.util.Random;
 /**
  * Created by steve on 14/07/2016.
  */
-public class Set implements Embedded {
+public class SetDofus implements Embedded {
 
     private String name;
     private String level;
@@ -30,8 +30,8 @@ public class Set implements Embedded {
     private String[] bonusPano;
     private List<String> recipeTotal;
 
-    private Set(String name, String level, List<String> bonusTotal, String skinURL, String url, String composition,
-                String[] bonusPano, List<String> recipeTotal) {
+    private SetDofus(String name, String level, List<String> bonusTotal, String skinURL, String url, String composition,
+                     String[] bonusPano, List<String> recipeTotal) {
         this.name = name;
         this.level = level;
         this.skinURL = skinURL;
@@ -99,7 +99,7 @@ public class Set implements Embedded {
         return builder.build();
     }
 
-    public static Set getSet(Language lg, String url) throws IOException {
+    public static SetDofus getSet(Language lg, String url) throws IOException {
         Document doc = JSoupManager.getDocument(url);
 
         String name = doc.getElementsByClass("ak-return-link").first().text();
@@ -153,7 +153,7 @@ public class Set implements Embedded {
                     recipeTotal.add(field.toString());
             }
 
-        return new Set(name, level, bonusTotal, URLManager.abs(skinURL), url, composition, bonusPano, recipeTotal);
+        return new SetDofus(name, level, bonusTotal, URLManager.abs(skinURL), url, composition, bonusPano, recipeTotal);
     }
 
     private static String extractStatsFromTitle(Language lg, Element elem)

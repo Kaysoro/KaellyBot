@@ -3,7 +3,6 @@ package data;
 import enums.City;
 import enums.Language;
 import enums.Order;
-import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sx.blah.discord.api.internal.json.objects.EmbedObject;
@@ -22,18 +21,15 @@ import java.util.*;
 /**
  * Created by steve on 19/02/2018.
  */
-public class OrderUser implements Comparable<OrderUser> {
+public class OrderUser extends ObjectUser {
 
     private final static Logger LOG = LoggerFactory.getLogger(OrderUser.class);
+    private static final String ORDER_PREFIX = "align";
     private static MultiKeySearch<OrderUser> orders;
     private static final int NUMBER_FIELD = 4;
     private static final int LEVEL_MAX = 100;
     private City city;
     private Order order;
-    private long idUser;
-    private int level;
-    private ServerDofus server;
-
 
     public OrderUser(long idUser, ServerDofus server, City city, Order order, int level){
         this.city = city;
@@ -117,12 +113,12 @@ public class OrderUser implements Comparable<OrderUser> {
         return order;
     }
 
-    private int getLevel() {
-        return level;
-    }
-
-    public ServerDofus getServer() {
-        return server;
+    @Override
+    protected String displayLine(IGuild guild, Language lg) {
+        IUser user = ClientConfig.DISCORD().getUserByID(idUser);
+        return EmojiManager.getEmojiForPresence(user.getPresence().getStatus()) + " "
+                + city.getLogo() + " " + order.getLabel(lg) + ", " + level + " : **"
+                + user.getDisplayName(guild) + "**\n";
     }
 
     private static synchronized MultiKeySearch<OrderUser> getOrders(){
@@ -183,7 +179,7 @@ public class OrderUser implements Comparable<OrderUser> {
      */
     public static List<EmbedObject> getOrdersFromUser(IUser user, ServerDofus server, IGuild guild, Language lg){
         List<OrderUser> result = getOrders().get(user.getLongID(), server, null, null);
-        Collections.sort(result);
+        result.sort(OrderUser::compare);
         List<EmbedObject> embed = new ArrayList<>();
 
         EmbedBuilder builder = new EmbedBuilder();
@@ -220,8 +216,8 @@ public class OrderUser implements Comparable<OrderUser> {
                     if (order.getLevel() >= level)
                         result.add(order);
             }
-        Collections.sort(result);
-        return getPlayersList(result, guild, lg);
+        result.sort(OrderUser::compare);
+        return getPlayersList(result, guild, lg, ORDER_PREFIX);
     }
 
     /**
@@ -239,79 +235,14 @@ public class OrderUser implements Comparable<OrderUser> {
                 List<OrderUser> potentials = getOrders().get(user.getLongID(), server, city, order);
                 result.addAll(potentials);
             }
-        Collections.sort(result);
-        return getPlayersList(result, guild, lg);
+        result.sort(OrderUser::compare);
+        return getPlayersList(result, guild, lg, ORDER_PREFIX);
     }
 
-    private static List<EmbedObject> getPlayersList(List<OrderUser> orders, IGuild guild, Language lg){
-        List<EmbedObject> embed = new ArrayList<>();
-
-        // On s'occupe d'abord de générer chaque ligne de field
-        if (!orders.isEmpty()){
-            List<List<String>> fieldsPerEmbed = new ArrayList<>();
-            List<String> fields = new ArrayList<>();
-            int fieldsSize = 0;
-            StringBuilder field = new StringBuilder();
-
-            for(OrderUser order : orders){
-                IUser user = ClientConfig.DISCORD().getUserByID(order.idUser);
-                String line = EmojiManager.getEmojiForPresence(user.getPresence().getStatus()) + " "
-                        + order.city.getLogo() + " " + order.order.getLabel(lg) + ", " + order.level + " : **"
-                        + user.getDisplayName(guild) + "**\n";
-
-                // Est-ce qu'on dépasse l'embed ? Si oui, on change de collection
-                if (fieldsSize + line.length() > EmbedBuilder.MAX_CHAR_LIMIT){
-                    fieldsPerEmbed.add(fields);
-                    fields = new ArrayList<>();
-                    fieldsSize = 0;
-                }
-                // Est-ce qu'on dépasse le field ? Si oui, on change de field
-                else if (field.length() + line.length() > EmbedBuilder.FIELD_CONTENT_LIMIT){
-                    fields.add(field.toString());
-                    fieldsSize += field.length();
-                    field.setLength(0);
-                }
-                field.append(line);
-            }
-
-            if (field.length() > 0)
-                fields.add(field.toString());
-            if (!fields.isEmpty())
-                fieldsPerEmbed.add(fields);
-
-            // Il ne reste plus qu'à les parcourir et à créer autant d'embed que nécessaire
-            for(int i = 0; i < fieldsPerEmbed.size(); i++){
-                EmbedBuilder builder = new EmbedBuilder()
-                        .withTitle(Translator.getLabel(lg, "align.list")
-                            + (fieldsPerEmbed.size() > 1? " (" + (i + 1) + "/"
-                            + fieldsPerEmbed.size() + ")" : ""))
-                        .withThumbnail(guild.getIconURL())
-                        .withColor(new Random().nextInt(16777216));
-
-                List<String> texts = fieldsPerEmbed.get(i);
-                for(int j = 0; j < texts.size(); j++){
-                    builder.appendField(Translator.getLabel(lg, "align.orders")
-                                    + (texts.size() > 1? " (" + (j + 1) + "/"
-                                    + texts.size() + ")" : "") + " : ",
-                            texts.get(j), true);
-                }
-                embed.add(builder.build());
-            }
-        }
-        else
-            embed.add(new EmbedBuilder()
-                        .withThumbnail(guild.getIconURL())
-                        .withColor(new Random().nextInt(16777216))
-                        .withDescription(Translator.getLabel(lg, "align.empty")).build());
-
-        return embed;
-    }
-
-    @Override
-    public int compareTo(@NotNull OrderUser o) {
+    private static int compare(OrderUser o1, OrderUser o2) {
         return Comparator.comparingInt(OrderUser::getLevel).reversed()
                 .thenComparing(OrderUser::getCity)
                 .thenComparing(OrderUser::getOrder)
-                .compare(this, o);
+                .compare(o1, o2);
     }
 }
