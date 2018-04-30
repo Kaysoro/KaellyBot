@@ -29,6 +29,7 @@ import java.util.regex.Pattern;
  */
 public class Portal implements Embedded{
 
+    public static final String NOT_PRESENT = "NOT_PRESENT";
     private final static Logger LOG = LoggerFactory.getLogger(Portal.class);
     private final static long LIMIT = 172800000;
     private final static Pattern sweetDateFormat = Pattern.compile("(\\d+\\s+j\\s+)?(\\d+\\s+h\\s+)?(\\d+\\s+min)");

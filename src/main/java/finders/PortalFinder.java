@@ -29,7 +29,8 @@ public class PortalFinder
                             ServerDofus server = guild.getServerDofus();
 
                             // Si les positions ne sont plus d'actualités, on les met à jour
-                            if (System.currentTimeMillis() - server.getLastSweetRefresh() > DELTA)
+                            if (System.currentTimeMillis() - server.getLastSweetRefresh() > DELTA
+                                    && ! server.getSweetId().equals(Portal.NOT_PRESENT))
                                 server.setSweetPortals(Portal.getSweetPortals(server));
 
                             guild.mergePortals(server.getSweetPortals());
