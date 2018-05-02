@@ -192,10 +192,11 @@ public class OrderUser extends ObjectUser {
             for (OrderUser orderUser : result)
                 st.append(orderUser.city.getLogo()).append(orderUser.order.getLabel(lg)).append(" : ")
                         .append(orderUser.level).append("\n");
-            builder.appendField(Translator.getLabel(lg, "align.orders"), st.toString(), true);
+            builder.appendField(Translator.getLabel(lg, "align.aligns"), st.toString(), true);
         }
         else
             builder.withDescription(Translator.getLabel(lg, "align.empty"));
+        builder.withFooterText(server.getName());
         embed.add(builder.build());
         return embed;
     }
@@ -217,7 +218,7 @@ public class OrderUser extends ObjectUser {
                         result.add(order);
             }
         result.sort(OrderUser::compare);
-        return getPlayersList(result, guild, lg, ORDER_PREFIX);
+        return getPlayersList(result, guild, server, lg, ORDER_PREFIX);
     }
 
     /**
@@ -236,7 +237,7 @@ public class OrderUser extends ObjectUser {
                 result.addAll(potentials);
             }
         result.sort(OrderUser::compare);
-        return getPlayersList(result, guild, lg, ORDER_PREFIX);
+        return getPlayersList(result, guild, server, lg, ORDER_PREFIX);
     }
 
     private static int compare(OrderUser o1, OrderUser o2) {

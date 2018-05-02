@@ -151,6 +151,7 @@ public class JobUser extends ObjectUser {
         }
         else
             builder.withDescription(Translator.getLabel(lg, "job.empty"));
+        builder.withFooterText(server.getName());
         embed.add(builder.build());
         return embed;
     }
@@ -178,7 +179,7 @@ public class JobUser extends ObjectUser {
                 }
             }
         result.sort(JobUser::compare);
-        return getPlayersList(result, guild, lg, JOB_PREFIX);
+        return getPlayersList(result, guild, server, lg, JOB_PREFIX);
     }
 
     @Override

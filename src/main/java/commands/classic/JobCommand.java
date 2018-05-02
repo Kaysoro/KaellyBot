@@ -137,7 +137,7 @@ public class JobCommand extends FetchCommand {
                 badUse.throwException(message, this, lg);
         }
         else if ((m = Pattern.compile("(>\\s*(\\d{1,3})\\s+)?((\\p{L}+\\s*,?\\s*)+)").matcher(content)).matches()){
-            List<String> proposals = Arrays.asList(m.group(3).split(",|\\s+"));
+            List<String> proposals = new LinkedList<>(Arrays.asList(m.group(3).split(",|\\s+")));
 
             if (proposals.size() > 1) {
                 String potentialServer = proposals.get(proposals.size() - 1);
