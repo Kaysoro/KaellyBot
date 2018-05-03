@@ -310,7 +310,7 @@ public class Portal implements Embedded{
         List<Portal> portals = new ArrayList<>();
 
         Document doc = JSoupManager.getDocument(Constants.sweetPortals + server.getSweetId());
-        Elements dimensions = doc.getElementsByClass("row");
+        Elements dimensions = doc.getElementsByClass("portal");
 
         for(Element dim : dimensions){
             String name = dim.getElementsByTag("h2").get(0).text();

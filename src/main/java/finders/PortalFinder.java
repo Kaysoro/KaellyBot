@@ -4,8 +4,6 @@ import data.Guild;
 import data.Portal;
 import data.ServerDofus;
 import exceptions.ExceptionManager;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.concurrent.Executors;
@@ -14,7 +12,6 @@ import java.util.concurrent.TimeUnit;
 
 public class PortalFinder
 {
-    private final static Logger LOG = LoggerFactory.getLogger(PortalFinder.class);
     private final static long DELTA = 20; // 20 minutes
     private static boolean isStarted = false;
 
