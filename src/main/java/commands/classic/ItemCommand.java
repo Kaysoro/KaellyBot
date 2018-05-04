@@ -7,7 +7,6 @@ import enums.Language;
 import enums.SuperTypeEquipment;
 import enums.TypeEquipment;
 import exceptions.*;
-import sx.blah.discord.handle.obj.Permissions;
 import util.*;
 import sx.blah.discord.handle.obj.IMessage;
 
@@ -32,20 +31,16 @@ public class ItemCommand extends DofusEncyclopediaRequestCommand {
 
     private DiscordException tooMuchItems;
     private DiscordException notFoundItem;
-    private DiscordException noExternalEmojiPermission;
 
     public ItemCommand(){
         super("item", "\\s+(-more)?(.*)");
         tooMuchItems = new TooMuchDiscordException("item");
         notFoundItem = new NotFoundDiscordException("item");
-        noExternalEmojiPermission = new BasicDiscordException("exception.basic.no_external_emoji_permission");
     }
 
     @Override
     public void request(IMessage message, Matcher m, Language lg) {
-        if (message.getChannel().getModifiedPermissions(ClientConfig.DISCORD().getOurUser()).contains(Permissions.USE_EXTERNAL_EMOJIS)
-                && ClientConfig.DISCORD().getOurUser().getPermissionsForGuild(message.getGuild())
-                .contains(Permissions.USE_EXTERNAL_EMOJIS)) {
+        if (isChannelHasExternalEmojisPermission(message)) {
             String normalName = Normalizer.normalize(m.group(2).trim(), Normalizer.Form.NFD)
                     .replaceAll("\\p{InCombiningDiacriticalMarks}+", "").toLowerCase();
             BestMatcher matcher = new BestMatcher(normalName);
@@ -77,7 +72,7 @@ public class ItemCommand extends DofusEncyclopediaRequestCommand {
             }
         }
         else
-            noExternalEmojiPermission.throwException(message, this, lg);
+            noExternalEmoji.throwException(message, this, lg);
     }
 
     protected String getSearchURL(String SuperTypeURL, String text, String typeArg, Language lg) throws UnsupportedEncodingException {

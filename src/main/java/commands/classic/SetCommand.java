@@ -3,7 +3,6 @@ package commands.classic;
 import commands.model.DofusRequestCommand;
 import enums.Language;
 import exceptions.*;
-import sx.blah.discord.handle.obj.Permissions;
 import util.*;
 import data.*;
 import sx.blah.discord.handle.obj.IMessage;
@@ -22,20 +21,16 @@ public class SetCommand extends DofusRequestCommand {
     private final static String forName = "text=";
     private DiscordException tooMuchSets;
     private DiscordException notFoundSet;
-    private DiscordException noExternalEmoji;
 
     public SetCommand(){
         super("set", "\\s+(-more)?(.*)");
         tooMuchSets = new TooMuchDiscordException("set");
         notFoundSet = new NotFoundDiscordException("set");
-        noExternalEmoji = new BasicDiscordException("exception.basic.no_external_emoji_permission");
     }
 
     @Override
     public void request(IMessage message, Matcher m, Language lg) {
-        if (message.getChannel().getModifiedPermissions(ClientConfig.DISCORD().getOurUser()).contains(Permissions.USE_EXTERNAL_EMOJIS)
-                && ClientConfig.DISCORD().getOurUser().getPermissionsForGuild(message.getGuild())
-                .contains(Permissions.USE_EXTERNAL_EMOJIS)) {
+        if (isChannelHasExternalEmojisPermission(message)) {
             String normalName = Normalizer.normalize(m.group(2).trim(), Normalizer.Form.NFD)
                     .replaceAll("\\p{InCombiningDiacriticalMarks}+", "").toLowerCase();
             String editedName = removeUselessWords(lg, normalName);

@@ -45,35 +45,39 @@ public class ResourceCommand extends DofusEncyclopediaRequestCommand {
 
     @Override
     public void request(IMessage message, Matcher m, Language lg) {
-        String normalName = Normalizer.normalize(m.group(2).trim(), Normalizer.Form.NFD)
-                .replaceAll("\\p{InCombiningDiacriticalMarks}+", "").toLowerCase();
-        BestMatcher matcher = new BestMatcher(normalName);
+        if (isChannelHasExternalEmojisPermission(message)) {
+            String normalName = Normalizer.normalize(m.group(2).trim(), Normalizer.Form.NFD)
+                    .replaceAll("\\p{InCombiningDiacriticalMarks}+", "").toLowerCase();
+            BestMatcher matcher = new BestMatcher(normalName);
 
-        try {
-            for (TypeResource resource : TypeResource.values()) {
-                String[] names = resource.getNames(lg);
-                gatherData(message, matcher, names, normalName, resource, notFoundRsrc);
+            try {
+                for (TypeResource resource : TypeResource.values()) {
+                    String[] names = resource.getNames(lg);
+                    gatherData(message, matcher, names, normalName, resource, notFoundRsrc);
+                }
+
+                if (matcher.isEmpty())
+                    for (SuperTypeResource type : SuperTypeResource.values())
+                        matcher.evaluateAll(getListRequestableFrom(
+                                getSearchURL(type.getUrl(lg), normalName, null, lg), message, notFoundRsrc));
+
+                if (matcher.isUnique()) { // We have found it !
+                    Embedded resource = Resource.getResource(lg, Translator.getLabel(lg, "game.url")
+                            + matcher.getBest().getUrl());
+                    if (m.group(1) != null)
+                        Message.sendEmbed(message.getChannel(), resource.getMoreEmbedObject(lg));
+                    else
+                        Message.sendEmbed(message.getChannel(), resource.getEmbedObject(lg));
+                } else if (!matcher.isEmpty()) // Too much items
+                    tooMuchRsrcs.throwException(message, this, lg, matcher.getBests());
+                else // empty
+                    notFoundRsrc.throwException(message, this, lg);
+            } catch (IOException e) {
+                ExceptionManager.manageIOException(e, message, this, lg, notFoundRsrc);
             }
-
-            if (matcher.isEmpty())
-                for (SuperTypeResource type : SuperTypeResource.values())
-                    matcher.evaluateAll(getListRequestableFrom(
-                            getSearchURL(type.getUrl(lg), normalName, null, lg), message, notFoundRsrc));
-
-            if (matcher.isUnique()) { // We have found it !
-                Embedded resource = Resource.getResource(lg, Translator.getLabel(lg, "game.url")
-                        + matcher.getBest().getUrl());
-                if (m.group(1) != null)
-                    Message.sendEmbed(message.getChannel(), resource.getMoreEmbedObject(lg));
-                else
-                    Message.sendEmbed(message.getChannel(), resource.getEmbedObject(lg));
-            } else if (!matcher.isEmpty()) // Too much items
-                tooMuchRsrcs.throwException(message, this, lg, matcher.getBests());
-            else // empty
-                notFoundRsrc.throwException(message, this, lg);
-        } catch (IOException e) {
-            ExceptionManager.manageIOException(e, message, this, lg, notFoundRsrc);
         }
+        else
+            noExternalEmoji.throwException(message, this, lg);
     }
 
     protected String getSearchURL(String SuperTypeURL, String text, String typeArg, Language lg) throws UnsupportedEncodingException {

@@ -10,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sx.blah.discord.handle.obj.IMessage;
 import sx.blah.discord.handle.obj.Permissions;
+import util.ClientConfig;
 import util.Reporter;
 import util.Translator;
 
@@ -26,6 +27,7 @@ public abstract class AbstractCommand implements Command {
     private DiscordException commandForbidden;
     protected DiscordException notUsableInMp;
     protected DiscordException badUse;
+    protected DiscordException noExternalEmoji;
 
     protected String name;
     protected String pattern;
@@ -43,6 +45,7 @@ public abstract class AbstractCommand implements Command {
         commandForbidden = new BasicDiscordException("exception.basic.command_forbidden");
         notUsableInMp = new BasicDiscordException("exception.basic.not_usable_in_mp");
         badUse = new BadUseCommandDiscordException();
+        noExternalEmoji = new BasicDiscordException("exception.basic.no_external_emoji_permission");
     }
 
     @Override
@@ -118,6 +121,18 @@ public abstract class AbstractCommand implements Command {
                 .replaceAll("~", "\\~")          //Strike
                 .replaceAll("\\`", "\\\\`");         //Code
         return prefix;
+    }
+
+    /**
+     * @param message message d'origine
+     * @return true si les permissions sont suffisantes, false le cas échéant
+     */
+    protected boolean isChannelHasExternalEmojisPermission(IMessage message){
+        return message.getChannel().isPrivate() ||
+                message.getChannel().getModifiedPermissions(ClientConfig.DISCORD().getOurUser())
+                        .contains(Permissions.USE_EXTERNAL_EMOJIS)
+                && ClientConfig.DISCORD().getOurUser().getPermissionsForGuild(message.getGuild())
+                        .contains(Permissions.USE_EXTERNAL_EMOJIS);
     }
 
     /**
