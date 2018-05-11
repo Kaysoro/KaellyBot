@@ -148,18 +148,20 @@ public class RSSFinder {
                 for (RSSFinder finder : getRSSFinders().values())
                     try {
                         IChannel chan = ClientConfig.DISCORD().getChannelByID(Long.parseLong(finder.getChan()));
-                        Language lg = Translator.getLanguageFrom(chan);
-                        List<RSS> rssFeeds = allFeeds.get(Translator.getLanguageFrom(chan));
-                        long lastRSS = -1;
+                        if (chan != null) {
+                            Language lg = Translator.getLanguageFrom(chan);
+                            List<RSS> rssFeeds = allFeeds.get(Translator.getLanguageFrom(chan));
+                            long lastRSS = -1;
 
-                        for (RSS rss : rssFeeds)
-                            if (rss.getDate() > finder.getLastRSS()) {
-                                Message.sendEmbed(chan, rss.getEmbedObject(lg));
-                                lastRSS = rss.getDate();
-                            }
+                            for (RSS rss : rssFeeds)
+                                if (rss.getDate() > finder.getLastRSS()) {
+                                    Message.sendEmbed(chan, rss.getEmbedObject(lg));
+                                    lastRSS = rss.getDate();
+                                }
 
-                        if (lastRSS != -1)
-                            finder.setLastRSS(lastRSS);
+                            if (lastRSS != -1)
+                                finder.setLastRSS(lastRSS);
+                        }
                     } catch(Exception e){
                         Reporter.report(e);
                         LOG.error("RSSFinder", e);
