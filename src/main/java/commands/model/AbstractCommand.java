@@ -113,14 +113,13 @@ public abstract class AbstractCommand implements Command {
     }
 
     protected String getPrefixMdEscaped(IMessage message){
-        String prefix = "";
         if (! message.getChannel().isPrivate())
-            prefix = Guild.getGuild(message.getGuild()).getPrefix();
-        prefix = prefix.replaceAll("\\*", "\\\\*") // Italic & Bold
+            return Guild.getGuild(message.getGuild()).getPrefix()
+                .replaceAll("\\*", "\\\\*")      // Italic & Bold
                 .replaceAll("_", "\\_")          // Underline
-                .replaceAll("~", "\\~")          //Strike
-                .replaceAll("\\`", "\\\\`");         //Code
-        return prefix;
+                .replaceAll("~", "\\~")          // Strike
+                .replaceAll("\\`", "\\\\`");     // Code
+        return "";
     }
 
     /**
