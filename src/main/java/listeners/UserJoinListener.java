@@ -21,7 +21,7 @@ public class UserJoinListener {
 
         @EventSubscriber
         public void onReady(UserJoinEvent event) {
-            ClientConfig.setSentryContext(event.getGuild(), event.getUser(), null, null);
+            //ClientConfig.setSentryContext(event.getGuild(), event.getUser(), null, null);
             String id = event.getUser().getStringID();
             String name = event.getUser().getDisplayName(event.getGuild());
 

@@ -20,7 +20,7 @@ public class NickNameChangeListener {
 
         @EventSubscriber
         public void onReady(NicknameChangedEvent event) {
-            ClientConfig.setSentryContext(event.getGuild(), event.getUser(), null, null);
+            //ClientConfig.setSentryContext(event.getGuild(), event.getUser(), null, null);
 
             if (event.getOldNickname().isPresent() && event.getNewNickname().isPresent()
                     && ! event.getOldNickname().get().equals(event.getNewNickname().get())) {

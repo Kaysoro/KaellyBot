@@ -6,6 +6,7 @@ import sx.blah.discord.handle.obj.IGuild;
 import sx.blah.discord.handle.obj.IUser;
 import util.ClientConfig;
 import util.Connexion;
+import util.Reporter;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -64,8 +65,8 @@ public class User {
                 request.executeUpdate();
 
             } catch (SQLException e) {
-                ClientConfig.setSentryContext(ClientConfig.DISCORD().getGuildByID(Long.parseLong(getGuild().getId())),
-                        ClientConfig.DISCORD().getUserByID(Long.parseLong(getId())), null,null);
+                /*ClientConfig.setSentryContext(ClientConfig.DISCORD().getGuildByID(Long.parseLong(getGuild().getId())),
+                        ClientConfig.DISCORD().getUserByID(Long.parseLong(getId())), null,null);*/
                 LOG.error(id + " - " + name + " : " + e.getMessage());
             }
         }
@@ -91,8 +92,8 @@ public class User {
                 request.executeUpdate();
 
             } catch (SQLException e) {
-                ClientConfig.setSentryContext(ClientConfig.DISCORD().getGuildByID(Long.parseLong(getGuild().getId())),
-                        ClientConfig.DISCORD().getUserByID(Long.parseLong(getId())), null,null);
+                /*ClientConfig.setSentryContext(ClientConfig.DISCORD().getGuildByID(Long.parseLong(getGuild().getId())),
+                        ClientConfig.DISCORD().getUserByID(Long.parseLong(getId())), null,null);*/
                 LOG.error(id + " - " + name + " : " + e.getMessage());
             }
         }
@@ -114,8 +115,8 @@ public class User {
             preparedStatement.executeUpdate();
 
         } catch (SQLException e) {
-            ClientConfig.setSentryContext(ClientConfig.DISCORD().getGuildByID(Long.parseLong(getGuild().getId())),
-                    ClientConfig.DISCORD().getUserByID(Long.parseLong(getId())), null,null);
+            /*ClientConfig.setSentryContext(ClientConfig.DISCORD().getGuildByID(Long.parseLong(getGuild().getId())),
+                    ClientConfig.DISCORD().getUserByID(Long.parseLong(getId())), null,null);*/
             LOG.error(e.getMessage());
         }
     }
@@ -135,8 +136,8 @@ public class User {
             preparedStatement.executeUpdate();
 
         } catch (SQLException e) {
-            ClientConfig.setSentryContext(ClientConfig.DISCORD().getGuildByID(Long.parseLong(getGuild().getId())),
-                    ClientConfig.DISCORD().getUserByID(Long.parseLong(getId())), null,null);
+            /*Reporter.report(e, ClientConfig.DISCORD().getGuildByID(Long.parseLong(getGuild().getId())),
+                    ClientConfig.DISCORD().getUserByID(Long.parseLong(getId())));*/
             LOG.error(e.getMessage());
         }
     }
@@ -168,7 +169,7 @@ public class User {
                     users.get(guildId.getId()).put(id, new User(id, name, right, guildId));
                 }
             } catch (SQLException e) {
-                ClientConfig.setSentryContext(null, null, null,null);
+                //Reporter.report(e);
                 LOG.error(e.getMessage());
             }
         }

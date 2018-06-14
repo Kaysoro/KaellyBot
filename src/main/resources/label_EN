@@ -1,5 +1,5 @@
 welcome.message=Hi and thank you for the invite ! I'm {name}, a bot dedicated to the {game} game; I have some commands in my hands which can interest you and allow me to show you game's items or character pages or manage jobs's book!\nWant to know more ? Write `{prefix}{help}` to get the entire list ! :blush:\n\n{owner}, as the administrator of {guild}, you hold a set of rights dedicated to set up me. Use the command `{prefix}{lang}` to choose a language or the commands `{prefix}{twitter}`, `{prefix}{almanax}` and `{prefix}{rss}` to gather a maximum of {game} news.\n\nSounds good, no ? I hope we gonna have fun together ! :smile:
-game.url=http://www.dofus-touch.com
+game.url=https://www.dofus-touch.com
 almanax.url=http://www.krosmoz.com/en/almanax/
 feed.url=/en/rss/news.xml
 twitter.id=3947817100
@@ -379,8 +379,8 @@ exception.toomuch.resources=resources
 exception.toomuch.resources_found=found
 exception.toomuch.sets=sets
 exception.toomuch.sets_found=found
-exception.toomuch.tutos=tutorials
-exception.toomuch.tutos_found=found
+exception.toomuch.tuto=tutorials
+exception.toomuch.tuto_found=found
 exception.toomuch.characters=characters
 exception.toomuch.characters_found=found
 about.title={name} version {version}

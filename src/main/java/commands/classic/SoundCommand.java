@@ -1,6 +1,7 @@
 package commands.classic;
 
 import commands.model.AbstractCommand;
+import data.Constants;
 import enums.Language;
 import util.ClientConfig;
 import exceptions.*;
@@ -107,7 +108,12 @@ public class SoundCommand extends AbstractCommand {
 
     private List<File> getSounds(){
         if (sounds == null) {
-            File file = new File(System.getProperty("user.dir") + File.separator + "sounds");
+            File file;
+            if (! Constants.database_path.trim().isEmpty()) {
+                file = new File(Constants.sound_path + File.separator + "sounds");
+            } else {
+                file = new File(System.getProperty("user.dir") + File.separator + "sounds");
+            }
             FilenameFilter filter = (File dir, String name) -> name.toLowerCase().endsWith(".mp3");
 
             if (file.listFiles(filter) == null)

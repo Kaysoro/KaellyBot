@@ -14,7 +14,7 @@ public class Main {
         LoggerFactory.getLogger(Main.class).info("               " + Constants.name + " v" + Constants.version
                 + " for " + Constants.game);
         LoggerFactory.getLogger(Main.class).info("=======================================================");
-      IDiscordClient client = ClientConfig.DISCORD();
+      IDiscordClient client = ClientConfig.DISCORD("");
       client.getDispatcher().registerListener(new ReadyListener());
     }
 }
