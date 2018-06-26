@@ -15,7 +15,7 @@ public class Constants {
     /**
      * Application version
      */
-    public final static String version = "1.0.1";
+    public final static String version = "1.0.2";
 
     /**
      * Changelog
