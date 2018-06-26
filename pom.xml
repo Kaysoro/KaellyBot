@@ -91,8 +91,8 @@
             <version>3.21.0.1</version>
         </dependency>
         <dependency>
-            <groupId>com.github.austinv11</groupId>
-            <artifactId>Discord4j</artifactId>
+            <groupId>com.github.Discord4J</groupId>
+            <artifactId>Discord4J</artifactId>
             <version>dev-SNAPSHOT</version>
             <classifier>shaded</classifier>
         </dependency>
@@ -104,7 +104,7 @@
         <dependency>
             <groupId>io.sentry</groupId>
             <artifactId>sentry</artifactId>
-            <version>1.7.0</version>
+            <version>1.7.2</version>
         </dependency>
         <dependency>
             <groupId>ch.qos.logback</groupId>
