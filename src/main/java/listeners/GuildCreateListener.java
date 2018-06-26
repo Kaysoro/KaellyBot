@@ -10,7 +10,6 @@ import sx.blah.discord.util.DiscordException;
 import util.ClientConfig;
 import data.Constants;
 import data.Guild;
-import data.User;
 import util.Message;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,10 +38,6 @@ public class GuildCreateListener {
                 Guild guild = new Guild(event.getGuild().getStringID(), event.getGuild().getName(),
                         Translator.detectLanguage(event.getGuild().getDefaultChannel()));
                 guild.addToDatabase();
-
-                for (IUser user : event.getGuild().getUsers())
-                    new User(user.getStringID(), user.getDisplayName(event.getGuild()), User.RIGHT_INVITE, guild)
-                            .addToDatabase();
 
                 Language lg = guild.getLanguage();
                 LOG.info("La guilde " + guild.getId() + " - " + guild.getName() + " a ajouté " + Constants.name);

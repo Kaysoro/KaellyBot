@@ -22,18 +22,20 @@ public class Guild {
     private String name;
     private Map<String, CommandForbidden> commands;
     private String prefixe;
+    private ServerDofus server;
     private Language language;
 
     public Guild(String id, String name, Language lang){
-        this(id, name, Constants.prefixCommand, lang);
+        this(id, name, Constants.prefixCommand, lang, null);
     }
 
-    private Guild(String id, String name, String prefixe, Language lang){
+    private Guild(String id, String name, String prefixe, Language lang, String serverDofus){
         this.id = id;
         this.name = name;
         this.prefixe = prefixe;
         commands = CommandForbidden.getForbiddenCommands(this);
         this.language = lang;
+        this.server = ServerDofus.getServersMap().get(serverDofus);
     }
 
     public synchronized void addToDatabase(){
@@ -56,10 +58,6 @@ public class Guild {
                 LOG.error(e.getMessage());
             }
         }
-
-
-            if (! User.getUsers().containsKey(id))
-            User.getUsers().put(id, new ConcurrentHashMap<>());
     }
 
     public synchronized void removeToDatabase() {
@@ -79,9 +77,6 @@ public class Guild {
                 LOG.error(e.getMessage());
             }
         }
-
-        if (User.getUsers().containsKey(id))
-            User.getUsers().remove(id);
     }
 
     public synchronized void setName(String name){
@@ -120,6 +115,26 @@ public class Guild {
         }
     }
 
+    public synchronized void setServer(ServerDofus server){
+        this.server = server;
+
+        Connexion connexion = Connexion.getInstance();
+        Connection connection = connexion.getConnection();
+
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(
+                    "UPDATE Guild SET server_dofus = ? WHERE id = ?;");
+            if (server != null) preparedStatement.setString(1, server.getName());
+            else preparedStatement.setNull(1, Types.VARCHAR);
+            preparedStatement.setString(2, id);
+
+            preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            Reporter.report(e);
+            LOG.error(e.getMessage());
+        }
+    }
+
     public synchronized void setLanguage(Language lang){
         this.language = lang;
 
@@ -145,22 +160,24 @@ public class Guild {
             String id;
             String name;
             String prefixe;
+            String server;
             String lang;
 
             Connexion connexion = Connexion.getInstance();
             Connection connection = connexion.getConnection();
 
             try {
-                PreparedStatement query = connection.prepareStatement("SELECT id, name, prefixe, lang FROM Guild");
+                PreparedStatement query = connection.prepareStatement("SELECT id, name, prefixe, server_dofus, lang FROM Guild");
                 ResultSet resultSet = query.executeQuery();
 
                 while (resultSet.next()) {
                     id = resultSet.getString("id");
                     name = resultSet.getString("name");
                     prefixe = resultSet.getString("prefixe");
+                    server = resultSet.getString("server_dofus");
                     lang = resultSet.getString("lang");
 
-                    guilds.put(id, new Guild(id, name, prefixe, Language.valueOf(lang)));
+                    guilds.put(id, new Guild(id, name, prefixe, Language.valueOf(lang), server));
                 }
             } catch (SQLException e) {
                 Reporter.report(e);
@@ -197,6 +214,10 @@ public class Guild {
 
     public Language getLanguage() {
         return language;
+    }
+
+    public ServerDofus getServerDofus() {
+        return server;
     }
 
     public Map<String, CommandForbidden> getForbiddenCommands(){

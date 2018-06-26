@@ -1,8 +1,9 @@
 package data;
 
+import enums.Job;
+import org.apache.commons.lang3.tuple.Triple;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import util.ClientConfig;
 import util.Connexion;
 import util.Reporter;
 
@@ -19,21 +20,25 @@ import java.util.concurrent.ConcurrentHashMap;
 public class JobUser {
 
     private final static Logger LOG = LoggerFactory.getLogger(JobUser.class);
-    private String name;
+    private static Map<Triple<Long, ServerDofus, Job>, JobUser> jobs;
+    private Job job;
+    private long idUser;
     private int level;
-    private User user;
+    private ServerDofus server;
 
-    public JobUser(String name, int level, User user){
-        this.name = name;
-        if (level > 100)
-            level = 100;
+
+    public JobUser(long idUser, ServerDofus server, Job job, int level){
+        this.job = job;
+        if (level > 200)
+            level = 200;
         this.level = level;
-        this.user = user;
+        this.idUser = idUser;
+        this.server = server;
     }
 
     public synchronized void setLevel(int level){
-        if (level > 100)
-            level = 100;
+        if (level > 200)
+            level = 200;
         this.level = level;
 
         Connexion connexion = Connexion.getInstance();
@@ -44,85 +49,98 @@ public class JobUser {
             if (level > 0) {
                 preparedStatement = connection.prepareStatement(
                         "UPDATE Job_User SET level = ?"
-                                + "WHERE name_job = ? AND id_user = ? AND id_guild = ?;");
+                                + "WHERE name_job = ? AND id_user = ? AND server_dofus = ?;");
                 preparedStatement.setInt(1, level);
-                preparedStatement.setString(2, name);
-                preparedStatement.setString(3, user.getId());
-                preparedStatement.setString(4, user.getGuild().getId());
+                preparedStatement.setString(2, job.getName());
+                preparedStatement.setString(3, String.valueOf(idUser));
+                preparedStatement.setString(4, server.getName());
             }
             else {
-                user.getJobs().remove(name);
                 preparedStatement = connection.prepareStatement(
-                        "DELETE FROM Job_User WHERE name_job = ? AND id_user = ? AND id_guild = ?;");
-                preparedStatement.setString(1, name);
-                preparedStatement.setString(2, user.getId());
-                preparedStatement.setString(3, user.getGuild().getId());
+                        "DELETE FROM Job_User WHERE name_job = ? AND id_user = ? AND server_dofus = ?;");
+                preparedStatement.setString(1, job.getName());
+                preparedStatement.setString(2, String.valueOf(idUser));
+                preparedStatement.setString(3, server.getName());
             }
 
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
-            Reporter.report(e, ClientConfig.DISCORD().getUserByID(Long.parseLong(user.getId())));
-            LOG.error("setLevel", e);
+            Reporter.report(e);
+            LOG.error(e.getMessage());
         }
     }
 
+    /**
+     * Ajoute à la base de donnée l'objet si celui-ci n'y est pas déjà.
+     */
     public synchronized void addToDatabase(){
-        if (! user.getJobs().containsKey(name) && level > 0) {
-            user.getJobs().put(name, this);
+
+        if (! getJobs().containsKey(Triple.of(idUser, server, job)) && level > 0) {
+            getJobs().put(Triple.of(idUser, server, job), this);
             Connexion connexion = Connexion.getInstance();
             Connection connection = connexion.getConnection();
 
             try {
                 PreparedStatement preparedStatement = connection.prepareStatement(
-                        "INSERT INTO Job_User(name_job, id_user, id_guild, level) VALUES(?, ?, ?, ?);");
-                preparedStatement.setString(1, name);
-                preparedStatement.setString(2, user.getId());
-                preparedStatement.setString(3, user.getGuild().getId());
+                        "INSERT INTO Job_User(name_job, id_user, server_dofus, level) VALUES(?, ?, ?, ?);");
+                preparedStatement.setString(1, job.getName());
+                preparedStatement.setString(2, String.valueOf(idUser));
+                preparedStatement.setString(3, server.getName());
                 preparedStatement.setInt(4, level);
 
                 preparedStatement.executeUpdate();
             } catch (SQLException e) {
-                Reporter.report(e, ClientConfig.DISCORD().getUserByID(Long.parseLong(user.getId())));
-                LOG.error("addToDatabase", e);
+                Reporter.report(e);
+                LOG.error(e.getMessage());
             }
         }
     }
 
-    public synchronized static Map<String, JobUser> getJobUsers(User user){
-        Map<String, JobUser> jobs = new ConcurrentHashMap<>();
+    public int getLevel() {
+        return level;
+    }
 
-        Connexion connexion = Connexion.getInstance();
-        Connection connection = connexion.getConnection();
+    public ServerDofus getServer() {
+        return server;
+    }
 
-        String name;
-        int level;
+    private static synchronized Map<Triple<Long, ServerDofus, Job>, JobUser> getJobs(){
+        if(jobs == null){
+            jobs = new ConcurrentHashMap<>();
+            Connexion connexion = Connexion.getInstance();
+            Connection connection = connexion.getConnection();
 
-        try {
-            PreparedStatement query = connection.prepareStatement("SELECT name_job, level"
-                    + " FROM Job_User WHERE id_user = ? AND id_guild = ?;");
-            query.setString(1, user.getId());
-            query.setString(2, user.getGuild().getId());
+            try {
+                PreparedStatement query = connection.prepareStatement(
+                        "SELECT id_user, server_dofus, name_job, level FROM Job_User;");
+                ResultSet resultSet = query.executeQuery();
 
-            ResultSet resultSet = query.executeQuery();
-
-            while (resultSet.next()) {
-                name = resultSet.getString("name_job");
-                level = resultSet.getInt("level");
-                jobs.put(name, new JobUser(name, level, user));
+                while (resultSet.next()) {
+                    Long idUser = resultSet.getLong("id_user");
+                    ServerDofus server = ServerDofus.getServersMap().get(resultSet.getString("server_dofus"));
+                    Job job = Job.getJob(resultSet.getString("name_job"));
+                    int level = resultSet.getInt("level");
+                    jobs.put(Triple.of(idUser, server, job), new JobUser(idUser, server, job, level));
+                }
+            } catch (SQLException e) {
+                Reporter.report(e);
+                LOG.error(e.getMessage());
             }
-        } catch (SQLException e) {
-            Reporter.report(e);
-            LOG.error("getJobs", e);
         }
 
         return jobs;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public int getLevel(){
-        return level;
+    /**
+     * Retourne le niveau du métier de l'utilisateur pour un serveur de jeu donné
+     * @param idUser ID de l'utilisateur
+     * @param server Serveur dofus
+     * @param job Métier souhaité
+     * @return Un nombre compris entre 1 et 200 (s'il existe), 0 le cas échéant.
+     */
+    public static int getJobLevel(long idUser, ServerDofus server, Job job){
+        if (getJobs().containsKey(Triple.of(idUser, server, job)))
+            return getJobs().get(Triple.of(idUser, server, job)).getLevel();
+        return 0;
     }
 }
