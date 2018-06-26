@@ -9,6 +9,8 @@ import org.slf4j.LoggerFactory;
 import sx.blah.discord.api.events.EventSubscriber;
 import sx.blah.discord.handle.impl.events.ReadyEvent;
 import sx.blah.discord.handle.impl.events.guild.GuildCreateEvent;
+import sx.blah.discord.handle.impl.events.guild.voice.user.UserVoiceChannelLeaveEvent;
+import sx.blah.discord.handle.impl.events.guild.voice.user.UserVoiceChannelMoveEvent;
 import sx.blah.discord.handle.obj.ActivityType;
 import sx.blah.discord.handle.obj.IGuild;
 import sx.blah.discord.handle.obj.StatusType;
@@ -32,7 +34,8 @@ public class ReadyListener {
         ClientConfig.DISCORD().getDispatcher().registerListener(new GuildLeaveListener());
         ClientConfig.DISCORD().getDispatcher().registerListener(new GuildUpdateListener());
         ClientConfig.DISCORD().getDispatcher().registerListener(new ChannelDeleteListener());
-        ClientConfig.DISCORD().getDispatcher().registerListener(new TrackFinishListener());
+        ClientConfig.DISCORD().getDispatcher().registerListener(new UserVoiceChannelMoveListener());
+        ClientConfig.DISCORD().getDispatcher().registerListener(new UserVoiceChannelLeaveListener());
 
         LOG.info("Check des guildes");
         for(IGuild guild : ClientConfig.DISCORD().getGuilds())
