@@ -21,6 +21,7 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Created by steve on 30/03/2018.
@@ -39,7 +40,7 @@ public class GuildCommand extends AbstractCommand {
     private DiscordException guildPageInaccessible;
 
     public GuildCommand(){
-        super("guild","(\\s+.+)(\\s+-serv\\s+.+)?");
+        super("guild","\\s+(.+)");
         tooMuchGuilds = new TooMuchDiscordException("guild");
         notFoundGuild = new NotFoundDiscordException("guild");
         tooMuchServers = new TooMuchDiscordException("server");
@@ -55,6 +56,13 @@ public class GuildCommand extends AbstractCommand {
             m.find();
             Language lg = Translator.getLanguageFrom(message.getChannel());
             String pseudo = m.group(1).trim().toLowerCase();
+            String serverName = null;
+
+            if (Pattern.compile("\\s+-serv\\s+").matcher(pseudo).find()) {
+                String[] split = pseudo.split("\\s+-serv\\s+");
+                pseudo = split[0];
+                serverName = split[1];
+            }
 
             StringBuilder url;
             try {
@@ -67,8 +75,7 @@ public class GuildCommand extends AbstractCommand {
                 return false;
             }
 
-            if (m.group(2) != null){
-                String serverName = m.group(2).trim().toLowerCase();
+            if (serverName != null){
                 List<ServerDofus> result = new ArrayList<>();
 
                 for(ServerDofus server : ServerDofus.getServersDofus())
