@@ -14,18 +14,17 @@ import util.Translator;
 public class NotFoundDiscordException implements DiscordException {
 
     private final static Logger LOG = LoggerFactory.getLogger(NotFoundDiscordException.class);
-    private String object;
-    private String found;
+    private String objectKey;
 
-    public NotFoundDiscordException(String object, String found){
-        this.object = object;
-        this.found = found;
+    public NotFoundDiscordException(String objectKey){
+        this.objectKey = objectKey;
     }
 
     @Override
     public void throwException(IMessage message, Command command, Language lg, Object... arguments) {
-        Message.sendText(message.getChannel(), Translator.getLabel(lg, "exception.notfound")
-                .replace("{object}", Translator.getLabel(lg, object))
-                .replace("{found}", Translator.getLabel(lg, found)));
+        String gender = Translator.getLabel(lg, "exception.object." + objectKey + ".gender");
+        Message.sendText(message.getChannel(), Translator.getLabel(lg, "exception.notfound.not." + gender)
+                + " " + Translator.getLabel(lg, "exception.object." + objectKey + ".singular")
+                + " " + Translator.getLabel(lg, "exception.notfound.found." + gender) + ".");
     }
 }

@@ -37,7 +37,7 @@ public class SoundCommand extends AbstractCommand {
     public SoundCommand(){
         super("sound","(\\s+.+)?");
         setUsableInMP(false);
-        notFoundSound = new NotFoundDiscordException("exception.notfound.sound", "exception.notfound.sound_found");
+        notFoundSound = new NotFoundDiscordException("sound");
         notInVocalChannel = new BasicDiscordException("exception.basic.not_in_vocal_channel");
         channelLimit = new BasicDiscordException("exception.basic.voice_channel_limit");
         noVoiceConnect = new BasicDiscordException("exception.basic.no_voice_permission");

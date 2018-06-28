@@ -39,8 +39,8 @@ public class ItemCommand extends DofusEncyclopediaRequestCommand {
 
     public ItemCommand(){
         super("item", "\\s+(-more)?(.*)");
-        tooMuchItems = new TooMuchDiscordException("exception.toomuch.items", "exception.toomuch.items_found");
-        notFoundItem = new NotFoundDiscordException("exception.notfound.item", "exception.notfound.item_found");
+        tooMuchItems = new TooMuchDiscordException("item");
+        notFoundItem = new NotFoundDiscordException("item");
         noExternalEmojiPermission = new BasicDiscordException("exception.basic.no_external_emoji_permission");
     }
 

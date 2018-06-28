@@ -18,26 +18,24 @@ public class TooMuchDiscordException implements DiscordException {
     private final static Logger LOG = LoggerFactory.getLogger(TooMuchDiscordException.class);
 
     private String objectKey;
-    private String foundKey;
     private boolean isTranslatable;
 
-    public TooMuchDiscordException(String objectKey, String foundKey){
+    public TooMuchDiscordException(String objectKey){
         this.objectKey = objectKey;
-        this.foundKey = foundKey;
         this.isTranslatable = false;
     }
 
-    public TooMuchDiscordException(String objectKey, String foundKey, boolean isTranslatable){
+    public TooMuchDiscordException(String objectKey, boolean isTranslatable){
         this.objectKey = objectKey;
-        this.foundKey = foundKey;
         this.isTranslatable = isTranslatable;
     }
 
     @Override
     public void throwException(IMessage message, Command command, Language lg, Object... arguments) {
-        StringBuilder st = new StringBuilder(Translator.getLabel(lg, "exception.toomuch")
-                .replace("{object}", Translator.getLabel(lg, objectKey))
-                .replace("{found}", Translator.getLabel(lg, foundKey)));
+        String gender = Translator.getLabel(lg, "exception.object." + objectKey + ".gender");
+        StringBuilder st = new StringBuilder(Translator.getLabel(lg, "exception.toomuch.toomuch." + gender))
+                .append(" ").append(Translator.getLabel(lg, "exception.object." + objectKey + ".plural"))
+                .append(" ").append(Translator.getLabel(lg, "exception.toomuch.found." + gender));
 
         if (arguments.length > 0) {
             st.append(": ");

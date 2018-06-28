@@ -42,8 +42,8 @@ public class ResourceCommand extends DofusEncyclopediaRequestCommand {
 
     public ResourceCommand(){
         super("resource", "\\s+(-more)?(.*)");
-        tooMuchRsrcs = new TooMuchDiscordException("exception.toomuch.resources", "exception.toomuch.resources_found");
-        notFoundRsrc = new NotFoundDiscordException("exception.notfound.resource", "exception.notfound.resource_found");
+        tooMuchRsrcs = new TooMuchDiscordException("resource");
+        notFoundRsrc = new NotFoundDiscordException("resource");
     }
 
     @Override

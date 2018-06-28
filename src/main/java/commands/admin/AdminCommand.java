@@ -26,7 +26,7 @@ public class AdminCommand extends AbstractCommand {
     public AdminCommand(){
         super("admin", "(\\s+.+)?");
         setAdmin(true);
-        notFound = new NotFoundDiscordException("exception.notfound.cmd", "exception.notfound.cmd_found");
+        notFound = new NotFoundDiscordException("cmd");
     }
 
     @Override

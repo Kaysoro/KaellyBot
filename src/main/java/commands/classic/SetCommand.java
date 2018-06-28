@@ -29,8 +29,8 @@ public class SetCommand extends DofusRequestCommand {
 
     public SetCommand(){
         super("set", "\\s+(-more)?(.*)");
-        tooMuchSets = new TooMuchDiscordException("exception.toomuch.sets", "exception.toomuch.sets_found");
-        notFoundSet = new NotFoundDiscordException("exception.notfound.set", "exception.notfound.set_found");
+        tooMuchSets = new TooMuchDiscordException("set");
+        notFoundSet = new NotFoundDiscordException("set");
         noExternalEmoji = new BasicDiscordException("exception.basic.no_external_emoji_permission");
     }
 

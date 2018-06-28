@@ -40,10 +40,10 @@ public class GuildCommand extends AbstractCommand {
 
     public GuildCommand(){
         super("guild","(\\s+.+)(\\s+-serv\\s+.+)?");
-        tooMuchGuilds = new TooMuchDiscordException("exception.toomuch.guilds", "exception.toomuch.guilds_found");
-        tooMuchServers = new TooMuchDiscordException("exception.toomuch.servers", "exception.toomuch.servers_found");
-        notFoundServer = new NotFoundDiscordException("exception.notfound.server", "exception.notfound.server_found");
-        notFoundGuild = new NotFoundDiscordException("exception.notfound.guild", "exception.notfound.guild_found");
+        tooMuchGuilds = new TooMuchDiscordException("guild");
+        notFoundGuild = new NotFoundDiscordException("guild");
+        tooMuchServers = new TooMuchDiscordException("server");
+        notFoundServer = new NotFoundDiscordException("server");
         guildPageInaccessible = new BasicDiscordException("exception.basic.guildpage_inaccessible");
     }
 

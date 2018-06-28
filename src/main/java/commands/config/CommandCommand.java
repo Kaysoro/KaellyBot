@@ -33,8 +33,8 @@ public class CommandCommand extends AbstractCommand {
     public CommandCommand(){
         super("cmd","\\s+(\\w+)\\s+(on|off|0|1|true|false)");
         setUsableInMP(false);
-        tooMuchCmds = new TooMuchDiscordException("exception.toomuch.cmds", "exception.toomuch.cmds_found");
-        notFoundCmd = new NotFoundDiscordException("exception.notfound.cmd", "exception.notfound.cmd_found");
+        tooMuchCmds = new TooMuchDiscordException("cmd");
+        notFoundCmd = new NotFoundDiscordException("cmd");
         forbiddenCmdFound = new BasicDiscordException("exception.basic.forbidden_command_found");
         forbiddenCmdNotFound = new BasicDiscordException("exception.basic.forbidden_command_notfound");
         noEnoughRights = new BasicDiscordException("exception.basic.no_enough_rights");
