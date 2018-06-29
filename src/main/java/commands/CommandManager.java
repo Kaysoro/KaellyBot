@@ -28,6 +28,7 @@ public class CommandManager {
         // Basics commands
         addCommand(new AboutCommand());
         addCommand(new AlignmentCommand());
+        addCommand(new AllianceCommand());
         addCommand(new AlmanaxCommand());
         addCommand(new CommandCommand());
         addCommand(new DistanceCommand());
