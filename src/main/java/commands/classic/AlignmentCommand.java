@@ -13,7 +13,6 @@ import org.slf4j.LoggerFactory;
 import sx.blah.discord.handle.obj.IMessage;
 import sx.blah.discord.handle.obj.IUser;
 import util.Message;
-import util.Quadruple;
 import util.Translator;
 
 import java.text.Normalizer;
@@ -29,28 +28,26 @@ public class AlignmentCommand extends AbstractCommand {
 
     private final static Logger LOG = LoggerFactory.getLogger(AlignmentCommand.class);
     private DiscordException notFoundFilter;
+    private DiscordException tooMuchFilters;
     private DiscordException tooMuchCities;
     private DiscordException notFoundCity;
     private DiscordException tooMuchOrders;
     private DiscordException notFoundOrder;
     private DiscordException tooMuchServers;
     private DiscordException notFoundServer;
-    private DiscordException notFoundGuildServer;
     private DiscordException badUse;
-    private DiscordException noEnoughRights;
 
     public AlignmentCommand(){
         super("align", "(.*)");
         setUsableInMP(false);
         notFoundFilter = new NotFoundDiscordException("filter");
+        tooMuchFilters = new TooMuchDiscordException("filter");
         tooMuchCities = new TooMuchDiscordException("city", true);
         notFoundCity = new NotFoundDiscordException("city");
         tooMuchOrders = new TooMuchDiscordException("order", true);
         notFoundOrder = new NotFoundDiscordException("order");
         tooMuchServers = new TooMuchDiscordException("server", true);
         notFoundServer = new NotFoundDiscordException("server");
-        notFoundGuildServer = new NotFoundDiscordException("guild_server");
-        noEnoughRights = new BasicDiscordException("exception.basic.no_enough_rights");
         badUse = new BadUseCommandDiscordException();
     }
 
@@ -63,16 +60,26 @@ public class AlignmentCommand extends AbstractCommand {
             String content = m.group(1).trim();
 
             // Initialisation du Filtre
-            City city;
-            Order order;
+            City city = null;
+            Order order = null;
             IUser user = message.getAuthor();
             ServerDofus server = Guild.getGuild(message.getGuild()).getServerDofus();
             List<ServerDofus> servers;
 
             // Consultation filtré par niveau
             if ((m = Pattern.compile(">\\s+(\\d{1,3})(\\s+.+)?").matcher(content)).matches()){
-                Message.sendText(message.getChannel(), "Consultation filtré par niveau");
-                //TODO
+                int level = Integer.parseInt(m.group(1));
+                if (m.group(2) != null) {
+                    servers = findServer(m.group(2));
+                    if (!checkData(servers, tooMuchServers, notFoundServer, message, lg)) return false;
+                    server = servers.get(0);
+                } else if (server == null){
+                    notFoundServer.throwException(message, this, lg);
+                    return false;
+                }
+                List<OrderUser> orders = OrderUser.getOrdersFromLevel(message.getGuild().getUsers(), server, level);
+                Message.sendText(message.getChannel(), "Consultation filtré par niveau : " + orders);
+                //ToDo
             }
             else {
                 // L'utilisateur concerné est-il l'auteur de la commande ?
@@ -82,14 +89,24 @@ public class AlignmentCommand extends AbstractCommand {
                 }
 
                 //Consultation des données filtrés par utilisateur
-                if (!(servers = findServer(content)).isEmpty() && (m = Pattern.compile("(.+)").matcher(content)).matches()
+                if (!findServer(content).isEmpty() && Pattern.compile("(.+)").matcher(content).matches()
                         || content.isEmpty()){
-                    Message.sendText(message.getChannel(), "Consultation des données utilisateur");
+                    boolean found = (m = Pattern.compile("(.+)").matcher(content)).matches();
+                    if (found) {
+                        servers = findServer(m.group(1));
+                        if (!checkData(servers, tooMuchServers, notFoundServer, message, lg)) return false;
+                        server = servers.get(0);
+                    } else if (server == null) {
+                        notFoundServer.throwException(message, this, lg);
+                        return false;
+                    }
+                    List<OrderUser> orders = OrderUser.getOrdersFromUser(user, server);
+                    Message.sendText(message.getChannel(), "Consultation des données utilisateur : " + orders);
                     //TODO
                 }
                 // Enregistrement des données
                 else if((m = Pattern.compile("(\\p{L}+)\\s+(\\p{L}+)\\s+(\\d{1,3})(\\s+.+)?").matcher(content)).matches()){
-                    if(user == message.getAuthor() || user != message.getAuthor() && isUserHasEnoughRights(message)) {
+                    if(user == message.getAuthor()) {
                         // Parsing des données et traitement des divers exceptions
                         List<City> cities = findCity(m.group(1), lg);
                         if (! checkData(cities, tooMuchCities, notFoundCity, message, lg)) return false;
@@ -104,11 +121,11 @@ public class AlignmentCommand extends AbstractCommand {
                             if (!checkData(servers, tooMuchServers, notFoundServer, message, lg)) return false;
                             server = servers.get(0);
                         } else if (server == null){
-                            notFoundGuildServer.throwException(message, this, lg);
+                            notFoundServer.throwException(message, this, lg);
                             return false;
                         }
-                        if(OrderUser.getOrders().containsKey(Quadruple.of(user.getLongID(), server, city, order)))
-                            OrderUser.getOrders().get(Quadruple.of(user.getLongID(), server, city, order)).setLevel(level);
+                        if(OrderUser.getOrders().containsKeys(user.getLongID(), server, city, order))
+                            OrderUser.getOrders().get(user.getLongID(), server, city, order).get(0).setLevel(level);
                         else
                             new OrderUser(user.getLongID(), server, city, order, level).addToDatabase();
 
@@ -118,13 +135,78 @@ public class AlignmentCommand extends AbstractCommand {
                             Message.sendText(message.getChannel(), "align.reset");
                     }
                     else
-                        noEnoughRights.throwException(message, this, lg);
+                        badUse.throwException(message, this, lg);
 
                 }
                 // Consultation filtré par cité et/ou par ordre
                 else if((m = Pattern.compile("(\\p{L}+)(\\s+\\p{L}+)?(\\s+[\\p{L}|\\W]+)?").matcher(content)).matches()){
-                    Message.sendText(message.getChannel(), "Consultation filtré par cité et/ou par ordre");
-                    //TODO
+                    if (m.group(3) != null) {
+                        servers = findServer(m.group(3));
+                        if (!checkData(servers, tooMuchServers, notFoundServer, message, lg)) return false;
+                        server = servers.get(0);
+                    }
+
+                    // On a précisé à la fois une cité et un ordre
+                    if (m.group(2) != null) {
+                        boolean is2Server = false;
+                        if (m.group(3) == null){
+                            servers = findServer(m.group(2));
+                            if (!checkData(servers, tooMuchServers, notFoundServer, message, lg)) return false;
+                            server = servers.get(0);
+                            is2Server = true;
+                        }
+
+                        if (is2Server){
+                            // Est-ce un ordre ? une cité ?
+                            String value = m.group(1).trim();
+                            List<City> cities = findCity(value, lg);
+                            List<Order> orders = findOrder(value, lg);
+                            if (cities.isEmpty() && orders.isEmpty()){
+                                notFoundFilter.throwException(message, this, lg);
+                                return false;
+                            }
+                            if (cities.size() > 1 || orders.size()  > 1){
+                                tooMuchFilters.throwException(message, this, lg);
+                                return false;
+                            }
+                            if (cities.size() == 1) city = cities.get(0);
+                            if (orders.size() == 1) order = orders.get(0);
+                        }
+                        else {
+                            List<City> cities = findCity(m.group(1).trim(), lg);
+                            if (!checkData(cities, tooMuchCities, notFoundCity, message, lg)) return false;
+                            city = cities.get(0);
+                            List<Order> orders = findOrder(m.group(2).trim(), lg);
+                            if (!checkData(orders, tooMuchOrders, notFoundOrder, message, lg)) return false;
+                            order = orders.get(0);
+                        }
+                    }
+                    else {
+                        // Est-ce un ordre ? une cité ?
+                        List<City> cities = findCity(m.group(1).trim(), lg);
+                        List<Order> orders = findOrder(m.group(1).trim(), lg);
+                        if (cities.isEmpty() && orders.isEmpty()){
+                            notFoundFilter.throwException(message, this, lg);
+                            return false;
+                        }
+                        if (cities.size() > 1 || orders.size() > 1){
+                            tooMuchFilters.throwException(message, this, lg);
+                            return false;
+                        }
+                        if (cities.size() == 1) city = cities.get(0);
+                        if (orders.size() == 1) order = orders.get(0);
+                    }
+
+                    if (server == null){
+                        notFoundServer.throwException(message, this, lg);
+                        return false;
+                    }
+
+                    List<OrderUser> result = OrderUser
+                            .getOrdersFromCityOrOrder(message.getGuild().getUsers(), server, city, order);
+                    Message.sendText(message.getChannel(),
+                            "Consultation filtré par cité et/ou par ordre : " + result);
+                    // TODO
                 }
                 else
                     badUse.throwException(message, this, lg);
@@ -230,7 +312,6 @@ public class AlignmentCommand extends AbstractCommand {
                 + "\n" + prefixe + "`"  + name + " `*`order server`* : " + Translator.getLabel(lg, "align.help.detailed.2")
                 + "\n" + prefixe + "`"  + name + " `*`> level server`* : " + Translator.getLabel(lg, "align.help.detailed.3")
                 + "\n" + prefixe + "`"  + name + " `*`@user server`* : " + Translator.getLabel(lg, "align.help.detailed.4")
-                + "\n" + prefixe + "`"  + name + " `*`city order level server`* : " + Translator.getLabel(lg, "align.help.detailed.5")
-                + "\n" + prefixe + "`"  + name + " `*`@user city order level server`* : " + Translator.getLabel(lg, "align.help.detailed.6")+ "\n";
+                + "\n" + prefixe + "`" + name + " `*`city order level server`* : " + Translator.getLabel(lg, "align.help.detailed.5") + "\n";
     }
 }
