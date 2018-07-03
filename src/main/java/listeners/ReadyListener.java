@@ -27,9 +27,9 @@ public class ReadyListener {
 
     @EventSubscriber
     public void onReady(ReadyEvent event) {
-        LOG.info(Constants.name + "Bot connecté !");
+        long time = System.currentTimeMillis();
 
-        LOG.info("Ajout des différents listeners");
+        LOG.info("Ajout des différents listeners...");
         ClientConfig.DISCORD().getDispatcher().registerListener(new GuildCreateListener());
         ClientConfig.DISCORD().getDispatcher().registerListener(new GuildLeaveListener());
         ClientConfig.DISCORD().getDispatcher().registerListener(new GuildUpdateListener());
@@ -37,7 +37,7 @@ public class ReadyListener {
         ClientConfig.DISCORD().getDispatcher().registerListener(new UserVoiceChannelMoveListener());
         ClientConfig.DISCORD().getDispatcher().registerListener(new UserVoiceChannelLeaveListener());
 
-        LOG.info("Check des guildes");
+        LOG.info("Check des guildes...");
         for(IGuild guild : ClientConfig.DISCORD().getGuilds())
             if (Guild.getGuilds().containsKey(guild.getStringID())
                     && !guild.getName().equals(Guild.getGuild(guild).getName()))
@@ -69,5 +69,7 @@ public class ReadyListener {
 
         LOG.info("Ecoute des messages...");
         ClientConfig.DISCORD().getDispatcher().registerListener(new MessageListener());
+
+        LOG.info("Mise en place des ressources en " + (System.currentTimeMillis() - time) + "ms");
     }
 }

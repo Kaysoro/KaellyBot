@@ -7,15 +7,20 @@ import java.util.Map;
 
 public enum City {
 
-    BONTA("city.bonta"), BRAKMAR("city.brakmar");
+    BONTA("city.bonta", "<:bonta:411236938771857431>"), BRAKMAR("city.brakmar", "<:brakmar:411237228736675860>");
 
     private static Map<String, City> cities;
     private String name;
+    private String logo;
 
-    City(String name){ this.name = name;}
+    City(String name, String logo){ this.name = name; this.logo = logo;}
 
     public String getName(){
         return name;
+    }
+
+    public String getLogo(){
+        return logo;
     }
 
     public String getLabel(Language lg){
@@ -31,6 +36,6 @@ public enum City {
 
         if (cities.containsKey(name))
             return cities.get(name);
-        throw new IllegalArgumentException("Aucune cité trouvée pour \"" + name + "\".");
+        throw new IllegalArgumentException("No city found for \"" + name + "\".");
     }
 }

@@ -43,7 +43,7 @@ public class PrefixCommand extends AbstractCommand {
                 String newPrefix = m.group(1).trim();
 
                 if (newPrefix.length() >= 1 && newPrefix.length() <= Constants.prefixeLimit) {
-                    Guild.getGuild(message.getGuild()).setPrefixe(newPrefix);
+                    Guild.getGuild(message.getGuild()).setPrefix(newPrefix);
                     Message.sendText(message.getChannel(), Translator.getLabel(lg, "prefix.request.1")
                         .replace("{prefix}", getPrefixMdEscaped(message)));
                     try {

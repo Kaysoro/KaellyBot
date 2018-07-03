@@ -69,6 +69,6 @@ public enum Job {
 
         if (jobs.containsKey(name))
             return jobs.get(name);
-        throw new IllegalArgumentException("Aucun métier trouvé pour \"" + name + "\".");
+        throw new IllegalArgumentException("No job found for \"" + name + "\".");
     }
 }

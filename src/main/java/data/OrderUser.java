@@ -1,23 +1,28 @@
 package data;
 
 import enums.City;
+import enums.Language;
 import enums.Order;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import sx.blah.discord.api.internal.json.objects.EmbedObject;
+import sx.blah.discord.handle.obj.IGuild;
 import sx.blah.discord.handle.obj.IUser;
+import sx.blah.discord.handle.obj.StatusType;
+import sx.blah.discord.util.EmbedBuilder;
 import util.*;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 /**
  * Created by steve on 19/02/2018.
  */
-public class OrderUser {
+public class OrderUser implements Comparable<OrderUser> {
 
     private final static Logger LOG = LoggerFactory.getLogger(OrderUser.class);
     private static MultiKeySearch<OrderUser> orders;
@@ -103,7 +108,15 @@ public class OrderUser {
         }
     }
 
-    public int getLevel() {
+    private City getCity() {
+        return city;
+    }
+
+    private Order getOrder() {
+        return order;
+    }
+
+    private int getLevel() {
         return level;
     }
 
@@ -143,8 +156,27 @@ public class OrderUser {
      * @param server Serveur dofus
      * @return Liste des résultats de la recherche
      */
-    public static List<OrderUser> getOrdersFromUser(IUser user, ServerDofus server){
-        return getOrders().get(user.getLongID(), server, null, null);
+    public static List<EmbedObject> getOrdersFromUser(IUser user, ServerDofus server, IGuild guild, Language lg){
+        List<OrderUser> result = getOrders().get(user.getLongID(), server, null, null);
+        Collections.sort(result);
+        List<EmbedObject> embed = new ArrayList<>();
+
+        EmbedBuilder builder = new EmbedBuilder();
+        builder.withTitle(Translator.getLabel(lg, "align.user").replace("{user}", user.getDisplayName(guild)));
+        builder.withThumbnail(user.getAvatarURL());
+        builder.withColor(new Random().nextInt(16777216));
+
+        if (! result.isEmpty()) {
+            StringBuilder st = new StringBuilder();
+            for (OrderUser orderUser : result)
+                st.append(orderUser.city.getLogo()).append(orderUser.order.getLabel(lg)).append(" : ")
+                        .append(orderUser.level).append("\n");
+            builder.appendField(Translator.getLabel(lg, "align.orders"), st.toString(), true);
+        }
+        else
+            builder.withDescription(Translator.getLabel(lg, "align.empty"));
+        embed.add(builder.build());
+        return embed;
     }
 
     /**
@@ -153,15 +185,20 @@ public class OrderUser {
      * @param level Niveau pallier
      * @return Liste des résultats de la recherche
      */
-    public static List<OrderUser> getOrdersFromLevel(List<IUser> users, ServerDofus server, int level){
+    public static List<EmbedObject> getOrdersFromLevel(List<IUser> users, ServerDofus server, int level,
+                                                       IGuild guild, Language lg){
         List<OrderUser> result = new ArrayList<>();
-        for(IUser user : users) {
-            List<OrderUser> potentials = getOrders().get(user.getLongID(), server, null, null);
-            for(OrderUser order : potentials)
-                if (order.getLevel() >= level)
-                    result.add(order);
-        }
-        return result;
+        for(IUser user : users)
+            if (user.getPresence().getStatus() != StatusType.OFFLINE && ! user.isBot()){
+                List<OrderUser> potentials = getOrders().get(user.getLongID(), server, null, null);
+                for(OrderUser order : potentials)
+                    if (order.getLevel() >= level)
+                        result.add(order);
+            }
+        Collections.sort(result);
+        List<EmbedObject> embed = new ArrayList<>();
+        //TODO
+        return embed;
     }
 
     /**
@@ -171,12 +208,25 @@ public class OrderUser {
      * @param order Ordre (coeur, oeil, esprit)
      * @return Liste des résultats de la recherche
      */
-    public static List<OrderUser> getOrdersFromCityOrOrder(List<IUser> users, ServerDofus server, City city, Order order){
+    public static List<EmbedObject> getOrdersFromCityOrOrder(List<IUser> users, ServerDofus server, City city,
+                                                             Order order, IGuild guild, Language lg){
         List<OrderUser> result = new ArrayList<>();
-        for(IUser user : users) {
-            List<OrderUser> potentials = getOrders().get(user.getLongID(), server, city, order);
-            result.addAll(potentials);
-        }
-        return result;
+        for(IUser user : users)
+            if (user.getPresence().getStatus() != StatusType.OFFLINE && ! user.isBot()){
+                List<OrderUser> potentials = getOrders().get(user.getLongID(), server, city, order);
+                result.addAll(potentials);
+            }
+        Collections.sort(result);
+        List<EmbedObject> embed = new ArrayList<>();
+        //TODO
+        return embed;
+    }
+
+    @Override
+    public int compareTo(@NotNull OrderUser o) {
+        return Comparator.comparingInt(OrderUser::getLevel).reversed()
+                .thenComparing(OrderUser::getCity)
+                .thenComparing(OrderUser::getOrder)
+                .compare(this, o);
     }
 }

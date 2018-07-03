@@ -21,7 +21,7 @@ public class Guild {
     private String id;
     private String name;
     private Map<String, CommandForbidden> commands;
-    private String prefixe;
+    private String prefix;
     private ServerDofus server;
     private Language language;
 
@@ -29,10 +29,10 @@ public class Guild {
         this(id, name, Constants.prefixCommand, lang, null);
     }
 
-    private Guild(String id, String name, String prefixe, Language lang, String serverDofus){
+    private Guild(String id, String name, String prefix, Language lang, String serverDofus){
         this.id = id;
         this.name = name;
-        this.prefixe = prefixe;
+        this.prefix = prefix;
         commands = CommandForbidden.getForbiddenCommands(this);
         this.language = lang;
         this.server = ServerDofus.getServersMap().get(serverDofus);
@@ -50,7 +50,7 @@ public class Guild {
                         + " Guild(id, name, prefixe) VALUES (?, ?, ?);");
                 request.setString(1, id);
                 request.setString(2, name);
-                request.setString(3, prefixe);
+                request.setString(3, prefix);
                 request.executeUpdate();
 
             } catch (SQLException e) {
@@ -97,8 +97,8 @@ public class Guild {
         }
     }
 
-    public synchronized void setPrefixe(String prefixe){
-        this.prefixe = prefixe;
+    public synchronized void setPrefix(String prefix){
+        this.prefix = prefix;
 
         Connexion connexion = Connexion.getInstance();
         Connection connection = connexion.getConnection();
@@ -106,7 +106,7 @@ public class Guild {
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(
                     "UPDATE Guild SET prefixe = ? WHERE id = ?;");
-            preparedStatement.setString(1, prefixe);
+            preparedStatement.setString(1, prefix);
             preparedStatement.setString(2, id);
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
@@ -173,7 +173,7 @@ public class Guild {
                 while (resultSet.next()) {
                     id = resultSet.getString("id");
                     name = resultSet.getString("name");
-                    prefixe = resultSet.getString("prefixe");
+                    prefixe = resultSet.getString("prefix");
                     server = resultSet.getString("server_dofus");
                     lang = resultSet.getString("lang");
 
@@ -210,7 +210,7 @@ public class Guild {
         return name;
     }
 
-    public String getPrefixe(){ return prefixe; }
+    public String getPrefix(){ return prefix; }
 
     public Language getLanguage() {
         return language;

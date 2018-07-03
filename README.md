@@ -105,8 +105,8 @@ Autorise ou non Kaelly à poster des tweets dans un salon.
 
 ### Whois
 Affiche la page personnelle d'un joueur.  
-`!whois *pseudo*` : donne la page personnelle associée au pseudo. Celui-ci doit être exact.  
-`!whois *pseudo server*` : est à utiliser lorsque le pseudo ne suffit pas pour déterminer la fiche d'un personnage.
+`!whois pseudo` : donne la page personnelle associée au pseudo. Celui-ci doit être exact.
+`!whois pseudo server` : est à utiliser lorsque le pseudo ne suffit pas pour déterminer la fiche d'un personnage.
 
 # Participer au projet
 
