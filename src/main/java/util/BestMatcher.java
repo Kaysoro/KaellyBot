@@ -52,6 +52,11 @@ public class BestMatcher {
             evaluate(proposal);
     }
 
+    public void evaluateAll(Requestable... proposals){
+        for(Requestable proposal : proposals)
+            evaluate(proposal);
+    }
+
     public boolean isUnique(){
         return bestMatches.size() == 1;
     }

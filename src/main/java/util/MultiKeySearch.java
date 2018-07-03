@@ -72,4 +72,12 @@ public class MultiKeySearch<V> implements Serializable {
         //TODO
         return true;
     }
+
+    /**
+     * @return True si aucune clef(s)/valeur n'a été ajouté, false le cas échéant
+     */
+    public boolean isEmpty(){
+        //TODO
+        return true;
+    }
 }
