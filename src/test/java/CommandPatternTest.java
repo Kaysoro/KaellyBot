@@ -3,7 +3,6 @@ import commands.classic.*;
 import commands.config.*;
 import commands.model.Command;
 import data.Constants;
-import junit.framework.TestCase;
 import org.junit.Test;
 
 import java.util.regex.Pattern;

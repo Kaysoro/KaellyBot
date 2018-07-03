@@ -12,8 +12,8 @@ Cette commande est destinée à expliciter les commandes de Kaelly avec des exem
 
 ### Alliance
 Affiche la page d'une alliance.
-`!alliance *nom*` : donne la page d'alliance associée au nom. Celui-ci doit être exact.
-`!alliance *nom -serv server*` : est à utiliser lorsque le nom ne suffit pas pour déterminer la fiche d'une alliance.
+`!alliance nom` : donne la page d'alliance associée au nom. Celui-ci doit être exact.
+`!alliance nom -serv server` : est à utiliser lorsque le nom ne suffit pas pour déterminer la fiche d'une alliance.
 
 ### Almanax
 Donne des informations relatives à l'Almanax.  
@@ -38,8 +38,8 @@ Renvoie le transport le plus proche à vol d'oiseau.
 
 ### Guild
 Affiche la page d'une guilde.
-`!guild *name*` : donne la page d'une guilde associée au nom. Celui-ci doit être exact.
-`!guild *name -serv server*` : est à utiliser lorsque le nom ne suffit pas pour déterminer la fiche d'une guilde.
+`!guild name` : donne la page d'une guilde associée au nom. Celui-ci doit être exact.
+`!guild name -serv server` : est à utiliser lorsque le nom ne suffit pas pour déterminer la fiche d'une guilde.
 
 ### Item
 Renvoie les statistiques d'un item du jeu Dofus.  
@@ -49,9 +49,9 @@ Renvoie les statistiques d'un item du jeu Dofus.
 ### Job
 Gère un annuaire d'artisans.  
 `!job` : renvoie la liste des métiers du jeu Dofus.
-`!job métier` : renvoie l'annuaire des artisans pour ce métier.  
-`!job métier niveau` : vous ajoute à l'annuaire du métier correspondant. Si vous indiquez 0, vous êtes supprimé de l'annuaire pour ce métier.  
-`!job -all niveau` : vous ajoute à l'annuaire pour tous les métiers correspondants. Si vous indiquez 0, vous êtes supprimé de chaque annuaire.  
+`!job job` : renvoie l'annuaire des artisans pour ce métier.
+`!job job level` : vous ajoute à l'annuaire du métier correspondant. Si vous indiquez 0, vous êtes supprimé de l'annuaire pour ce métier.
+`!job -all level` : vous ajoute à l'annuaire pour tous les métiers correspondants. Si vous indiquez 0, vous êtes supprimé de chaque annuaire.
 
 ### Lang
 Change la langue utilisée pour communiquer avec Kaelly parmi la liste suivante : FR, EN, SP.  
@@ -61,8 +61,8 @@ Change la langue utilisée pour communiquer avec Kaelly parmi la liste suivante 
 
 ### Monster
 Renvoie les statistiques d'un monstre du jeu Dofus.  
-`!monster monstre` : renvoie les statistiques du monstre spécifié : son nom peut être approximatif s'il est suffisamment précis.    
-`!monster -more monstre` : renvoie les statistiques détaillés du monstre spécifié.  
+`!monster monster` : renvoie les statistiques du monstre spécifié : son nom peut être approximatif s'il est suffisamment précis.
+`!monster -more monster` : renvoie les statistiques détaillés du monstre spécifié.
 
 ### Prefix
 Change le préfixe utilisé pour invoquer une commande. Niveau modérateur minimum requis.  
@@ -71,8 +71,8 @@ Change le préfixe utilisé pour invoquer une commande. Niveau modérateur minim
 ### Random
 Commande tirant des valeurs aléatoires.  
 `!rdm` : tire une valeur entre Vrai et Faux.  
-`!rdm nombre` : tire une valeur entre 0 et nombre.  
-`!rdm valeur1 valeur2 ...` : tire une valeur parmi celles spécifiées en paramètre.  
+`!rdm number` : tire une valeur entre 0 et nombre.
+`!rdm value1 value2 ...` : tire une valeur parmi celles spécifiées en paramètre.
 
 ### Resource
 Renvoie les statistiques d'une ressource du jeu Dofus.  
@@ -106,7 +106,7 @@ Autorise ou non Kaelly à poster des tweets dans un salon.
 ### Whois
 Affiche la page personnelle d'un joueur.  
 `!whois *pseudo*` : donne la page personnelle associée au pseudo. Celui-ci doit être exact.  
-`!whois *pseudo serveur*` : est à utiliser lorsque le pseudo ne suffit pas pour déterminer la fiche d'un personnage.  
+`!whois *pseudo server*` : est à utiliser lorsque le pseudo ne suffit pas pour déterminer la fiche d'un personnage.
 
 # Participer au projet
 
