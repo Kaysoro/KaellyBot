@@ -196,9 +196,7 @@ public class OrderUser implements Comparable<OrderUser> {
                         result.add(order);
             }
         Collections.sort(result);
-        List<EmbedObject> embed = new ArrayList<>();
-        //TODO
-        return embed;
+        return getPlayersList(result, guild, lg);
     }
 
     /**
@@ -217,8 +215,70 @@ public class OrderUser implements Comparable<OrderUser> {
                 result.addAll(potentials);
             }
         Collections.sort(result);
+        return getPlayersList(result, guild, lg);
+    }
+
+    private static List<EmbedObject> getPlayersList(List<OrderUser> orders, IGuild guild, Language lg){
         List<EmbedObject> embed = new ArrayList<>();
-        //TODO
+
+        // On s'occupe d'abord de générer chaque ligne de field
+        if (!orders.isEmpty()){
+            List<List<String>> fieldsPerEmbed = new ArrayList<>();
+            List<String> fields = new ArrayList<>();
+            int fieldsSize = 0;
+            StringBuilder field = new StringBuilder();
+
+            for(OrderUser order : orders){
+                IUser user = ClientConfig.DISCORD().getUserByID(order.idUser);
+                String line = EmojiManager.getEmojiForPresence(user.getPresence().getStatus()) + " "
+                        + order.city.getLogo() + " " + order.order.getLabel(lg) + ", " + order.level + " : **"
+                        + user.getDisplayName(guild) + "**\n";
+
+                // Est-ce qu'on dépasse l'embed ? Si oui, on change de collection
+                if (fieldsSize + line.length() > EmbedBuilder.MAX_CHAR_LIMIT){
+                    fieldsPerEmbed.add(fields);
+                    fields = new ArrayList<>();
+                    fieldsSize = 0;
+                }
+                // Est-ce qu'on dépasse le field ? Si oui, on change de field
+                else if (field.length() + line.length() > EmbedBuilder.FIELD_CONTENT_LIMIT){
+                    fields.add(field.toString());
+                    fieldsSize += field.length();
+                    field.setLength(0);
+                }
+                field.append(line);
+            }
+
+            if (field.length() > 0)
+                fields.add(field.toString());
+            if (!fields.isEmpty())
+                fieldsPerEmbed.add(fields);
+
+            // Il ne reste plus qu'à les parcourir et à créer autant d'embed que nécessaire
+            for(int i = 0; i < fieldsPerEmbed.size(); i++){
+                EmbedBuilder builder = new EmbedBuilder()
+                        .withTitle(Translator.getLabel(lg, "align.list")
+                                + (fieldsPerEmbed.size() > 1? " (" + (i + 1) + "/"
+                                + fieldsPerEmbed.size() + ")" : ""))
+                        .withThumbnail(guild.getIconURL())
+                        .withColor(new Random().nextInt(16777216));
+
+                List<String> texts = fieldsPerEmbed.get(i);
+                for(int j = 0; j < texts.size(); j++){
+                    builder.appendField(Translator.getLabel(lg, "align.orders")
+                                    + (texts.size() > 1? " (" + (j + 1) + "/"
+                                    + texts.size() + ")" : "") + " : ",
+                            texts.get(j), true);
+                }
+                embed.add(builder.build());
+            }
+        }
+        else
+            embed.add(new EmbedBuilder()
+                    .withThumbnail(guild.getIconURL())
+                    .withColor(new Random().nextInt(16777216))
+                    .withDescription(Translator.getLabel(lg, "align.empty")).build());
+
         return embed;
     }
 
