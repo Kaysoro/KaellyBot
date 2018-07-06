@@ -6,8 +6,6 @@ import exceptions.*;
 import sx.blah.discord.handle.obj.Permissions;
 import util.*;
 import data.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import sx.blah.discord.handle.obj.IMessage;
 
 import java.io.IOException;
@@ -21,7 +19,6 @@ import java.util.regex.Matcher;
  */
 public class SetCommand extends DofusRequestCommand {
 
-    private final static Logger LOG = LoggerFactory.getLogger(SetCommand.class);
     private final static String forName = "text=";
     private DiscordException tooMuchSets;
     private DiscordException notFoundSet;
@@ -35,45 +32,35 @@ public class SetCommand extends DofusRequestCommand {
     }
 
     @Override
-    public boolean request(IMessage message) {
-        if (super.request(message)) {
-            Matcher m = getMatcher(message);
-            Language lg = Translator.getLanguageFrom(message.getChannel());
-            m.find();
+    public void request(IMessage message, Matcher m, Language lg) {
+        if (message.getChannel().getModifiedPermissions(ClientConfig.DISCORD().getOurUser()).contains(Permissions.USE_EXTERNAL_EMOJIS)
+                && ClientConfig.DISCORD().getOurUser().getPermissionsForGuild(message.getGuild())
+                .contains(Permissions.USE_EXTERNAL_EMOJIS)) {
+            String normalName = Normalizer.normalize(m.group(2).trim(), Normalizer.Form.NFD)
+                    .replaceAll("\\p{InCombiningDiacriticalMarks}+", "").toLowerCase();
+            String editedName = removeUselessWords(lg, normalName);
+            BestMatcher matcher = new BestMatcher(normalName);
 
-            if (message.getChannel().getModifiedPermissions(ClientConfig.DISCORD().getOurUser()).contains(Permissions.USE_EXTERNAL_EMOJIS)
-                    && ClientConfig.DISCORD().getOurUser().getPermissionsForGuild(message.getGuild())
-                    .contains(Permissions.USE_EXTERNAL_EMOJIS)) {
-                String normalName = Normalizer.normalize(m.group(2).trim(), Normalizer.Form.NFD)
-                        .replaceAll("\\p{InCombiningDiacriticalMarks}+", "").toLowerCase();
-                String editedName = removeUselessWords(lg, normalName);
-                BestMatcher matcher = new BestMatcher(normalName);
+            try {
+                matcher.evaluateAll(getListRequestableFrom(getSearchURL(lg, editedName), message, notFoundSet));
 
-                try {
-                    matcher.evaluateAll(getListRequestableFrom(getSearchURL(lg, editedName), message, notFoundSet));
-
-                    if (matcher.isUnique()) { // We have found it !
-                        Embedded set = Set.getSet(lg, Translator.getLabel(lg, "game.url")
-                                + matcher.getBest().getUrl());
-                        if (m.group(1) != null)
-                            Message.sendEmbed(message.getChannel(), set.getMoreEmbedObject(lg));
-                        else
-                            Message.sendEmbed(message.getChannel(), set.getEmbedObject(lg));
-                    } else if (!matcher.isEmpty())  // Too much sets
-                        tooMuchSets.throwException(message, this, lg, matcher.getBests());
-                    else // empty
-                        notFoundSet.throwException(message, this, lg);
-                } catch (IOException e) {
-                    ExceptionManager.manageIOException(e, message, this, lg, notFoundSet);
-                }
-
-                return true;
+                if (matcher.isUnique()) { // We have found it !
+                    Embedded set = Set.getSet(lg, Translator.getLabel(lg, "game.url")
+                            + matcher.getBest().getUrl());
+                    if (m.group(1) != null)
+                        Message.sendEmbed(message.getChannel(), set.getMoreEmbedObject(lg));
+                    else
+                        Message.sendEmbed(message.getChannel(), set.getEmbedObject(lg));
+                } else if (!matcher.isEmpty())  // Too much sets
+                    tooMuchSets.throwException(message, this, lg, matcher.getBests());
+                else // empty
+                    notFoundSet.throwException(message, this, lg);
+            } catch (IOException e) {
+                ExceptionManager.manageIOException(e, message, this, lg, notFoundSet);
             }
-            else
-                noExternalEmoji.throwException(message, this, lg);
         }
-
-        return false;
+        else
+            noExternalEmoji.throwException(message, this, lg);
     }
 
     private String getSearchURL(Language lg, String text) throws UnsupportedEncodingException {

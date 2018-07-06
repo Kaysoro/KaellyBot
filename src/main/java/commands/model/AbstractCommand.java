@@ -23,14 +23,15 @@ public abstract class AbstractCommand implements Command {
 
     private final static Logger LOG = LoggerFactory.getLogger(AbstractCommand.class);
 
-    protected DiscordException commandForbidden;
+    private DiscordException commandForbidden;
     protected DiscordException notUsableInMp;
+    protected DiscordException badUse;
 
     protected String name;
     protected String pattern;
-    protected boolean isPublic;
-    protected boolean isUsableInMP;
-    protected boolean isAdmin;
+    private boolean isPublic;
+    private boolean isUsableInMP;
+    private boolean isAdmin;
 
     protected AbstractCommand(String name, String pattern){
         super();
@@ -41,43 +42,53 @@ public abstract class AbstractCommand implements Command {
         this.isAdmin = false;
         commandForbidden = new BasicDiscordException("exception.basic.command_forbidden");
         notUsableInMp = new BasicDiscordException("exception.basic.not_usable_in_mp");
+        badUse = new BadUseCommandDiscordException();
     }
 
     @Override
-    public boolean request(IMessage message) {
-        boolean isFound = false;
+    public final void request(IMessage message) {
         try {
             Language lg = Translator.getLanguageFrom(message.getChannel());
             Matcher m = getMatcher(message);
-            isFound = m.find();
+            boolean isFound = m.find();
 
             // Caché si la fonction est désactivée/réservée aux admin et que l'auteur n'est pas super-admin
-            if ((! isPublic() || isAdmin()) && message.getAuthor().getLongID() != Constants.authorId && message.getAuthor().getLongID() != Constants.authorId2)
-                return false;
+            if ((!isPublic() || isAdmin()) && message.getAuthor().getLongID() != Constants.authorId)
+                return;
+
             // La commande est trouvée
-            if(isFound) {
+            if (isFound) {
                 // Mais n'est pas utilisable en MP
-                if (! isUsableInMP() && message.getChannel().isPrivate()) {
+                if (!isUsableInMP() && message.getChannel().isPrivate()) {
                     notUsableInMp.throwException(message, this, lg);
-                    return false;
+                    return;
                 }
                 // Mais est désactivée par la guilde
-                else if (! message.getChannel().isPrivate() && message.getAuthor().getLongID() != Constants.authorId && message.getAuthor().getLongID() != Constants.authorId2
+                else if (!message.getChannel().isPrivate() && message.getAuthor().getLongID() != Constants.authorId
                         && isForbidden(Guild.getGuild(message.getGuild()))) {
                     commandForbidden.throwException(message, this, lg);
-                    return false;
+                    return;
                 }
             }
             // Mais est mal utilisée
-            else if (message.getContent().startsWith(getPrefix(message) + getName()))
-                new BadUseCommandDiscordException().throwException(message, this, lg);
-
-        } catch (Exception e) {
+            else if (message.getContent().startsWith(getPrefix(message) + getName())) {
+                badUse.throwException(message, this, lg);
+                return;
+            }
+            if (isFound)
+                request(message, m, lg);
+        } catch(Exception e){
             Reporter.report(e, message.getGuild(), message.getChannel(), message.getAuthor(), message);
             LOG.error("request", e);
         }
-        return isFound;
     }
+
+    /**
+     * @param message Message from the event
+     * @param m Matcher that permit to fetch data
+     * @param lg Language of the channel (FR, EN, ES..)
+     */
+    protected abstract void request(IMessage message, Matcher m, Language lg);
 
     @Override
     public boolean isForbidden(Guild g){
@@ -109,13 +120,15 @@ public abstract class AbstractCommand implements Command {
         return prefix;
     }
 
+    /**
+     * Retourne true si l'utilisateur a les droits nécessaires, false le cas échéant
+     * @param message Message reçu
+     * @return true si l'utilisateur a les droits nécessaires, false le cas échéant
+     */
     protected boolean isUserHasEnoughRights(IMessage message){
-        return ! message.getChannel().isPrivate() &&
-                (message.getAuthor().getLongID() == Constants.authorId
-                || message.getAuthor().getLongID() == Constants.authorId2
+        return ! message.getChannel().isPrivate() && (message.getAuthor().getLongID() == Constants.authorId
                 || message.getAuthor().getPermissionsForGuild(message.getGuild()).contains(Permissions.MANAGE_SERVER)
                 || message.getChannel().getModifiedPermissions(message.getAuthor()).contains(Permissions.MANAGE_SERVER));
-
     }
 
     @Override

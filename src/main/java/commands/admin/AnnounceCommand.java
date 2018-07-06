@@ -28,39 +28,31 @@ public class AnnounceCommand extends AbstractCommand {
     }
 
     @Override
-    public boolean request(IMessage message) {
-        if (super.request(message)) {
-            Matcher m = getMatcher(message);
-            m.find();
-            Language lg = Translator.getLanguageFrom(message.getChannel());
-            String text = m.group(2).trim();
+    public void request(IMessage message, Matcher m, Language lg) {
+        String text = m.group(2).trim();
 
-            if (m.group(1) != null) {
-                for (IGuild guild : ClientConfig.DISCORD().getGuilds())
-                    try {
-                        if (guild.getDefaultChannel().getModifiedPermissions(ClientConfig.DISCORD().getOurUser())
-                                .contains(Permissions.SEND_MESSAGES))
-                            Message.sendText(guild.getDefaultChannel(), text);
-                        else
-                            Message.sendText(guild.getOwner().getOrCreatePMChannel(), text);
-                    } catch (DiscordException e) {
-                        LOG.warn("onReady", "Impossible de contacter l'administrateur de la guilde ["
-                                + guild.getName() + "].");
-                    } catch (Exception e2) {
-                        LOG.warn("onReady", e2);
-                    }
+        if (m.group(1) != null) {
+            for (IGuild guild : ClientConfig.DISCORD().getGuilds())
+                try {
+                    if (guild.getDefaultChannel().getModifiedPermissions(ClientConfig.DISCORD().getOurUser())
+                            .contains(Permissions.SEND_MESSAGES))
+                        Message.sendText(guild.getDefaultChannel(), text);
+                    else
+                        Message.sendText(guild.getOwner().getOrCreatePMChannel(), text);
+                } catch(DiscordException e){
+                    LOG.warn("onReady", "Impossible de contacter l'administrateur de la guilde ["
+                            + guild.getName() + "].");
+                } catch (Exception e2){
+                    LOG.warn("onReady", e2);
+                }
 
-                Message.sendText(message.getChannel(), Translator.getLabel(lg, "announce.request.1") + " "
-                        + ClientConfig.DISCORD().getGuilds().size() + " " + Translator.getLabel(lg, "announce.request.2")
-                        + (ClientConfig.DISCORD().getGuilds().size() > 1?"s":"") + "."
-                );
-            }
-            else
-                Message.sendText(message.getChannel(), text);
-
-            return true;
+            Message.sendText(message.getChannel(), Translator.getLabel(lg, "announce.request.1") + " "
+                    + ClientConfig.DISCORD().getGuilds().size() + " " + Translator.getLabel(lg, "announce.request.2")
+                    + (ClientConfig.DISCORD().getGuilds().size() > 1?"s":"") + "."
+            );
         }
-        return false;
+        else
+            Message.sendText(message.getChannel(), text);
     }
 
     @Override

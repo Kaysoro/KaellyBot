@@ -7,8 +7,6 @@ import commands.model.Command;
 import enums.Language;
 import util.Message;
 import exceptions.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import sx.blah.discord.handle.obj.IMessage;
 import util.Translator;
 
@@ -21,7 +19,6 @@ import java.util.regex.Matcher;
  */
 public class AvailableCommand extends AbstractCommand {
 
-    private final static Logger LOG = LoggerFactory.getLogger(AvailableCommand.class);
     private DiscordException tooMuchCmds;
     private DiscordException notFoundCmd;
     private DiscordException forbiddenCmdFound;
@@ -37,52 +34,46 @@ public class AvailableCommand extends AbstractCommand {
     }
 
     @Override
-    public boolean request(IMessage message) {
-        if (super.request(message)) {
-            Matcher m = getMatcher(message);
-            m.find();
-            Language lg = Translator.getLanguageFrom(message.getChannel());
-            List<Command> potentialCmds = new ArrayList<>();
-            String commandName = m.group(1).trim();
-            for (Command command : CommandManager.getCommands())
-                if (!command.isAdmin() && command.getName().contains(commandName))
-                    potentialCmds.add(command);
+    public void request(IMessage message, Matcher m, Language lg) {
+        List<Command> potentialCmds = new ArrayList<>();
+        String commandName = m.group(1).trim();
+        for (Command command : CommandManager.getCommands())
+            if (!command.isAdmin() && command.getName().contains(commandName))
+                potentialCmds.add(command);
 
-            if (potentialCmds.size() == 1){
-                Command command = potentialCmds.get(0);
-                String value = m.group(2);
+        if (potentialCmds.size() == 1){
+            Command command = potentialCmds.get(0);
+            String value = m.group(2);
 
-                if (command instanceof AvailableCommand || command instanceof AboutCommand){
-                    Message.sendText(message.getChannel(), Translator.getLabel(lg, "announce.request.1"));
-                    return false;
-                }
-                if (value.matches("false") || value.matches("1") || value.matches("off")){
-                    if (command.isPublic()) {
-                        command.setPublic(false);
-                        Message.sendText(message.getChannel(), Translator.getLabel(lg, "announce.request.2") + " *" + commandName
-                                + "* " + Translator.getLabel(lg, "announce.request.3"));
-                    }
-                    else
-                        forbiddenCmdFound.throwException(message, this, lg);
-                }
-                else if (value.matches("true") || value.matches("0") || value.matches("on")){
-                    if (! command.isPublic()) {
-                        command.setPublic(true);
-                        Message.sendText(message.getChannel(), Translator.getLabel(lg, "announce.request.2") + "*" + commandName
-                                + "* " + Translator.getLabel(lg, "announce.request.4"));
-                    }
-                    else
-                        forbiddenCmdNotFound.throwException(message, this, lg);
+            if (command instanceof AvailableCommand || command instanceof AboutCommand){
+                Message.sendText(message.getChannel(), Translator.getLabel(lg, "announce.request.1"));
+                return;
+            }
+            if (value.matches("false") || value.matches("1") || value.matches("off")){
+                if (command.isPublic()) {
+                    command.setPublic(false);
+                    Message.sendText(message.getChannel(), Translator.getLabel(lg, "announce.request.2") + " *" + commandName
+                            + "* " + Translator.getLabel(lg, "announce.request.3"));
                 }
                 else
-                    new BadUseCommandDiscordException().throwException(message, this, lg);
+                    forbiddenCmdFound.throwException(message, this, lg);
             }
-            else if (potentialCmds.isEmpty())
-                notFoundCmd.throwException(message, this, lg);
+            else if (value.matches("true") || value.matches("0") || value.matches("on")){
+                if (! command.isPublic()) {
+                    command.setPublic(true);
+                    Message.sendText(message.getChannel(), Translator.getLabel(lg, "announce.request.2") + "*" + commandName
+                            + "* " + Translator.getLabel(lg, "announce.request.4"));
+                }
+                else
+                    forbiddenCmdNotFound.throwException(message, this, lg);
+            }
             else
-                tooMuchCmds.throwException(message, this, lg);
+                badUse.throwException(message, this, lg);
         }
-        return false;
+        else if (potentialCmds.isEmpty())
+            notFoundCmd.throwException(message, this, lg);
+        else
+            tooMuchCmds.throwException(message, this, lg);
     }
 
     @Override

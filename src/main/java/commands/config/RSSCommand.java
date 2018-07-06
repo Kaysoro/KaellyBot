@@ -6,8 +6,6 @@ import enums.Language;
 import exceptions.*;
 import finders.RSSFinder;
 import util.Message;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import sx.blah.discord.handle.obj.IMessage;
 import util.Translator;
 
@@ -17,8 +15,6 @@ import java.util.regex.Matcher;
  * Created by steve on 14/07/2016.
  */
 public class RSSCommand extends AbstractCommand {
-
-    private final static Logger LOG = LoggerFactory.getLogger(RSSCommand.class);
 
     private DiscordException noEnoughRights;
     private DiscordException rssFound;
@@ -33,39 +29,33 @@ public class RSSCommand extends AbstractCommand {
     }
 
     @Override
-    public boolean request(IMessage message) {
-        if (super.request(message)) {
-            Language lg = Translator.getLanguageFrom(message.getChannel());
-            //On check si la personne a bien les droits pour exécuter cette commande
-            if (isUserHasEnoughRights(message)) {
-                Matcher m = getMatcher(message);
-                m.find();
-                String value = m.group(1);
+    public void request(IMessage message, Matcher m, Language lg) {
+        //On check si la personne a bien les droits pour exécuter cette commande
+        if (isUserHasEnoughRights(message)) {
+            String value = m.group(1);
 
-                if (value.matches("\\s+true") || value.matches("\\s+0") || value.matches("\\s+on")){
+            if (value.matches("\\s+true") || value.matches("\\s+0") || value.matches("\\s+on")){
 
-                    if (!RSSFinder.getRSSFinders().containsKey(message.getChannel().getStringID())) {
-                        new RSSFinder(message.getGuild().getStringID(), message.getChannel().getStringID()).addToDatabase();
-                        Message.sendText(message.getChannel(), Translator.getLabel(lg, "rss.request.1")
-                                .replace("{game.url}", Translator.getLabel(lg, "game.url")));
-                    }
-                    else
-                        rssFound.throwException(message, this, lg);
+                if (!RSSFinder.getRSSFinders().containsKey(message.getChannel().getStringID())) {
+                    new RSSFinder(message.getGuild().getStringID(), message.getChannel().getStringID()).addToDatabase();
+                    Message.sendText(message.getChannel(), Translator.getLabel(lg, "rss.request.1")
+                            .replace("{game.url}", Translator.getLabel(lg, "game.url")));
                 }
-                else if (value.matches("\\s+false") || value.matches("\\s+1") || value.matches("\\s+off"))
-                    if (RSSFinder.getRSSFinders().containsKey(message.getChannel().getStringID())){
-                        RSSFinder.getRSSFinders().get(message.getChannel().getStringID()).removeToDatabase();
-                        Message.sendText(message.getChannel(), Translator.getLabel(lg, "rss.request.2")
-                                .replace("{game.url}", Translator.getLabel(lg, "game.url")));
-                    }
-                    else
-                        rssNotFound.throwException(message, this, lg);
                 else
-                    new BadUseCommandDiscordException().throwException(message, this, lg);
-            } else
-                noEnoughRights.throwException(message, this, lg);
-        }
-        return false;
+                    rssFound.throwException(message, this, lg);
+            }
+            else if (value.matches("\\s+false") || value.matches("\\s+1") || value.matches("\\s+off"))
+                if (RSSFinder.getRSSFinders().containsKey(message.getChannel().getStringID())){
+                    RSSFinder.getRSSFinders().get(message.getChannel().getStringID()).removeToDatabase();
+                    Message.sendText(message.getChannel(), Translator.getLabel(lg, "rss.request.2")
+                            .replace("{game.url}", Translator.getLabel(lg, "game.url")));
+                }
+                else
+                    rssNotFound.throwException(message, this, lg);
+            else
+                badUse.throwException(message, this, lg);
+        } else
+            noEnoughRights.throwException(message, this, lg);
     }
 
     @Override

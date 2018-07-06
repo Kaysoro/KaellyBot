@@ -1,26 +1,30 @@
 package data;
 
 import enums.Job;
-import org.apache.commons.lang3.tuple.Triple;
+import enums.Language;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import util.Connexion;
-import util.Reporter;
+import sx.blah.discord.api.internal.json.objects.EmbedObject;
+import sx.blah.discord.handle.obj.IGuild;
+import sx.blah.discord.handle.obj.IUser;
+import sx.blah.discord.util.EmbedBuilder;
+import util.*;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.*;
 
 /**
  * Created by steve on 12/11/2016.
  */
-public class JobUser {
+public class JobUser implements Comparable<JobUser> {
 
     private final static Logger LOG = LoggerFactory.getLogger(JobUser.class);
-    private static Map<Triple<Long, ServerDofus, Job>, JobUser> jobs;
+    private static final int NUMBER_FIELD = 3;
+    private static MultiKeySearch<JobUser> jobs;
     private Job job;
     private long idUser;
     private int level;
@@ -65,8 +69,8 @@ public class JobUser {
 
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
-            Reporter.report(e);
-            LOG.error(e.getMessage());
+            Reporter.report(e, ClientConfig.DISCORD().getUserByID(idUser));
+            LOG.error("setLevel", e);
         }
     }
 
@@ -75,8 +79,8 @@ public class JobUser {
      */
     public synchronized void addToDatabase(){
 
-        if (! getJobs().containsKey(Triple.of(idUser, server, job)) && level > 0) {
-            getJobs().put(Triple.of(idUser, server, job), this);
+        if (! getJobs().containsKeys(idUser, server, job) && level > 0) {
+            getJobs().add(this, idUser, server, job);
             Connexion connexion = Connexion.getInstance();
             Connection connection = connexion.getConnection();
 
@@ -90,23 +94,27 @@ public class JobUser {
 
                 preparedStatement.executeUpdate();
             } catch (SQLException e) {
-                Reporter.report(e);
-                LOG.error(e.getMessage());
+                Reporter.report(e, ClientConfig.DISCORD().getUserByID(idUser));
+                LOG.error("addToDatabase", e);
             }
         }
     }
 
-    public int getLevel() {
+    private int getLevel() {
         return level;
     }
 
-    public ServerDofus getServer() {
+    private Job getJob() {
+        return job;
+    }
+
+    private ServerDofus getServer() {
         return server;
     }
 
-    private static synchronized Map<Triple<Long, ServerDofus, Job>, JobUser> getJobs(){
+    private static synchronized MultiKeySearch<JobUser> getJobs(){
         if(jobs == null){
-            jobs = new ConcurrentHashMap<>();
+            jobs = new MultiKeySearch<>(NUMBER_FIELD);
             Connexion connexion = Connexion.getInstance();
             Connection connection = connexion.getConnection();
 
@@ -120,11 +128,11 @@ public class JobUser {
                     ServerDofus server = ServerDofus.getServersMap().get(resultSet.getString("server_dofus"));
                     Job job = Job.getJob(resultSet.getString("name_job"));
                     int level = resultSet.getInt("level");
-                    jobs.put(Triple.of(idUser, server, job), new JobUser(idUser, server, job, level));
+                    jobs.add(new JobUser(idUser, server, job, level), idUser, server, job);
                 }
             } catch (SQLException e) {
                 Reporter.report(e);
-                LOG.error(e.getMessage());
+                LOG.error("getJobs", e);
             }
         }
 
@@ -132,15 +140,59 @@ public class JobUser {
     }
 
     /**
-     * Retourne le niveau du métier de l'utilisateur pour un serveur de jeu donné
-     * @param idUser ID de l'utilisateur
+     * @param user Joueur de la guilde
      * @param server Serveur dofus
-     * @param job Métier souhaité
-     * @return Un nombre compris entre 1 et 200 (s'il existe), 0 le cas échéant.
+     * @return Liste des résultats de la recherche
      */
-    public static int getJobLevel(long idUser, ServerDofus server, Job job){
-        if (getJobs().containsKey(Triple.of(idUser, server, job)))
-            return getJobs().get(Triple.of(idUser, server, job)).getLevel();
-        return 0;
+    public static List<EmbedObject> getJobsFromUser(IUser user, ServerDofus server, IGuild guild, Language lg){
+        List<JobUser> result = getJobs().get(user.getLongID(), server, null);
+        Collections.sort(result);
+        List<EmbedObject> embed = new ArrayList<>();
+
+        EmbedBuilder builder = new EmbedBuilder();
+        builder.withTitle(Translator.getLabel(lg, "job.user").replace("{user}", user.getDisplayName(guild)));
+        builder.withThumbnail(user.getAvatarURL());
+        builder.withColor(new Random().nextInt(16777216));
+
+        if (! result.isEmpty()) {
+            StringBuilder st = new StringBuilder();
+            for (JobUser jobUser : result)
+                st.append(jobUser.job.getLabel(lg)).append(" : ").append(jobUser.level).append("\n");
+            builder.appendField(Translator.getLabel(lg, "job.jobs"), st.toString(), true);
+        }
+        else
+            builder.withDescription(Translator.getLabel(lg, "job.empty"));
+        embed.add(builder.build());
+        return embed;
+    }
+
+    /**
+     * if JobUser instance contains keys
+     * @param user User id
+     * @param server Dofus server
+     * @param job Job (from Job enum)
+     * @return true if it contains
+     */
+    public static boolean containsKeys(long user, ServerDofus server, Job job){
+        return getJobs().containsKeys(user, server, job);
+    }
+
+
+    /**
+     * getData with all the keys
+     * @param user User id
+     * @param server Dofus server
+     * @param job Job (from Job enum)
+     * @return List of JobUser
+     */
+    public static List<JobUser> get(long user, ServerDofus server, Job job){
+        return getJobs().get(user, server, job);
+    }
+
+    @Override
+    public int compareTo(@NotNull JobUser o) {
+        return Comparator.comparingInt(JobUser::getLevel).reversed()
+                .thenComparing(JobUser::getJob)
+                .compare(this, o);
     }
 }

@@ -8,8 +8,6 @@ import exceptions.BasicDiscordException;
 import exceptions.DiscordException;
 import exceptions.NotFoundDiscordException;
 import exceptions.TooMuchDiscordException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import sx.blah.discord.handle.obj.IMessage;
 import util.Message;
 import util.Translator;
@@ -23,7 +21,6 @@ import java.util.regex.Matcher;
  */
 public class LanguageCommand extends AbstractCommand {
 
-    private final static Logger LOG = LoggerFactory.getLogger(LanguageCommand.class);
     private DiscordException tooMuchLangs;
     private DiscordException notFoundLang;
     private DiscordException noEnoughRights;
@@ -37,73 +34,64 @@ public class LanguageCommand extends AbstractCommand {
     }
 
     @Override
-    public boolean request(IMessage message) {
-        if (super.request(message)) {
-            Language lg = Translator.getLanguageFrom(message.getChannel());
-            Matcher m = getMatcher(message);
-            m.find();
+    public void request(IMessage message, Matcher m, Language lg) {
+        if (m.group(2) != null) { // Ajouts
+            if (isUserHasEnoughRights(message)) {
+                List<Language> langs = new ArrayList<>();
+                for(Language lang : Language.values())
+                    if (m.group(2).trim().toUpperCase().equals(lang.getAbrev()))
+                        langs.add(lang);
 
-            if (m.group(2) != null) { // Ajouts
-                if (isUserHasEnoughRights(message)) {
-                    List<Language> langs = new ArrayList<>();
-                    for(Language lang : Language.values())
-                        if (m.group(2).trim().toUpperCase().equals(lang.getAbrev()))
-                            langs.add(lang);
-
-                    if (langs.size() == 1) {
-                        if (m.group(1) == null) {
-                            Guild.getGuild(message.getGuild()).setLanguage(langs.get(0));
-                            lg = langs.get(0);
-                            Message.sendText(message.getChannel(), message.getGuild().getName()
-                                    + " " + Translator.getLabel(lg, "lang.request.1") + " " + langs.get(0));
-                        } else {
-                            ChannelLanguage chan = ChannelLanguage.getChannelLanguages().get(message.getChannel().getLongID());
-                            if (chan != null){
-                                if (chan.getLang().equals(langs.get(0))){
-                                    chan.removeToDatabase();
-                                    lg = Translator.getLanguageFrom(message.getChannel());
-                                    Message.sendText(message.getChannel(), message.getChannel().getName()
-                                            + " " + Translator.getLabel(lg, "lang.request.2") + " "
-                                            + Guild.getGuild(message.getGuild()).getLanguage());
-                                }
-                                else {
-                                    chan.setLanguage(langs.get(0));
-                                    lg = langs.get(0);
-                                    Message.sendText(message.getChannel(), message.getChannel().getName()
-                                            + " " + Translator.getLabel(lg, "lang.request.1") + " " + chan.getLang());
-                                }
+                if (langs.size() == 1) {
+                    if (m.group(1) == null) {
+                        Guild.getGuild(message.getGuild()).setLanguage(langs.get(0));
+                        lg = langs.get(0);
+                        Message.sendText(message.getChannel(), message.getGuild().getName()
+                                + " " + Translator.getLabel(lg, "lang.request.1") + " " + langs.get(0));
+                    } else {
+                        ChannelLanguage chan = ChannelLanguage.getChannelLanguages().get(message.getChannel().getLongID());
+                        if (chan != null){
+                            if (chan.getLang().equals(langs.get(0))){
+                                chan.removeToDatabase();
+                                lg = Translator.getLanguageFrom(message.getChannel());
+                                Message.sendText(message.getChannel(), message.getChannel().getName()
+                                        + " " + Translator.getLabel(lg, "lang.request.2") + " "
+                                        + Guild.getGuild(message.getGuild()).getLanguage());
                             }
                             else {
-                                chan = new ChannelLanguage(langs.get(0), message.getChannel().getLongID());
-                                chan.addToDatabase();
+                                chan.setLanguage(langs.get(0));
                                 lg = langs.get(0);
                                 Message.sendText(message.getChannel(), message.getChannel().getName()
                                         + " " + Translator.getLabel(lg, "lang.request.1") + " " + chan.getLang());
                             }
                         }
+                        else {
+                            chan = new ChannelLanguage(langs.get(0), message.getChannel().getLongID());
+                            chan.addToDatabase();
+                            lg = langs.get(0);
+                            Message.sendText(message.getChannel(), message.getChannel().getName()
+                                    + " " + Translator.getLabel(lg, "lang.request.1") + " " + chan.getLang());
+                        }
                     }
-                    else if (langs.isEmpty())
-                        notFoundLang.throwException(message, this, lg);
-                    else
-                        tooMuchLangs.throwException(message, this, lg);
-
-                } else {
-                    noEnoughRights.throwException(message, this, lg);
-                    return false;
                 }
-            }
-            else { // Consultation
-                String text = "**" + message.getGuild().getName() + "** " + Translator.getLabel(lg, "lang.request.3")
-                        + " " + Guild.getGuild(message.getGuild()).getLanguage() + ".";
+                else if (langs.isEmpty())
+                    notFoundLang.throwException(message, this, lg);
+                else
+                    tooMuchLangs.throwException(message, this, lg);
 
-                ChannelLanguage chanLang = ChannelLanguage.getChannelLanguages().get(message.getChannel().getLongID());
-                if (chanLang != null)
-                    text += "\nLe salon *" + message.getChannel().getName() + "* " + Translator.getLabel(lg, "lang.request.3")
-                    + " " + chanLang.getLang() + ".";
-                Message.sendText(message.getChannel(), text);
-            }
+            } else
+                noEnoughRights.throwException(message, this, lg);
         }
-        return false;
+        else { // Consultation
+            String text = "**" + message.getGuild().getName() + "** " + Translator.getLabel(lg, "lang.request.3")
+                    + " " + Guild.getGuild(message.getGuild()).getLanguage() + ".";
+
+            ChannelLanguage chanLang = ChannelLanguage.getChannelLanguages().get(message.getChannel().getLongID());
+            if (chanLang != null)
+                text += "\nLe salon *" + message.getChannel().getName() + "* " + Translator.getLabel(lg, "lang.request.3")
+                        + " " + chanLang.getLang() + ".";
+            Message.sendText(message.getChannel(), text);
+        }
     }
 
     @Override
@@ -114,8 +102,7 @@ public class LanguageCommand extends AbstractCommand {
         st.setLength(st.length() - 2);
         st.append(").");
 
-        return "**" + prefixe + name + "** " + Translator.getLabel(lg, "lang.help.1") + st.toString() + " "
-                + Translator.getLabel(lg, "lang.help.2");
+        return "**" + prefixe + name + "** " + Translator.getLabel(lg, "lang.help") + st.toString();
     }
 
     @Override

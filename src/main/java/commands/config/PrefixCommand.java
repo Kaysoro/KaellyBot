@@ -33,37 +33,30 @@ public class PrefixCommand extends AbstractCommand {
     }
 
     @Override
-    public boolean request(IMessage message) {
-        if (super.request(message)) {
-            Language lg = Translator.getLanguageFrom(message.getChannel());
+    public void request(IMessage message, Matcher m, Language lg) {
+        if (isUserHasEnoughRights(message)) {
+            String newPrefix = m.group(1).trim();
 
-            if (isUserHasEnoughRights(message)) {
-                Matcher m = getMatcher(message);
-                m.find();
-                String newPrefix = m.group(1).trim();
-
-                if (newPrefix.length() >= 1 && newPrefix.length() <= Constants.prefixeLimit) {
-                    Guild.getGuild(message.getGuild()).setPrefix(newPrefix);
-                    Message.sendText(message.getChannel(), Translator.getLabel(lg, "prefix.request.1")
+            if (newPrefix.length() >= 1 && newPrefix.length() <= Constants.prefixeLimit) {
+                Guild.getGuild(message.getGuild()).setPrefix(newPrefix);
+                Message.sendText(message.getChannel(), Translator.getLabel(lg, "prefix.request.1")
                         .replace("{prefix}", getPrefixMdEscaped(message)));
-                    try {
-                        Message.sendText(message.getGuild().getOwner().getOrCreatePMChannel(),
-                                Translator.getLabel(lg, "prefix.request.2")
-                                        .replace("{prefix}", getPrefixMdEscaped(message))
-                                        .replace("{guild.name}", message.getGuild().getName()));
-                    } catch (DiscordException e) {
-                        LOG.warn("request", "Impossible de contacter l'administrateur de la guide ["
-                                + message.getGuild().getName() + "].");
-                    }
-                    return true;
+
+                try {
+                    Message.sendText(message.getGuild().getOwner().getOrCreatePMChannel(),
+                            Translator.getLabel(lg, "prefix.request.2")
+                                    .replace("{prefix}", getPrefixMdEscaped(message))
+                                    .replace("{guild.name}", message.getGuild().getName()));
+                } catch (DiscordException e){
+                    LOG.warn("request", "Impossible de contacter l'administrateur de la guilde ["
+                            + message.getGuild().getName() + "].");
                 }
-                else
-                    prefixeOutOfBounds.throwException(message, this, lg);
             }
             else
-                noEnoughRights.throwException(message, this, lg);
+                prefixeOutOfBounds.throwException(message, this, lg);
         }
-        return false;
+        else
+            noEnoughRights.throwException(message, this, lg);
     }
 
     @Override
@@ -74,7 +67,7 @@ public class PrefixCommand extends AbstractCommand {
     @Override
     public String helpDetailed(Language lg, String prefixe) {
         return help(lg, prefixe)
-                + "\n" + prefixe + "`"  + name + " `*`prefixe`* : " + Translator.getLabel(lg, "prefix.help.detailed")
+                + "\n" + prefixe + "`"  + name + " `*`prefix`* : " + Translator.getLabel(lg, "prefix.help.detailed")
                 .replace("{prefixeLimit}", String.valueOf(Constants.prefixeLimit)) + "\n";
     }
 }

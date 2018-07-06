@@ -9,8 +9,6 @@ import enums.TypeEquipment;
 import exceptions.*;
 import sx.blah.discord.handle.obj.Permissions;
 import util.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import sx.blah.discord.handle.obj.IMessage;
 
 import java.io.IOException;
@@ -24,7 +22,6 @@ import java.util.regex.Matcher;
  */
 public class ItemCommand extends DofusEncyclopediaRequestCommand {
 
-    private final static Logger LOG = LoggerFactory.getLogger(ItemCommand.class);
     private final static String forName = "text=";
     private final static String forLevelMin = "object_level_min=";
     private final static String levelMin = "1";
@@ -45,52 +42,42 @@ public class ItemCommand extends DofusEncyclopediaRequestCommand {
     }
 
     @Override
-    public boolean request(IMessage message) {
-        if (super.request(message)){
-            Matcher m = getMatcher(message);
-            Language lg = Translator.getLanguageFrom(message.getChannel());
-            m.find();
-            if (message.getChannel().getModifiedPermissions(ClientConfig.DISCORD().getOurUser()).contains(Permissions.USE_EXTERNAL_EMOJIS)
-                    && ClientConfig.DISCORD().getOurUser().getPermissionsForGuild(message.getGuild())
-                    .contains(Permissions.USE_EXTERNAL_EMOJIS)) {
-                String normalName = Normalizer.normalize(m.group(2).trim(), Normalizer.Form.NFD)
-                        .replaceAll("\\p{InCombiningDiacriticalMarks}+", "").toLowerCase();
-                BestMatcher matcher = new BestMatcher(normalName);
+    public void request(IMessage message, Matcher m, Language lg) {
+        if (message.getChannel().getModifiedPermissions(ClientConfig.DISCORD().getOurUser()).contains(Permissions.USE_EXTERNAL_EMOJIS)
+                && ClientConfig.DISCORD().getOurUser().getPermissionsForGuild(message.getGuild())
+                .contains(Permissions.USE_EXTERNAL_EMOJIS)) {
+            String normalName = Normalizer.normalize(m.group(2).trim(), Normalizer.Form.NFD)
+                    .replaceAll("\\p{InCombiningDiacriticalMarks}+", "").toLowerCase();
+            BestMatcher matcher = new BestMatcher(normalName);
 
-                try {
-                    for (TypeEquipment equip : TypeEquipment.values()) {
-                        String[] names = equip.getNames(lg);
-                        gatherData(message, matcher, names, normalName, equip, notFoundItem);
-                    }
-
-                    if (matcher.isEmpty())
-                        for (SuperTypeEquipment type : SuperTypeEquipment.values())
-                            matcher.evaluateAll(getListRequestableFrom(
-                                    getSearchURL(type.getUrl(lg), normalName, null, lg), message, notFoundItem));
-
-                    if (matcher.isUnique()) { // We have found it !
-                        Embedded item = Item.getItem(lg, Translator.getLabel(lg, "game.url")
-                                + matcher.getBest().getUrl());
-                        if (m.group(1) != null)
-                            Message.sendEmbed(message.getChannel(), item.getMoreEmbedObject(lg));
-                        else
-                            Message.sendEmbed(message.getChannel(), item.getEmbedObject(lg));
-                    } else if (!matcher.isEmpty()) // Too much items
-                        tooMuchItems.throwException(message, this, lg, matcher.getBests());
-                    else // empty
-                        notFoundItem.throwException(message, this, lg);
-                } catch (IOException e) {
-                    ExceptionManager.manageIOException(e, message, this, lg, notFoundItem);
+            try {
+                for (TypeEquipment equip : TypeEquipment.values()) {
+                    String[] names = equip.getNames(lg);
+                    gatherData(message, matcher, names, normalName, equip, notFoundItem);
                 }
 
-                return true;
+                if (matcher.isEmpty())
+                    for (SuperTypeEquipment type : SuperTypeEquipment.values())
+                        matcher.evaluateAll(getListRequestableFrom(
+                                getSearchURL(type.getUrl(lg), normalName, null, lg), message, notFoundItem));
+
+                if (matcher.isUnique()) { // We have found it !
+                    Embedded item = Item.getItem(lg, Translator.getLabel(lg, "game.url")
+                            + matcher.getBest().getUrl());
+                    if (m.group(1) != null)
+                        Message.sendEmbed(message.getChannel(), item.getMoreEmbedObject(lg));
+                    else
+                        Message.sendEmbed(message.getChannel(), item.getEmbedObject(lg));
+                } else if (!matcher.isEmpty()) // Too much items
+                    tooMuchItems.throwException(message, this, lg, matcher.getBests());
+                else // empty
+                    notFoundItem.throwException(message, this, lg);
+            } catch (IOException e) {
+                ExceptionManager.manageIOException(e, message, this, lg, notFoundItem);
             }
-            else
-                noExternalEmojiPermission.throwException(message, this, lg);
         }
-
-
-        return false;
+        else
+            noExternalEmojiPermission.throwException(message, this, lg);
     }
 
     protected String getSearchURL(String SuperTypeURL, String text, String typeArg, Language lg) throws UnsupportedEncodingException {

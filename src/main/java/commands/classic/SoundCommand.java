@@ -1,7 +1,6 @@
 package commands.classic;
 
 import commands.model.AbstractCommand;
-import data.Constants;
 import enums.Language;
 import util.ClientConfig;
 import exceptions.*;
@@ -44,55 +43,48 @@ public class SoundCommand extends AbstractCommand {
     }
 
     @Override
-    public boolean request(IMessage message) {
-        Language lg = Translator.getLanguageFrom(message.getChannel());
-        if (super.request(message)) {
-            try {
-                IVoiceChannel voice = message.getAuthor().getVoiceStateForGuild(message.getGuild()).getChannel();
+    public void request(IMessage message, Matcher m, Language lg) {
+        try {
+            IVoiceChannel voice = message.getAuthor().getVoiceStateForGuild(message.getGuild()).getChannel();
 
-                if (voice == null)
-                    notInVocalChannel.throwException(message, this, lg);
+            if (voice == null)
+                notInVocalChannel.throwException(message, this, lg);
+            else {
+                if (!voice.getModifiedPermissions(ClientConfig.DISCORD().getOurUser()).contains(Permissions.VOICE_CONNECT)
+                        || !ClientConfig.DISCORD().getOurUser().getPermissionsForGuild(message.getGuild())
+                        .contains(Permissions.VOICE_CONNECT))
+                    noVoiceConnect.throwException(message, this, lg);
+                else if (voice.getConnectedUsers().size() >= voice.getUserLimit() && voice.getUserLimit() != 0)
+                    channelLimit.throwException(message, this, lg);
                 else {
-                    if (!voice.getModifiedPermissions(ClientConfig.DISCORD().getOurUser()).contains(Permissions.VOICE_CONNECT)
-                            || !ClientConfig.DISCORD().getOurUser().getPermissionsForGuild(message.getGuild())
-                            .contains(Permissions.VOICE_CONNECT))
-                        noVoiceConnect.throwException(message, this, lg);
-                    else if (voice.getConnectedUsers().size() >= voice.getUserLimit() && voice.getUserLimit() != 0)
-                        channelLimit.throwException(message, this, lg);
-                    else {
-                        try {
-                            Matcher m = getMatcher(message);
-                            m.find();
-                            if (m.group(1) != null) { // Specific sound
-                                String value = m.group(1).trim().toLowerCase();
-                                List<File> files = new ArrayList<>();
-                                for (File file : getSounds())
-                                    if (file.getName().toLowerCase().startsWith(value))
-                                        files.add(file);
+                    try {
+                        if (m.group(1) != null) { // Specific sound
+                            String value = m.group(1).trim().toLowerCase();
+                            List<File> files = new ArrayList<>();
+                            for (File file : getSounds())
+                                if (file.getName().toLowerCase().startsWith(value))
+                                    files.add(file);
 
-                                if (!files.isEmpty()) {
-                                    File file = files.get(new Random().nextInt(files.size()));
-                                    playSound(voice, message, file);
-                                } else
-                                    notFoundSound.throwException(message, this, lg);
-                            } else { // random sound
-
-                                File file = getSounds().get(new Random().nextInt(getSounds().size()));
+                            if (!files.isEmpty()) {
+                                File file = files.get(new Random().nextInt(files.size()));
                                 playSound(voice, message, file);
-                            }
+                            } else
+                                notFoundSound.throwException(message, this, lg);
+                        } else { // random sound
 
-                        } catch (MissingPermissionsException e) {
-                            noVoiceConnect.throwException(message, this, lg);
+                            File file = getSounds().get(new Random().nextInt(getSounds().size()));
+                            playSound(voice, message, file);
                         }
+
+                    } catch (MissingPermissionsException e) {
+                        noVoiceConnect.throwException(message, this, lg);
                     }
                 }
-            } catch (Exception e){
-                Reporter.report(e, message.getGuild(), message.getChannel(), message.getAuthor(), message);
-                LOG.error("request", e);
             }
+        } catch(Exception e){
+            Reporter.report(e, message.getGuild(), message.getChannel(), message.getAuthor(), message);
+            LOG.error("request", e);
         }
-
-        return true;
     }
 
     private void playSound(IVoiceChannel voice, IMessage message, File file) {
@@ -108,18 +100,14 @@ public class SoundCommand extends AbstractCommand {
 
     private List<File> getSounds(){
         if (sounds == null) {
-            File file;
-            if (! Constants.database_path.trim().isEmpty()) {
-                file = new File(Constants.sound_path + File.separator + "sounds");
-            } else {
-                file = new File(System.getProperty("user.dir") + File.separator + "sounds");
-            }
+            File file = new File(System.getProperty("user.dir") + File.separator + "sounds");
             FilenameFilter filter = (File dir, String name) -> name.toLowerCase().endsWith(".mp3");
 
-            if (file.listFiles(filter) == null)
-                sounds = new ArrayList<>();
+            File[] files = file.listFiles(filter);
+            if (files != null)
+                sounds = Arrays.asList(files);
             else
-                sounds = Arrays.asList(file.listFiles(filter));
+                sounds = new ArrayList<>();
         }
         Collections.sort(sounds);
         return sounds;
@@ -135,15 +123,15 @@ public class SoundCommand extends AbstractCommand {
         StringBuilder st = new StringBuilder("\n```");
 
         List<File> sounds = getSounds();
-        long sizemax = 0;
+        long sizeMax = 0;
 
         for(File f : sounds)
-            if (f.getName().replaceFirst("[.][^.]+$", "").length() > sizemax)
-                sizemax = f.getName().replaceFirst("[.][^.]+$", "").length();
+            if (f.getName().replaceFirst("[.][^.]+$", "").length() > sizeMax)
+                sizeMax = f.getName().replaceFirst("[.][^.]+$", "").length();
 
         for(File f : sounds) {
             st.append(f.getName().replaceFirst("[.][^.]+$", ""));
-            for(int i = 0 ; i < sizemax-f.getName().replaceFirst("[.][^.]+$", "").length() ; i++)
+            for(int i = 0 ; i < sizeMax-f.getName().replaceFirst("[.][^.]+$", "").length() ; i++)
                 st.append(" ");
             st.append("\t");
         }

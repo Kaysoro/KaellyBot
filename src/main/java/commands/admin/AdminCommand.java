@@ -8,8 +8,6 @@ import enums.Language;
 import exceptions.DiscordException;
 import exceptions.NotFoundDiscordException;
 import util.Message;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import sx.blah.discord.handle.obj.IMessage;
 import util.Translator;
 
@@ -20,7 +18,6 @@ import java.util.regex.Matcher;
  */
 public class AdminCommand extends AbstractCommand {
 
-    private final static Logger LOG = LoggerFactory.getLogger(AdminCommand.class);
     private DiscordException notFound;
 
     public AdminCommand(){
@@ -30,31 +27,25 @@ public class AdminCommand extends AbstractCommand {
     }
 
     @Override
-    public boolean request(IMessage message) {
-        if (super.request(message)) {
-            String prefixe = getPrefixMdEscaped(message);
-            Language lg = Translator.getLanguageFrom(message.getChannel());
-            Matcher m = getMatcher(message);
-            m.find();
-            StringBuilder st = new StringBuilder();
-            boolean argumentFound = m.group(1) != null && m.group(1).replaceAll("^\\s+", "").length() > 0;
-            for (Command command : CommandManager.getCommands())
-                if (command.isAdmin()) {
-                    if (!argumentFound)
-                        st.append(command.help(lg, prefixe)).append("\n");
-                    else if (command.getName().equals(m.group(1).trim())) {
-                        st.append(command.helpDetailed(lg, prefixe));
-                        break;
-                    }
-                }
+    public void request(IMessage message, Matcher m, Language lg) {
+        String prefix = getPrefixMdEscaped(message);
 
-            if (argumentFound && st.length() == 0)
-                notFound.throwException(message, this, lg);
-            else
-                Message.sendText(message.getChannel(), st.toString());
-            return true;
-        }
-        return false;
+        StringBuilder st = new StringBuilder();
+        boolean argumentFound = m.group(1) != null && m.group(1).replaceAll("^\\s+", "").length() > 0;
+        for (Command command : CommandManager.getCommands())
+            if (command.isAdmin()) {
+                if (!argumentFound)
+                    st.append(command.help(lg, prefix)).append("\n");
+                else if (command.getName().equals(m.group(1).trim())) {
+                    st.append(command.helpDetailed(lg, prefix));
+                    break;
+                }
+            }
+
+        if (argumentFound && st.length() == 0)
+            notFound.throwException(message, this, lg);
+        else
+            Message.sendText(message.getChannel(), st.toString());
     }
 
     @Override
