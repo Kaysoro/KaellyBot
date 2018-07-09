@@ -45,7 +45,7 @@ public class SetCommand extends DofusRequestCommand {
                 matcher.evaluateAll(getListRequestableFrom(getSearchURL(lg, editedName), message, notFoundSet));
 
                 if (matcher.isUnique()) { // We have found it !
-                    Embedded set = Set.getSet(lg, Translator.getLabel(lg, "game.url")
+                    Embedded set = SetDofus.getSet(lg, Translator.getLabel(lg, "game.url")
                             + matcher.getBest().getUrl());
                     if (m.group(1) != null)
                         Message.sendEmbed(message.getChannel(), set.getMoreEmbedObject(lg));

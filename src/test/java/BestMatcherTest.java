@@ -7,7 +7,7 @@ import util.Requestable;
 import java.util.ArrayList;
 
 import static junit.framework.TestCase.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 /**
  * Created by steve on 08/11/2016.
@@ -30,7 +30,7 @@ public class BestMatcherTest {
     public void testEmptySize(){
         assertTrue(collection.isEmpty());
         assertTrue(collection.getBests().isEmpty());
-        assertTrue(collection.getBest() == null);
+        assertNull(collection.getBest());
         assertFalse(collection.isUnique());
     }
 
@@ -38,8 +38,8 @@ public class BestMatcherTest {
     public void testOneElement(){
         Requestable requestable = new Requestable("test", "http://test.tst");
         collection.evaluate(requestable);
-        assertTrue(collection.getBests().size() == 1);
-        assertTrue(collection.getBest() == requestable);
+        assertEquals(collection.getBests().size(), 1);
+        assertSame(collection.getBest(), requestable);
         assertTrue(collection.isUnique());
         assertFalse(collection.isEmpty());
     }
@@ -54,8 +54,8 @@ public class BestMatcherTest {
         collection.evaluate(requestable);
         collection.evaluate(bar);
 
-        assertTrue(collection.getBests().size() == 1);
-        assertTrue(collection.getBest() == requestable);
+        assertEquals(collection.getBests().size(), 1);
+        assertSame(collection.getBest(), requestable);
         assertTrue(collection.isUnique());
         assertFalse(collection.isEmpty());
     }
@@ -70,8 +70,8 @@ public class BestMatcherTest {
         collection.evaluate(test2);
         collection.evaluate(test3);
 
-        assertTrue(collection.getBests().size() == 3);
-        assertTrue(collection.getBest() == null);
+        assertSame(collection.getBests().size(), 3);
+        assertNull(collection.getBest());
         assertFalse(collection.isUnique());
         assertFalse(collection.isEmpty());
     }
@@ -86,8 +86,8 @@ public class BestMatcherTest {
         collection.evaluate(test);
         collection.evaluate(test3);
 
-        assertTrue(collection.getBests().size() == 1);
-        assertTrue(collection.getBest() == test);
+        assertEquals(collection.getBests().size(), 1);
+        assertSame(collection.getBest(), test);
         assertTrue(collection.isUnique());
         assertFalse(collection.isEmpty());
     }
@@ -102,8 +102,8 @@ public class BestMatcherTest {
         collection.evaluate(bad);
         collection.evaluate(test3);
 
-        assertTrue(collection.getBests().size() == 2);
-        assertTrue(collection.getBest() == null);
+        assertEquals(collection.getBests().size(), 2);
+        assertNull(collection.getBest());
         assertFalse(collection.isUnique());
         assertFalse(collection.isEmpty());
     }
@@ -112,8 +112,8 @@ public class BestMatcherTest {
     public void testEvaluateAllEmpty(){
         collection.evaluateAll(new ArrayList<>());
 
-        assertTrue(collection.getBests().size() == 0);
-        assertTrue(collection.getBest() == null);
+        assertEquals(collection.getBests().size(), 0);
+        assertNull(collection.getBest());
         assertFalse(collection.isUnique());
         assertTrue(collection.isEmpty());
     }
@@ -127,8 +127,8 @@ public class BestMatcherTest {
                 new Requestable("TEST4", "http://test4.tst")
         );
 
-        assertTrue(collection.getBests().size() == 4);
-        assertTrue(collection.getBest() == null);
+        assertEquals(collection.getBests().size(), 4);
+        assertNull(collection.getBest());
         assertFalse(collection.isUnique());
         assertFalse(collection.isEmpty());
     }

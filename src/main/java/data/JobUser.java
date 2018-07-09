@@ -2,12 +2,12 @@ package data;
 
 import enums.Job;
 import enums.Language;
-import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sx.blah.discord.api.internal.json.objects.EmbedObject;
 import sx.blah.discord.handle.obj.IGuild;
 import sx.blah.discord.handle.obj.IUser;
+import sx.blah.discord.handle.obj.StatusType;
 import sx.blah.discord.util.EmbedBuilder;
 import util.*;
 
@@ -20,16 +20,13 @@ import java.util.*;
 /**
  * Created by steve on 12/11/2016.
  */
-public class JobUser implements Comparable<JobUser> {
+public class JobUser extends ObjectUser {
 
     private final static Logger LOG = LoggerFactory.getLogger(JobUser.class);
+    private static final String JOB_PREFIX = "job";
     private static final int NUMBER_FIELD = 3;
     private static MultiKeySearch<JobUser> jobs;
     private Job job;
-    private long idUser;
-    private int level;
-    private ServerDofus server;
-
 
     public JobUser(long idUser, ServerDofus server, Job job, int level){
         this.job = job;
@@ -100,16 +97,8 @@ public class JobUser implements Comparable<JobUser> {
         }
     }
 
-    private int getLevel() {
-        return level;
-    }
-
     private Job getJob() {
         return job;
-    }
-
-    private ServerDofus getServer() {
-        return server;
     }
 
     private static synchronized MultiKeySearch<JobUser> getJobs(){
@@ -146,7 +135,7 @@ public class JobUser implements Comparable<JobUser> {
      */
     public static List<EmbedObject> getJobsFromUser(IUser user, ServerDofus server, IGuild guild, Language lg){
         List<JobUser> result = getJobs().get(user.getLongID(), server, null);
-        Collections.sort(result);
+        result.sort(JobUser::compare);
         List<EmbedObject> embed = new ArrayList<>();
 
         EmbedBuilder builder = new EmbedBuilder();
@@ -164,6 +153,40 @@ public class JobUser implements Comparable<JobUser> {
             builder.withDescription(Translator.getLabel(lg, "job.empty"));
         embed.add(builder.build());
         return embed;
+    }
+
+    /**
+     * @param users Joueurs de la guilde
+     * @param server Serveur dofus
+     * @param jobs Métiers
+     * @param level Niveau; si ingérieur à 0, filtre ignoré
+     * @return Liste des résultats de la recherche
+     */
+    public static List<EmbedObject> getJobsFromFilters(List<IUser> users, ServerDofus server, Set<Job> jobs,
+                                                       int level, IGuild guild, Language lg){
+        List<JobUser> result = new ArrayList<>();
+        for(IUser user : users)
+            if (user.getPresence().getStatus() != StatusType.OFFLINE && ! user.isBot()){
+                for(Job job : jobs) {
+                    List<JobUser> potentials = getJobs().get(user.getLongID(), server, job);
+                    if (level > 0) {
+                        for (JobUser potential : potentials)
+                            if (potential.getLevel() >= level)
+                                result.add(potential);
+                    } else
+                        result.addAll(potentials);
+                }
+            }
+        result.sort(JobUser::compare);
+        return getPlayersList(result, guild, lg, JOB_PREFIX);
+    }
+
+    @Override
+    protected String displayLine(IGuild guild, Language lg) {
+        IUser user = ClientConfig.DISCORD().getUserByID(idUser);
+        return EmojiManager.getEmojiForPresence(user.getPresence().getStatus()) + " "
+                + job.getLabel(lg) + ", " + level + " : **"
+                + user.getDisplayName(guild) + "**\n";
     }
 
     /**
@@ -189,10 +212,9 @@ public class JobUser implements Comparable<JobUser> {
         return getJobs().get(user, server, job);
     }
 
-    @Override
-    public int compareTo(@NotNull JobUser o) {
+    private static int compare(JobUser jobUser1, JobUser jobUser2){
         return Comparator.comparingInt(JobUser::getLevel).reversed()
                 .thenComparing(JobUser::getJob)
-                .compare(this, o);
+                .compare(jobUser1, jobUser2);
     }
 }

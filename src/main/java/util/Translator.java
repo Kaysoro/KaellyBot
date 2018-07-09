@@ -1,6 +1,5 @@
 package util;
 
-import com.google.common.base.Optional;
 import com.optimaize.langdetect.LanguageDetector;
 import com.optimaize.langdetect.LanguageDetectorBuilder;
 import com.optimaize.langdetect.i18n.LdLocale;
@@ -41,7 +40,7 @@ public class Translator {
 
                 List<LanguageProfile> languageProfiles = new LanguageProfileReader().read(languages);
                 languageDetector = LanguageDetectorBuilder.create(NgramExtractors.standard())
-                                .withProfiles(languageProfiles).build();
+                        .withProfiles(languageProfiles).build();
             }
             catch (IOException e) {
                 LoggerFactory.getLogger(Translator.class).error("Translator.getLanguageDetector", e);
@@ -50,6 +49,11 @@ public class Translator {
         return languageDetector;
     }
 
+    /**
+     * Fournit la langue utilisée dans un salon textuel
+     * @param channel Salon textuel
+     * @return Langue de la guilde ou du salon si précisé
+     */
     public static Language getLanguageFrom(IChannel channel){
         Language result = Constants.defaultLanguage;
         if (! channel.isPrivate()) {
@@ -62,6 +66,11 @@ public class Translator {
         return result;
     }
 
+    /**
+     * Génère une liste de source formatée à partir d'un salon textuel
+     * @param channel Salon d'origine
+     * @return Liste de message éligibles à une reconnaissance de langue
+     */
     private static List<String> getReformatedMessages(IChannel channel){
         List<String> result = new ArrayList<>();
 
@@ -76,55 +85,57 @@ public class Translator {
         return result;
     }
 
-    public static Language getLanguageFrom(String source){
+    /**
+     * Détermine une langue à partir d'une source textuelle
+     * @param source Source textuelle
+     * @return Langue majoritaire détectée au sein de la source
+     */
+    private static Language getLanguageFrom(String source){
         TextObject textObject = CommonTextObjectFactories.forDetectingOnLargeText().forText(source);
-        Optional<LdLocale> lang = getLanguageDetector().detect(textObject);
-        if (lang.isPresent())
-            for(Language lg : Language.values())
-                if(lang.get().getLanguage().equals(lg.getAbrev().toLowerCase()))
-                    return lg;
-        return null;
+        LdLocale lang = getLanguageDetector().detect(textObject)
+                .or(LdLocale.fromString(Constants.defaultLanguage.getAbrev().toLowerCase()));
+
+        for(Language lg : Language.values())
+            if(lang.getLanguage().equals(lg.getAbrev().toLowerCase()))
+                return lg;
+        return Constants.defaultLanguage;
     }
 
+    /**
+     * Détecte la langue majoritaire utilisée dans un salon textuel
+     * @param channel Salon textuel à étudier
+     * @return Langue majoritaire (ou Constants.defaultLanguage si non trouvée)
+     */
     public static Language detectLanguage(IChannel channel){
-        Language result = Constants.defaultLanguage;
-        Map<Language, Integer> languages = new HashMap<>();
+        Map<Language, LanguageOccurrence> languages = new HashMap<>();
         for(Language lang : Language.values())
-            languages.put(lang, 0);
-        languages.put(null, 0);
-        List<String> sources = getReformatedMessages(channel);
-        for (String source : sources){
-            Language lg = getLanguageFrom(source);
-            languages.put(lg, languages.get(lg) + 1);
-        }
-        Map.Entry<Language, Integer> better = null;
-        for (Map.Entry<Language, Integer> chosenLanguage : languages.entrySet()){
-            if (better == null)
-                better = chosenLanguage;
-            if (better.getValue() < chosenLanguage.getValue())
-                better = chosenLanguage;
-        }
+            languages.put(lang, LanguageOccurrence.of(lang));
 
-        try {
-            if (better.getKey() != null)
-                return better.getKey();
-        } catch(NullPointerException e){
-            LoggerFactory.getLogger(Translator.class).warn("Translator.detectLanguage", e);
-        }
-        return result;
+        List<String> sources = getReformatedMessages(channel);
+        for (String source : sources)
+            languages.get(getLanguageFrom(source)).increment();
+
+        return languages.entrySet().stream()
+                .map(Map.Entry::getValue)
+                .max(Comparator.comparingInt(LanguageOccurrence::getOccurrence))
+                .orElse(LanguageOccurrence.DEFAULT_LANGUAGE).getLanguage();
     }
 
+    /**
+     * Fournit un libellé dans la langue choisi, pour un code donné
+     * @param lang Language du libellé
+     * @param property code du libellé
+     * @return Libellé correspondant au code, dans la langue choisie
+     */
     public synchronized static String getLabel(Language lang, String property){
         if (labels == null){
             labels = new ConcurrentHashMap<>();
 
             for(Language language : Language.values())
                 try(InputStream file = Translator.class.getResourceAsStream("/label_" + language.getAbrev())) {
-
                     Properties prop = new Properties();
                     prop.load(new BufferedReader(new InputStreamReader(file, StandardCharsets.UTF_8)));
                     labels.put(language, prop);
-
                 } catch (IOException e) {
                     LoggerFactory.getLogger(Translator.class).error("Translator.getLabel", e);
                 }
@@ -139,5 +150,40 @@ public class Translator {
             else
                 return property;
         return value;
+    }
+
+    /**
+     * Classe dédiée à la détection de la langue la plus utilisée au sein d'un salon textuel
+     */
+    private static class LanguageOccurrence {
+        private final static LanguageOccurrence DEFAULT_LANGUAGE = of(Constants.defaultLanguage);
+        private final static int DEFAULT_VALUE = 0;
+        private Language language;
+        private int occurrence;
+
+        private LanguageOccurrence(Language language, int occurrence){
+            this.language = language;
+            this.occurrence = occurrence;
+        }
+
+        private static LanguageOccurrence of(Language language){
+            return new LanguageOccurrence(language, DEFAULT_VALUE);
+        }
+
+        public Language getLanguage(){
+            return language;
+        }
+
+        private int getOccurrence(){
+            return occurrence;
+        }
+
+        private void increment(){
+            occurrence++;
+        }
+
+        public boolean equals(LanguageOccurrence lgo){
+            return language.equals(lgo.language);
+        }
     }
 }

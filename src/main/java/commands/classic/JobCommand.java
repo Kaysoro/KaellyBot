@@ -22,6 +22,8 @@ import java.util.regex.Pattern;
  */
 public class JobCommand extends FetchCommand {
 
+    private final static int MAX_JOB_DISPLAY = 3;
+
     public JobCommand(){
         super("job", "(.*)");
         setUsableInMP(false);
@@ -134,9 +136,53 @@ public class JobCommand extends FetchCommand {
             } else
                 badUse.throwException(message, this, lg);
         }
+        else if ((m = Pattern.compile("(>\\s*(\\d{1,3})\\s+)?((\\p{L}+\\s*,?\\s*)+)").matcher(content)).matches()){
+            List<String> proposals = Arrays.asList(m.group(3).split(",|\\s+"));
 
-        // TODO consultation with filters
+            if (proposals.size() > 1) {
+                String potentialServer = proposals.get(proposals.size() - 1);
+                servers = findServer(potentialServer);
+                if (servers.size() > 1) {
+                    tooMuchServers.throwException(message, this, lg, servers);
+                    return;
+                } else if (servers.isEmpty() && server == null) {
+                    notFoundServer.throwException(message, this, lg);
+                    return;
+                } else if (servers.size() == 1) {
+                    server = servers.get(0);
+                    proposals.remove(potentialServer);
+                }
+            }
 
+            Set<Job> jobs = new HashSet<>();
+            StringBuilder ignoredWords = new StringBuilder();
+
+            for (String proposal : proposals)
+                if (jobs.size() < MAX_JOB_DISPLAY) {
+                    if (!proposal.trim().isEmpty()) {
+                        List<Job> tmp = getJob(lg, proposal);
+                        if (tmp.size() == 1) jobs.add(tmp.get(0));
+                        else ignoredWords.append(proposal).append(", ");
+                    }
+                } else ignoredWords.append(proposal).append(", ");
+            if (ignoredWords.length() > 0)
+                ignoredWords.setLength(ignoredWords.length() - 2);
+
+            // Avant d'aller plus loin, on test si on a au moins un métier de trouvé
+            if (jobs.isEmpty()) {
+                Message.sendText(message.getChannel(), Translator.getLabel(lg, "job.noone"));
+                return;
+            }
+
+            int level = -1;
+            if (m.group(2) != null) level = Integer.parseInt(m.group(2));
+
+            List<EmbedObject> embeds = JobUser.getJobsFromFilters(message.getGuild().getUsers(), server,
+                    jobs, level, message.getGuild(), lg);
+
+            for(EmbedObject embed : embeds)
+                Message.sendEmbed(message.getChannel(), embed);
+        }
         else
             badUse.throwException(message, this, lg);
     }
