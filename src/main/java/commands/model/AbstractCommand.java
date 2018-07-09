@@ -106,10 +106,13 @@ public abstract class AbstractCommand implements Command {
 
     @Override
     public String getPrefix(IMessage message){
-        String prefix = "";
         if (! message.getChannel().isPrivate())
-            prefix = Guild.getGuild(message.getGuild()).getPrefix();
-        return prefix;
+            return Guild.getGuild(message.getGuild()).getPrefix()
+            .replaceAll("\\*", "\\\\*")     // Italic & Bold
+            .replaceAll("_", "\\_")         // Underline
+            .replaceAll("~", "\\~")         // Strike
+            .replaceAll("\\`", "\\\\`");    // Code
+        return "";
     }
 
     protected String getPrefixMdEscaped(IMessage message){
