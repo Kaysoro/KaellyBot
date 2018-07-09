@@ -40,8 +40,7 @@ public class TwitterListener extends StatusAdapter {
                 try {
                     IChannel chan = ClientConfig.DISCORD().getChannelByID(twitterFinder.getChannelId());
 
-                    if (TwitterFinder.getTwitterChannels().containsKey(twitterFinder.getChannelId())
-                            && Translator.getLanguageFrom(chan).equals(language))
+                    if (chan != null && Translator.getLanguageFrom(chan).equals(language))
                         Message.sendEmbed(chan, createEmbedFor(status));
                 } catch (Exception e) {
                     Reporter.report(e, ClientConfig.DISCORD().getChannelByID(twitterFinder.getChannelId()));
@@ -49,7 +48,7 @@ public class TwitterListener extends StatusAdapter {
                 }
     }
 
-    public EmbedObject createEmbedFor(Status status){
+    private EmbedObject createEmbedFor(Status status){
         EmbedBuilder builder = new EmbedBuilder();
 
         builder.withAuthorName("@" + status.getUser().getScreenName());

@@ -31,7 +31,7 @@ public class JobCommand extends FetchCommand {
 
     @Override
     protected void request(IMessage message, Matcher m, Language lg) {
-        String content = m.group(1).trim();
+        String content = m.group(1).trim().replaceAll(",", "");
 
         // Initialisation du Filtre
         IUser user = message.getAuthor();
@@ -62,7 +62,7 @@ public class JobCommand extends FetchCommand {
                 Message.sendEmbed(message.getChannel(), embed);
         }
         // Enregistrement des données
-        else if((m = Pattern.compile("(-all|(\\p{L}+\\s*,?\\s*)+)\\s+(\\d{1,3})(\\s+.+)?").matcher(content)).matches()) {
+        else if((m = Pattern.compile("(-all|\\p{L}+(?:\\s+\\p{L}+)*)\\s+(\\d{1,3})(\\s+.+)?").matcher(content)).matches()) {
             if (user == message.getAuthor()) {
                 // Parsing des données et traitement des divers exceptions
                 Set<Job> jobs;
@@ -71,7 +71,7 @@ public class JobCommand extends FetchCommand {
                 StringBuilder tooMuch = new StringBuilder();
                 if (! m.group(1).equals("-all")) {
                     jobs = new HashSet<>();
-                    String[] proposals = m.group(1).split(",|\\s+");
+                    String[] proposals = m.group(1).split("\\s+");
                     for(String proposal : proposals)
                         if (!proposal.trim().isEmpty()){
                             List<Job> tmp = getJob(lg, proposal);
@@ -100,10 +100,10 @@ public class JobCommand extends FetchCommand {
                 if (tooMuch.length() > 0)
                     tooMuch.setLength(tooMuch.length() - 2);
 
-                int level = Integer.parseInt(m.group(3));
+                int level = Integer.parseInt(m.group(2));
 
-                if (m.group(4) != null) {
-                    servers = findServer(m.group(4));
+                if (m.group(3) != null) {
+                    servers = findServer(m.group(3));
                     if (checkData(servers, tooMuchServers, notFoundServer, message, lg)) return;
                     server = servers.get(0);
                 } else if (server == null) {
@@ -136,8 +136,8 @@ public class JobCommand extends FetchCommand {
             } else
                 badUse.throwException(message, this, lg);
         }
-        else if ((m = Pattern.compile("(>\\s*(\\d{1,3})\\s+)?((\\p{L}+\\s*,?\\s*)+)").matcher(content)).matches()){
-            List<String> proposals = new LinkedList<>(Arrays.asList(m.group(3).split(",|\\s+")));
+        else if ((m = Pattern.compile("(?:>\\s*(\\d{1,3})\\s+)?(\\p{L}+(?:\\s+\\p{L}+)*)").matcher(content)).matches()){
+            List<String> proposals = new LinkedList<>(Arrays.asList(m.group(2).split("\\s+")));
 
             if (proposals.size() > 1) {
                 String potentialServer = proposals.get(proposals.size() - 1);
@@ -175,7 +175,7 @@ public class JobCommand extends FetchCommand {
             }
 
             int level = -1;
-            if (m.group(2) != null) level = Integer.parseInt(m.group(2));
+            if (m.group(1) != null) level = Integer.parseInt(m.group(1));
 
             List<EmbedObject> embeds = JobUser.getJobsFromFilters(message.getGuild().getUsers(), server,
                     jobs, level, message.getGuild(), lg);
@@ -211,9 +211,9 @@ public class JobCommand extends FetchCommand {
         return help(lg, prefixe)
                 + "\n" + prefixe + "`"  + name + " `*`server`* : " + Translator.getLabel(lg, "job.help.detailed.1")
                 + "\n" + prefixe + "`"  + name + " `*`@user server`* : " + Translator.getLabel(lg, "job.help.detailed.2")
-                + "\n" + prefixe + "`"  + name + " `*`job1, job2, job3 server`* : " + Translator.getLabel(lg, "job.help.detailed.3")
-                + "\n" + prefixe + "`"  + name + " > `*`level job1, job2, job3 server`* : " + Translator.getLabel(lg, "job.help.detailed.4")
-                + "\n" + prefixe + "`"  + name + " `*`job1, job2, job3 level server`* : " + Translator.getLabel(lg, "job.help.detailed.5")
+                + "\n" + prefixe + "`"  + name + " `*`job1 job2 job3 server`* : " + Translator.getLabel(lg, "job.help.detailed.3")
+                + "\n" + prefixe + "`"  + name + " > `*`level job1 job2 job3 server`* : " + Translator.getLabel(lg, "job.help.detailed.4")
+                + "\n" + prefixe + "`"  + name + " `*`job1 job2 job3 level server`* : " + Translator.getLabel(lg, "job.help.detailed.5")
                 + "\n" + prefixe + "`"  + name + " -all `*`level server`* : " + Translator.getLabel(lg, "job.help.detailed.6") + "\n";
     }
 }

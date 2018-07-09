@@ -3,7 +3,6 @@ package commands.classic;
 import commands.model.DofusRequestCommand;
 import enums.Language;
 import exceptions.*;
-import sx.blah.discord.handle.obj.Permissions;
 import util.*;
 import data.*;
 import sx.blah.discord.handle.obj.IMessage;
@@ -23,20 +22,16 @@ public class MonsterCommand extends DofusRequestCommand {
 
     private DiscordException tooMuchMonsters;
     private DiscordException notFoundMonster;
-    private DiscordException noExternalEmojiPermission;
 
     public MonsterCommand(){
         super("monster", "\\s+(-more)?(.*)");
         tooMuchMonsters = new TooMuchDiscordException("monster");
         notFoundMonster = new NotFoundDiscordException("monster");
-        noExternalEmojiPermission = new BasicDiscordException("exception.basic.no_external_emoji_permission");
     }
 
     @Override
     public void request(IMessage message, Matcher m, Language lg) {
-        if (message.getChannel().getModifiedPermissions(ClientConfig.DISCORD().getOurUser()).contains(Permissions.USE_EXTERNAL_EMOJIS)
-                && ClientConfig.DISCORD().getOurUser().getPermissionsForGuild(message.getGuild())
-                .contains(Permissions.USE_EXTERNAL_EMOJIS)) {
+        if (isChannelHasExternalEmojisPermission(message)) {
             String normalName = Normalizer.normalize(m.group(2).trim(), Normalizer.Form.NFD)
                     .replaceAll("\\p{InCombiningDiacriticalMarks}+", "").toLowerCase();
             String editedName = removeUselessWords(normalName);
@@ -61,7 +56,7 @@ public class MonsterCommand extends DofusRequestCommand {
             }
         }
         else
-            noExternalEmojiPermission.throwException(message, this, lg);
+            noExternalEmoji.throwException(message, this, lg);
     }
 
     private String getSearchURL(Language lg, String text) throws UnsupportedEncodingException {

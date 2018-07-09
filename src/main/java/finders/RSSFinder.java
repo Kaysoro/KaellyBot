@@ -161,6 +161,7 @@ public class RSSFinder {
                         if (lastRSS != -1)
                             finder.setLastRSS(lastRSS);
                     } catch (Exception e) {
+                        Reporter.report(e);
                         LOG.error("RSSFinder", e);
                     }
                 }
