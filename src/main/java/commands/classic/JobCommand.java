@@ -153,7 +153,10 @@ public class JobCommand extends FetchCommand {
                     proposals.remove(potentialServer);
                 }
             }
-
+            else if (server == null) {
+                notFoundServer.throwException(message, this, lg);
+                return;
+            }
             Set<Job> jobs = new HashSet<>();
             StringBuilder ignoredWords = new StringBuilder();
 
