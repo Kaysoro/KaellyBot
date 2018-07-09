@@ -30,7 +30,7 @@ public abstract class ObjectUser {
 
     protected abstract String displayLine(IGuild guild, Language lg);
 
-    protected static<T extends ObjectUser> List<EmbedObject> getPlayersList(List<T> objUsers, IGuild guild, Language lg, String prefix){
+    protected static<T extends ObjectUser> List<EmbedObject> getPlayersList(List<T> objUsers, IGuild guild, ServerDofus server, Language lg, String prefix){
         List<EmbedObject> embed = new ArrayList<>();
 
         // On s'occupe d'abord de générer chaque ligne de field
@@ -79,6 +79,7 @@ public abstract class ObjectUser {
                                     + texts.size() + ")" : "") + " : ",
                             texts.get(j), true);
                 }
+                builder.withFooterText(server.getName());
                 embed.add(builder.build());
             }
         }
@@ -86,7 +87,8 @@ public abstract class ObjectUser {
             embed.add(new EmbedBuilder()
                     .withThumbnail(guild.getIconURL())
                     .withColor(new Random().nextInt(16777216))
-                    .withDescription(Translator.getLabel(lg, prefix + ".empty")).build());
+                    .withDescription(Translator.getLabel(lg, prefix + ".empty"))
+                    .withFooterText(server.getName()).build());
 
         return embed;
     }
