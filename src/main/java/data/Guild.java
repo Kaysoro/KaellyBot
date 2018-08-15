@@ -47,7 +47,7 @@ public class Guild {
 
             try {
                 PreparedStatement request = connection.prepareStatement("INSERT INTO"
-                        + " Guild(id, name, prefixe) VALUES (?, ?, ?);");
+                        + " Guild(id, name, prefix) VALUES (?, ?, ?);");
                 request.setString(1, id);
                 request.setString(2, name);
                 request.setString(3, prefix);
@@ -105,7 +105,7 @@ public class Guild {
 
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(
-                    "UPDATE Guild SET prefixe = ? WHERE id = ?;");
+                    "UPDATE Guild SET prefix = ? WHERE id = ?;");
             preparedStatement.setString(1, prefix);
             preparedStatement.setString(2, id);
             preparedStatement.executeUpdate();
@@ -159,7 +159,7 @@ public class Guild {
             guilds = new ConcurrentHashMap<>();
             String id;
             String name;
-            String prefixe;
+            String prefix;
             String server;
             String lang;
 
@@ -167,17 +167,17 @@ public class Guild {
             Connection connection = connexion.getConnection();
 
             try {
-                PreparedStatement query = connection.prepareStatement("SELECT id, name, prefixe, server_dofus, lang FROM Guild");
+                PreparedStatement query = connection.prepareStatement("SELECT id, name, prefix, server_dofus, lang FROM Guild");
                 ResultSet resultSet = query.executeQuery();
 
                 while (resultSet.next()) {
                     id = resultSet.getString("id");
                     name = resultSet.getString("name");
-                    prefixe = resultSet.getString("prefix");
+                    prefix = resultSet.getString("prefix");
                     server = resultSet.getString("server_dofus");
                     lang = resultSet.getString("lang");
 
-                    guilds.put(id, new Guild(id, name, prefixe, Language.valueOf(lang), server));
+                    guilds.put(id, new Guild(id, name, prefix, Language.valueOf(lang), server));
                 }
             } catch (SQLException e) {
                 Reporter.report(e);

@@ -30,16 +30,16 @@ public class JobUser extends ObjectUser {
 
     public JobUser(long idUser, ServerDofus server, Job job, int level){
         this.job = job;
-        if (level > 200)
-            level = 200;
+        if (level > 100)
+            level = 100;
         this.level = level;
         this.idUser = idUser;
         this.server = server;
     }
 
     public synchronized void setLevel(int level){
-        if (level > 200)
-            level = 200;
+        if (level > 100)
+            level = 100;
         this.level = level;
 
         Connexion connexion = Connexion.getInstance();
