@@ -29,17 +29,11 @@ public class SoundCommand extends AbstractCommand {
     private final static Logger LOG = LoggerFactory.getLogger(SoundCommand.class);
     private static List<File> sounds;
     private DiscordException notFoundSound;
-    private DiscordException notInVocalChannel;
-    private DiscordException channelLimit;
-    private DiscordException noVoiceConnect;
 
     public SoundCommand(){
         super("sound","(\\s+.+)?");
         setUsableInMP(false);
         notFoundSound = new NotFoundDiscordException("sound");
-        notInVocalChannel = new BasicDiscordException("exception.basic.not_in_vocal_channel");
-        channelLimit = new BasicDiscordException("exception.basic.voice_channel_limit");
-        noVoiceConnect = new BasicDiscordException("exception.basic.no_voice_permission");
     }
 
     @Override
@@ -48,14 +42,14 @@ public class SoundCommand extends AbstractCommand {
             IVoiceChannel voice = message.getAuthor().getVoiceStateForGuild(message.getGuild()).getChannel();
 
             if (voice == null)
-                notInVocalChannel.throwException(message, this, lg);
+                BasicDiscordException.NOT_IN_VOCAL_CHANNEL.throwException(message, this, lg);
             else {
                 if (!voice.getModifiedPermissions(ClientConfig.DISCORD().getOurUser()).contains(Permissions.VOICE_CONNECT)
                         || !ClientConfig.DISCORD().getOurUser().getPermissionsForGuild(message.getGuild())
                         .contains(Permissions.VOICE_CONNECT))
-                    noVoiceConnect.throwException(message, this, lg);
+                    BasicDiscordException.NO_VOICE_PERMISSION.throwException(message, this, lg);
                 else if (voice.getConnectedUsers().size() >= voice.getUserLimit() && voice.getUserLimit() != 0)
-                    channelLimit.throwException(message, this, lg);
+                    BasicDiscordException.VOICE_CHANNEL_LIMIT.throwException(message, this, lg);
                 else {
                     try {
                         if (m.group(1) != null) { // Specific sound
@@ -77,7 +71,7 @@ public class SoundCommand extends AbstractCommand {
                         }
 
                     } catch (MissingPermissionsException e) {
-                        noVoiceConnect.throwException(message, this, lg);
+                        BasicDiscordException.NO_VOICE_PERMISSION.throwException(message, this, lg);
                     }
                 }
             }

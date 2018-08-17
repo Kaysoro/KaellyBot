@@ -21,13 +21,11 @@ import java.util.regex.Matcher;
 public class PrefixCommand extends AbstractCommand {
 
     private final static Logger LOG = LoggerFactory.getLogger(PrefixCommand.class);
-    private exceptions.DiscordException noEnoughRights;
     private exceptions.DiscordException prefixeOutOfBounds;
 
     public PrefixCommand(){
         super("prefix","\\s+(.+)");
         setUsableInMP(false);
-        noEnoughRights = new BasicDiscordException("exception.basic.no_enough_rights");
         prefixeOutOfBounds = new AdvancedDiscordException("exception.advanced.prefix_out_of_bound",
                 new String[]{String.valueOf(Constants.prefixeLimit)}, new Boolean[]{false});
     }
@@ -56,7 +54,7 @@ public class PrefixCommand extends AbstractCommand {
                 prefixeOutOfBounds.throwException(message, this, lg);
         }
         else
-            noEnoughRights.throwException(message, this, lg);
+            BasicDiscordException.NO_ENOUGH_RIGHTS.throwException(message, this, lg);
     }
 
     @Override

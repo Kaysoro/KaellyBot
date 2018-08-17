@@ -20,15 +20,8 @@ import java.util.regex.Matcher;
  */
 public class AlmanaxCommand extends AbstractCommand {
 
-    private DiscordException notFound;
-    private DiscordException incorrectDateFormat;
-    private DiscordException noEnoughRights;
-
     public AlmanaxCommand(){
         super("almanax", "(\\s+\\d{2}/\\d{2}/\\d{4}|\\s+\\+\\d|\\s+true|\\s+false|\\s+0|\\s+1|\\s+on|\\s+off)?");
-        notFound = new BasicDiscordException("exception.basic.almanax");
-        incorrectDateFormat = new BasicDiscordException("exception.basic.incorrect_date_format");
-        noEnoughRights = new BasicDiscordException("exception.basic.no_enough_rights");
     }
 
     @Override
@@ -53,9 +46,9 @@ public class AlmanaxCommand extends AbstractCommand {
                             } else
                                 Message.sendText(message.getChannel(), Translator.getLabel(lg, "almanax.request.4"));
                     } else
-                        noEnoughRights.throwException(message, this, lg);
+                        BasicDiscordException.NO_ENOUGH_RIGHTS.throwException(message, this, lg);
                 } else
-                    notUsableInMp.throwException(message, this, lg);
+                    BasicDiscordException.NOT_USABLE_IN_MP.throwException(message, this, lg);
             }
 
             else if (m.group(1) != null && m.group(1).matches("\\s+\\+\\d")) {
@@ -69,9 +62,9 @@ public class AlmanaxCommand extends AbstractCommand {
             }
 
         } catch (ParseException e) {
-           incorrectDateFormat.throwException(message, this, lg);
+            BasicDiscordException.INCORRECT_DATE_FORMAT.throwException(message, this, lg);
         } catch (IOException e) {
-            ExceptionManager.manageIOException(e, message, this, lg, notFound);
+            ExceptionManager.manageIOException(e, message, this, lg, BasicDiscordException.ALMANAX);
         } catch (Exception e) {
             ExceptionManager.manageException(e, message, this, lg);
         }

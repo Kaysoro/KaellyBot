@@ -34,8 +34,6 @@ public class WhoisCommand extends AbstractCommand {
     private DiscordException tooMuchServers;
     private DiscordException notFoundServer;
     private DiscordException notFoundCharacter;
-    private DiscordException characterPageInaccessible;
-    private DiscordException characterTooOld;
 
     public WhoisCommand(){
         super("whois","(\\s+[\\p{L}|-]+)(\\s+.+)?");
@@ -43,8 +41,6 @@ public class WhoisCommand extends AbstractCommand {
         notFoundCharacter = new NotFoundDiscordException("character");
         tooMuchServers = new TooMuchDiscordException("server");
         notFoundServer = new NotFoundDiscordException("server");
-        characterPageInaccessible = new BasicDiscordException("exception.basic.characterpage_inaccessible");
-        characterTooOld = new BasicDiscordException("exception.basic.character_too_old");
     }
 
     @Override
@@ -108,7 +104,7 @@ public class WhoisCommand extends AbstractCommand {
                                 + result.get(0), lg);
                         Message.sendEmbed(message.getChannel(), characPage.getEmbedObject(lg));
                     } else
-                        characterTooOld.throwException(message, this, lg);
+                        BasicDiscordException.CHARACTER_TOO_OLD.throwException(message, this, lg);
                 }
                 else if (result.size() > 1)
                     tooMuchCharacters.throwException(message, this, lg, servers);
@@ -118,7 +114,7 @@ public class WhoisCommand extends AbstractCommand {
             else
                 notFoundCharacter.throwException(message, this, lg);
         } catch(IOException e){
-            ExceptionManager.manageIOException(e, message, this, lg, characterPageInaccessible);
+            ExceptionManager.manageIOException(e, message, this, lg, BasicDiscordException.CHARACTERPAGE_INACCESSIBLE);
         }  catch (Exception e) {
             ExceptionManager.manageException(e, message, this, lg);
         }

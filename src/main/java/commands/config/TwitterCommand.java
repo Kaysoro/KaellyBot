@@ -15,14 +15,12 @@ import java.util.regex.Matcher;
  */
 public class TwitterCommand extends AbstractCommand {
 
-    private DiscordException noEnoughRights;
     private DiscordException twitterFound;
     private DiscordException twitterNotFound;
 
     public TwitterCommand(){
         super("twitter", "(\\s+true|\\s+false|\\s+0|\\s+1|\\s+on|\\s+off)");
         setUsableInMP(false);
-        noEnoughRights = new BasicDiscordException("exception.basic.no_enough_rights");
         twitterFound = new AdvancedDiscordException("exception.advanced.tweet_found", new String[]{"twitter.name"}, new Boolean[]{true});
         twitterNotFound = new AdvancedDiscordException("exception.advanced.tweet_not_found", new String[]{"twitter.name"}, new Boolean[]{true});
     }
@@ -55,7 +53,7 @@ public class TwitterCommand extends AbstractCommand {
                 badUse.throwException(message, this, lg);
         }
         else
-            noEnoughRights.throwException(message, this, lg);
+            BasicDiscordException.NO_ENOUGH_RIGHTS.throwException(message, this, lg);
     }
 
     @Override
