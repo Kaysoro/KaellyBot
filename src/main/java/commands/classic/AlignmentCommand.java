@@ -74,6 +74,10 @@ public class AlignmentCommand extends FetchCommand {
             // L'utilisateur concerné est-il l'auteur de la commande ?
             if(Pattern.compile("^<@[!|&]?\\d+>").matcher(content).find()){
                 content = content.replaceFirst("<@[!|&]?\\d+>", "").trim();
+                if (message.getMentions().isEmpty()){
+                    BasicDiscordException.USER_NEEDED.throwException(message, this, lg);
+                    return;
+                }
                 user = message.getMentions().get(0);
             }
 

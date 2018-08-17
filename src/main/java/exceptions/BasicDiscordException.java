@@ -15,7 +15,6 @@ public class BasicDiscordException implements DiscordException {
 
     private final static Logger LOG = LoggerFactory.getLogger(BasicDiscordException.class);
     public final static BasicDiscordException ALMANAX = new BasicDiscordException("exception.basic.almanax");
-    public final static BasicDiscordException AUTOCHANGE_RIGHTS = new BasicDiscordException("exception.basic.autochange_rights");
     public final static BasicDiscordException ALLIANCEPAGE_INACCESSIBLE = new BasicDiscordException("exception.basic.alliancepage_inaccessible");
     public final static BasicDiscordException GUILDPAGE_INACCESSIBLE = new BasicDiscordException("exception.basic.guildpage_inaccessible");
     public final static BasicDiscordException CHARACTERPAGE_INACCESSIBLE = new BasicDiscordException("exception.basic.characterpage_inaccessible");
@@ -32,6 +31,7 @@ public class BasicDiscordException implements DiscordException {
     public final static BasicDiscordException NOT_IN_VOCAL_CHANNEL = new BasicDiscordException("exception.basic.not_in_vocal_channel");
     public final static BasicDiscordException NOT_USABLE_IN_MP = new BasicDiscordException("exception.basic.not_usable_in_mp");
     public final static BasicDiscordException UNKNOWN_ERROR = new BasicDiscordException("exception.basic.unknown_error");
+    public final static BasicDiscordException USER_NEEDED = new BasicDiscordException("exception.basic.user_needed");
     public final static BasicDiscordException VOICE_CHANNEL_LIMIT = new BasicDiscordException("exception.basic.voice_channel_limit");
     private String messageKey;
 
