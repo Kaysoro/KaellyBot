@@ -134,7 +134,7 @@ public class AlmanaxCalendar {
                     if (chan != null && ! chan.isDeleted())
                         almanaxCalendar.put(chan.getStringID(), new AlmanaxCalendar(chan.getGuild().getStringID(), chan.getStringID()));
                     else {
-                        new RSSFinder(idGuild, idChan).removeToDatabase();
+                        new AlmanaxCalendar(idGuild, idChan).removeToDatabase();
                         LOG.info("Chan deleted : " + idChan);
                     }
                 }
