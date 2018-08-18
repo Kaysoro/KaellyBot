@@ -21,16 +21,12 @@ public class AvailableCommand extends AbstractCommand {
 
     private DiscordException tooMuchCmds;
     private DiscordException notFoundCmd;
-    private DiscordException forbiddenCmdFound;
-    private DiscordException forbiddenCmdNotFound;
 
     public AvailableCommand(){
         super("available","\\s+(\\w+)\\s+(on|off|0|1|true|false)");
         setAdmin(true);
         tooMuchCmds = new TooMuchDiscordException("cmd");
         notFoundCmd = new NotFoundDiscordException("cmd");
-        forbiddenCmdFound = new BasicDiscordException("exception.basic.forbidden_command_found");
-        forbiddenCmdNotFound = new BasicDiscordException("exception.basic.forbidden_command_notfound");
     }
 
     @Override
@@ -56,7 +52,7 @@ public class AvailableCommand extends AbstractCommand {
                             + "* " + Translator.getLabel(lg, "announce.request.3"));
                 }
                 else
-                    forbiddenCmdFound.throwException(message, this, lg);
+                    BasicDiscordException.FORBIDDEN_COMMAND_FOUND.throwException(message, this, lg);
             }
             else if (value.matches("true") || value.matches("0") || value.matches("on")){
                 if (! command.isPublic()) {
@@ -65,7 +61,7 @@ public class AvailableCommand extends AbstractCommand {
                             + "* " + Translator.getLabel(lg, "announce.request.4"));
                 }
                 else
-                    forbiddenCmdNotFound.throwException(message, this, lg);
+                    BasicDiscordException.FORBIDDEN_COMMAND_NOTFOUND.throwException(message, this, lg);
             }
             else
                 badUse.throwException(message, this, lg);

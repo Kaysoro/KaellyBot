@@ -33,7 +33,6 @@ public class AllianceCommand extends AbstractCommand {
     private DiscordException tooMuchServers;
     private DiscordException notFoundServer;
     private DiscordException notFoundAlliance;
-    private DiscordException alliancePageInaccessible;
 
     public AllianceCommand(){
         super("alliance","\\s+(.+)");
@@ -41,7 +40,6 @@ public class AllianceCommand extends AbstractCommand {
         notFoundAlliance = new NotFoundDiscordException("alliance");
         tooMuchServers = new TooMuchDiscordException("server");
         notFoundServer = new NotFoundDiscordException("server");
-        alliancePageInaccessible = new BasicDiscordException("exception.basic.alliancepage_inaccessible");
     }
 
     @Override
@@ -114,7 +112,7 @@ public class AllianceCommand extends AbstractCommand {
             else
                 notFoundAlliance.throwException(message, this, lg);
         } catch(IOException e){
-            ExceptionManager.manageIOException(e, message, this, lg, alliancePageInaccessible);
+            ExceptionManager.manageIOException(e, message, this, lg, BasicDiscordException.ALLIANCEPAGE_INACCESSIBLE);
         }  catch (Exception e) {
             ExceptionManager.manageException(e, message, this, lg);
         }

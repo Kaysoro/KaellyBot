@@ -56,7 +56,7 @@ public class MonsterCommand extends DofusRequestCommand {
             }
         }
         else
-            noExternalEmoji.throwException(message, this, lg);
+            BasicDiscordException.NO_EXTERNAL_EMOJI_PERMISSION.throwException(message, this, lg);
     }
 
     private String getSearchURL(Language lg, String text) throws UnsupportedEncodingException {

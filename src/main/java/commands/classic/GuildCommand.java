@@ -33,7 +33,6 @@ public class GuildCommand extends AbstractCommand {
     private DiscordException tooMuchServers;
     private DiscordException notFoundServer;
     private DiscordException notFoundGuild;
-    private DiscordException guildPageInaccessible;
 
     public GuildCommand(){
         super("guild","\\s+(.+)");
@@ -41,7 +40,6 @@ public class GuildCommand extends AbstractCommand {
         notFoundGuild = new NotFoundDiscordException("guild");
         tooMuchServers = new TooMuchDiscordException("server");
         notFoundServer = new NotFoundDiscordException("server");
-        guildPageInaccessible = new BasicDiscordException("exception.basic.guildpage_inaccessible");
     }
 
     @Override
@@ -114,7 +112,7 @@ public class GuildCommand extends AbstractCommand {
             else
                 notFoundGuild.throwException(message, this, lg);
         } catch(IOException e){
-            ExceptionManager.manageIOException(e, message, this, lg, guildPageInaccessible);
+            ExceptionManager.manageIOException(e, message, this, lg, BasicDiscordException.GUILDPAGE_INACCESSIBLE);
         }  catch (Exception e) {
             ExceptionManager.manageException(e, message, this, lg);
         }

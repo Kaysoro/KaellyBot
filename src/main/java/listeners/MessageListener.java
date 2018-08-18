@@ -4,7 +4,6 @@ import commands.*;
 import commands.model.Command;
 import enums.Language;
 import exceptions.BasicDiscordException;
-import exceptions.DiscordException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sx.blah.discord.api.events.EventSubscriber;
@@ -18,7 +17,6 @@ import util.Translator;
 public class MessageListener {
 
     private final static Logger LOG = LoggerFactory.getLogger(MessageListener.class);
-    private DiscordException unknown = new BasicDiscordException("exception.basic.unknown_error");
 
 
     @EventSubscriber
@@ -31,7 +29,7 @@ public class MessageListener {
                 try {
                     command.request(event.getMessage());
                 } catch (Exception e) {
-                    unknown.throwException(event.getMessage(), command, lg);
+                    BasicDiscordException.UNKNOWN_ERROR.throwException(event.getMessage(), command, lg);
                     Reporter.report(e, event.getGuild(), event.getChannel(), event.getAuthor(), event.getMessage());
                     LOG.error("onReady", e);
                 }

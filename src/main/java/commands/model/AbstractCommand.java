@@ -24,13 +24,9 @@ public abstract class AbstractCommand implements Command {
 
     private final static Logger LOG = LoggerFactory.getLogger(AbstractCommand.class);
 
-    private DiscordException commandForbidden;
-    protected DiscordException notUsableInMp;
-    protected DiscordException badUse;
-    protected DiscordException noExternalEmoji;
-
     protected String name;
     protected String pattern;
+    protected DiscordException badUse;
     private boolean isPublic;
     private boolean isUsableInMP;
     private boolean isAdmin;
@@ -42,10 +38,7 @@ public abstract class AbstractCommand implements Command {
         this.isPublic = true;
         this.isUsableInMP = true;
         this.isAdmin = false;
-        commandForbidden = new BasicDiscordException("exception.basic.command_forbidden");
-        notUsableInMp = new BasicDiscordException("exception.basic.not_usable_in_mp");
         badUse = new BadUseCommandDiscordException();
-        noExternalEmoji = new BasicDiscordException("exception.basic.no_external_emoji_permission");
     }
 
     @Override
@@ -63,13 +56,13 @@ public abstract class AbstractCommand implements Command {
             if (isFound) {
                 // Mais n'est pas utilisable en MP
                 if (!isUsableInMP() && message.getChannel().isPrivate()) {
-                    notUsableInMp.throwException(message, this, lg);
+                    BasicDiscordException.NOT_USABLE_IN_MP.throwException(message, this, lg);
                     return;
                 }
                 // Mais est désactivée par la guilde
                 else if (!message.getChannel().isPrivate() && message.getAuthor().getLongID() != Constants.authorId
                         && isForbidden(Guild.getGuild(message.getGuild()))) {
-                    commandForbidden.throwException(message, this, lg);
+                    BasicDiscordException.COMMAND_FORBIDDEN.throwException(message, this, lg);
                     return;
                 }
             }

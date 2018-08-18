@@ -25,14 +25,12 @@ public class ServerCommand extends AbstractCommand {
 
     private DiscordException tooMuchServers;
     private DiscordException notFoundServer;
-    private DiscordException noEnoughRights;
 
     public ServerCommand(){
         super("server","(\\s+.+)?");
         setUsableInMP(false);
         tooMuchServers = new TooMuchDiscordException("server");
         notFoundServer = new NotFoundDiscordException("server");
-        noEnoughRights = new BasicDiscordException("exception.basic.no_enough_rights");
     }
 
     @Override
@@ -74,7 +72,7 @@ public class ServerCommand extends AbstractCommand {
                 }
             }
             else
-                noEnoughRights.throwException(message, this, lg);
+                BasicDiscordException.NO_ENOUGH_RIGHTS.throwException(message, this, lg);
         else {
             if (guild.getServerDofus() != null)
                 Message.sendText(message.getChannel(), guild.getName() + " "

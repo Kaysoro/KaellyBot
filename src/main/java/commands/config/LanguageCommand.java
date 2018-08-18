@@ -23,14 +23,12 @@ public class LanguageCommand extends AbstractCommand {
 
     private DiscordException tooMuchLangs;
     private DiscordException notFoundLang;
-    private DiscordException noEnoughRights;
 
     public LanguageCommand(){
         super("lang", "(\\s+-channel)?(\\s+[A-Za-z]+)?");
         setUsableInMP(false);
         tooMuchLangs = new TooMuchDiscordException("lang");
         notFoundLang = new NotFoundDiscordException("lang");
-        noEnoughRights = new BasicDiscordException("exception.basic.no_enough_rights");
     }
 
     @Override
@@ -80,7 +78,7 @@ public class LanguageCommand extends AbstractCommand {
                     tooMuchLangs.throwException(message, this, lg);
 
             } else
-                noEnoughRights.throwException(message, this, lg);
+                BasicDiscordException.NO_ENOUGH_RIGHTS.throwException(message, this, lg);
         }
         else { // Consultation
             String text = "**" + message.getGuild().getName() + "** " + Translator.getLabel(lg, "lang.request.3")

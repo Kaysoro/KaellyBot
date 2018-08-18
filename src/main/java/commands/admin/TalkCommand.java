@@ -21,7 +21,6 @@ public class TalkCommand extends AbstractCommand {
 
     private IChannel lastChan;
     private DiscordException notFoundChan;
-    private DiscordException noSendTextPermission;
 
     public TalkCommand(){
         super("talk", "(\\s+\\d+)?(\\s+.+)");
@@ -29,7 +28,6 @@ public class TalkCommand extends AbstractCommand {
 
         this.lastChan = null;
         notFoundChan = new NotFoundDiscordException("chan");
-        noSendTextPermission = new BasicDiscordException("exception.basic.no_send_text_permission");
     }
 
     @Override
@@ -46,7 +44,7 @@ public class TalkCommand extends AbstractCommand {
         else if (lastChan.getModifiedPermissions(ClientConfig.DISCORD().getOurUser()).contains(Permissions.SEND_MESSAGES))
             Message.sendText(lastChan, text);
         else
-            noSendTextPermission.throwException(message, this, lg);
+            BasicDiscordException.NO_SEND_TEXT_PERMISSION.throwException(message, this, lg);
     }
 
     @Override

@@ -72,7 +72,7 @@ public class ItemCommand extends DofusEncyclopediaRequestCommand {
             }
         }
         else
-            noExternalEmoji.throwException(message, this, lg);
+            BasicDiscordException.NO_EXTERNAL_EMOJI_PERMISSION.throwException(message, this, lg);
     }
 
     protected String getSearchURL(String SuperTypeURL, String text, String typeArg, Language lg) throws UnsupportedEncodingException {

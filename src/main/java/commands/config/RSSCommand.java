@@ -16,14 +16,12 @@ import java.util.regex.Matcher;
  */
 public class RSSCommand extends AbstractCommand {
 
-    private DiscordException noEnoughRights;
     private DiscordException rssFound;
     private DiscordException rssNotFound;
 
     public RSSCommand(){
         super("rss","(\\s+true|\\s+false|\\s+0|\\s+1|\\s+on|\\s+off)");
         setUsableInMP(false);
-        noEnoughRights = new BasicDiscordException("exception.basic.no_enough_rights");
         rssFound = new AdvancedDiscordException("exception.advanced.rss_found", new String[]{"game.url"}, new Boolean[]{true});
         rssNotFound = new AdvancedDiscordException("exception.advanced.rss_not_found", new String[]{"game.url"}, new Boolean[]{true});
     }
@@ -55,7 +53,7 @@ public class RSSCommand extends AbstractCommand {
             else
                 badUse.throwException(message, this, lg);
         } else
-            noEnoughRights.throwException(message, this, lg);
+            BasicDiscordException.NO_ENOUGH_RIGHTS.throwException(message, this, lg);
     }
 
     @Override

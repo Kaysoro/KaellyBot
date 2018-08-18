@@ -26,7 +26,6 @@ public class SetCommand extends DofusRequestCommand {
         super("set", "\\s+(-more)?(.*)");
         tooMuchSets = new TooMuchDiscordException("set");
         notFoundSet = new NotFoundDiscordException("set");
-        noExternalEmoji = new BasicDiscordException("exception.basic.no_external_emoji_permission");
     }
 
     @Override
@@ -56,7 +55,7 @@ public class SetCommand extends DofusRequestCommand {
             }
         }
         else
-            noExternalEmoji.throwException(message, this, lg);
+            BasicDiscordException.NO_EXTERNAL_EMOJI_PERMISSION.throwException(message, this, lg);
     }
 
     private String getSearchURL(Language lg, String text) throws UnsupportedEncodingException {
