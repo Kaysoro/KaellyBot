@@ -58,8 +58,9 @@ public class SetDofus implements Embedded {
             builder.appendField(Translator.getLabel(lg, "set.composition"), composition, true);
 
         for(int i = 0; i < bonusPano.length; i++)
-            builder.appendField(Translator.getLabel(lg, "set.bonus.1") + " " + (i + 2)
-                    + " " + Translator.getLabel(lg, "set.bonus.2"), bonusPano[i], true);
+            if (bonusPano[i] != null)
+                builder.appendField(Translator.getLabel(lg, "set.bonus.1") + " " + (i + 2)
+                        + " " + Translator.getLabel(lg, "set.bonus.2"), bonusPano[i], true);
 
         return builder.build();
     }
@@ -156,13 +157,15 @@ public class SetDofus implements Embedded {
         return new SetDofus(name, level, bonusTotal, URLManager.abs(skinURL), url, composition, bonusPano, recipeTotal);
     }
 
-    private static String extractStatsFromTitle(Language lg, Element elem)
-    {
-        Elements lines = elem.getElementsByClass("ak-title");
-        StringBuilder tmp = new StringBuilder();
-        for (Element line : lines)
-            tmp.append(EmojiManager.getEmojiForStat(lg, line.text())).append(line.text()).append("\n");
-        return tmp.toString();
+    private static String extractStatsFromTitle(Language lg, Element elem) {
+        if (elem != null){
+            Elements lines = elem.getElementsByClass("ak-title");
+            StringBuilder tmp = new StringBuilder();
+            for (Element line : lines)
+                tmp.append(EmojiManager.getEmojiForStat(lg, line.text())).append(line.text()).append("\n");
+            return tmp.toString();
+        }
+        return null;
     }
 
     private static List<String> extractStatsFromTitleToList(Language lg, Element elem)
