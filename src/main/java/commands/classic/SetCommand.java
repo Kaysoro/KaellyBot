@@ -77,7 +77,7 @@ public class SetCommand extends DofusRequestCommand {
     @Override
     public String helpDetailed(Language lg, String prefixe) {
         return help(lg, prefixe)
-                + "\n" + prefixe + "`"  + name + " `*`set`* : " + Translator.getLabel(lg, "set.help.detailed.1")
-                + "\n" + prefixe + "`"  + name + " -more `*`set`* : " + Translator.getLabel(lg, "set.help.detailed.2") + "\n";
+                + "\n`" + prefixe + name + " `*`set`* : " + Translator.getLabel(lg, "set.help.detailed.1")
+                + "\n`" + prefixe + name + " -more `*`set`* : " + Translator.getLabel(lg, "set.help.detailed.2") + "\n";
     }
 }

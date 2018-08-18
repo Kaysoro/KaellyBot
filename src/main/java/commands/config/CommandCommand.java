@@ -86,7 +86,7 @@ public class CommandCommand extends AbstractCommand {
     @Override
     public String helpDetailed(Language lg, String prefixe) {
         return help(lg, prefixe)
-                + "\n" + prefixe + "`"  + name + " `*`CommandForbidden`*` true` : " + Translator.getLabel(lg, "command.help.detailed.1")
-                + "\n" + prefixe + "`"  + name + " `*`CommandForbidden`*` false` : " + Translator.getLabel(lg, "command.help.detailed.2") + "\n";
+                + "\n`" + prefixe + name + " `*`CommandForbidden`*` true` : " + Translator.getLabel(lg, "command.help.detailed.1")
+                + "\n`" + prefixe + name + " `*`CommandForbidden`*` false` : " + Translator.getLabel(lg, "command.help.detailed.2") + "\n";
     }
 }

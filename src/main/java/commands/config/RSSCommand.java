@@ -65,8 +65,8 @@ public class RSSCommand extends AbstractCommand {
     @Override
     public String helpDetailed(Language lg, String prefixe) {
         return help(lg, prefixe)
-                + "\n" + prefixe + "`"  + name + " true` : " + Translator.getLabel(lg, "rss.help.detailed.1")
+                + "\n`" + prefixe + name + " true` : " + Translator.getLabel(lg, "rss.help.detailed.1")
                 .replace("{game.url}", Translator.getLabel(lg, "game.url"))
-                + "\n" + prefixe + "`"  + name + " false` : " + Translator.getLabel(lg, "rss.help.detailed.2") + "\n";
+                + "\n`" + prefixe + name + " false` : " + Translator.getLabel(lg, "rss.help.detailed.2") + "\n";
     }
 }

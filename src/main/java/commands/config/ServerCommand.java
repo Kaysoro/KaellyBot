@@ -97,11 +97,11 @@ public class ServerCommand extends AbstractCommand {
     @Override
     public String helpDetailed(Language lg, String prefixe) {
         return help(lg, prefixe)
-                + "\n" + prefixe + "`"  + name + "` : " + Translator.getLabel(lg, "server.help.detailed.1")
+                + "\n`" + prefixe + name + "` : " + Translator.getLabel(lg, "server.help.detailed.1")
                     .replace("{game}", Constants.game)
-                + "\n" + prefixe + "`"  + name + " `*`server`* : " + Translator.getLabel(lg, "server.help.detailed.2")
+                + "\n`" + prefixe + name + " `*`server`* : " + Translator.getLabel(lg, "server.help.detailed.2")
                     .replace("{game}", Constants.game)
-                + "\n" + prefixe + "`"  + name + " `*`-reset`* : " + Translator.getLabel(lg, "server.help.detailed.3")
+                + "\n`" + prefixe + name + " `*`-reset`* : " + Translator.getLabel(lg, "server.help.detailed.3")
                     .replace("{game}", Constants.game) + "\n";
     }
 }

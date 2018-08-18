@@ -65,7 +65,7 @@ public class PrefixCommand extends AbstractCommand {
     @Override
     public String helpDetailed(Language lg, String prefixe) {
         return help(lg, prefixe)
-                + "\n" + prefixe + "`"  + name + " `*`prefix`* : " + Translator.getLabel(lg, "prefix.help.detailed")
+                + "\n`" + prefixe + name + " `*`prefix`* : " + Translator.getLabel(lg, "prefix.help.detailed")
                 .replace("{prefixeLimit}", String.valueOf(Constants.prefixeLimit)) + "\n";
     }
 }

@@ -80,9 +80,9 @@ public class MapCommand extends AbstractCommand {
     @Override
     public String helpDetailed(Language lg, String prefixe) {
         return help(lg, prefixe)
-                + "\n" + prefixe + "`"  + name + "` : " + Translator.getLabel(lg, "map.help.detailed.1")
-                + "\n" + prefixe + "`"  + name + " `*`map1 map2 ...`* : " + Translator.getLabel(lg, "map.help.detailed.2")
-                + "\n" + prefixe + "`"  + name + " -ban `*`map1 map2 ...`* : " + Translator.getLabel(lg, "map.help.detailed.3") + "\n";
+                + "\n`" + prefixe + name + "` : " + Translator.getLabel(lg, "map.help.detailed.1")
+                + "\n`" + prefixe + name + " `*`map1 map2 ...`* : " + Translator.getLabel(lg, "map.help.detailed.2")
+                + "\n`" + prefixe + name + " -ban `*`map1 map2 ...`* : " + Translator.getLabel(lg, "map.help.detailed.3") + "\n";
     }
 
     private static String numberToRoman(String num) {

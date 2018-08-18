@@ -99,7 +99,7 @@ public class ResourceCommand extends DofusEncyclopediaRequestCommand {
     @Override
     public String helpDetailed(Language lg, String prefixe) {
         return help(lg, prefixe)
-                + "\n" + prefixe + "`"  + name + " `*`resource`* : " + Translator.getLabel(lg, "resource.help.detailed.1")
-                + "\n" + prefixe + "`"  + name + " -more `*`resource`* : " + Translator.getLabel(lg, "resource.help.detailed.2") + "\n";
+                + "\n`" + prefixe + name + " `*`resource`* : " + Translator.getLabel(lg, "resource.help.detailed.1")
+                + "\n`" + prefixe + name + " -more `*`resource`* : " + Translator.getLabel(lg, "resource.help.detailed.2") + "\n";
     }
 }

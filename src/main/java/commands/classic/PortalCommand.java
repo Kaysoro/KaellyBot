@@ -81,13 +81,13 @@ public class PortalCommand extends AbstractCommand {
     @Override
     public String helpDetailed(Language lg, String prefixe) {
         return help(lg, prefixe)
-                + "\n" + prefixe + "`"  + name + "` : " + Translator.getLabel(lg, "portal.help.detailed.1")
-                + "\n" + prefixe + "`"  + name + " `*`dimension`* : " + Translator.getLabel(lg, "portal.help.detailed.2")
-                + "\n" + prefixe + "`"  + name + " `*`dimension`*` [POS, POS]` : "
+                + "\n`" + prefixe + name + "` : " + Translator.getLabel(lg, "portal.help.detailed.1")
+                + "\n`" + prefixe + name + " `*`dimension`* : " + Translator.getLabel(lg, "portal.help.detailed.2")
+                + "\n`" + prefixe + name + " `*`dimension`*` [POS, POS]` : "
                         + Translator.getLabel(lg, "portal.help.detailed.3")
-                + "\n" + prefixe + "`"  + name + " `*`dimension`*` [POS, POS] `*`utilisation`* : "
+                + "\n`" + prefixe + name + " `*`dimension`*` [POS, POS] `*`utilisation`* : "
                         + Translator.getLabel(lg, "portal.help.detailed.4")
-                + "\n" + prefixe + "`"  + name + " `*`dimension` `utilisation`* : "
+                + "\n`" + prefixe + name + " `*`dimension` `utilisation`* : "
                         + Translator.getLabel(lg, "portal.help.detailed.5") + "\n";
     }
 }

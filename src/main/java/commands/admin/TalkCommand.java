@@ -55,7 +55,7 @@ public class TalkCommand extends AbstractCommand {
     @Override
     public String helpDetailed(Language lg, String prefixe) {
         return help(lg, prefixe)
-                + "\n" + prefixe + "`"  + name + " `*`text`* : " + Translator.getLabel(lg, "talk.help.detailed.1")
-                + "\n" + prefixe + "`"  + name + " `*channel `text`* : " + Translator.getLabel(lg, "talk.help.detailed.2") + "\n";
+                + "\n`" + prefixe + name + " `*`text`* : " + Translator.getLabel(lg, "talk.help.detailed.1")
+                + "\n`" + prefixe + name + " channel `*`text`* : " + Translator.getLabel(lg, "talk.help.detailed.2") + "\n";
     }
 }

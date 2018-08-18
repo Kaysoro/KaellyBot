@@ -264,10 +264,10 @@ public class AlignmentCommand extends FetchCommand {
     @Override
     public String helpDetailed(Language lg, String prefixe) {
         return help(lg, prefixe)
-                + "\n" + prefixe + "`"  + name + " `*`server`* : " + Translator.getLabel(lg, "align.help.detailed.1")
-                + "\n" + prefixe + "`"  + name + " `*`order server`* : " + Translator.getLabel(lg, "align.help.detailed.2")
-                + "\n" + prefixe + "`"  + name + " `*`> level server`* : " + Translator.getLabel(lg, "align.help.detailed.3")
-                + "\n" + prefixe + "`"  + name + " `*`@user server`* : " + Translator.getLabel(lg, "align.help.detailed.4")
-                + "\n" + prefixe + "`"  + name + " `*`city order level server`* : " + Translator.getLabel(lg, "align.help.detailed.5") + "\n";
+                + "\n`" + prefixe + name + " `*`server`* : " + Translator.getLabel(lg, "align.help.detailed.1")
+                + "\n`" + prefixe + name + " `*`order server`* : " + Translator.getLabel(lg, "align.help.detailed.2")
+                + "\n`" + prefixe + name + " `*`> level server`* : " + Translator.getLabel(lg, "align.help.detailed.3")
+                + "\n`" + prefixe + name + " `*`@user server`* : " + Translator.getLabel(lg, "align.help.detailed.4")
+                + "\n`" + prefixe + name + " `*`city order level server`* : " + Translator.getLabel(lg, "align.help.detailed.5") + "\n";
     }
 }

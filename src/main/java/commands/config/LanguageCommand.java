@@ -106,7 +106,7 @@ public class LanguageCommand extends AbstractCommand {
     @Override
     public String helpDetailed(Language lg, String prefixe) {
         return help(lg, prefixe)
-                + "\n" + prefixe + "`"  + name + " `*`language`* : " + Translator.getLabel(lg, "lang.help.detailed.1")
-                + "\n" + prefixe + "`"  + name + " -channel `*`language`* : " + Translator.getLabel(lg, "lang.help.detailed.2") + "\n";
+                + "\n`" + prefixe + name + " `*`language`* : " + Translator.getLabel(lg, "lang.help.detailed.1")
+                + "\n`" + prefixe + name + " -channel `*`language`* : " + Translator.getLabel(lg, "lang.help.detailed.2") + "\n";
     }
 }
