@@ -639,6 +639,7 @@ set.extract.recipe=complete list of ingredients
 sound.help=plays a sound by joining the voice channel with you.
 sound.help.detailed.1=plays a random sound from the following list:
 sound.help.detailed.2=plays a sound specified in parameter.
+sound.help.detailed.3=leaves the voice channel.
 stat.request=Number of guilds using this bot: {guilds.size}\nNumber of unique users: {users.size}.\nNumber of users: {users_max.size}.
 stat.help=Sends basic statistics about this bot.
 talk.help=sends a message for a specific channel.

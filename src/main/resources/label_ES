@@ -639,6 +639,7 @@ set.extract.recipe=lista total de ingredientes
 sound.help=reproduce un sonido uniendo el canal de voz con usted.
 sound.help.detailed.1=reproduce un sonido aleatorio de la siguiente lista:
 sound.help.detailed.2=reproduce un sonido especificado en el parámetro.
+sound.help.detailed.3=deja el canal de voz.
 stat.request=Número de gremios que usan este bot: {guilds.size}\nNúmero de usuarios únicos: {users.size}.\nNúmero de usuarios: {users_max.size}.
 stat.help=Devuelve estadísticas básicas sobre este bot.
 talk.help=envía un mensaje para un canal específico.﻿

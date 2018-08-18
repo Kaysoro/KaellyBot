@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 import sx.blah.discord.api.events.EventSubscriber;
 import sx.blah.discord.handle.impl.events.guild.voice.user.UserVoiceChannelMoveEvent;
 import sx.blah.discord.util.audio.AudioPlayer;
+import util.ClientConfig;
 import util.Reporter;
 
 /**
@@ -17,9 +18,16 @@ public class UserVoiceChannelMoveListener {
     @EventSubscriber
     public void onUserVoiceChannelMove(UserVoiceChannelMoveEvent event) {
         try {
-            if (event.getOldChannel().isConnected() && event.getOldChannel().getConnectedUsers().size() == 1) {
+            if (!event.getUser().equals(ClientConfig.DISCORD().getOurUser())
+                    && event.getOldChannel().isConnected()
+                    && event.getOldChannel().getConnectedUsers().size() == 1) {
                 AudioPlayer.getAudioPlayerForGuild(event.getGuild()).clear();
                 event.getOldChannel().leave();
+            }
+            else if (event.getUser().equals(ClientConfig.DISCORD().getOurUser())
+                    && event.getNewChannel().getConnectedUsers().size() == 1){
+                AudioPlayer.getAudioPlayerForGuild(event.getGuild()).clear();
+                event.getNewChannel().leave();
             }
         } catch(Exception e){
             Reporter.report(e, event.getGuild(), event.getOldChannel());

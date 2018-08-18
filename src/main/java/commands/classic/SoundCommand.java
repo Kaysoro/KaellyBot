@@ -44,11 +44,17 @@ public class SoundCommand extends AbstractCommand {
             if (voice == null)
                 BasicDiscordException.NOT_IN_VOCAL_CHANNEL.throwException(message, this, lg);
             else {
-                if (!voice.getModifiedPermissions(ClientConfig.DISCORD().getOurUser()).contains(Permissions.VOICE_CONNECT)
+                if (voice.isConnected() && m.group(1) != null && m.group(1).matches("\\s+-leave")){
+                    AudioPlayer.getAudioPlayerForGuild(message.getGuild()).clear();
+                    voice.leave();
+                }
+                else if (!voice.getModifiedPermissions(ClientConfig.DISCORD().getOurUser()).contains(Permissions.VOICE_CONNECT)
                         || !ClientConfig.DISCORD().getOurUser().getPermissionsForGuild(message.getGuild())
                         .contains(Permissions.VOICE_CONNECT))
                     BasicDiscordException.NO_VOICE_PERMISSION.throwException(message, this, lg);
-                else if (voice.getConnectedUsers().size() >= voice.getUserLimit() && voice.getUserLimit() != 0)
+                else if (voice.getConnectedUsers().size() >= voice.getUserLimit()
+                        && voice.getUserLimit() != 0
+                        && ! voice.isConnected())
                     BasicDiscordException.VOICE_CHANNEL_LIMIT.throwException(message, this, lg);
                 else {
                     try {
@@ -131,7 +137,8 @@ public class SoundCommand extends AbstractCommand {
         }
         st.append("```");
         return help(lg, prefixe)
-                + "\n" + prefixe + "`"  + name + "` : " + Translator.getLabel(lg, "sound.help.detailed.1") + " " + st.toString()
-                + "\n" + prefixe + "`"  + name + " `*`sound`* : " + Translator.getLabel(lg, "sound.help.detailed.2") + "\n";
+                + "\n`" + prefixe + name + "` : " + Translator.getLabel(lg, "sound.help.detailed.1") + " " + st.toString()
+                + "\n`" + prefixe + name + " `*`sound`* : " + Translator.getLabel(lg, "sound.help.detailed.2")
+                + "\n`" + prefixe + name + " -leave` : " + Translator.getLabel(lg, "sound.help.detailed.3") + "\n";
     }
 }
