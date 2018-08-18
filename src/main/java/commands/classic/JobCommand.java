@@ -6,6 +6,7 @@ import data.JobUser;
 import data.ServerDofus;
 import enums.Job;
 import enums.Language;
+import exceptions.BasicDiscordException;
 import sx.blah.discord.api.internal.json.objects.EmbedObject;
 import sx.blah.discord.handle.obj.IUser;
 import util.Message;
@@ -41,6 +42,10 @@ public class JobCommand extends FetchCommand {
         // L'utilisateur concerné est-il l'auteur de la commande ?
         if(Pattern.compile("^<@[!|&]?\\d+>").matcher(content).find()){
             content = content.replaceFirst("<@[!|&]?\\d+>", "").trim();
+            if (message.getMentions().isEmpty()){
+                BasicDiscordException.USER_NEEDED.throwException(message, this, lg);
+                return;
+            }
             user = message.getMentions().get(0);
         }
 
