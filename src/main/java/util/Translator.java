@@ -12,6 +12,7 @@ import data.ChannelLanguage;
 import data.Constants;
 import data.Guild;
 import enums.Language;
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sx.blah.discord.handle.obj.IChannel;
 import sx.blah.discord.handle.obj.IMessage;
@@ -26,6 +27,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class Translator {
 
+    private final static Logger LOG = LoggerFactory.getLogger(Translator.class);
     private static final int MAX_MESSAGES_READ = 100;
     private static final int MAX_CHARACTER_ACCEPTANCE = 20;
     private static Map<Language, Properties> labels;
@@ -43,7 +45,7 @@ public class Translator {
                                 .withProfiles(languageProfiles).build();
             }
             catch (IOException e) {
-                LoggerFactory.getLogger(Translator.class).error("Translator.getLanguageDetector", e);
+                LOG.error("Translator.getLanguageDetector", e);
             }
         }
         return languageDetector;
@@ -75,11 +77,15 @@ public class Translator {
         List<String> result = new ArrayList<>();
 
         if (channel != null) {
-            IMessage[] messages = channel.getMessageHistory(MAX_MESSAGES_READ).asArray();
-            for (IMessage message : messages) {
-                String content = message.getContent().replaceAll(":\\w+:", "").trim();
-                if (content.length() > MAX_CHARACTER_ACCEPTANCE)
-                    result.add(content);
+            try {
+                IMessage[] messages = channel.getMessageHistory(MAX_MESSAGES_READ).asArray();
+                for (IMessage message : messages) {
+                    String content = message.getContent().replaceAll(":\\w+:", "").trim();
+                    if (content.length() > MAX_CHARACTER_ACCEPTANCE)
+                        result.add(content);
+                }
+            } catch (Exception e){
+                LOG.warn("Impossible to gather data from " + channel.getStringID() + "/" + channel.getName());
             }
         }
         return result;
@@ -137,14 +143,14 @@ public class Translator {
                     prop.load(new BufferedReader(new InputStreamReader(file, StandardCharsets.UTF_8)));
                     labels.put(language, prop);
                 } catch (IOException e) {
-                    LoggerFactory.getLogger(Translator.class).error("Translator.getLabel", e);
+                    LOG.error("Translator.getLabel", e);
                 }
         }
 
         String value = labels.get(lang).getProperty(property);
         if (value == null || value.trim().isEmpty())
             if (Constants.defaultLanguage != lang) {
-                LoggerFactory.getLogger(Translator.class).warn("Missing label in " + lang.getAbrev() + " : " + property);
+                LOG.warn("Missing label in " + lang.getAbrev() + " : " + property);
                 return getLabel(Constants.defaultLanguage, property);
             }
             else
