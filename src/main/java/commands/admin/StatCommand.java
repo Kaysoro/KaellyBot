@@ -43,7 +43,8 @@ public class StatCommand extends AbstractCommand {
             List<IGuild> guilds = getBiggestGuilds(limit);
             int ladder = 1;
             for(IGuild guild : guilds)
-                st.append(ladder++ + " : **" + guild.getName() + "**, " + guild.getTotalMemberCount() + " users\n");
+                st.append(ladder++).append(" : **").append(guild.getName()).append("**, ")
+                        .append(guild.getTotalMemberCount()).append(" users\n");
             Message.sendText(message.getChannel(), st.toString());
         }
     }
@@ -66,6 +67,8 @@ public class StatCommand extends AbstractCommand {
 
     @Override
     public String helpDetailed(Language lg, String prefixe) {
-        return help(lg, prefixe);
+        return help(lg, prefixe)
+                + "\n`" + prefixe + name + "` : " + Translator.getLabel(lg, "stat.help.detailed.1")
+                + "\n`" + prefixe + name + " -g `*`n`* : " + Translator.getLabel(lg, "stat.help.detailed.2") + "\n";
     }
 }

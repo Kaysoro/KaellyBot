@@ -52,9 +52,9 @@ public class RandomCommand extends AbstractCommand {
     @Override
     public String helpDetailed(Language lg, String prefixe) {
         return help(lg, prefixe)
-                + "\n" + prefixe + "`"  + name + "` : " + Translator.getLabel(lg, "random.help.detailed.1")
-                + "\n" + prefixe + "`"  + name + " `*`number`* : " + Translator.getLabel(lg, "random.help.detailed.2")
-                + "\n" + prefixe + "`"  + name + " `*`value1 value2 ...`* : "
+                + "\n`" + prefixe + name + "` : " + Translator.getLabel(lg, "random.help.detailed.1")
+                + "\n`" + prefixe + name + " `*`number`* : " + Translator.getLabel(lg, "random.help.detailed.2")
+                + "\n`" + prefixe + name + " `*`value1 value2 ...`* : "
                 + Translator.getLabel(lg, "random.help.detailed.3") + "\n";
     }
 }

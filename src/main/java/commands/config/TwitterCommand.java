@@ -65,8 +65,8 @@ public class TwitterCommand extends AbstractCommand {
     @Override
     public String helpDetailed(Language lg, String prefixe) {
         return help(lg, prefixe)
-                + "\n" + prefixe + "`"  + name + " true` : " + Translator.getLabel(lg, "twitter.help.detailed.1")
+                + "\n`" + prefixe + name + " true` : " + Translator.getLabel(lg, "twitter.help.detailed.1")
                 .replace("{twitter.name}", Translator.getLabel(lg, "twitter.name"))
-                + "\n" + prefixe + "`"  + name + " false` : " + Translator.getLabel(lg, "twitter.help.detailed.2") + "\n";
+                + "\n`" + prefixe + name + " false` : " + Translator.getLabel(lg, "twitter.help.detailed.2") + "\n";
     }
 }

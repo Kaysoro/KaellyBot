@@ -99,6 +99,6 @@ public class TutorialCommand extends AbstractCommand {
     @Override
     public String helpDetailed(Language lg, String prefixe) {
         return help(lg, prefixe)
-                + "\n" + prefixe + "`"  + name + " `*`search`* : " + Translator.getLabel(lg, "tutorial.help.detailed") + "\n";
+                + "\n`" + prefixe + name + " `*`search`* : " + Translator.getLabel(lg, "tutorial.help.detailed") + "\n";
     }
 }

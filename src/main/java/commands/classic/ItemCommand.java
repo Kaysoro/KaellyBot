@@ -97,7 +97,7 @@ public class ItemCommand extends DofusEncyclopediaRequestCommand {
     @Override
     public String helpDetailed(Language lg, String prefixe) {
         return help(lg, prefixe)
-                + "\n" + prefixe + "`"  + name + " `*`item`* : " + Translator.getLabel(lg, "item.help.detailed.1")
-                + "\n" + prefixe + "`"  + name + " -more `*`item`* : " + Translator.getLabel(lg, "item.help.detailed.2") + "\n";
+                + "\n`" + prefixe + name + " `*`item`* : " + Translator.getLabel(lg, "item.help.detailed.1")
+                + "\n`" + prefixe + name + " -more `*`item`* : " + Translator.getLabel(lg, "item.help.detailed.2") + "\n";
     }
 }

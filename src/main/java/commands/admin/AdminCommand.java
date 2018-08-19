@@ -56,7 +56,7 @@ public class AdminCommand extends AbstractCommand {
     @Override
     public String helpDetailed(Language lg, String prefixe) {
         return help(lg, prefixe)
-                + "\n" + prefixe + "`"  + name + "` : " + Translator.getLabel(lg, "admin.help.detailed.1")
-                + "\n" + prefixe + "`"  + name + " `*`command`* : " + Translator.getLabel(lg, "admin.help.detailed.2") + "\n";
+                + "\n`" + prefixe + name + "` : " + Translator.getLabel(lg, "admin.help.detailed.1")
+                + "\n`" + prefixe + name + " `*`command`* : " + Translator.getLabel(lg, "admin.help.detailed.2") + "\n";
     }
 }

@@ -80,7 +80,7 @@ public class AvailableCommand extends AbstractCommand {
     @Override
     public String helpDetailed(Language lg, String prefixe) {
         return help(lg, prefixe)
-                + "\n" + prefixe + "`"  + name + "*CommandForbidden* true` : " + Translator.getLabel(lg, "available.detailed.1")
-                + "\n" + prefixe + "`"  + name + "*CommandForbidden* false` : " + Translator.getLabel(lg, "available.detailed.2") + "\n";
+                + "\n`" + prefixe + name + "`*`CommandForbidden`*` true` : " + Translator.getLabel(lg, "available.help.detailed.1")
+                + "\n`" + prefixe + name + "`*` CommandForbidden`*` false` : " + Translator.getLabel(lg, "available.help.detailed.2") + "\n";
     }
 }

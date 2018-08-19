@@ -126,7 +126,7 @@ public class GuildCommand extends AbstractCommand {
     @Override
     public String helpDetailed(Language lg, String prefixe) {
         return help(lg, prefixe)
-                + "\n" + prefixe + "`"  + name + " `*`name`* : " + Translator.getLabel(lg, "guild.help.detailed.1")
-                + "\n" + prefixe + "`"  + name + " `*`name`*` -serv `*`server`* : " + Translator.getLabel(lg, "guild.help.detailed.2") + "\n";
+                + "\n`" + prefixe + name + " `*`name`* : " + Translator.getLabel(lg, "guild.help.detailed.1")
+                + "\n`" + prefixe + name + " `*`name`*` -serv `*`server`* : " + Translator.getLabel(lg, "guild.help.detailed.2") + "\n";
     }
 }
