@@ -1,4 +1,4 @@
-# KaellyTOUCH [![Build Status](https://travis-ci.org/Kaysoro/KaellyBot.svg?branch=Touch)](https://travis-ci.org/Kaysoro/KaellyBot) [![Dependency Status](https://beta.gemnasium.com/badges/github.com/Kaysoro/KaellyBot.svg?branch=touch)](https://beta.gemnasium.com/projects/github.com/Kaysoro/KaellyBot/tree/Touch) [![Known Vulnerabilities](https://snyk.io/test/github/kaysoro/kaellybot/badge.svg?targetFile=pom.xml)](https://snyk.io/test/github/kaysoro/kaellybot?targetFile=pom.xml) [![Coverage Status](https://coveralls.io/repos/github/Kaysoro/KaellyBot/badge.svg?branch=master)](https://coveralls.io/github/Kaysoro/KaellyBot?branch=master)
+# KaellyBOT [![Build Status](https://travis-ci.org/Kaysoro/KaellyBot.svg?branch=DevTouch)](https://travis-ci.org/Kaysoro/KaellyBot) [![pipeline status](https://gitlab.com/Kaysoro/KaellyBot/badges/DevTouch/pipeline.svg)](https://gitlab.com/Kaysoro/KaellyBot/commits/DevTouch) [![Known Vulnerabilities](https://snyk.io/test/github/kaysoro/kaellybot/badge.svg?targetFile=pom.xml)](https://snyk.io/test/github/kaysoro/kaellybot?targetFile=pom.xml) [![Coverage Status](https://coveralls.io/repos/github/Kaysoro/KaellyBot/badge.svg?branch=DevTouch)](https://coveralls.io/github/Kaysoro/KaellyBot?branch=DevTouch)
 KaellyTOUCH est destinée à fournir des commandes utiles à la communauté de DOFUS TOUCH (FR/EN)! L'intégralité de son code est libre d'accès. Si vous avez des questions, des suggestions ou que vous souhaitez juste passer un coucou, rejoignez le serveur discord du support : [![Support Server Invite](https://img.shields.io/badge/Join-KaellyBOT%20Support-7289DA.svg?style=flat)](https://discord.gg/CyJCFDk)
 
 ## Ajoutez KaellyTOUCH à votre serveur : [![Official Kaelly Invite](https://img.shields.io/badge/Add-KaellyTOUCH-0199FE.svg?style=flat)](https://discordapp.com/oauth2/authorize?&client_id=393925392618094612&scope=bot)
@@ -93,6 +93,7 @@ Renvoie les statistiques d'une panoplie du jeu Dofus.
 Joue des sons dans un salon vocal.  
 `!sound` : joue un son au hasard, parmi une liste prédéfinie.  
 `!sound sound` : joue le son spécifié.  
+`!sound -leave` : quitte le salon vocal.
 
 ### Tuto
 Renvoie le tutoriel correspondant à la recherche effectuée..  
@@ -108,15 +109,12 @@ Affiche la page personnelle d'un joueur.
 `!whois pseudo` : donne la page personnelle associée au pseudo. Celui-ci doit être exact.
 `!whois pseudo server` : est à utiliser lorsque le pseudo ne suffit pas pour déterminer la fiche d'un personnage.
 
-# Participer au projet
+# Participer au projet (Développeur uniquement)
 
-## Modifier KaellyTOUCH
-
-Tout le monde peut aider au développement de KaellyTOUCH ! Proposez des suggestions, remontez des bugs sur le support ou bien développez des évolutions en proposant vos pulls request : https://github.com/Kaysoro/KaellyBot/pulls.
+Section réservée aux développeurs. Si vous souhaitez ajouter Kaelly, il existe un lien d'invitation plus haut. Pour proposer des suggestions ou remonter des bugs, utiliser le serveur support. Le projet est ouvert au pulls request : https://github.com/Kaysoro/KaellyBot/pulls.
 
 
 ## Créer votre Bot
-Attention, cette section est avant tout réservée à un public averti : si vous ne maîtrisez pas un minimum l'informatique, veuillez utiliser le bot officiel dont le lien est disponible plus haut. Dans le cas contraire, un support moindre sera apporté, mais il faudra savoir se débrouiller un minimum soi-même !  
 
 ### Obtenir un token Discord
 
@@ -137,7 +135,7 @@ https://discordapp.com/oauth2/authorize?&client_id=CLIENT_ID&scope=bot
 
 ### Connecter le bot à Discord
 
-Maintenant que vous avez déclaré votre application sur la plateforme Discord, il suffit d'ajouter le token précédemment copié dans le fichier [config.properties](https://github.com/Kaysoro/KaellyBot/blob/master/config.properties), de telle sorte que : discord.token=TOKEN.
+Maintenant que vous avez déclaré votre application sur la plateforme Discord, il suffit d'ajouter le token précédemment copié dans le fichier [config.properties](https://github.com/Kaysoro/KaellyBot/blob/DevTouch/config.properties), de telle sorte que : discord.token=TOKEN.
 
 Avant de continuer, il faut ajouter la base de données *bdd.sqlite* à la racine du dossier; celle-ci est en libre téléchargement sur le serveur de support KaellyBOT, dans le salon \#trucs_utiles.
 
@@ -161,4 +159,5 @@ Kaelly peut être lancée depuis n'importe quelle distribution : elle est compat
 Ce projet est sous licence GPL(v3).
 
 ## Merci !
+Le développement et l'accessibilité de Kaelly 24/7 génèrent des frais en continu. N'hésitez pas à participer à son maintien par le biais des dons !
 [![Donate](https://www.paypalobjects.com/fr_FR/FR/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=89WTL4LXRZK98)
