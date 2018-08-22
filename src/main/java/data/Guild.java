@@ -1,6 +1,7 @@
 package data;
 
 import enums.Language;
+import finders.PortalTracker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sx.blah.discord.handle.obj.IGuild;
@@ -8,6 +9,7 @@ import util.Connexion;
 import util.Reporter;
 
 import java.sql.*;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -23,6 +25,7 @@ public class Guild {
     private String name;
     private List<Portal> portals;
     private Map<String, CommandForbidden> commands;
+    private Map<String, PortalTracker> portalTrackers;
     private String prefix;
     private ServerDofus server;
     private Language language;
@@ -39,6 +42,7 @@ public class Guild {
         this.language = lang;
         this.server = ServerDofus.getServersMap().get(serverDofus);
         portals = Portal.getPortals(this);
+        portalTrackers = PortalTracker.getPortalTrackers(this);
     }
 
     public synchronized void addToDatabase(){
@@ -236,14 +240,25 @@ public class Guild {
         return commands;
     }
 
+    public Map<String, PortalTracker> getPortalTrackers(){
+        return portalTrackers;
+    }
+
     public ServerDofus getServerDofus() {
         return server;
     }
 
-    public void mergePortals(List<Portal> newPortals){
+    /**
+     * @param newPortals new portals from a specific source
+     * @return Portals to track
+     */
+    public List<Portal> mergePortals(List<Portal> newPortals){
+        List<Portal> portalToTrack = new ArrayList<>();
         for(Portal newPortal : newPortals)
             for(Portal portal : portals)
-                portal.merge(newPortal);
+                if (portal.merge(newPortal))
+                    portalToTrack.add(portal);
+        return portalToTrack;
     }
 
     public void resetPortals() {

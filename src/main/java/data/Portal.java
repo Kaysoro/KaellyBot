@@ -247,21 +247,35 @@ public class Portal implements Embedded{
         }
     }
 
-    public void merge(Portal portal){
-
+    /**
+     *
+     * @param portal new portal
+     * @return true if the coordonate has changed
+     */
+    public boolean merge(Portal portal){
+        boolean result = false;
         if (Normalizer.normalize(portal.getName(), Normalizer.Form.NFD)
                         .replaceAll("\\p{InCombiningDiacriticalMarks}+", "").toLowerCase()
                         .equals(Normalizer.normalize(getName(), Normalizer.Form.NFD)
                         .replaceAll("\\p{InCombiningDiacriticalMarks}+", "").toLowerCase())
-                && ! portal.coordonate.isNull())
-            if (coordonate.equals(portal.coordonate) && utilisation > portal.utilisation || coordonate.isNull()){
+                && ! portal.coordonate.isNull()) {
+            // Si les coordonnées sont différentes et que la date de création est plus récente
+            result = !coordonate.equals(portal.coordonate) && creation < portal.creation;
+
+            // Si le nombre d'utilisation a changé ou que les coordonnées de base sont nulles
+            if (coordonate.equals(portal.coordonate) && utilisation > portal.utilisation || coordonate.isNull()) {
                 setCoordonate(portal.coordonate, portal.creation, portal.creationSource);
                 setUtilisation(portal.utilisation, portal.lastUpdate, portal.updateSource);
             }
-            else if (! coordonate.isNull() && ! coordonate.equals(portal.coordonate) && creation < portal.creation){
+
+            // Si la coordonnée de base n'est pas nulle, que les positions sont différentes et que la date de création est plus récente
+            else if (!coordonate.isNull() && !coordonate.equals(portal.coordonate) && creation < portal.creation) {
                 setCoordonate(portal.coordonate, portal.creation, portal.creationSource);
                 setUtilisation(portal.utilisation, portal.lastUpdate, portal.updateSource);
             }
+        }
+
+        return result;
     }
 
     public void reset() {
@@ -275,6 +289,21 @@ public class Portal implements Embedded{
 
     @Override
     public EmbedObject getEmbedObject(Language lg) {
+        return getEmbedBuilder(lg).build();
+    }
+
+    public EmbedObject getEmbedObjectChange(Language lg) {
+        return getEmbedBuilder(lg)
+                .withTitle(":new: " + name)
+                .build();
+    }
+
+    @Override
+    public EmbedObject getMoreEmbedObject(Language lg) {
+        return getEmbedObject(lg);
+    }
+
+    private EmbedBuilder getEmbedBuilder(Language lg){
         EmbedBuilder builder = new EmbedBuilder();
 
         builder.withTitle(name);
@@ -296,13 +325,7 @@ public class Portal implements Embedded{
             builder.appendField(Translator.getLabel(lg, "portal.zaap"), zaap.toDiscordString(lg), false);
             builder.withFooterText(getDateInformation(creationSource, updateSource, lg));
         }
-
-        return builder.build();
-    }
-
-    @Override
-    public EmbedObject getMoreEmbedObject(Language lg) {
-        return getEmbedObject(lg);
+        return builder;
     }
 
     public static List<Portal> getSweetPortals(ServerDofus server) throws IOException {
