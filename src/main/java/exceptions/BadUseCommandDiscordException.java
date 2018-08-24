@@ -1,5 +1,6 @@
 package exceptions;
 
+import commands.model.AbstractCommand;
 import commands.model.Command;
 import commands.classic.HelpCommand;
 import enums.Language;
@@ -18,7 +19,7 @@ public class BadUseCommandDiscordException implements DiscordException {
     public void throwException(IMessage message, Command command, Language lg, Object... arguments) {
         Message.sendText(message.getChannel(), Translator.getLabel(lg, "exception.bad_use_command")
                 .replace("{author}", Matcher.quoteReplacement(message.getAuthor().toString()))
-                .replaceAll("\\{prefix}", Matcher.quoteReplacement(command.getPrefix(message)))
+                .replaceAll("\\{prefix}", Matcher.quoteReplacement(AbstractCommand.getPrefix(message)))
                 .replaceAll("\\{cmd.name}", command.getName())
                 .replace("{HelpCmd.name}", HelpCommand.NAME));
     }

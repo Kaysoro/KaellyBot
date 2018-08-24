@@ -13,7 +13,6 @@ public interface Command {
     String getName();
     String getPattern();
     Matcher getMatcher(IMessage message);
-    String getPrefix(IMessage message);
     void request(IMessage message);
 
     /**
