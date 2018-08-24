@@ -88,6 +88,9 @@ public class PortalCommand extends AbstractCommand {
                 + "\n`" + prefixe + name + " `*`dimension`*` [POS, POS] `*`utilisation`* : "
                         + Translator.getLabel(lg, "portal.help.detailed.4")
                 + "\n`" + prefixe + name + " `*`dimension` `utilisation`* : "
-                        + Translator.getLabel(lg, "portal.help.detailed.5") + "\n";
+                        + Translator.getLabel(lg, "portal.help.detailed.5")
+                + "\n`" + prefixe + name + " true` : " + Translator.getLabel(lg, "portal.help.detailed.6")
+                + "\n`" + prefixe + name + " false` : " + Translator.getLabel(lg, "portal.help.detailed.7")
+                + "\n";
     }
 }

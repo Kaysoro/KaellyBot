@@ -25,12 +25,19 @@ public class CommandPatternTest {
         assertTrue(pattern.matcher(Constants.prefixCommand + "almanax").find());
         assertTrue(pattern.matcher(Constants.prefixCommand + "almanax 20/02/2016").find());
         assertTrue(pattern.matcher(Constants.prefixCommand + "almanax +9").find());
-        assertTrue(pattern.matcher(Constants.prefixCommand + "almanax true").find());
-        assertTrue(pattern.matcher(Constants.prefixCommand + "almanax on").find());
-        assertTrue(pattern.matcher(Constants.prefixCommand + "almanax 0").find());
-        assertTrue(pattern.matcher(Constants.prefixCommand + "almanax false").find());
-        assertTrue(pattern.matcher(Constants.prefixCommand + "almanax off").find());
-        assertTrue(pattern.matcher(Constants.prefixCommand + "almanax 1").find());
+    }
+
+    @Test
+    public void testAlmanaxAutoCommand(){
+        Command cmd = new AlmanaxAutoCommand();
+        Pattern pattern = Pattern.compile("^" + Constants.prefixCommand + cmd.getName() + cmd.getPattern() + "$");
+
+        assertTrue(pattern.matcher(Constants.prefixCommand + "almanax-auto true").find());
+        assertTrue(pattern.matcher(Constants.prefixCommand + "almanax-auto on").find());
+        assertTrue(pattern.matcher(Constants.prefixCommand + "almanax-auto 0").find());
+        assertTrue(pattern.matcher(Constants.prefixCommand + "almanax-auto false").find());
+        assertTrue(pattern.matcher(Constants.prefixCommand + "almanax-auto off").find());
+        assertTrue(pattern.matcher(Constants.prefixCommand + "almanax-auto 1").find());
     }
 
     @Test
@@ -190,6 +197,19 @@ public class CommandPatternTest {
         assertTrue(pattern.matcher(Constants.prefixCommand + "pos dimension 1,-1 1").find());
         assertTrue(pattern.matcher(Constants.prefixCommand + "pos dimension [1,-1] 1").find());
         assertTrue(pattern.matcher(Constants.prefixCommand + "pos dimension 1").find());
+    }
+
+    @Test
+    public void testPortalAutoCommand(){
+        Command cmd = new PortalAutoCommand();
+        Pattern pattern = Pattern.compile("^" + Constants.prefixCommand + cmd.getName() + cmd.getPattern() + "$");
+
+        assertTrue(pattern.matcher(Constants.prefixCommand + "pos-auto true").find());
+        assertTrue(pattern.matcher(Constants.prefixCommand + "pos-auto on").find());
+        assertTrue(pattern.matcher(Constants.prefixCommand + "pos-auto 0").find());
+        assertTrue(pattern.matcher(Constants.prefixCommand + "pos-auto false").find());
+        assertTrue(pattern.matcher(Constants.prefixCommand + "pos-auto off").find());
+        assertTrue(pattern.matcher(Constants.prefixCommand + "pos-auto 1").find());
     }
 
     @Test

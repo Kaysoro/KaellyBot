@@ -45,7 +45,7 @@ public class PortalTracker {
     }
 
     public synchronized void removeToDatabase() {
-        Guild.getGuilds().get(getGuildId()).getPortalTrackers().remove(this);
+        Guild.getGuilds().get(getGuildId()).getPortalTrackers().remove(getChan());
 
         Connexion connexion = Connexion.getInstance();
         Connection connection = connexion.getConnection();

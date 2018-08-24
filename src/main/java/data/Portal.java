@@ -260,7 +260,8 @@ public class Portal implements Embedded{
                         .replaceAll("\\p{InCombiningDiacriticalMarks}+", "").toLowerCase())
                 && ! portal.coordonate.isNull()) {
             // Si les coordonnées sont différentes et que la date de création est plus récente
-            result = !coordonate.equals(portal.coordonate) && creation < portal.creation;
+            result = ! coordonate.equals(portal.coordonate) && creation < portal.creation && !coordonate.isNull()
+                    || coordonate.isNull() && portal.isValid();
 
             // Si le nombre d'utilisation a changé ou que les coordonnées de base sont nulles
             if (coordonate.equals(portal.coordonate) && utilisation > portal.utilisation || coordonate.isNull()) {

@@ -30,6 +30,7 @@ public class CommandManager {
         addCommand(new AlignmentCommand());
         addCommand(new AllianceCommand());
         addCommand(new AlmanaxCommand());
+        addCommand(new AlmanaxAutoCommand());
         addCommand(new CommandCommand());
         addCommand(new DistanceCommand());
         addCommand(new GuildCommand());
@@ -40,6 +41,7 @@ public class CommandManager {
         addCommand(new MapCommand());
         addCommand(new MonsterCommand());
         addCommand(new PortalCommand());
+        addCommand(new PortalAutoCommand());
         addCommand(new PrefixCommand());
         addCommand(new RandomCommand());
         addCommand(new ResourceCommand());
