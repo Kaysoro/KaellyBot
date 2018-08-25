@@ -24,7 +24,7 @@ public class CommandCommand extends AbstractCommand {
     private DiscordException notFoundCmd;
 
     public CommandCommand(){
-        super("cmd","\\s+(\\w+)\\s+(on|off|0|1|true|false)");
+        super("cmd","\\s+([\\w|-]+)\\s+(on|off|0|1|true|false)");
         setUsableInMP(false);
         tooMuchCmds = new TooMuchDiscordException("cmd");
         notFoundCmd = new NotFoundDiscordException("cmd");

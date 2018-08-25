@@ -88,6 +88,7 @@ public class CommandPatternTest {
         assertTrue(pattern.matcher(Constants.prefixCommand + "cmd CommandForbidden 1").find());
         assertFalse(pattern.matcher(Constants.prefixCommand + "cmd").find());
         assertFalse(pattern.matcher(Constants.prefixCommand + "cmd CommandForbidden").find());
+        assertTrue(pattern.matcher(Constants.prefixCommand + "cmd Command-Forbidden true").find());
     }
 
     @Test
@@ -362,6 +363,7 @@ public class CommandPatternTest {
         assertTrue(pattern.matcher(Constants.prefixCommand + "available CommandForbidden 1").find());
         assertFalse(pattern.matcher(Constants.prefixCommand + "available").find());
         assertFalse(pattern.matcher(Constants.prefixCommand + "available CommandForbidden").find());
+        assertTrue(pattern.matcher(Constants.prefixCommand + "available Command-Forbidden true").find());
     }
 
     @Test

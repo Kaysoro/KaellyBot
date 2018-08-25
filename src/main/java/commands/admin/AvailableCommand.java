@@ -23,7 +23,7 @@ public class AvailableCommand extends AbstractCommand {
     private DiscordException notFoundCmd;
 
     public AvailableCommand(){
-        super("available","\\s+(\\w+)\\s+(on|off|0|1|true|false)");
+        super("available","\\s+([\\w|-]+)\\s+(on|off|0|1|true|false)");
         setAdmin(true);
         tooMuchCmds = new TooMuchDiscordException("cmd");
         notFoundCmd = new NotFoundDiscordException("cmd");
