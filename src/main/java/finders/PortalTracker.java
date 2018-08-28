@@ -84,7 +84,8 @@ public class PortalTracker {
         Connection connection = connexion.getConnection();
 
         try {
-            PreparedStatement query = connection.prepareStatement("SELECT id_guild, id_chan FROM Portal_Tracker");
+            PreparedStatement query = connection.prepareStatement("SELECT id_guild, id_chan FROM Portal_Tracker WHERE id_guild = ?;");
+            query.setString(1, guild.getId());
             ResultSet resultSet = query.executeQuery();
 
             while (resultSet.next()){
