@@ -8,6 +8,12 @@ import sx.blah.discord.api.internal.json.objects.EmbedObject;
 import sx.blah.discord.handle.obj.IChannel;
 import sx.blah.discord.util.*;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
+
 /**
  * Created by steve on 14/11/2016.
  */
@@ -34,6 +40,35 @@ public class Message {
             } catch(Exception e){
                 Reporter.report(e, channel.isPrivate()? null : channel.getGuild(), channel);
                 LoggerFactory.getLogger(Message.class).error(e.getMessage(),e );
+            }
+            return null;
+        });
+    }
+
+    public static void sendImage(IChannel channel, BufferedImage image, String imageName) {
+        Language lg = Translator.getLanguageFrom(channel);
+        RequestBuffer.request(() -> {
+            try {
+                ByteArrayOutputStream os = new ByteArrayOutputStream();
+                ImageIO.write(image, "png", os);
+                InputStream is = new ByteArrayInputStream(os.toByteArray());
+                new MessageBuilder(ClientConfig.DISCORD())
+                        .withChannel(channel)
+                        .withFile(is, imageName)
+                        .build();
+            } catch (RateLimitException e) {
+                LoggerFactory.getLogger(Message.class).warn(e.getMessage(), e);
+                throw e;
+            } catch (DiscordException e) {
+                Reporter.report(e, channel.isPrivate() ? null : channel.getGuild(), channel);
+                LoggerFactory.getLogger(Message.class).error(e.getMessage(), e);
+            } catch (MissingPermissionsException e) {
+                LoggerFactory.getLogger(Message.class).warn(Constants.name
+                        + " n'a pas les permissions pour appliquer cette requête.");
+                new MissingPermissionDiscordException().throwException(channel, lg, e);
+            } catch (Exception e) {
+                Reporter.report(e, channel.isPrivate() ? null : channel.getGuild(), channel);
+                LoggerFactory.getLogger(Message.class).error(e.getMessage(), e);
             }
             return null;
         });
