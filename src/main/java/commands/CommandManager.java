@@ -43,6 +43,7 @@ public class CommandManager {
         addCommand(new PortalCommand());
         addCommand(new PortalAutoCommand());
         addCommand(new PrefixCommand());
+        addCommand(new PurgeCommand());
         addCommand(new RandomCommand());
         addCommand(new ResourceCommand());
         addCommand(new RSSCommand());

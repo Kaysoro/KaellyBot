@@ -74,6 +74,32 @@ public class Message {
         });
     }
 
+    public static void sendFile(IChannel channel, InputStream file, String fileName) {
+        Language lg = Translator.getLanguageFrom(channel);
+        RequestBuffer.request(() -> {
+            try {
+                new MessageBuilder(ClientConfig.DISCORD())
+                        .withChannel(channel)
+                        .withFile(file, fileName)
+                        .build();
+            } catch (RateLimitException e) {
+                LoggerFactory.getLogger(Message.class).warn(e.getMessage(), e);
+                throw e;
+            } catch (DiscordException e) {
+                Reporter.report(e, channel.isPrivate() ? null : channel.getGuild(), channel);
+                LoggerFactory.getLogger(Message.class).error(e.getMessage(), e);
+            } catch (MissingPermissionsException e) {
+                LoggerFactory.getLogger(Message.class).warn(Constants.name
+                        + " n'a pas les permissions pour appliquer cette requête.");
+                new MissingPermissionDiscordException().throwException(channel, lg, e);
+            } catch (Exception e) {
+                Reporter.report(e, channel.isPrivate() ? null : channel.getGuild(), channel);
+                LoggerFactory.getLogger(Message.class).error(e.getMessage(), e);
+            }
+            return null;
+        });
+    }
+
     public static void sendEmbed(IChannel channel, EmbedObject content){
         Language lg = Translator.getLanguageFrom(channel);
         RequestBuffer.request(() -> {
