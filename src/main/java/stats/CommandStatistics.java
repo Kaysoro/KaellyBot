@@ -83,7 +83,6 @@ public class CommandStatistics {
                 st.append("INSERT INTO Command_Statistics(name_command, instant) VALUES(\"")
                         .append(resultSet.getString("name_command")).append("\", ")
                         .append(resultSet.getString("instant")).append(");\n");
-            LOG.info(st.toString());
             PreparedStatement request = connection.prepareStatement("DELETE FROM Command_Statistics;");
             request.executeUpdate();
 
