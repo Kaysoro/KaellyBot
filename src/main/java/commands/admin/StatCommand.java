@@ -20,6 +20,8 @@ import util.Translator;
 import java.awt.image.BufferedImage;
 import java.time.Duration;
 import java.time.Instant;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.stream.Collectors;
@@ -29,6 +31,9 @@ import java.util.stream.Collectors;
  */
 public class StatCommand extends AbstractCommand {
 
+    private final static DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+                    .withLocale( Locale.FRANCE )
+                    .withZone(ZoneId.systemDefault());
     private final static int GULD_LIMIT = 10;
     private final static int CMD_LIMIT = 1;
 
@@ -65,6 +70,8 @@ public class StatCommand extends AbstractCommand {
         else if (m.group(1).matches("\\s+-cmd(\\s+\\d+)?")){
             int limit = CMD_LIMIT;
             if (m.group(3) != null) limit = Integer.parseInt(m.group(3).trim());
+            Message.sendImage(message.getChannel(), getNumberCmdCalledPerCmd(limit),
+                    "stats -cmd : " + Instant.now() + ".png");
             Message.sendImage(message.getChannel(), getNumberCmdCalled(limit),
                     "stats -cmd : " + Instant.now() + ".png");
         }
@@ -109,7 +116,28 @@ public class StatCommand extends AbstractCommand {
                 "Discord guild number",
                 dataSet, false, false, false);
 
-        return chart.createBufferedImage(700, 500);
+        return chart.createBufferedImage(1200, 700);
+    }
+
+    /**
+     *
+     * @param limit nombre de jours d'appels de commande réparti par commandes à afficher
+     * @return Liste des appels de commandes de kaelly par jour et par commande
+     */
+    private BufferedImage getNumberCmdCalledPerCmd(int limit){
+        long period = Duration.ofDays(limit).toMillis();
+        List<CommandStatistics> stats = CommandStatistics.getStatisticsPerCommand(period);
+        DefaultCategoryDataset dataSet = new DefaultCategoryDataset();
+        for(CommandStatistics stat : stats)
+            dataSet.setValue(stat.getUse(), "Calls", stat.getCommandName());
+
+        JFreeChart chart = ChartFactory.createBarChart(
+                "Commands called since " + FORMATTER.format(Instant.ofEpochMilli(System.currentTimeMillis() - period)),
+                "Commands",
+                "Calls",
+                dataSet, PlotOrientation.VERTICAL, false, false, false);
+
+        return chart.createBufferedImage(1200, 700);
     }
 
     /**
@@ -120,17 +148,20 @@ public class StatCommand extends AbstractCommand {
     private BufferedImage getNumberCmdCalled(int limit){
         long period = Duration.ofDays(limit).toMillis();
         List<CommandStatistics> stats = CommandStatistics.getStatistics(period);
-        DefaultCategoryDataset dataSet = new DefaultCategoryDataset();
+        TimeSeriesCollection dataSet = new TimeSeriesCollection();
+        TimeSeries series = new TimeSeries("data");
+
         for(CommandStatistics stat : stats)
-            dataSet.setValue(stat.getUse(), "Calls", stat.getCommandName());
+            series.addOrUpdate(new Day(stat.getDate()), stat.getUse());
+        dataSet.addSeries(series);
 
-        JFreeChart chart = ChartFactory.createBarChart(
-                "Commands called since " + Instant.ofEpochMilli(System.currentTimeMillis() - period),
-                "Commands",
-                "Calls",
-                dataSet, PlotOrientation.VERTICAL, false, true, false);
+        JFreeChart chart = ChartFactory.createTimeSeriesChart(
+                "Commands called since " + FORMATTER.format(Instant.ofEpochMilli(System.currentTimeMillis() - period)),
+                "Date",
+                "Command Calls",
+                dataSet, false, false, false);
 
-        return chart.createBufferedImage(700, 500);
+        return chart.createBufferedImage(1200, 700);
     }
 
     @Override

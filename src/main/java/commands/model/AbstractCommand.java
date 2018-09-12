@@ -74,7 +74,8 @@ public abstract class AbstractCommand implements Command {
                 return;
             }
             if (isFound) {
-                CommandStatistics.addStatsToDatabase(this);
+                if (! isAdmin())
+                    CommandStatistics.addStatsToDatabase(this);
                 request(message, m, lg);
             }
         } catch(Exception e){

@@ -6,7 +6,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import util.Connexion;
 import util.Reporter;
-import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.sql.Connection;
@@ -14,6 +13,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -23,13 +23,19 @@ public class CommandStatistics {
     private final static Logger LOG = LoggerFactory.getLogger(CommandStatistics.class);
     private String commandName;
     private int use;
+    private Date date;
 
     private CommandStatistics(String commandName, int use) {
         this.commandName = commandName;
         this.use = use;
     }
 
-    public static List<CommandStatistics> getStatistics(long period){
+    private CommandStatistics(Date date, int use) {
+        this.date = date;
+        this.use = use;
+    }
+
+    public static List<CommandStatistics> getStatisticsPerCommand(long period){
         List<CommandStatistics> result = new ArrayList<>();
         long dateMin = System.currentTimeMillis() - period;
         Connexion connexion = Connexion.getInstance();
@@ -45,6 +51,32 @@ public class CommandStatistics {
                 String command = resultSet.getString("name_command");
                 int use = resultSet.getInt("use");
                 result.add(new CommandStatistics(command, use));
+            }
+        } catch (SQLException e) {
+            Reporter.report(e);
+            LOG.error("getStatisticsPerCommand", e);
+        }
+
+        return result;
+    }
+
+    public static List<CommandStatistics> getStatistics(long period){
+        List<CommandStatistics> result = new ArrayList<>();
+        long dateMin = System.currentTimeMillis() - period;
+        Connexion connexion = Connexion.getInstance();
+        Connection connection = connexion.getConnection();
+
+        try {
+            PreparedStatement query = connection.prepareStatement("SELECT count(*) AS use, instant,"
+                    + " strftime('%s', date(instant / 1000, 'unixepoch')) as date"
+                    + " FROM Command_Statistics WHERE instant > ? GROUP BY date");
+            query.setLong(1, dateMin);
+            ResultSet resultSet = query.executeQuery();
+
+            while (resultSet.next()){
+                long date = resultSet.getLong("date") * 1000;
+                int use = resultSet.getInt("use");
+                result.add(new CommandStatistics(new Date(date), use));
             }
         } catch (SQLException e) {
             Reporter.report(e);
@@ -102,5 +134,9 @@ public class CommandStatistics {
 
     public int getUse() {
         return use;
+    }
+
+    public Date getDate() {
+        return date;
     }
 }
