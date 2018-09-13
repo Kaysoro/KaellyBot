@@ -60,6 +60,29 @@ public class CommandStatistics {
         return result;
     }
 
+    public static List<CommandStatistics> getStatisticsPerCommandForbidden(){
+        List<CommandStatistics> result = new ArrayList<>();
+        Connexion connexion = Connexion.getInstance();
+        Connection connection = connexion.getConnection();
+
+        try {
+            PreparedStatement query = connection.prepareStatement("SELECT name_command, count(*) AS use"
+                    + " FROM Command_Guild GROUP BY name_command");
+            ResultSet resultSet = query.executeQuery();
+
+            while (resultSet.next()){
+                String command = resultSet.getString("name_command");
+                int use = resultSet.getInt("use");
+                result.add(new CommandStatistics(command, use));
+            }
+        } catch (SQLException e) {
+            Reporter.report(e);
+            LOG.error("getStatisticsPerCommandForbidden", e);
+        }
+
+        return result;
+    }
+
     public static List<CommandStatistics> getStatistics(long period){
         List<CommandStatistics> result = new ArrayList<>();
         long dateMin = System.currentTimeMillis() - period;
@@ -68,7 +91,7 @@ public class CommandStatistics {
 
         try {
             PreparedStatement query = connection.prepareStatement("SELECT count(*) AS use, instant,"
-                    + " strftime('%s', date(instant / 1000, 'unixepoch')) as date"
+                    + " strftime('%s', date(instant / 1000, 'unixepoch', 'localtime')) as date"
                     + " FROM Command_Statistics WHERE instant > ? GROUP BY date");
             query.setLong(1, dateMin);
             ResultSet resultSet = query.executeQuery();

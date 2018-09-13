@@ -4,8 +4,7 @@ import commands.model.AbstractCommand;
 import enums.Language;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
-import org.jfree.chart.plot.PlotOrientation;
-import org.jfree.data.category.DefaultCategoryDataset;
+import org.jfree.data.general.DefaultPieDataset;
 import org.jfree.data.time.Day;
 import org.jfree.data.time.TimeSeries;
 import org.jfree.data.time.TimeSeriesCollection;
@@ -74,6 +73,8 @@ public class StatCommand extends AbstractCommand {
                     "stats -cmd : " + Instant.now() + ".png");
             Message.sendImage(message.getChannel(), getNumberCmdCalled(limit),
                     "stats -cmd : " + Instant.now() + ".png");
+            Message.sendImage(message.getChannel(), getForbiddenCommandsChart(),
+                    "stats -cmd : " + Instant.now() + ".png");
         }
         else if (m.group(1).matches("\\s+-hist"))
             Message.sendImage(message.getChannel(), getJoinTimeGuildsGraph(),
@@ -127,15 +128,30 @@ public class StatCommand extends AbstractCommand {
     private BufferedImage getNumberCmdCalledPerCmd(int limit){
         long period = Duration.ofDays(limit).toMillis();
         List<CommandStatistics> stats = CommandStatistics.getStatisticsPerCommand(period);
-        DefaultCategoryDataset dataSet = new DefaultCategoryDataset();
+        DefaultPieDataset dataSet = new DefaultPieDataset();
         for(CommandStatistics stat : stats)
-            dataSet.setValue(stat.getUse(), "Calls", stat.getCommandName());
+            dataSet.setValue(stat.getCommandName() + " (" + stat.getUse() + ")", stat.getUse());
 
-        JFreeChart chart = ChartFactory.createBarChart(
+        JFreeChart chart = ChartFactory.createPieChart(
                 "Commands called since " + FORMATTER.format(Instant.ofEpochMilli(System.currentTimeMillis() - period)),
-                "Commands",
-                "Calls",
-                dataSet, PlotOrientation.VERTICAL, false, false, false);
+                dataSet, false, false, false);
+
+        return chart.createBufferedImage(1200, 700);
+    }
+
+    /**
+     *
+     * @return Graphe à propos des commandes les plus bloquées
+     */
+    private BufferedImage getForbiddenCommandsChart(){
+        List<CommandStatistics> stats = CommandStatistics.getStatisticsPerCommandForbidden();
+        DefaultPieDataset dataSet = new DefaultPieDataset();
+        for(CommandStatistics stat : stats)
+            dataSet.setValue(stat.getCommandName() + " (" + stat.getUse() + ")", stat.getUse());
+
+        JFreeChart chart = ChartFactory.createPieChart(
+                "Commands forbidden",
+                dataSet, false, false, false);
 
         return chart.createBufferedImage(1200, 700);
     }
@@ -175,6 +191,6 @@ public class StatCommand extends AbstractCommand {
                 + "\n`" + prefixe + name + "` : " + Translator.getLabel(lg, "stat.help.detailed.1")
                 + "\n`" + prefixe + name + " -g `*`n`* : " + Translator.getLabel(lg, "stat.help.detailed.2")
                 + "\n`" + prefixe + name + " -cmd `*`n`* : " + Translator.getLabel(lg, "stat.help.detailed.3")
-                + "\n`" + prefixe + name + " -hist` : " + Translator.getLabel(lg, "stat.help.detailed.4")+ "\n";
+                + "\n`" + prefixe + name + " -hist` : " + Translator.getLabel(lg, "stat.help.detailed.4") + "\n";
     }
 }
