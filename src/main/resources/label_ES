@@ -684,4 +684,7 @@ whois.success=:trophy: Logros:
 whois.progression=Progresión:
 whois.guild=:shield: Gremio:
 whois.ally=:beginner: Alianza:
+whois.ladder_XP=:chart_with_upwards_trend: XP
+whois.ladder_koli=:melon: Koliseo
+whois.ladder_success=:crossed_swords: Logros
 whois.extract.level=Nivel

@@ -794,4 +794,7 @@ whois.success=:trophy: Succès :
 whois.progression=Progression :
 whois.guild=:shield: Guilde :
 whois.ally=:beginner: Alliance :
+whois.ladder_XP=:chart_with_upwards_trend: XP
+whois.ladder_koli=:melon: Kolizeum
+whois.ladder_success=:crossed_swords: Succès
 whois.extract.level=Niveau
