@@ -671,6 +671,7 @@ twitter.request.2=Tweets from {twitter.name} won't be sent here anymore.
 twitter.help=sends tweets from {twitter.name} in a channel; right to manage the server required.
 twitter.help.detailed.1=sends tweets from {twitter.name}. Works also with "on" and "0".
 twitter.help.detailed.2=does not send tweets in the channel. Works also with "off" and "1".
+vacuum.help=calls the SQLite command vacuum();
 whois.request=unavailable
 whois.help=gives the character page.
 whois.help.detailed.1=gives the character page from a pseudo. It should be exact.

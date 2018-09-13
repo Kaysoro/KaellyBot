@@ -671,6 +671,7 @@ twitter.request.2=Los tweets de {twitter.name} ya no se enviarán aquí.
 twitter.help=envía tweets desde {twitter.name} en un canal; el derecho a administrar el servidor es obligatorio.
 twitter.help.detailed.1=envía tweets desde {twitter.name}. Funciona también con "on" y "0".
 twitter.help.detailed.2=no envía tweets en el canal. Funciona también con "off" y "1".
+vacuum.help=llama al comando SQLite vacuum();
 whois.request=no-disponible
 whois.help=da la página personal de un personaje.
 whois.help.detailed.1=da la página personal asociada con el apodo. Esto debe ser exacto.

@@ -388,4 +388,13 @@ public class CommandPatternTest {
         assertTrue(pattern.matcher(Constants.prefixCommand + "stats -cmd 200").find());
         assertTrue(pattern.matcher(Constants.prefixCommand + "stats -hist").find());
     }
+
+    @Test
+    public void testVacuumCommand(){
+        Command cmd = new VacuumCommand();
+        Pattern pattern = Pattern.compile("^" + Constants.prefixCommand + cmd.getName() + cmd.getPattern() + "$");
+
+        assertTrue(pattern.matcher(Constants.prefixCommand + "vacuum").find());
+        assertFalse(pattern.matcher(Constants.prefixCommand + "  ").find());
+    }
 }
