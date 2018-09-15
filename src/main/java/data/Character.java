@@ -18,6 +18,7 @@ import java.util.Random;
  */
 public class Character implements Embedded {
 
+    // Classic values
     private String pseudo;
     private String level;
     private String classe;
@@ -33,6 +34,13 @@ public class Character implements Embedded {
     private String ladderXP;
     private String ladderKoli;
     private String ladderSuccess;
+
+    // Stuff values
+    private boolean stuffAvailable;
+    private String primaire;
+    private String secondaire;
+    private String dommage;
+    private String resistance;
 
     private Character(String pseudo, String level, String classe, String server, String score,
                       String guildName, String guildUrl, String alliName, String alliUrl,
@@ -55,13 +63,30 @@ public class Character implements Embedded {
         this.ladderSuccess = ladderSuccess;
     }
 
+    private Character(String pseudo, String level, String classe, String server,
+                      String littleSkinURL, String bigSkinURL, String url, boolean stuffAvailable,
+                      String primaire, String secondaire, String dommage, String resistance) {
+        this.pseudo = pseudo;
+        this.level = level;
+        this.classe = classe;
+        this.server = server;
+        this.littleSkinURL = littleSkinURL;
+        this.bigSkinURL = bigSkinURL;
+        this.url = url;
+        this.stuffAvailable = stuffAvailable;
+        this.primaire = primaire;
+        this.secondaire = secondaire;
+        this.dommage = dommage;
+        this.resistance = resistance;
+    }
+
     @Override
     public EmbedObject getEmbedObject(Language lg){
         EmbedBuilder builder = new EmbedBuilder();
 
         builder.withTitle(pseudo);
         builder.withUrl(url);
-        builder.withDescription(Translator.getLabel(lg, classe));
+        builder.withDescription(classe);
 
         builder.withColor(new Random().nextInt(16777216));
         builder.withThumbnail(littleSkinURL);
@@ -94,7 +119,29 @@ public class Character implements Embedded {
 
     @Override
     public EmbedObject getMoreEmbedObject(Language lg) {
-        return getEmbedObject(lg);
+        EmbedBuilder builder = new EmbedBuilder();
+
+        builder.withTitle(pseudo);
+        builder.withUrl(url);
+        builder.withDescription(classe + ", " + level);
+        builder.withColor(new Random().nextInt(16777216));
+        builder.withThumbnail(littleSkinURL);
+        builder.withFooterText(Translator.getLabel(lg, "whois.server") + " " + server);
+
+        if (stuffAvailable){
+            builder.withImage(bigSkinURL);
+            builder.appendField(Translator.getLabel(lg, "whois.stuff.primary"), primaire, true);
+            builder.appendField(Translator.getLabel(lg, "whois.stuff.secondary"), secondaire, true);
+            builder.appendField(Translator.getLabel(lg, "whois.stuff.damages"), dommage, true);
+            builder.appendField(Translator.getLabel(lg, "whois.stuff.resistances"), resistance, true);
+        }
+        else {
+            String[] punchlines = Translator.getLabel(lg, "whois.stuff.none.punchlines").split(";");
+            String punchline = punchlines[new Random().nextInt(punchlines.length)];
+            builder.appendField(Translator.getLabel(lg, "whois.stuff.none.title"), punchline, true);
+        }
+
+        return builder.build();
     }
 
     public static Character getCharacter(String url, Language lg) throws IOException {
@@ -159,5 +206,46 @@ public class Character implements Embedded {
         return new Character(pseudo, level, classe, server, score,
                 guildName, guildUrl, alliName, alliUrl, littleSkinURL, bigSkinURL, url,
                 ladderXP.toString(), ladderKoli.toString(), ladderSuccess.toString());
+    }
+
+    public static Character getCharacterStuff(String url, Language lg) throws IOException {
+        Document doc = JSoupManager.getDocument(url);
+        String bigSkinURL = null;
+        String littleSkinURL = doc.getElementsByClass("ak-entitylook").first().toString();
+        littleSkinURL = littleSkinURL.substring(littleSkinURL.indexOf("https://"), littleSkinURL.indexOf(")"));
+        String pseudo = doc.getElementsByClass("ak-return-link").first().text();
+        String level = doc.getElementsByClass("ak-directories-level").first().text();
+        String classe = doc.getElementsByClass("ak-directories-breed").first().text();
+        String server = doc.getElementsByClass("ak-directories-server-name").first().text();
+
+        boolean stuffAvailable = !doc.getElementsByClass("ak-caracteristics-content").isEmpty();
+        String primaire = null;
+        String secondaire = null;
+        String dommage = null;
+        String resistance = null;
+
+        if (stuffAvailable){
+            bigSkinURL = doc.getElementsByClass("ak-entitylook").last().attr("style");
+            bigSkinURL = bigSkinURL.substring(bigSkinURL.indexOf("https://"), bigSkinURL.indexOf(")"));
+            primaire = getStats(doc.getElementsByClass("ak-primary-caracteristics").first(), lg);
+            secondaire = getStats(doc.getElementsByClass("ak-secondary-caracteristics").first(), lg);
+            dommage = getStats(doc.getElementsByClass("ak-primary-caracteristics").get(1), lg);
+            resistance = getStats(doc.getElementsByClass("ak-secondary-caracteristics").get(1), lg);
+        }
+
+        return new Character(pseudo, level, classe, server, littleSkinURL, bigSkinURL, url, stuffAvailable,
+                    primaire, secondaire, dommage, resistance);
+    }
+
+    private static String getStats(Element section, Language lg){
+        StringBuilder tmp = new StringBuilder();
+        Elements trs = section.getElementsByTag("tbody").first().getElementsByTag("tr");
+
+        for (Element tr : trs) {
+            Elements tds = tr.getElementsByTag("td");
+            tmp.append(EmojiManager.getEmojiForStat(lg, tds.get(1).text()))
+                    .append(tds.last().text()).append(" ").append(tds.get(1).text()).append("\n");
+        }
+        return tmp.toString();
     }
 }
