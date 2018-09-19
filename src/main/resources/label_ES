@@ -513,6 +513,7 @@ item.recette=:moneybag: Receta:
 item.panoplie=:link: Set:
 item.extract.level=Nivel:
 item.extract.caracteristiques=Características
+item.extract.evolution_effects=Efectos evolutivos
 item.extract.description=Descripción
 item.extract.effets=Efectos
 item.extract.conditions=Condiciones
