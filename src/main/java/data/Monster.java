@@ -31,9 +31,10 @@ public class Monster implements Embedded {
     private String zones;
     private List<String> butins;
     private List<String> butinsConditionne;
+    private boolean error;
 
     private Monster(String name, String family, String level, String caracteristics, String skinURL, String url,
-                     String resistances, String zones, List<String> butins, List<String> butinsConditionne) {
+                     String resistances, String zones, List<String> butins, List<String> butinsConditionne, boolean error) {
         this.name = name;
         this.family = family;
         this.level = level;
@@ -44,6 +45,7 @@ public class Monster implements Embedded {
         this.zones = zones;
         this.butins = butins;
         this.butinsConditionne = butinsConditionne;
+        this.error = error;
     }
 
     @Override
@@ -64,6 +66,8 @@ public class Monster implements Embedded {
 
         if (resistances != null && ! resistances.isEmpty())
             builder.appendField(Translator.getLabel(lg, "monster.resistance"), resistances, true);
+
+        if (error) builder.withFooterText(Translator.getLabel(lg, "monster.error"));
 
         return builder.build();
     }
@@ -103,6 +107,8 @@ public class Monster implements Embedded {
                                 + butinsConditionne.size() + ")" : "") + " : ",
                         butinsConditionne.get(i), true);
 
+        if (error) builder.withFooterText(Translator.getLabel(lg, "monster.error"));
+
         return builder.build();
     }
 
@@ -123,6 +129,8 @@ public class Monster implements Embedded {
         List<String> butins = new ArrayList<>();
         List<String> butinsConditionne = new ArrayList<>();
 
+        boolean error = false;
+
         Elements titles = doc.getElementsByClass("ak-panel-title");
         for (Element title : titles)
             if (title.text().equals(Translator.getLabel(lg, "monster.extract.caracteristic")))
@@ -132,11 +140,12 @@ public class Monster implements Embedded {
             else if (title.text().equals(Translator.getLabel(lg, "monster.extract.zones")))
                 zones = title.parent().children().last().text();
             else if (title.text().equals(Translator.getLabel(lg, "monster.extract.butins")))
-                extractButins(butins, title.parent().getElementById("ak-encyclo-monster-drops ak-container ak-content-list"));
+                error = error || extractButins(butins, title.parent()
+                        .getElementById("ak-encyclo-monster-drops ak-container ak-content-list"));
             else if (title.text().equals(Translator.getLabel(lg, "monster.extract.butins_conditionnes")))
-                extractButins(butinsConditionne, title.parent());
+                error = error || extractButins(butinsConditionne, title.parent());
 
-        return new Monster(name, family, level, caracteristics, URLManager.abs(skinURL), url, resistances, zones, butins, butinsConditionne);
+        return new Monster(name, family, level, caracteristics, URLManager.abs(skinURL), url, resistances, zones, butins, butinsConditionne, error);
     }
 
     private static String extractStatsFromTitle(Language lg, Element elem)
@@ -148,31 +157,41 @@ public class Monster implements Embedded {
         return tmp.toString();
     }
 
-    private static void extractButins(List<String> butins, Element element){
+    /**
+     * @param butins Liste des butins
+     * @param element Element contenant les butins
+     * @return true si c'est en erreur, false le cas échéant
+     */
+    private static boolean extractButins(List<String> butins, Element element){
+        boolean error = false;
         StringBuilder field = new StringBuilder();
         Elements lines = element.getElementsByClass("ak-column");
         for (Element line : lines) {
             StringBuilder tmp = new StringBuilder();
             tmp.append(line.getElementsByClass("ak-front").text());
 
-            if (! line.getElementsByClass("ak-title").first().children().isEmpty())
-                    tmp.append("[")
-                    .append(line.getElementsByClass("ak-title").first().text()).append("](")
-                    .append(line.getElementsByClass("ak-title").first()
-                            .children().first().attr("abs:href")).append(") ");
-            else
-                tmp.append(line.getElementsByClass("ak-title").first().text()).append(" ");
+            Elements titles = line.getElementsByClass("ak-title");
+            if (!titles.isEmpty()) {
+                if (!titles.first().children().isEmpty())
+                    tmp.append("[").append(titles.first().text()).append("](")
+                            .append(titles.first().children().first().attr("abs:href")).append(") ");
+                else
+                    tmp.append(titles.first().text()).append(" ");
 
-            tmp.append(line.getElementsByClass("ak-drop-percent").first().text()).append("\n");
+                tmp.append(line.getElementsByClass("ak-drop-percent").first().text()).append("\n");
 
-            if (field.length() + tmp.length() > EmbedBuilder.FIELD_CONTENT_LIMIT){
-                butins.add(field.toString());
-                field.setLength(0);
+                if (field.length() + tmp.length() > EmbedBuilder.FIELD_CONTENT_LIMIT) {
+                    butins.add(field.toString());
+                    field.setLength(0);
+                }
+                field.append(tmp.toString());
             }
-            field.append(tmp.toString());
+            else error = true;
         }
 
         if (field.length() > 0)
             butins.add(field.toString());
+
+        return error;
     }
 }

@@ -559,6 +559,7 @@ monster.resistance=:shield: Resistances:
 monster.zones=:map: Areas:
 monster.butins=:moneybag: Drops
 monster.butins_conditionnes=:moneybag: Conditional drops
+monster.error=The Ankama website is unstable: some data could not be recovered because it could not be used.
 monster.extract.level=Level:
 monster.extract.caracteristic=Characteristics
 monster.extract.resistance=Resistances

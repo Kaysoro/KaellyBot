@@ -669,6 +669,7 @@ monster.resistance=:shield: Résistances :
 monster.zones=:map: Zones :
 monster.butins=:moneybag: Butins
 monster.butins_conditionnes=:moneybag: Butins conditionnés
+monster.error=Le site web d'Ankama est instable : certains données n'ont pu être récupérées car inexploitable.
 monster.extract.level=Niveau :
 monster.extract.caracteristic=Caractéristiques
 monster.extract.resistance=Résistances
