@@ -32,7 +32,8 @@ public class RandomCommand extends AbstractCommand {
     public void request(IMessage message, Matcher m, Language lg) {
         Random r = new Random();
         Matcher tmp;
-        if (m.group(1) == null) {
+
+        if (m.group(1) == null || m.group(1).trim().isEmpty()) {
             boolean value = r.nextBoolean();
             Message.sendText(message.getChannel(), value ? Translator.getLabel(lg, "random.request.1") :
                     Translator.getLabel(lg, "random.request.2") + " !");
