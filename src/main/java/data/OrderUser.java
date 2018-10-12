@@ -69,6 +69,7 @@ public class OrderUser extends ObjectUser {
                 preparedStatement.setString(2, order.getName());
                 preparedStatement.setString(3, String.valueOf(idUser));
                 preparedStatement.setString(4, server.getName());
+                getOrders().remove(idUser, server, city, order);
             }
 
             preparedStatement.executeUpdate();
