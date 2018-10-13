@@ -32,7 +32,9 @@ public enum TypeEquipment implements Type {
     PIERREDAME("&type_id[]=83", "equip.pierredame", WEAPON),
     FAMILIER("&type_id[]=121", "equip.familier", PET),
     TROPHEE("&type_id[]=151", "equip.trophee", EQUIPMENT),
-    DRAGODINDE("&model_family_id[]=1", "equip.dragodinde", MONTURE);
+    DRAGODINDE("&model_family_id[]=1", "equip.dragodinde", MONTURE),
+    MULDO("&model_family_id[]=5", "equip.muldo", MONTURE),
+    VOLKORNE("&model_family_id[]=6", "equip.volkorne", MONTURE);
 
     private String typeID;
     private String names;
