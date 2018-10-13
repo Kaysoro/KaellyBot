@@ -350,6 +350,7 @@ exception.toomuch.toomuch.fg=Varios
 exception.toomuch.found.mg=encontrados
 exception.toomuch.found.ng=encontrados
 exception.toomuch.found.fg=encontradas
+exception.toomuch.items=¡Refina la búsqueda indicando más caracteres!
 exception.object.alliance.gender=fg
 exception.object.city.gender=fg
 exception.object.cmd.gender=mg
