@@ -27,7 +27,7 @@ import java.util.regex.Matcher;
  */
 public class WhoisCommand extends AbstractCommand {
 
-    private final static String forPseudo = "TEXT=";
+    private final static String forPseudo = "text=";
     private final static String forServer = "character_homeserv[]=";
 
     private DiscordException tooMuchCharacters;
