@@ -3,6 +3,7 @@ package commands.classic;
 import commands.model.AbstractCommand;
 import data.Constants;
 import enums.Donator;
+import enums.Graphist;
 import enums.Language;
 import sx.blah.discord.handle.obj.IUser;
 import sx.blah.discord.util.EmbedBuilder;
@@ -56,7 +57,10 @@ public class AboutCommand extends AbstractCommand {
                     .replace("{git}", Constants.git), true)
         .appendField(Translator.getLabel(lg, "about.free.title"),
                 Translator.getLabel(lg, "about.free.desc")
-                    .replace("{paypal}", Constants.paypal), true);
+                    .replace("{paypal}", Constants.paypal), true)
+        .appendField(Translator.getLabel(lg, "about.graphist.title"),
+                Translator.getLabel(lg, "about.graphist.desc")
+                        .replace("{graphist}", Graphist.ELYCANN.toMarkdown()), true);
 
         StringBuilder st = new StringBuilder();
         for(Donator donator : Donator.values())
