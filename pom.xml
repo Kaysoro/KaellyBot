@@ -50,7 +50,7 @@
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
-                <version>0.7.9</version>
+                <version>0.8.2</version>
                 <executions>
                     <execution>
                         <id>prepare-agent</id>
@@ -78,7 +78,7 @@
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
-            <version>3.7</version>
+            <version>3.8.1</version>
         </dependency>
         <dependency>
             <groupId>org.jsoup</groupId>
@@ -88,7 +88,7 @@
         <dependency>
             <groupId>org.xerial</groupId>
             <artifactId>sqlite-jdbc</artifactId>
-            <version>3.21.0.1</version>
+            <version>3.25.2</version>
         </dependency>
         <dependency>
             <groupId>com.discord4j</groupId>
@@ -98,12 +98,12 @@
         <dependency>
             <groupId>com.rometools</groupId>
             <artifactId>rome</artifactId>
-            <version>1.11.0</version>
+            <version>1.12.0</version>
         </dependency>
         <dependency>
             <groupId>io.sentry</groupId>
             <artifactId>sentry</artifactId>
-            <version>1.7.5</version>
+            <version>1.7.16</version>
         </dependency>
         <dependency>
             <groupId>ch.qos.logback</groupId>
@@ -113,7 +113,7 @@
         <dependency>
             <groupId>org.twitter4j</groupId>
             <artifactId>twitter4j-stream</artifactId>
-            <version>4.0.6</version>
+            <version>4.0.7</version>
         </dependency>
         <dependency>
             <groupId>com.optimaize.languagedetector</groupId>
