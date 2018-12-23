@@ -47,10 +47,10 @@
     <orderEntry type="library" name="Maven: org.json:json:20170516" level="project" />
     <orderEntry type="library" name="Maven: com.koloboke:koloboke-impl-common-jdk8:1.0.0" level="project" />
     <orderEntry type="library" name="Maven: com.koloboke:koloboke-api-jdk8:1.0.0" level="project" />
-    <orderEntry type="library" name="Maven: com.rometools:rome:1.9.0" level="project" />
-    <orderEntry type="library" name="Maven: com.rometools:rome-utils:1.9.0" level="project" />
+    <orderEntry type="library" name="Maven: com.rometools:rome:1.11.0" level="project" />
+    <orderEntry type="library" name="Maven: com.rometools:rome-utils:1.11.0" level="project" />
     <orderEntry type="library" name="Maven: org.jdom:jdom2:2.0.6" level="project" />
-    <orderEntry type="library" name="Maven: io.sentry:sentry:1.7.3" level="project" />
+    <orderEntry type="library" name="Maven: io.sentry:sentry:1.7.5" level="project" />
     <orderEntry type="library" name="Maven: com.fasterxml.jackson.core:jackson-core:2.8.7" level="project" />
     <orderEntry type="library" name="Maven: ch.qos.logback:logback-classic:1.2.3" level="project" />
     <orderEntry type="library" name="Maven: ch.qos.logback:logback-core:1.2.3" level="project" />
