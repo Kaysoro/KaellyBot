@@ -330,7 +330,7 @@ public class Portal implements Embedded{
     }
 
     public static List<Portal> getSweetPortals(ServerDofus server) throws IOException {
-        String source = "Sweet.ovh";
+        String source = "dofus-portals.fr";
         List<Portal> portals = new ArrayList<>();
 
         Document doc = JSoupManager.getDocument(Constants.sweetPortals + server.getSweetId());
