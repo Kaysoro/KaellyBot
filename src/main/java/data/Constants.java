@@ -93,7 +93,7 @@ public class Constants {
     /**
      * Portal URL
      */
-    public final static String sweetPortals = "http://www.sweet.ovh/portails/";
+    public final static String sweetPortals = "https://dofus-portals.fr/portails/";
 
     public final static String turnamentMapImg = "https://dofus-tournaments.fr/_default/src/img/maps/A{number}.jpg";
 
