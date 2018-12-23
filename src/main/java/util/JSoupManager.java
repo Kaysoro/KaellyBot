@@ -17,6 +17,7 @@ public class JSoupManager {
                 .userAgent("Mozilla/5.0 (Windows NT 10.0; WOW64; rv:54.0) Gecko/20100101 Firefox/54.0")
                 .referrer("http://www.google.com")
                 .timeout(10000)
+                .validateTLSCertificates(false)
                 .get();
     }
 
@@ -27,6 +28,7 @@ public class JSoupManager {
                 .headers(header)
                 .data(data)
                 .timeout(10000)
+                .validateTLSCertificates(false)
                 .post();
     }
 
@@ -35,6 +37,7 @@ public class JSoupManager {
                 .userAgent("Mozilla/5.0 (Windows NT 10.0; WOW64; rv:54.0) Gecko/20100101 Firefox/54.0")
                 .referrer("http://www.google.com")
                 .timeout(10000)
+                .validateTLSCertificates(false)
                 .execute();
     }
 }
