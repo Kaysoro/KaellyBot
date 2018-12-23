@@ -62,6 +62,7 @@ public class JobUser extends ObjectUser {
                 preparedStatement.setString(1, job.getName());
                 preparedStatement.setString(2, String.valueOf(idUser));
                 preparedStatement.setString(3, server.getName());
+                getJobs().remove(idUser, server, job);
             }
 
             preparedStatement.executeUpdate();
