@@ -42,14 +42,14 @@ public class AvailableCommand extends AbstractCommand {
             String value = m.group(2);
 
             if (command instanceof AvailableCommand || command instanceof AboutCommand){
-                Message.sendText(message.getChannel(), Translator.getLabel(lg, "announce.request.1"));
+                Message.sendText(message.getChannel(), Translator.getLabel(lg, "available.request.1"));
                 return;
             }
             if (value.matches("false") || value.matches("1") || value.matches("off")){
                 if (command.isPublic()) {
                     command.setPublic(false);
-                    Message.sendText(message.getChannel(), Translator.getLabel(lg, "announce.request.2") + " *" + commandName
-                            + "* " + Translator.getLabel(lg, "announce.request.3"));
+                    Message.sendText(message.getChannel(), Translator.getLabel(lg, "available.request.2") + " *" + commandName
+                            + "* " + Translator.getLabel(lg, "available.request.3"));
                 }
                 else
                     BasicDiscordException.FORBIDDEN_COMMAND_FOUND.throwException(message, this, lg);
@@ -57,8 +57,8 @@ public class AvailableCommand extends AbstractCommand {
             else if (value.matches("true") || value.matches("0") || value.matches("on")){
                 if (! command.isPublic()) {
                     command.setPublic(true);
-                    Message.sendText(message.getChannel(), Translator.getLabel(lg, "announce.request.2") + "*" + commandName
-                            + "* " + Translator.getLabel(lg, "announce.request.4"));
+                    Message.sendText(message.getChannel(), Translator.getLabel(lg, "available.request.2") + "*" + commandName
+                            + "* " + Translator.getLabel(lg, "available.request.4"));
                 }
                 else
                     BasicDiscordException.FORBIDDEN_COMMAND_NOTFOUND.throwException(message, this, lg);
