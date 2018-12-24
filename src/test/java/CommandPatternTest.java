@@ -220,6 +220,7 @@ public class CommandPatternTest {
 
         assertTrue(pattern.matcher(Constants.prefixCommand + "sound").find());
         assertTrue(pattern.matcher(Constants.prefixCommand + "sound dofus").find());
+        assertTrue(pattern.matcher(Constants.prefixCommand + "sound -leave").find());
     }
 
     @Test
@@ -241,7 +242,8 @@ public class CommandPatternTest {
         assertTrue(pattern.matcher(Constants.prefixCommand + "rdm").find());
         assertTrue(pattern.matcher(Constants.prefixCommand + "rdm 200").find());
         assertTrue(pattern.matcher(Constants.prefixCommand + "rdm un deûx trôis").find());
-        assertFalse(pattern.matcher(Constants.prefixCommand + "rdm ").find());
+        assertTrue(pattern.matcher(Constants.prefixCommand + "rdm -dj 200").find());
+        assertTrue(pattern.matcher(Constants.prefixCommand + "rdm -dj 190 10").find());
     }
 
     @Test
@@ -320,5 +322,7 @@ public class CommandPatternTest {
         Pattern pattern = Pattern.compile(("^" + Constants.prefixCommand + cmd.getName() + cmd.getPattern() + "$"));
 
         assertTrue(pattern.matcher(Constants.prefixCommand + "stats").find());
+        assertTrue(pattern.matcher(Constants.prefixCommand + "stats -g").find());
+        assertTrue(pattern.matcher(Constants.prefixCommand + "stats -g 200").find());
     }
 }
