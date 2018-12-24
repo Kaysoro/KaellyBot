@@ -30,6 +30,7 @@ public class CommandManager {
         addCommand(new AlignmentCommand());
         addCommand(new AllianceCommand());
         addCommand(new AlmanaxCommand());
+        addCommand(new AlmanaxAutoCommand());
         addCommand(new CommandCommand());
         addCommand(new DistanceCommand());
         addCommand(new GuildCommand());

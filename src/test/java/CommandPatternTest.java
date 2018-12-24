@@ -25,12 +25,19 @@ public class CommandPatternTest {
         assertTrue(pattern.matcher(Constants.prefixCommand + "almanax").find());
         assertTrue(pattern.matcher(Constants.prefixCommand + "almanax 20/02/2016").find());
         assertTrue(pattern.matcher(Constants.prefixCommand + "almanax +9").find());
-        assertTrue(pattern.matcher(Constants.prefixCommand + "almanax true").find());
-        assertTrue(pattern.matcher(Constants.prefixCommand + "almanax on").find());
-        assertTrue(pattern.matcher(Constants.prefixCommand + "almanax 0").find());
-        assertTrue(pattern.matcher(Constants.prefixCommand + "almanax false").find());
-        assertTrue(pattern.matcher(Constants.prefixCommand + "almanax off").find());
-        assertTrue(pattern.matcher(Constants.prefixCommand + "almanax 1").find());
+    }
+
+    @Test
+    public void testAlmanaxAutoCommand() {
+        Command cmd = new AlmanaxAutoCommand();
+        Pattern pattern = Pattern.compile("^" + Constants.prefixCommand + cmd.getName() + cmd.getPattern() + "$");
+
+        assertTrue(pattern.matcher(Constants.prefixCommand + "almanax-auto true").find());
+        assertTrue(pattern.matcher(Constants.prefixCommand + "almanax-auto on").find());
+        assertTrue(pattern.matcher(Constants.prefixCommand + "almanax-auto 0").find());
+        assertTrue(pattern.matcher(Constants.prefixCommand + "almanax-auto false").find());
+        assertTrue(pattern.matcher(Constants.prefixCommand + "almanax-auto off").find());
+        assertTrue(pattern.matcher(Constants.prefixCommand + "almanax-auto 1").find());
     }
 
     @Test
@@ -81,6 +88,7 @@ public class CommandPatternTest {
         assertTrue(pattern.matcher(Constants.prefixCommand + "cmd CommandForbidden 1").find());
         assertFalse(pattern.matcher(Constants.prefixCommand + "cmd").find());
         assertFalse(pattern.matcher(Constants.prefixCommand + "cmd CommandForbidden").find());
+        assertTrue(pattern.matcher(Constants.prefixCommand + "cmd Command-Forbidden true").find());
     }
 
     @Test
@@ -304,6 +312,7 @@ public class CommandPatternTest {
         assertTrue(pattern.matcher(Constants.prefixCommand + "available CommandForbidden 1").find());
         assertFalse(pattern.matcher(Constants.prefixCommand + "available").find());
         assertFalse(pattern.matcher(Constants.prefixCommand + "available CommandForbidden").find());
+        assertTrue(pattern.matcher(Constants.prefixCommand + "available Command-Forbidden true").find());
     }
 
     @Test
