@@ -666,4 +666,7 @@ whois.success=:trophy: Achievement:
 whois.progression=Progression:
 whois.guild=:shield: Guild:
 whois.ally=:beginner: Ally:
+whois.ladder_XP=:chart_with_upwards_trend: XP
+whois.ladder_koli=:melon: Kolossium rating
+whois.ladder_success=:crossed_swords: Achievements
 whois.extract.level=Level

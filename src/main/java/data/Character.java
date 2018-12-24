@@ -2,11 +2,11 @@ package data;
 
 import enums.Language;
 import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import sx.blah.discord.api.internal.json.objects.EmbedObject;
 import sx.blah.discord.util.EmbedBuilder;
+import util.EmojiManager;
 import util.JSoupManager;
 import util.Translator;
 
@@ -17,8 +17,6 @@ import java.util.Random;
  * Created by steve on 20/04/2017.
  */
 public class Character implements Embedded {
-
-    private final static Logger LOG = LoggerFactory.getLogger(Character.class);
 
     private String pseudo;
     private String level;
@@ -33,11 +31,15 @@ public class Character implements Embedded {
     private String littleSkinURL;
     private String bigSkinURL;
     private String url;
+    private String ladderXP;
+    private String ladderKoli;
+    private String ladderSuccess;
 
     private Character(String pseudo, String level, String classe, String server,
                       String score, String progression,
                       String guildName, String guildUrl, String alliName, String alliUrl,
-                      String littleSkinURL, String bigSkinURL, String url) {
+                      String littleSkinURL, String bigSkinURL, String url, String ladderXP,
+                      String ladderKoli, String ladderSuccess) {
         this.pseudo = pseudo;
         this.level = level;
         this.classe = classe;
@@ -51,6 +53,9 @@ public class Character implements Embedded {
         this.littleSkinURL = littleSkinURL;
         this.bigSkinURL = bigSkinURL;
         this.url = url;
+        this.ladderXP = ladderXP;
+        this.ladderKoli = ladderKoli;
+        this.ladderSuccess = ladderSuccess;
     }
 
     @Override
@@ -75,6 +80,13 @@ public class Character implements Embedded {
             builder.appendField(Translator.getLabel(lg, "whois.guild"), "[" + guildName + "](" + guildUrl + ")", true);
         if (alliName != null)
             builder.appendField(Translator.getLabel(lg, "whois.ally"), "[" + alliName + "](" + alliUrl + ")", true);
+
+        if (ladderXP != null && ! ladderXP.isEmpty())
+            builder.appendField(Translator.getLabel(lg, "whois.ladder_XP"), ladderXP, true);
+        if (ladderKoli != null && ! ladderKoli.isEmpty())
+            builder.appendField(Translator.getLabel(lg, "whois.ladder_koli"), ladderKoli, true);
+        if (ladderSuccess != null && ! ladderSuccess.isEmpty())
+            builder.appendField(Translator.getLabel(lg, "whois.ladder_success"), ladderSuccess, true);
 
         return builder.build();
     }
@@ -118,7 +130,26 @@ public class Character implements Embedded {
             }
         }
 
+        String ladderXP = "";
+        String ladderKoli = "";
+        String ladderSuccess = "";
+
+        elem = doc.getElementsByClass("ak-container ak-table ak-responsivetable");
+        if (!elem.isEmpty()) {
+            Elements trs = elem.first().getElementsByTag("tbody").first().getElementsByTag("tr");
+
+
+            for(Element tr : trs){
+                String ladderText = tr.getElementsByTag("td").first().text() + " : ";
+                tr.getElementsByTag("td").first().remove();
+                ladderXP += ladderText + EmojiManager.getEmojiForLadder(tr.getElementsByTag("td").first().text()) + "\n";
+                ladderKoli += ladderText + EmojiManager.getEmojiForLadder(tr.getElementsByTag("td").get(1).text()) + "\n";
+                ladderSuccess += ladderText + EmojiManager.getEmojiForLadder(tr.getElementsByTag("td").last().text()) + "\n";
+            }
+        }
+
         return new Character(pseudo, level, classe, server, score, progression,
-                guildName, guildUrl, alliName, alliUrl, littleSkinURL, bigSkinURL, url);
+                guildName, guildUrl, alliName, alliUrl, littleSkinURL, bigSkinURL, url,
+                ladderXP, ladderKoli, ladderSuccess);
     }
 }

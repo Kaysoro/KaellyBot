@@ -26,6 +26,15 @@ public class EmojiManager {
         return "";
     }
 
+    public static String getEmojiForLadder(String place){
+        switch (place) {
+            case "1": return ":crown:";
+            case "2": return ":second_place:";
+            case "3": return ":third_place:";
+            default : return "**" + place + "**";
+        }
+    }
+
     public static String getEmojiForPresence(StatusType presence){
         switch (presence){
             case ONLINE : return "<:here:435696207776710656>";
