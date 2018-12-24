@@ -1,10 +1,7 @@
 package listeners;
 
-import commands.classic.AlmanaxCommand;
 import commands.classic.HelpCommand;
-import commands.config.LanguageCommand;
-import commands.config.RSSCommand;
-import commands.config.TwitterCommand;
+import commands.config.*;
 import enums.Language;
 import sx.blah.discord.util.DiscordException;
 import util.ClientConfig;
@@ -15,7 +12,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sx.blah.discord.api.events.EventSubscriber;
 import sx.blah.discord.handle.impl.events.guild.GuildCreateEvent;
-import sx.blah.discord.handle.obj.IUser;
 import sx.blah.discord.handle.obj.Permissions;
 import util.Reporter;
 import util.Translator;
@@ -49,9 +45,10 @@ public class GuildCreateListener {
                         .replaceAll("\\{game\\}", Constants.game)
                         .replaceAll("\\{prefix\\}", Constants.prefixCommand)
                         .replaceAll("\\{help\\}", HelpCommand.NAME)
+                        .replaceAll("\\{server\\}", new ServerCommand().getName())
                         .replaceAll("\\{lang\\}", new LanguageCommand().getName())
                         .replaceAll("\\{twitter\\}", new TwitterCommand().getName())
-                        .replaceAll("\\{almanax\\}", new AlmanaxCommand().getName())
+                        .replaceAll("\\{almanax-auto\\}", new AlmanaxAutoCommand().getName())
                         .replaceAll("\\{rss\\}", new RSSCommand().getName())
                         .replaceAll("\\{owner\\}", event.getGuild().getOwner().mention())
                         .replaceAll("\\{guild\\}", event.getGuild().getName());

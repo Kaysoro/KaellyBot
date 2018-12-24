@@ -3,7 +3,6 @@ package commands.classic;
 import commands.model.AbstractCommand;
 import data.Almanax;
 import enums.Language;
-import finders.AlmanaxCalendar;
 import util.Message;
 import exceptions.*;
 import sx.blah.discord.handle.obj.IMessage;
@@ -21,7 +20,7 @@ import java.util.regex.Matcher;
 public class AlmanaxCommand extends AbstractCommand {
 
     public AlmanaxCommand(){
-        super("almanax", "(\\s+\\d{2}/\\d{2}/\\d{4}|\\s+\\+\\d|\\s+true|\\s+false|\\s+0|\\s+1|\\s+on|\\s+off)?");
+        super("almanax", "(\\s+\\d{2}/\\d{2}/\\d{4}|\\s+\\+\\d)?");
     }
 
     @Override
@@ -29,29 +28,7 @@ public class AlmanaxCommand extends AbstractCommand {
         try {
             Date date = new Date();
 
-            if (m.group(1) != null && (m.group(1).matches("\\s+true") || m.group(1).matches("\\s+0") || m.group(1).matches("\\s+on")
-                    || m.group(1).matches("\\s+false") || m.group(1).matches("\\s+1") || m.group(1).matches("\\s+off"))) {
-                if (! message.getChannel().isPrivate()){
-                    if (isUserHasEnoughRights(message)) {
-                        if (m.group(1).matches("\\s+true") || m.group(1).matches("\\s+0") || m.group(1).matches("\\s+on"))
-                            if (!AlmanaxCalendar.getAlmanaxCalendars().containsKey(message.getChannel().getStringID())) {
-                                new AlmanaxCalendar(message.getGuild().getStringID(), message.getChannel().getStringID()).addToDatabase();
-                                Message.sendText(message.getChannel(), Translator.getLabel(lg, "almanax.request.1"));
-                            } else
-                                Message.sendText(message.getChannel(), Translator.getLabel(lg, "almanax.request.2"));
-                        else if (m.group(1).matches("\\s+false") || m.group(1).matches("\\s+1") || m.group(1).matches("\\s+off"))
-                            if (AlmanaxCalendar.getAlmanaxCalendars().containsKey(message.getChannel().getStringID())) {
-                                AlmanaxCalendar.getAlmanaxCalendars().get(message.getChannel().getStringID()).removeToDatabase();
-                                Message.sendText(message.getChannel(), Translator.getLabel(lg, "almanax.request.3"));
-                            } else
-                                Message.sendText(message.getChannel(), Translator.getLabel(lg, "almanax.request.4"));
-                    } else
-                        BasicDiscordException.NO_ENOUGH_RIGHTS.throwException(message, this, lg);
-                } else
-                    BasicDiscordException.NOT_USABLE_IN_MP.throwException(message, this, lg);
-            }
-
-            else if (m.group(1) != null && m.group(1).matches("\\s+\\+\\d")) {
+            if (m.group(1) != null && m.group(1).matches("\\s+\\+\\d")) {
                 int number = Integer.parseInt(m.group(1).replaceAll("\\s+\\+", ""));
                 Message.sendEmbed(message.getChannel(), Almanax.getGroupedObject(lg, date, number));
             } else {
@@ -80,8 +57,6 @@ public class AlmanaxCommand extends AbstractCommand {
         return help(lg, prefixe)
                 + "\n`" + prefixe + name + "` : " + Translator.getLabel(lg, "almanax.help.detailed.1")
                 + "\n`" + prefixe + name + " `*`dd/mm/yyyy`* : " + Translator.getLabel(lg, "almanax.help.detailed.2")
-                + "\n`" + prefixe + name + " `*`+days`* : " + Translator.getLabel(lg, "almanax.help.detailed.3")
-                + "\n`" + prefixe + name + " true` : " + Translator.getLabel(lg, "almanax.help.detailed.4")
-                + "\n`" + prefixe + name + " false` : " + Translator.getLabel(lg, "almanax.help.detailed.5") + "\n";
+                + "\n`" + prefixe + name + " `*`+days`* : " + Translator.getLabel(lg, "almanax.help.detailed.3") + "\n";
     }
 }
