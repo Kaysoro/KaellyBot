@@ -2,12 +2,14 @@ package commands.admin;
 
 import commands.model.AbstractCommand;
 import enums.Language;
-import exceptions.BasicDiscordException;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
+import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.data.category.DefaultCategoryDataset;
 import org.jfree.data.time.Day;
 import org.jfree.data.time.TimeSeries;
 import org.jfree.data.time.TimeSeriesCollection;
+import stats.CommandStatistics;
 import sx.blah.discord.handle.obj.IGuild;
 import sx.blah.discord.handle.obj.IMessage;
 import sx.blah.discord.handle.obj.IUser;
@@ -16,10 +18,8 @@ import util.Message;
 import util.Translator;
 
 import java.awt.image.BufferedImage;
+import java.time.Duration;
 import java.time.Instant;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
-import java.time.format.FormatStyle;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.stream.Collectors;
@@ -62,10 +62,9 @@ public class StatCommand extends AbstractCommand {
         }
         else if (m.group(1).matches("\\s+-cmd(\\s+\\d+)?")){
             int limit = CMD_LIMIT;
-            if (m.group(2) != null) limit = Integer.parseInt(m.group(2).trim());
-            List<String> cmdCalled = getNumberCmdCalled(limit);
-            //TODO
-            BasicDiscordException.IN_DEVELOPPMENT.throwException(message, this, lg);
+            if (m.group(3) != null) limit = Integer.parseInt(m.group(3).trim());
+            Message.sendImage(message.getChannel(), getNumberCmdCalled(limit),
+                    "stats -cmd : " + Instant.now() + ".png");
         }
         else if (m.group(1).matches("\\s+-hist"))
             Message.sendImage(message.getChannel(), getJoinTimeGuildsGraph(),
@@ -98,7 +97,7 @@ public class StatCommand extends AbstractCommand {
         TimeSeries series = new TimeSeries("data");
         int guildNumber = 1;
         for(IGuild guild : guilds)
-            series.add(new Day(Date.from(guild.getJoinTimeForUser(me))), guildNumber++);
+            series.addOrUpdate(new Day(Date.from(guild.getJoinTimeForUser(me))), guildNumber++);
         dataSet.addSeries(series);
 
         JFreeChart chart = ChartFactory.createTimeSeriesChart(
@@ -115,10 +114,20 @@ public class StatCommand extends AbstractCommand {
      * @param limit nombre de jours d'appels de commande à afficher
      * @return Liste des appels de commandes de kaelly par jour
      */
-    private List<String> getNumberCmdCalled(int limit){
-        List<String> result = new ArrayList<>();
-        //TODO
-        return result;
+    private BufferedImage getNumberCmdCalled(int limit){
+        long period = Duration.ofDays(limit).toMillis();
+        List<CommandStatistics> stats = CommandStatistics.getStatistics(period);
+        DefaultCategoryDataset dataSet = new DefaultCategoryDataset();
+        for(CommandStatistics stat : stats)
+            dataSet.setValue(stat.getUse(), "Calls", stat.getCommandName());
+
+        JFreeChart chart = ChartFactory.createBarChart(
+                "Commands called since " + Instant.ofEpochMilli(System.currentTimeMillis() - period),
+                "Commands",
+                "Calls",
+                dataSet, PlotOrientation.VERTICAL, false, true, false);
+
+        return chart.createBufferedImage(700, 500);
     }
 
     @Override

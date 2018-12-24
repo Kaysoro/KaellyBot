@@ -40,6 +40,7 @@ public class CommandManager {
         addCommand(new LanguageCommand());
         addCommand(new MonsterCommand());
         addCommand(new PrefixCommand());
+        addCommand(new PurgeCommand());
         addCommand(new RandomCommand());
         addCommand(new ResourceCommand());
         addCommand(new RSSCommand());

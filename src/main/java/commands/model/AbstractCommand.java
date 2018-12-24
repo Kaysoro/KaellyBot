@@ -8,6 +8,7 @@ import exceptions.BasicDiscordException;
 import exceptions.DiscordException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import stats.CommandStatistics;
 import sx.blah.discord.handle.obj.IMessage;
 import sx.blah.discord.handle.obj.Permissions;
 import util.ClientConfig;
@@ -71,8 +72,10 @@ public abstract class AbstractCommand implements Command {
                 badUse.throwException(message, this, lg);
                 return;
             }
-            if (isFound)
+            if (isFound) {
+                CommandStatistics.addStatsToDatabase(this);
                 request(message, m, lg);
+            }
         } catch(Exception e){
             Reporter.report(e, message.getGuild(), message.getChannel(), message.getAuthor(), message);
             LOG.error("request", e);
