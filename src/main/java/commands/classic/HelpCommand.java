@@ -12,6 +12,8 @@ import util.Message;
 import sx.blah.discord.handle.obj.IMessage;
 import util.Translator;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Matcher;
 
 /**
@@ -32,22 +34,34 @@ public class HelpCommand extends AbstractCommand {
     public void request(IMessage message, Matcher m, Language lg) {
         String prefix = getPrefixMdEscaped(message);
         StringBuilder st = new StringBuilder();
+        List<String> messages = new ArrayList<>();
+
         boolean argumentFound = m.group(1) != null && m.group(1).replaceAll("^\\s+", "").length() > 0;
         for(Command command : CommandManager.getCommands())
             if (command.isPublic() && ! command.isAdmin()
                     && (message.getChannel().isPrivate() || ! command.isForbidden(Guild.getGuild(message.getGuild())))){
-                if (! argumentFound)
-                    st.append(command.help(lg, prefix)).append("\n");
+                if (! argumentFound) {
+                    String helpCmd = command.help(lg, prefix) + "\n";
+                    if (st.length() + helpCmd.length() > IMessage.MAX_MESSAGE_LENGTH){
+                        messages.add(st.toString());
+                        st.setLength(0);
+                    }
+                    st.append(helpCmd);
+                }
                 else if (command.getName().equals(m.group(1).trim())) {
                     st.append(command.helpDetailed(lg, prefix));
                     break;
                 }
             }
 
-        if (argumentFound && st.length() == 0)
+        if (st.length() > 0)
+            messages.add(st.toString());
+
+        if (argumentFound && messages.isEmpty())
             notFoundCmd.throwException(message, this, lg);
         else
-            Message.sendText(message.getChannel(), st.toString());
+            for(String msg : messages)
+                Message.sendText(message.getChannel(), msg);
     }
 
     @Override
