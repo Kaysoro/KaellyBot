@@ -20,8 +20,11 @@ Donne des informations relatives à l'Almanax.
 `!almanax` : donne le bonus et l'offrande du jour actuel.  
 `!almanax jj/mm/aaaa` : Donne le bonus et l'offrande du jour spécifié.  
 `!almanax +days` : donne la liste des bonus et offrandes des jours à venir (jusqu'à 9 jours).  
-`!almanax true` : poste quotidiennement l'almanax du jour. Fonctionne aussi avec `on` et `0`.  
-`!almanax false` : ne poste plus l'almanax dans le salon. Fonctionne aussi avec `off` et `1`.  
+
+### Almanax-auto
+Poste l'almanax du jour à compter de minuit; nécessite le droit de gérer le serveur.  
+`!almanax-auto true` : poste quotidiennement l'almanax du jour. Fonctionne aussi avec `on` et `0`.  
+`!almanax-auto false` : ne poste plus l'almanax dans le salon. Fonctionne aussi avec `off` et `1`.  
 
 ### About
 Informations relatives à Kaelly.  

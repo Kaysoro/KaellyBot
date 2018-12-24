@@ -15,7 +15,7 @@ import java.util.regex.Matcher;
 public class AlmanaxAutoCommand extends AbstractCommand {
 
     public AlmanaxAutoCommand(){
-        super("almanax-auto", "(\\s+true|\\s+false|\\s+0|\\s+1|\\s+on|\\s+off)?");
+        super("almanax-auto", "(\\s+true|\\s+false|\\s+0|\\s+1|\\s+on|\\s+off)");
         setUsableInMP(false);
     }
 

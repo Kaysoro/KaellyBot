@@ -97,8 +97,7 @@ public abstract class AbstractCommand implements Command {
         return Pattern.compile("^" + Pattern.quote(prefixe) + name + pattern + "$").matcher(message.getContent());
     }
 
-    @Override
-    public String getPrefix(IMessage message){
+    public static String getPrefix(IMessage message){
         if (! message.getChannel().isPrivate())
             return Guild.getGuild(message.getGuild()).getPrefix()
             .replaceAll("\\*", "\\\\*")     // Italic & Bold
