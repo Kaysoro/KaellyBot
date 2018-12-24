@@ -40,7 +40,6 @@ public class CommandManager {
         addCommand(new LanguageCommand());
         addCommand(new MonsterCommand());
         addCommand(new PrefixCommand());
-        addCommand(new PurgeCommand());
         addCommand(new RandomCommand());
         addCommand(new ResourceCommand());
         addCommand(new RSSCommand());
@@ -55,8 +54,10 @@ public class CommandManager {
         addCommand(new AdminCommand());
         addCommand(new AvailableCommand());
         addCommand(new AnnounceCommand());
+        addCommand(new PurgeCommand());
         addCommand(new StatCommand());
         addCommand(new TalkCommand());
+        addCommand(new VacuumCommand());
     }
 
     public static CommandManager getInstance(){

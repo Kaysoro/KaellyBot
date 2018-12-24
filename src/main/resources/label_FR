@@ -731,6 +731,7 @@ twitter.request.2=Les tweets de {twitter.name} ne seront plus postés ici.
 twitter.help=poste les tweets de {twitter.name} dans un salon; nécessite le droit de gérer le serveur.
 twitter.help.detailed.1=poste les tweets de {twitter.name}. Fonctionne aussi avec "on" et "0".
 twitter.help.detailed.2=ne poste plus les tweets dans le salon. Fonctionne aussi avec "off" et "1".
+vacuum.help=appelle la commande SQLite vacuum();
 whois.request=indisponible
 whois.help=donne la page personnelle d'un personnage.
 whois.help.detailed.1=donne la page personnelle associée au pseudo. Celui-ci doit être exact.
