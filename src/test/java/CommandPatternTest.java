@@ -263,6 +263,7 @@ public class CommandPatternTest {
         assertTrue(pattern.matcher(Constants.prefixCommand + "whois test-test").find());
         assertTrue(pattern.matcher(Constants.prefixCommand + "whois test-test server").find());
         assertTrue(pattern.matcher(Constants.prefixCommand + "whois test-test EL server").find());
+        assertTrue(pattern.matcher(Constants.prefixCommand + "whois -more test-test EL server").find());
         assertFalse(pattern.matcher(Constants.prefixCommand + "whois").find());
     }
 

@@ -36,7 +36,7 @@ public class WhoisCommand extends AbstractCommand {
     private DiscordException notFoundCharacter;
 
     public WhoisCommand(){
-        super("whois","(\\s+[\\p{L}|-]+)(\\s+.+)?");
+        super("whois","(\\s+-more)?(\\s+[\\p{L}|-]+)(\\s+.+)?");
         tooMuchCharacters = new TooMuchDiscordException("character");
         notFoundCharacter = new NotFoundDiscordException("character");
         tooMuchServers = new TooMuchDiscordException("server");
@@ -45,7 +45,7 @@ public class WhoisCommand extends AbstractCommand {
 
     @Override
     public void request(IMessage message, Matcher m, Language lg) {
-        String pseudo = m.group(1).trim().toLowerCase();
+        String pseudo = m.group(2).trim().toLowerCase();
 
         StringBuilder url;
         try {
@@ -58,8 +58,8 @@ public class WhoisCommand extends AbstractCommand {
             return;
         }
 
-        if (m.group(2) != null){
-            String serverName = m.group(2).trim().toLowerCase();
+        if (m.group(3) != null){
+            String serverName = m.group(3).trim().toLowerCase();
             List<ServerDofus> result = new ArrayList<>();
 
             for(ServerDofus server : ServerDofus.getServersDofus())
@@ -100,9 +100,14 @@ public class WhoisCommand extends AbstractCommand {
                             .getResponse(Translator.getLabel(lg, "game.url") + result.get(0));
 
                     if (!response.url().getPath().endsWith(Translator.getLabel(lg, "whois.request"))) {
-                        Character characPage = Character.getCharacter(Translator.getLabel(lg, "game.url")
-                                + result.get(0), lg);
-                        Message.sendEmbed(message.getChannel(), characPage.getEmbedObject(lg));
+                        if (m.group(1) == null)
+                            Message.sendEmbed(message.getChannel(), Character.getCharacter(
+                                    Translator.getLabel(lg, "game.url") + result.get(0), lg)
+                                    .getEmbedObject(lg));
+                        else
+                            Message.sendEmbed(message.getChannel(), Character.getCharacterStuff(
+                                    Translator.getLabel(lg, "game.url") + result.get(0) + Translator.getLabel(lg, "character.stuff.url"), lg)
+                                    .getMoreEmbedObject(lg));
                     } else
                         BasicDiscordException.CHARACTER_TOO_OLD.throwException(message, this, lg);
                 }
