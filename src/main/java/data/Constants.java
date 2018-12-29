@@ -47,7 +47,7 @@ public class Constants {
     /**
      * URL for github KaellyBot repository
      */
-    public final static String git = "https://github.com/Kaysoro/KaellyBot/tree/Touch";
+    public final static String git = "https://github.com/Kaysoro/KaellyBot/tree/DevTouch";
 
     /**
      * Official link invite

@@ -23,7 +23,6 @@ public class Character implements Embedded {
     private String classe;
     private String server;
     private String score;
-    private String progression;
     private String guildName;
     private String guildUrl;
     private String alliName;
@@ -35,8 +34,7 @@ public class Character implements Embedded {
     private String ladderKoli;
     private String ladderSuccess;
 
-    private Character(String pseudo, String level, String classe, String server,
-                      String score, String progression,
+    private Character(String pseudo, String level, String classe, String server, String score,
                       String guildName, String guildUrl, String alliName, String alliUrl,
                       String littleSkinURL, String bigSkinURL, String url, String ladderXP,
                       String ladderKoli, String ladderSuccess) {
@@ -45,7 +43,6 @@ public class Character implements Embedded {
         this.classe = classe;
         this.server = server;
         this.score = score;
-        this.progression = progression;
         this.guildName = guildName;
         this.guildUrl = guildUrl;
         this.alliName = alliName;
@@ -64,29 +61,33 @@ public class Character implements Embedded {
 
         builder.withTitle(pseudo);
         builder.withUrl(url);
-        builder.withDescription(Translator.getLabel(lg, "whois.desc"));
+        builder.withDescription(Translator.getLabel(lg, classe));
 
         builder.withColor(new Random().nextInt(16777216));
         builder.withThumbnail(littleSkinURL);
         builder.withImage(bigSkinURL);
+        builder.withFooterText(Translator.getLabel(lg, "whois.server") + " " + server);
 
-        builder.appendField(Translator.getLabel(lg, "whois.level"), level, true);
-        builder.appendField(Translator.getLabel(lg, "whois.class"), classe, true);
-        builder.appendField(Translator.getLabel(lg, "whois.server"), server, true);
-        builder.appendField(Translator.getLabel(lg, "whois.success") + " " + score,
-                Translator.getLabel(lg, "whois.progression")+ " " + progression, true);
+        if (ladderXP != null && ! ladderXP.isEmpty())
+            builder.appendField(Translator.getLabel(lg, "whois.level") + " " + level, ladderXP, true);
+        else
+            builder.appendField(Translator.getLabel(lg, "whois.level") + " " + level,
+                    Translator.getLabel(lg, "whois.ladder.none"), true);
+
+        if (ladderSuccess != null && ! ladderSuccess.isEmpty())
+            builder.appendField(Translator.getLabel(lg, "whois.success") + " " + score,
+                    ladderSuccess, true);
+        else
+            builder.appendField(Translator.getLabel(lg, "whois.success") + " " + score,
+                    Translator.getLabel(lg, "whois.ladder.none"), true);
+
+        if (ladderKoli != null && ! ladderKoli.isEmpty())
+            builder.appendField(Translator.getLabel(lg, "whois.ladder_koli"), ladderKoli, true);
 
         if (guildName != null)
             builder.appendField(Translator.getLabel(lg, "whois.guild"), "[" + guildName + "](" + guildUrl + ")", true);
         if (alliName != null)
             builder.appendField(Translator.getLabel(lg, "whois.ally"), "[" + alliName + "](" + alliUrl + ")", true);
-
-        if (ladderXP != null && ! ladderXP.isEmpty())
-            builder.appendField(Translator.getLabel(lg, "whois.ladder_XP"), ladderXP, true);
-        if (ladderKoli != null && ! ladderKoli.isEmpty())
-            builder.appendField(Translator.getLabel(lg, "whois.ladder_koli"), ladderKoli, true);
-        if (ladderSuccess != null && ! ladderSuccess.isEmpty())
-            builder.appendField(Translator.getLabel(lg, "whois.ladder_success"), ladderSuccess, true);
 
         return builder.build();
     }
@@ -107,8 +108,8 @@ public class Character implements Embedded {
                 .replace(Translator.getLabel(lg, "whois.extract.level"), "").trim();
         String classe = doc.getElementsByClass("ak-directories-breed").first().text();
         String server = doc.getElementsByClass("ak-directories-server-name").first().text();
-        String score = doc.getElementsByClass("ak-score-text").first().text();
-        String progression = doc.getElementsByClass("ak-progress-bar-text").first().text();
+        String score = doc.getElementsByClass("ak-score-text").first().text() + " ("
+                + doc.getElementsByClass("ak-progress-bar-text").first().text() + ")";
 
         // Optional
         String guildName = null;
@@ -130,26 +131,33 @@ public class Character implements Embedded {
             }
         }
 
-        String ladderXP = "";
-        String ladderKoli = "";
-        String ladderSuccess = "";
+        StringBuilder ladderXP = new StringBuilder();
+        StringBuilder ladderKoli = new StringBuilder();
+        StringBuilder ladderSuccess = new StringBuilder();
 
         elem = doc.getElementsByClass("ak-container ak-table ak-responsivetable");
         if (!elem.isEmpty()) {
+            ladderXP.append(doc.getElementsByClass("ak-total-xp").first().text()).append("\n");
+
+            for(Element cote : doc.getElementsByClass("ak-total-kolizeum"))
+                if (! cote.text().endsWith("-1"))
+                    ladderKoli.append(cote.text().replace(Translator.getLabel(lg, "whois.extract.koli"), "").trim()).append("\n");
+
             Elements trs = elem.first().getElementsByTag("tbody").first().getElementsByTag("tr");
-
-
-            for(Element tr : trs){
+            for (Element tr : trs) {
                 String ladderText = tr.getElementsByTag("td").first().text() + " : ";
                 tr.getElementsByTag("td").first().remove();
-                ladderXP += ladderText + EmojiManager.getEmojiForLadder(tr.getElementsByTag("td").first().text()) + "\n";
-                ladderKoli += ladderText + EmojiManager.getEmojiForLadder(tr.getElementsByTag("td").get(1).text()) + "\n";
-                ladderSuccess += ladderText + EmojiManager.getEmojiForLadder(tr.getElementsByTag("td").last().text()) + "\n";
+                if (!tr.getElementsByTag("td").first().text().equals("-"))
+                    ladderXP.append(ladderText).append(EmojiManager.getEmojiForLadder(tr.getElementsByTag("td").first().text())).append("\n");
+                if (!tr.getElementsByTag("td").get(1).text().equals("-"))
+                    ladderKoli.append(ladderText).append(EmojiManager.getEmojiForLadder(tr.getElementsByTag("td").get(1).text())).append("\n");
+                if (!tr.getElementsByTag("td").last().text().equals("-"))
+                    ladderSuccess.append(ladderText).append(EmojiManager.getEmojiForLadder(tr.getElementsByTag("td").last().text())).append("\n");
             }
         }
 
-        return new Character(pseudo, level, classe, server, score, progression,
+        return new Character(pseudo, level, classe, server, score,
                 guildName, guildUrl, alliName, alliUrl, littleSkinURL, bigSkinURL, url,
-                ladderXP, ladderKoli, ladderSuccess);
+                ladderXP.toString(), ladderKoli.toString(), ladderSuccess.toString());
     }
 }
