@@ -26,7 +26,7 @@ import java.util.regex.Pattern;
  */
 public class GuildCommand extends AbstractCommand {
 
-    private final static String forPseudo = "TEXT=";
+    private final static String forPseudo = "text=";
     private final static String forServer = "guild_server_id[]=";
 
     private DiscordException tooMuchGuilds;
