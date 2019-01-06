@@ -441,6 +441,7 @@ exception.toomuch.toomuch.fg=Plusieurs
 exception.toomuch.found.mg=trouvés
 exception.toomuch.found.ng=trouvés
 exception.toomuch.found.fg=trouvées
+exception.toomuch.items=Affine la recherche en indiquant plus de caractères !
 exception.object.alliance.gender=fg
 exception.object.city.gender=fg
 exception.object.cmd.gender=fg

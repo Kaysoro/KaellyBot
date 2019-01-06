@@ -360,6 +360,7 @@ exception.notfound.found.fg=found
 exception.toomuch.toomuch.mg=Many
 exception.toomuch.toomuch.ng=Many
 exception.toomuch.toomuch.fg=Many
+exception.toomuch.items=Refine the search by indicating more characters!
 exception.toomuch.found.mg=found
 exception.toomuch.found.ng=found
 exception.toomuch.found.fg=found

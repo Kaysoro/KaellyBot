@@ -16,7 +16,7 @@ import java.util.List;
 public class TooMuchDiscordException implements DiscordException {
 
     private final static Logger LOG = LoggerFactory.getLogger(TooMuchDiscordException.class);
-
+    private final static int ITEM_LIMIT = 25;
     private String objectKey;
     private boolean isTranslatable;
 
@@ -38,14 +38,19 @@ public class TooMuchDiscordException implements DiscordException {
                 .append(" ").append(Translator.getLabel(lg, "exception.toomuch.found." + gender));
 
         if (arguments.length > 0) {
-            st.append(": ");
             List<Object> objects = (List<Object>) arguments[0];
-            for (Object object : objects)
-                if (isTranslatable)
-                    st.append(Translator.getLabel(lg, object.toString()).replace("{0}", "")).append(", ");
-                else
-                    st.append(object.toString()).append(", ");
-            st.delete(st.length() - 2, st.length()).append(".");
+            if (objects.size() <= ITEM_LIMIT){
+                st.append(": ");
+
+                for (Object object : objects)
+                    if (isTranslatable)
+                        st.append(Translator.getLabel(lg, object.toString())).append(", ");
+                    else
+                        st.append(object.toString()).append(", ");
+                st.delete(st.length() - 2, st.length()).append(".");
+            }
+            else
+                st.append(". ").append(Translator.getLabel(lg, "exception.toomuch.items"));
         }
         else {
             if (st.substring(st.length() - 1, st.length()).matches("\\s+"))
