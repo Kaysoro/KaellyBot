@@ -19,6 +19,8 @@ import java.io.InputStream;
  */
 public class Message {
 
+    private static final MissingPermissionDiscordException missingPermission = new MissingPermissionDiscordException();
+
     public static void sendText(IChannel channel, String content){
         Language lg = Translator.getLanguageFrom(channel);
         RequestBuffer.request(() -> {
@@ -36,12 +38,11 @@ public class Message {
             } catch(MissingPermissionsException e){
                 LoggerFactory.getLogger(Message.class).warn(Constants.name
                         + " n'a pas les permissions pour appliquer cette requête.");
-                new MissingPermissionDiscordException().throwException(channel, lg, e);
+                missingPermission.throwException(channel, lg, e);
             } catch(Exception e){
                 Reporter.report(e, channel.isPrivate()? null : channel.getGuild(), channel);
                 LoggerFactory.getLogger(Message.class).error(e.getMessage(),e );
             }
-            return null;
         });
     }
 
@@ -65,12 +66,11 @@ public class Message {
             } catch (MissingPermissionsException e) {
                 LoggerFactory.getLogger(Message.class).warn(Constants.name
                         + " n'a pas les permissions pour appliquer cette requête.");
-                new MissingPermissionDiscordException().throwException(channel, lg, e);
+                missingPermission.throwException(channel, lg, e);
             } catch (Exception e) {
                 Reporter.report(e, channel.isPrivate() ? null : channel.getGuild(), channel);
                 LoggerFactory.getLogger(Message.class).error(e.getMessage(), e);
             }
-            return null;
         });
     }
 
@@ -91,12 +91,11 @@ public class Message {
             } catch (MissingPermissionsException e) {
                 LoggerFactory.getLogger(Message.class).warn(Constants.name
                         + " n'a pas les permissions pour appliquer cette requête.");
-                new MissingPermissionDiscordException().throwException(channel, lg, e);
+                missingPermission.throwException(channel, lg, e);
             } catch (Exception e) {
                 Reporter.report(e, channel.isPrivate() ? null : channel.getGuild(), channel);
                 LoggerFactory.getLogger(Message.class).error(e.getMessage(), e);
             }
-            return null;
         });
     }
 
@@ -117,12 +116,11 @@ public class Message {
             } catch(MissingPermissionsException e){
                 LoggerFactory.getLogger(Message.class).warn(Constants.name
                         + " n'a pas les permissions pour appliquer cette requête.");
-                new MissingPermissionDiscordException().throwException(channel, lg, e);
+                missingPermission.throwException(channel, lg, e);
             } catch(Exception e){
                 Reporter.report(e, channel.isPrivate()? null : channel.getGuild(), channel);
                 LoggerFactory.getLogger(Message.class).error(e.getMessage(), e);
             }
-            return null;
         });
     }
 }
