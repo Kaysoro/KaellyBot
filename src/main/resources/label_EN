@@ -526,6 +526,7 @@ item.recette=:hammer_pick: Recipe:
 item.panoplie=:link: Set:
 item.extract.level=Level:
 item.extract.caracteristiques=Characteristics
+item.extract.evolution_effects= Evolution Effects
 item.extract.description=Description
 item.extract.effets=Effects
 item.extract.conditions=Conditions

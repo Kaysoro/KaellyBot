@@ -12,6 +12,8 @@ import util.Translator;
 import util.URLManager;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
 
 /**
@@ -128,8 +130,8 @@ public class Item implements Embedded {
         String effects = null;
         String caracteristics = null;
         String conditions = null;
-        String panoplie = null;
-        String panoplieURL = null;
+        String set = null;
+        String setURL = null;
         String recipe = null;
 
         Elements titles = doc.getElementsByClass("ak-panel-title");
@@ -142,25 +144,26 @@ public class Item implements Embedded {
                 effects = extractStatsFromTitle(lg, title);
             else if (title.text().equals(Translator.getLabel(lg, "item.extract.caracteristiques")))
                 caracteristics = extractLinesFromTitle(title);
+            else if (title.text().equals(Translator.getLabel(lg, "item.extract.evolution_effects")))
+                effects = extractEvolutionEffectsFromTitle(lg, url);
             else if (title.text().equals(Translator.getLabel(lg, "item.extract.conditions")))
                 conditions = extractLinesFromTitle(title);
-            else if (title.text().contains(Translator.getLabel(lg, "item.extract.panoplie"))){
-                panoplie = title.getElementsByTag("a").first().text();
-                panoplieURL = title.getElementsByTag("a").first().attr("abs:href");
-            }
-            else if (title.text().equals(Translator.getLabel(lg, "item.extract.recette"))){
+            else if (title.text().contains(Translator.getLabel(lg, "item.extract.panoplie"))) {
+                set = title.getElementsByTag("a").first().text();
+                setURL = title.getElementsByTag("a").first().attr("abs:href");
+            } else if (title.text().equals(Translator.getLabel(lg, "item.extract.recette"))) {
                 lines = title.parent().getElementsByClass("ak-column");
                 tmp = new StringBuilder();
                 for (Element line : lines)
                     tmp.append(line.getElementsByClass("ak-front").text()).append(" [")
                             .append(line.getElementsByClass("ak-title").first().text()).append("](")
                             .append(line.getElementsByClass("ak-title").first()
-                            .children().first().attr("abs:href")).append(")\n");
+                                    .children().first().attr("abs:href")).append(")\n");
                 recipe = tmp.toString();
             }
 
         return new Item(name, type, level, description, effects, URLManager.abs(skinURL), url,
-                caracteristics, conditions, panoplie, panoplieURL, recipe);
+                caracteristics, conditions, set, setURL, recipe);
     }
 
     private static String extractLinesFromTitle(Element title)
@@ -169,6 +172,23 @@ public class Item implements Embedded {
         StringBuilder tmp = new StringBuilder();
         for (Element line : lines)
             tmp.append(line.text()).append("\n");
+        return tmp.toString();
+    }
+
+    private static String extractEvolutionEffectsFromTitle(Language lg, String url) throws IOException
+    {
+        Map<String, String> header = new HashMap<>();
+        header.put("X-PJAX", "true");
+        header.put("X-PJAX-Container", ".ak-item-details-container");
+        header.put("X-Requested-With", "XMLHttpRequest");
+        Map<String, String> data = new HashMap<>();
+        data.put("level", "100");
+        data.put("_pjax", ".ak-item-details-container");
+        Document doc = JSoupManager.postDocument(url, header, data);
+        Elements lines = doc.getElementsByClass("ak-list-element");
+        StringBuilder tmp = new StringBuilder();
+        for (Element line : lines)
+            tmp.append(EmojiManager.getEmojiForStat(lg, line.text())).append(line.text()).append("\n");
         return tmp.toString();
     }
 

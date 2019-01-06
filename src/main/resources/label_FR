@@ -604,6 +604,7 @@ item.recette=:hammer_pick: Recette :
 item.panoplie=:link: Panoplie :
 item.extract.level=Niveau :
 item.extract.caracteristiques=Caractéristiques
+item.extract.evolution_effects=Effets évolutifs
 item.extract.description=Description
 item.extract.effets=Effets
 item.extract.conditions=Conditions
