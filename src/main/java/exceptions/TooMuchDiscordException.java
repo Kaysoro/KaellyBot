@@ -1,6 +1,10 @@
 package exceptions;
 
+import commands.classic.AllianceCommand;
+import commands.classic.GuildCommand;
+import commands.classic.WhoisCommand;
 import commands.model.Command;
+import enums.AnkamaBug;
 import enums.Language;
 import util.Message;
 import org.slf4j.Logger;
@@ -9,6 +13,7 @@ import sx.blah.discord.handle.obj.IMessage;
 import util.Translator;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Created by steve on 14/11/2016.
@@ -32,6 +37,8 @@ public class TooMuchDiscordException implements DiscordException {
 
     @Override
     public void throwException(IMessage message, Command command, Language lg, Object... arguments) {
+        AnkamaBug bug = null;
+
         String gender = Translator.getLabel(lg, "exception.object." + objectKey + ".gender");
         StringBuilder st = new StringBuilder(Translator.getLabel(lg, "exception.toomuch.toomuch." + gender))
                 .append(" ").append(Translator.getLabel(lg, "exception.object." + objectKey + ".plural"))
@@ -39,6 +46,22 @@ public class TooMuchDiscordException implements DiscordException {
 
         if (arguments.length > 0) {
             List<Object> objects = (List<Object>) arguments[0];
+
+            long similarOcc = objects.stream()
+                    .collect(Collectors.groupingBy(e -> e, Collectors.counting()))
+                    .values().stream()
+                    .max(Long::compareTo)
+                    .orElse(0L);
+
+            if (similarOcc > 1){
+                if (command instanceof WhoisCommand)
+                    bug = AnkamaBug.GHOST_CHARACTER;
+                else if (command instanceof GuildCommand)
+                    bug = AnkamaBug.GHOST_GUILD;
+                else if (command instanceof AllianceCommand)
+                    bug = AnkamaBug.GHOST_ALLY;
+            }
+
             if (objects.size() <= ITEM_LIMIT){
                 st.append(": ");
 
@@ -58,6 +81,9 @@ public class TooMuchDiscordException implements DiscordException {
             st.append(".");
         }
 
-        Message.sendText(message.getChannel(), st.toString());
+        if (bug != null)
+            Message.sendEmbed(message.getChannel(), bug.getEmbed(st.toString(), lg));
+        else
+            Message.sendText(message.getChannel(), st.toString());
     }
 }
