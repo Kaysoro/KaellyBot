@@ -26,6 +26,7 @@ public class BasicDiscordException implements DiscordException {
     public final static BasicDiscordException IN_DEVELOPPMENT = new BasicDiscordException("exception.basic.in_developpment");
     public final static BasicDiscordException NO_EXTERNAL_EMOJI_PERMISSION = new BasicDiscordException("exception.basic.no_external_emoji_permission");
     public final static BasicDiscordException NO_SEND_TEXT_PERMISSION = new BasicDiscordException("exception.basic.no_send_text_permission");
+    public final static BasicDiscordException NO_NSFW_CHANNEL = new BasicDiscordException("exception.basic.no_nsfw_channel");
     public final static BasicDiscordException NO_ENOUGH_RIGHTS = new BasicDiscordException("exception.basic.no_enough_rights");
     public final static BasicDiscordException NO_VOICE_PERMISSION = new BasicDiscordException("exception.basic.no_voice_permission");
     public final static BasicDiscordException NOT_IN_VOCAL_CHANNEL = new BasicDiscordException("exception.basic.not_in_vocal_channel");

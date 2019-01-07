@@ -34,6 +34,12 @@ public interface Command {
     boolean isPublic();
 
     /**
+     * is the command is hidden ?
+     * @return True if the command is hidden
+     */
+    boolean isHidden();
+
+    /**
      * Change the command scope
      * @param isPublic is command available or not
      */
@@ -57,6 +63,12 @@ public interface Command {
      * @param isAdmin is command only available for admins or not
      */
     void setAdmin(boolean isAdmin);
+
+    /**
+     * Hide or not the command
+     * @param isHidden is command hidden or not
+     */
+    void setHidden(boolean isHidden);
 
     /**
      * @param prefixe Prefixe for command

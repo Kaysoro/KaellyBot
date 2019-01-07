@@ -3,6 +3,7 @@ package commands;
 import commands.admin.*;
 import commands.classic.*;
 import commands.config.*;
+import commands.hidden.SendNudeCommand;
 import commands.model.Command;
 
 import java.util.List;
@@ -52,6 +53,9 @@ public class CommandManager {
         addCommand(new TutorialCommand());
         addCommand(new TwitterCommand());
         addCommand(new WhoisCommand());
+
+        // Hidden commands
+        addCommand(new SendNudeCommand());
 
         // Admin commands
         addCommand(new AdminCommand());
