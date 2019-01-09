@@ -31,6 +31,7 @@ public abstract class AbstractCommand implements Command {
     private boolean isPublic;
     private boolean isUsableInMP;
     private boolean isAdmin;
+    private boolean isHidden;
 
     protected AbstractCommand(String name, String pattern){
         super();
@@ -39,6 +40,7 @@ public abstract class AbstractCommand implements Command {
         this.isPublic = true;
         this.isUsableInMP = true;
         this.isAdmin = false;
+        this.isHidden = false;
         badUse = new BadUseCommandDiscordException();
     }
 
@@ -179,5 +181,15 @@ public abstract class AbstractCommand implements Command {
     @Override
     public void setAdmin(boolean isAdmin) {
         this.isAdmin = isAdmin;
+    }
+
+    @Override
+    public boolean isHidden() {
+        return isHidden;
+    }
+
+    @Override
+    public void setHidden(boolean isHidden) {
+        this.isHidden = isHidden;
     }
 }
