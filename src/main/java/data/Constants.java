@@ -15,7 +15,7 @@ public class Constants {
     /**
      * Application version
      */
-    public final static String version = "1.0.2";
+    public final static String version = "1.0.1";
 
     /**
      * Changelog
@@ -57,7 +57,7 @@ public class Constants {
     /**
      * Official paypal link
      */
-    public final static String paypal = "https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=89WTL4LXRZK98";
+    public final static String paypal = "https://www.paypal.me/s0ngfu";
 
     /**
      * Database name
