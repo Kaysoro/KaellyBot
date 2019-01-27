@@ -50,7 +50,7 @@
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
-                <version>0.8.2</version>
+                <version>0.8.3</version>
                 <executions>
                     <execution>
                         <id>prepare-agent</id>
@@ -103,7 +103,7 @@
         <dependency>
             <groupId>io.sentry</groupId>
             <artifactId>sentry</artifactId>
-            <version>1.7.16</version>
+            <version>1.7.17</version>
         </dependency>
         <dependency>
             <groupId>ch.qos.logback</groupId>

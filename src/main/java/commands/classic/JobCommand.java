@@ -199,13 +199,21 @@ public class JobCommand extends FetchCommand {
         nameProposed = Normalizer.normalize(nameProposed, Normalizer.Form.NFD)
                 .replaceAll("\\p{InCombiningDiacriticalMarks}+", "").toLowerCase();
         nameProposed = nameProposed.replaceAll("\\W+", "");
+        String nameJob;
         List<Job> jobs = new ArrayList<>();
 
-        for(Job job : Job.values())
-            if (Normalizer.normalize(job.getLabel(lg), Normalizer.Form.NFD)
+        for(Job job : Job.values()) {
+            nameJob = Normalizer.normalize(job.getLabel(lg), Normalizer.Form.NFD)
                     .replaceAll("\\p{InCombiningDiacriticalMarks}+", "")
-                    .toLowerCase().replaceAll("\\W+", "").startsWith(nameProposed))
+                    .toLowerCase().replaceAll("\\W+", "");
+            if (nameJob.equals(nameProposed)) {
+                jobs.clear();
                 jobs.add(job);
+                return jobs;
+            }
+            if (nameJob.startsWith(nameProposed))
+                jobs.add(job);
+        }
         return jobs;
     }
 
