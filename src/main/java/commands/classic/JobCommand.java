@@ -260,7 +260,7 @@ public class JobCommand extends FetchCommand {
                 + "\n`" + prefixe + name + " `*`job1 job2 job3 server`* : " + Translator.getLabel(lg, "job.help.detailed.3")
                 + "\n`" + prefixe + name + " > `*`level job1 job2 job3 server`* : " + Translator.getLabel(lg, "job.help.detailed.4")
                 + "\n`" + prefixe + name + " `*`job1, job2 job3 level server`* : " + Translator.getLabel(lg, "job.help.detailed.5")
-                + "\n`" + prefixe + name + " -all `*`level server`* : " + Translator.getLabel(lg, "job.help.detailed.6") + "\n"
+                + "\n`" + prefixe + name + " -all `*`level server`* : " + Translator.getLabel(lg, "job.help.detailed.6")
                 + "\n`" + prefixe + name + " -list` : " + Translator.getLabel(lg, "job.help.detailed.7") + "\n";
     }
 }
