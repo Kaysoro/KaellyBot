@@ -1,6 +1,7 @@
 package commands.classic;
 
 import commands.model.AbstractCommand;
+import data.Constants;
 import enums.Language;
 import util.ClientConfig;
 import exceptions.*;
@@ -100,7 +101,11 @@ public class SoundCommand extends AbstractCommand {
 
     private List<File> getSounds(){
         if (sounds == null) {
-            File file = new File(System.getProperty("user.dir") + File.separator + "sounds");
+            File file;
+            if (! Constants.sound_path.trim().isEmpty())
+                file = new File(Constants.sound_path + File.separator + "sounds");
+            else
+                file = new File(System.getProperty("user.dir") + File.separator + "sounds");
             FilenameFilter filter = (File dir, String name) -> name.toLowerCase().endsWith(".mp3");
 
             File[] files = file.listFiles(filter);
@@ -120,7 +125,7 @@ public class SoundCommand extends AbstractCommand {
 
     @Override
     public String helpDetailed(Language lg, String prefixe) {
-        StringBuilder st = new StringBuilder("\n```");
+        StringBuilder sb = new StringBuilder("\n```");
 
         List<File> sounds = getSounds();
         long sizeMax = 0;
@@ -130,14 +135,14 @@ public class SoundCommand extends AbstractCommand {
                 sizeMax = f.getName().replaceFirst("[.][^.]+$", "").length();
 
         for(File f : sounds) {
-            st.append(f.getName().replaceFirst("[.][^.]+$", ""));
+            sb.append(f.getName().replaceFirst("[.][^.]+$", ""));
             for(int i = 0 ; i < sizeMax-f.getName().replaceFirst("[.][^.]+$", "").length() ; i++)
-                st.append(" ");
-            st.append("\t");
+                sb.append(" ");
+            sb.append("\t");
         }
-        st.append("```");
+        sb.append("```");
         return help(lg, prefixe)
-                + "\n`" + prefixe + name + "` : " + Translator.getLabel(lg, "sound.help.detailed.1") + " " + st.toString()
+                + "\n`" + prefixe + name + "` : " + Translator.getLabel(lg, "sound.help.detailed.1") + " " + sb.toString()
                 + "\n`" + prefixe + name + " `*`sound`* : " + Translator.getLabel(lg, "sound.help.detailed.2")
                 + "\n`" + prefixe + name + " -leave` : " + Translator.getLabel(lg, "sound.help.detailed.3") + "\n";
     }

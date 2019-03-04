@@ -12,12 +12,16 @@ CREATE TABLE IF NOT EXISTS `Server` (
 	`id_dofus`	TEXT NOT NULL,
 	PRIMARY KEY(`name`)
 );
+-- Dofus Touch servers
 INSERT INTO `Server` (name,id_dofus) VALUES ('Brutas','407');
 INSERT INTO `Server` (name,id_dofus) VALUES ('Dodge','406');
 INSERT INTO `Server` (name,id_dofus) VALUES ('Grandapan','401');
 INSERT INTO `Server` (name,id_dofus) VALUES ('Herdegrize','405');
 INSERT INTO `Server` (name,id_dofus) VALUES ('Oshimo','403');
 INSERT INTO `Server` (name,id_dofus) VALUES ('Terra Cogita','404');
+-- Dofus 1.29 servers
+INSERT INTO `Server` (name,id_dofus) VALUES ('Henual','0');
+INSERT INTO `Server` (name,id_dofus) VALUES ('Eratz','1');
 DROP TABLE IF EXISTS `RSS_Finder`;
 CREATE TABLE IF NOT EXISTS `RSS_Finder` (
 	`id_chan`	TEXT NOT NULL,
@@ -47,7 +51,7 @@ DROP TABLE IF EXISTS `Guild`;
 CREATE TABLE IF NOT EXISTS `Guild` (
 	`id`	TEXT NOT NULL,
 	`name`	TEXT,
-	`prefixe`	TEXT DEFAULT "!",
+	`prefix`	TEXT DEFAULT "!",
 	`server_dofus`	TEXT,
 	`lang`	TEXT DEFAULT 'FR',
 	PRIMARY KEY(`id`)
