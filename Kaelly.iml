@@ -15,41 +15,43 @@
     <orderEntry type="library" name="Maven: org.apache.commons:commons-lang3:3.8.1" level="project" />
     <orderEntry type="library" name="Maven: org.jsoup:jsoup:1.11.3" level="project" />
     <orderEntry type="library" name="Maven: org.xerial:sqlite-jdbc:3.25.2" level="project" />
-    <orderEntry type="library" name="Maven: com.discord4j:Discord4J:2.10.1" level="project" />
-    <orderEntry type="library" name="Maven: org.slf4j:slf4j-api:1.7.25" level="project" />
-    <orderEntry type="library" name="Maven: org.apache.httpcomponents:httpcore:4.4.8" level="project" />
-    <orderEntry type="library" name="Maven: org.apache.httpcomponents:httpclient:4.5.4" level="project" />
-    <orderEntry type="library" name="Maven: commons-logging:commons-logging:1.2" level="project" />
-    <orderEntry type="library" name="Maven: commons-codec:commons-codec:1.10" level="project" />
-    <orderEntry type="library" name="Maven: org.apache.httpcomponents:httpmime:4.5.4" level="project" />
-    <orderEntry type="library" name="Maven: commons-io:commons-io:2.6" level="project" />
-    <orderEntry type="library" name="Maven: org.eclipse.jetty.websocket:websocket-client:9.4.8.v20171121" level="project" />
-    <orderEntry type="library" name="Maven: org.eclipse.jetty:jetty-client:9.4.8.v20171121" level="project" />
-    <orderEntry type="library" name="Maven: org.eclipse.jetty:jetty-http:9.4.8.v20171121" level="project" />
-    <orderEntry type="library" name="Maven: org.eclipse.jetty:jetty-xml:9.4.8.v20171121" level="project" />
-    <orderEntry type="library" name="Maven: org.eclipse.jetty:jetty-util:9.4.8.v20171121" level="project" />
-    <orderEntry type="library" name="Maven: org.eclipse.jetty:jetty-io:9.4.8.v20171121" level="project" />
-    <orderEntry type="library" name="Maven: org.eclipse.jetty.websocket:websocket-common:9.4.8.v20171121" level="project" />
-    <orderEntry type="library" name="Maven: org.eclipse.jetty.websocket:websocket-api:9.4.8.v20171121" level="project" />
-    <orderEntry type="library" name="Maven: net.jodah:typetools:0.5.0" level="project" />
-    <orderEntry type="library" name="Maven: com.fasterxml.jackson.module:jackson-module-afterburner:2.9.2" level="project" />
-    <orderEntry type="library" name="Maven: com.fasterxml.jackson.core:jackson-databind:2.9.2" level="project" />
+    <orderEntry type="library" name="Maven: com.discord4j:Discord4J:2.10.2" level="project" />
+    <orderEntry type="library" name="Maven: com.discord4j.Discord4J:discord4j-command:2.10.2" level="project" />
+    <orderEntry type="library" name="Maven: com.discord4j.Discord4J:discord4j-common:2.10.2" level="project" />
+    <orderEntry type="library" name="Maven: io.projectreactor.netty:reactor-netty:0.8.5.RELEASE" level="project" />
+    <orderEntry type="library" name="Maven: io.netty:netty-codec-http:4.1.33.Final" level="project" />
+    <orderEntry type="library" name="Maven: io.netty:netty-common:4.1.33.Final" level="project" />
+    <orderEntry type="library" name="Maven: io.netty:netty-buffer:4.1.33.Final" level="project" />
+    <orderEntry type="library" name="Maven: io.netty:netty-transport:4.1.33.Final" level="project" />
+    <orderEntry type="library" name="Maven: io.netty:netty-resolver:4.1.33.Final" level="project" />
+    <orderEntry type="library" name="Maven: io.netty:netty-codec:4.1.33.Final" level="project" />
+    <orderEntry type="library" name="Maven: io.netty:netty-codec-http2:4.1.33.Final" level="project" />
+    <orderEntry type="library" name="Maven: io.netty:netty-handler:4.1.33.Final" level="project" />
+    <orderEntry type="library" name="Maven: io.netty:netty-handler-proxy:4.1.33.Final" level="project" />
+    <orderEntry type="library" name="Maven: io.netty:netty-codec-socks:4.1.33.Final" level="project" />
+    <orderEntry type="library" name="Maven: io.netty:netty-transport-native-epoll:linux-x86_64:4.1.33.Final" level="project" />
+    <orderEntry type="library" name="Maven: io.netty:netty-transport-native-unix-common:4.1.33.Final" level="project" />
+    <orderEntry type="library" name="Maven: io.projectreactor:reactor-core:3.2.6.RELEASE" level="project" />
+    <orderEntry type="library" name="Maven: org.reactivestreams:reactive-streams:1.0.2" level="project" />
+    <orderEntry type="library" name="Maven: com.fasterxml.jackson.core:jackson-databind:2.9.8" level="project" />
     <orderEntry type="library" name="Maven: com.fasterxml.jackson.core:jackson-annotations:2.9.0" level="project" />
-    <orderEntry type="library" name="Maven: net.java.dev.jna:jna:4.5.0" level="project" />
-    <orderEntry type="library" name="Maven: com.googlecode.soundlibs:mp3spi:1.9.5.4" level="project" />
-    <orderEntry type="library" name="Maven: com.googlecode.soundlibs:jlayer:1.0.1.4" level="project" />
-    <orderEntry type="library" name="Maven: org.jcraft:jorbis:0.0.17" level="project" />
-    <orderEntry type="library" name="Maven: org.jflac:jflac-codec:1.5.2" level="project" />
-    <orderEntry type="library" name="Maven: com.googlecode.soundlibs:tritonus-share:0.3.7.4" level="project" />
-    <orderEntry type="library" name="Maven: org.tritonus:tritonus-dsp:0.3.6" level="project" />
-    <orderEntry type="library" name="Maven: com.vdurmont:emoji-java:4.0.0" level="project" />
-    <orderEntry type="library" name="Maven: org.json:json:20170516" level="project" />
-    <orderEntry type="library" name="Maven: com.koloboke:koloboke-impl-common-jdk8:1.0.0" level="project" />
-    <orderEntry type="library" name="Maven: com.koloboke:koloboke-api-jdk8:1.0.0" level="project" />
+    <orderEntry type="library" name="Maven: com.fasterxml.jackson.datatype:jackson-datatype-jdk8:2.9.8" level="project" />
+    <orderEntry type="library" name="Maven: com.discord4j.Discord4J:discord4j-core:2.10.2" level="project" />
+    <orderEntry type="library" name="Maven: com.discord4j:stores-jdk:3.0.0.RC1" level="project" />
+    <orderEntry type="library" name="Maven: com.discord4j:stores-common:3.0.0.RC1" level="project" />
+    <orderEntry type="library" name="Maven: com.discord4j:stores-api:3.0.0.RC1" level="project" />
+    <orderEntry type="library" name="Maven: com.austinv11.servicer:Servicer:1.0.0" level="project" />
+    <orderEntry type="library" name="Maven: commons-codec:commons-codec:1.11" level="project" />
+    <orderEntry type="library" name="Maven: com.discord4j.Discord4J:discord4j-gateway:2.10.2" level="project" />
+    <orderEntry type="library" name="Maven: io.projectreactor.addons:reactor-extra:3.2.2.RELEASE" level="project" />
+    <orderEntry type="library" name="Maven: com.discord4j.Discord4J:discord4j-rest:2.10.2" level="project" />
+    <orderEntry type="library" name="Maven: com.discord4j.Discord4J:discord4j-voice:2.10.2" level="project" />
+    <orderEntry type="library" name="Maven: com.discord4j:simple-fsm:1.0.1" level="project" />
     <orderEntry type="library" name="Maven: com.rometools:rome:1.12.0" level="project" />
     <orderEntry type="library" name="Maven: com.rometools:rome-utils:1.12.0" level="project" />
     <orderEntry type="library" name="Maven: org.jdom:jdom2:2.0.6" level="project" />
-    <orderEntry type="library" name="Maven: io.sentry:sentry:1.7.16" level="project" />
+    <orderEntry type="library" name="Maven: org.slf4j:slf4j-api:1.7.16" level="project" />
+    <orderEntry type="library" name="Maven: io.sentry:sentry:1.7.21" level="project" />
     <orderEntry type="library" name="Maven: com.fasterxml.jackson.core:jackson-core:2.8.7" level="project" />
     <orderEntry type="library" name="Maven: ch.qos.logback:logback-classic:1.2.3" level="project" />
     <orderEntry type="library" name="Maven: ch.qos.logback:logback-core:1.2.3" level="project" />
