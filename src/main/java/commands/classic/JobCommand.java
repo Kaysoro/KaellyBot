@@ -67,77 +67,82 @@ public class JobCommand extends FetchCommand {
                 Message.sendEmbed(message.getChannel(), embed);
         }
         // Enregistrement des données
-        else if((m = Pattern.compile("(-all|\\p{L}+(?:\\s+\\p{L}+)*)\\s+(\\d{1,3})(\\s+.+)?").matcher(content)).matches()) {
+        else if((m = Pattern.compile("-list|(-all|\\p{L}+(?:\\s+\\p{L}+)*)\\s+(\\d{1,3})(\\s+.+)?").matcher(content)).matches()) {
             if (user == message.getAuthor()) {
-                // Parsing des données et traitement des divers exceptions
-                Set<Job> jobs;
-                StringBuilder found = new StringBuilder();
-                StringBuilder notFound = new StringBuilder();
-                StringBuilder tooMuch = new StringBuilder();
-                if (! m.group(1).equals("-all")) {
-                    jobs = new HashSet<>();
-                    String[] proposals = m.group(1).split("\\s+");
-                    for(String proposal : proposals)
-                        if (!proposal.trim().isEmpty()){
-                            List<Job> tmp = getJob(lg, proposal);
-                            if (tmp.size() == 1) {
-                                jobs.add(tmp.get(0));
-                                found.append(tmp.get(0).getLabel(lg)).append(", ");
+                if (!m.group(0).equals("-list")) {
+                    // Parsing des données et traitement des divers exceptions
+                    Set<Job> jobs;
+                    StringBuilder found = new StringBuilder();
+                    StringBuilder notFound = new StringBuilder();
+                    StringBuilder tooMuch = new StringBuilder();
+                    if (!m.group(1).equals("-all")) {
+                        jobs = new HashSet<>();
+                        String[] proposals = m.group(1).split("\\s+");
+                        for (String proposal : proposals)
+                            if (!proposal.trim().isEmpty()) {
+                                List<Job> tmp = getJob(lg, proposal);
+                                if (tmp.size() == 1) {
+                                    jobs.add(tmp.get(0));
+                                    found.append(tmp.get(0).getLabel(lg)).append(", ");
+                                } else if (tmp.isEmpty())
+                                    notFound.append("*").append(proposal).append("*, ");
+                                else
+                                    tooMuch.append("*").append(proposal).append("*, ");
                             }
-                            else if (tmp.isEmpty())
-                                notFound.append("*").append(proposal).append("*, ");
-                            else
-                                tooMuch.append("*").append(proposal).append("*, ");
-                        }
-                } else
-                    jobs = new HashSet<>(Arrays.asList(Job.values()));
+                    } else
+                        jobs = new HashSet<>(Arrays.asList(Job.values()));
 
-                // Avant d'aller plus loin, on test si on a au moins un métier de trouvé
-                if (jobs.isEmpty()){
-                    Message.sendText(message.getChannel(), Translator.getLabel(lg, "job.noone"));
-                    return;
-                }
+                    // Avant d'aller plus loin, on test si on a au moins un métier de trouvé
+                    if (jobs.isEmpty()) {
+                        Message.sendText(message.getChannel(), Translator.getLabel(lg, "job.noone"));
+                        return;
+                    }
 
-                if (found.length() > 0)
-                    found.setLength(found.length() - 2);
-                if (notFound.length() > 0)
-                    notFound.setLength(notFound.length() - 2);
-                if (tooMuch.length() > 0)
-                    tooMuch.setLength(tooMuch.length() - 2);
+                    if (found.length() > 0)
+                        found.setLength(found.length() - 2);
+                    if (notFound.length() > 0)
+                        notFound.setLength(notFound.length() - 2);
+                    if (tooMuch.length() > 0)
+                        tooMuch.setLength(tooMuch.length() - 2);
 
-                int level = Integer.parseInt(m.group(2));
+                    int level = Integer.parseInt(m.group(2));
 
-                if (m.group(3) != null) {
-                    servers = findServer(m.group(3));
-                    if (checkData(servers, tooMuchServers, notFoundServer, message, lg)) return;
-                    server = servers.get(0);
-                } else if (server == null) {
-                    notFoundServer.throwException(message, this, lg);
-                    return;
-                }
+                    if (m.group(3) != null) {
+                        servers = findServer(m.group(3));
+                        if (checkData(servers, tooMuchServers, notFoundServer, message, lg)) return;
+                        server = servers.get(0);
+                    } else if (server == null) {
+                        notFoundServer.throwException(message, this, lg);
+                        return;
+                    }
 
-                for (Job job : jobs)
-                    if (JobUser.containsKeys(user.getLongID(), server, job))
-                        JobUser.get(user.getLongID(), server, job).get(0).setLevel(level);
+                    for (Job job : jobs)
+                        if (JobUser.containsKeys(user.getLongID(), server, job))
+                            JobUser.get(user.getLongID(), server, job).get(0).setLevel(level);
+                        else
+                            new JobUser(user.getLongID(), server, job, level).addToDatabase();
+
+                    StringBuilder sb = new StringBuilder();
+
+                    if (jobs.size() < Job.values().length)
+                        sb.append(Translator.getLabel(lg, level > 0 ? "job.save" : "job.reset")
+                                .replace("{jobs}", found.toString()));
                     else
-                        new JobUser(user.getLongID(), server,job, level).addToDatabase();
+                        sb.append(Translator.getLabel(lg, level > 0 ? "job.all_save" : "job.all_reset"));
 
-                StringBuilder st = new StringBuilder();
+                    if (notFound.length() > 0)
+                        sb.append("\n").append(Translator.getLabel(lg, "job.not_found")
+                                .replace("{jobs}", notFound.toString()));
+                    if (tooMuch.length() > 0)
+                        sb.append("\n").append(Translator.getLabel(lg, "job.too_much")
+                                .replace("{jobs}", tooMuch.toString()));
 
-                if (jobs.size() < Job.values().length)
-                    st.append(Translator.getLabel(lg, level > 0 ? "job.save" : "job.reset")
-                            .replace("{jobs}", found.toString()));
-                else
-                    st.append(Translator.getLabel(lg, level > 0 ? "job.all_save" : "job.all_reset"));
-
-                if (notFound.length() > 0)
-                    st.append("\n").append(Translator.getLabel(lg, "job.not_found")
-                            .replace("{jobs}", notFound.toString()));
-                if (tooMuch.length() > 0)
-                    st.append("\n").append(Translator.getLabel(lg, "job.too_much")
-                            .replace("{jobs}", tooMuch.toString()));
-
-                Message.sendText(message.getChannel(), st.toString());
+                    Message.sendText(message.getChannel(), sb.toString());
+                } else {
+                    String sb = Translator.getLabel(lg, "job.list") + "\n" +
+                            getJobsNormalized(lg);
+                    Message.sendText(message.getChannel(), sb);
+                }
             } else
                 badUse.throwException(message, this, lg);
         }
@@ -210,6 +215,31 @@ public class JobCommand extends FetchCommand {
         return jobs;
     }
 
+    private String getJobsNormalized(Language lg) {
+        StringBuilder sb = new StringBuilder("\n```");
+        List<String> jobs = new ArrayList<>();
+        String nameJob;
+        long sizeMax = 0;
+        for(Job job : Job.values()) {
+            nameJob = Normalizer.normalize(job.getLabel(lg), Normalizer.Form.NFD)
+                    .replaceAll("\\p{InCombiningDiacriticalMarks}+", "")
+                    .toLowerCase().replaceAll("\\W+", "");
+            if(nameJob.length() > sizeMax)
+                sizeMax = nameJob.length();
+            jobs.add(nameJob);
+        }
+        Collections.sort(jobs);
+
+        for(String str : jobs) {
+            sb.append(str);
+            for(int i = 0 ; i < sizeMax - str.length() ; i++)
+                sb.append(" ");
+            sb.append("\t");
+        }
+        sb.append("```");
+        return sb.toString();
+    }
+
     @Override
     public String help(Language lg, String prefixe) {
         return "**" + prefixe + name + "** " + Translator.getLabel(lg, "job.help");
@@ -223,6 +253,7 @@ public class JobCommand extends FetchCommand {
                 + "\n`" + prefixe + name + " `*`job1 job2 job3 server`* : " + Translator.getLabel(lg, "job.help.detailed.3")
                 + "\n`" + prefixe + name + " > `*`level job1 job2 job3 server`* : " + Translator.getLabel(lg, "job.help.detailed.4")
                 + "\n`" + prefixe + name + " `*`job1, job2 job3 level server`* : " + Translator.getLabel(lg, "job.help.detailed.5")
-                + "\n`" + prefixe + name + " -all `*`level server`* : " + Translator.getLabel(lg, "job.help.detailed.6") + "\n";
+                + "\n`" + prefixe + name + " -all `*`level server`* : " + Translator.getLabel(lg, "job.help.detailed.6")
+                + "\n`" + prefixe + name + " -list` : " + Translator.getLabel(lg, "job.help.detailed.7") + "\n";
     }
 }
