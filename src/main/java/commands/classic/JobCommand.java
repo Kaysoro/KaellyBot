@@ -146,7 +146,7 @@ public class JobCommand extends FetchCommand {
             } else
                 badUse.throwException(message, this, lg);
         }
-        else if ((m = Pattern.compile("(?:>\\s*(\\d{1,3})\\s+)?(\\p{L}+(?:\\s+\\p{L}+)*)").matcher(content)).matches()){
+        else if ((m = Pattern.compile("(?:>\\s*(\\d{1,3})\\s+)?(\\p{L}+(?:\\s+\\p{L}+)*)\\s*(-off)?").matcher(content)).matches()){
             List<String> proposals = new LinkedList<>(Arrays.asList(m.group(2).split("\\s+")));
 
             if (proposals.size() > 1) {
@@ -190,8 +190,10 @@ public class JobCommand extends FetchCommand {
             int level = -1;
             if (m.group(1) != null) level = Integer.parseInt(m.group(1));
 
+            boolean offline = m.group(3) == null;
+
             List<EmbedObject> embeds = JobUser.getJobsFromFilters(message.getGuild().getUsers(), server,
-                    jobs, level, message.getGuild(), lg);
+                    jobs, level, offline, message.getGuild(), lg);
 
             for(EmbedObject embed : embeds)
                 Message.sendEmbed(message.getChannel(), embed);
@@ -255,12 +257,12 @@ public class JobCommand extends FetchCommand {
     @Override
     public String helpDetailed(Language lg, String prefixe) {
         return help(lg, prefixe)
-                + "\n`" + prefixe + name + " `*`server`* : " + Translator.getLabel(lg, "job.help.detailed.1")
-                + "\n`" + prefixe + name + " `*`@user server`* : " + Translator.getLabel(lg, "job.help.detailed.2")
-                + "\n`" + prefixe + name + " `*`job1 job2 job3 server`* : " + Translator.getLabel(lg, "job.help.detailed.3")
-                + "\n`" + prefixe + name + " > `*`level job1 job2 job3 server`* : " + Translator.getLabel(lg, "job.help.detailed.4")
-                + "\n`" + prefixe + name + " `*`job1, job2 job3 level server`* : " + Translator.getLabel(lg, "job.help.detailed.5")
-                + "\n`" + prefixe + name + " -all `*`level server`* : " + Translator.getLabel(lg, "job.help.detailed.6")
+                + "\n`" + prefixe + name + " `*`(server)`* : " + Translator.getLabel(lg, "job.help.detailed.1")
+                + "\n`" + prefixe + name + " `*`@user (server)`* : " + Translator.getLabel(lg, "job.help.detailed.2")
+                + "\n`" + prefixe + name + " `*`job1 (job2 job3) (server) (-off)`* : " + Translator.getLabel(lg, "job.help.detailed.3")
+                + "\n`" + prefixe + name + " > `*`level job1 (job2 job3) (server) (-off)`* : " + Translator.getLabel(lg, "job.help.detailed.4")
+                + "\n`" + prefixe + name + " `*`job1 (job2 job3) level (server)`* : " + Translator.getLabel(lg, "job.help.detailed.5")
+                + "\n`" + prefixe + name + " -all `*`level (server)`* : " + Translator.getLabel(lg, "job.help.detailed.6")
                 + "\n`" + prefixe + name + " -list` : " + Translator.getLabel(lg, "job.help.detailed.7") + "\n";
     }
 }

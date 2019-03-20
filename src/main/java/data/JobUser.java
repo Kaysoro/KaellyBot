@@ -162,13 +162,14 @@ public class JobUser extends ObjectUser {
      * @param server Serveur dofus
      * @param jobs Métiers
      * @param level Niveau; si ingérieur à 0, filtre ignoré
+     * @param offline Hors-ligne
      * @return Liste des résultats de la recherche
      */
     public static List<EmbedObject> getJobsFromFilters(List<IUser> users, ServerDofus server, Set<Job> jobs,
-                                                       int level, IGuild guild, Language lg){
+                                                       int level, boolean offline, IGuild guild, Language lg){
         List<JobUser> result = new ArrayList<>();
         for(IUser user : users)
-            if (user.getPresence().getStatus() != StatusType.OFFLINE && ! user.isBot()){
+            if (! user.isBot() && (!offline || user.getPresence().getStatus() != StatusType.OFFLINE)){
                 for(Job job : jobs) {
                     List<JobUser> potentials = getJobs().get(user.getLongID(), server, job);
                     if (level > 0) {
