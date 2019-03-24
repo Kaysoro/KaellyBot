@@ -93,7 +93,7 @@
         <dependency>
             <groupId>com.discord4j</groupId>
             <artifactId>Discord4J</artifactId>
-            <version>2.10.2</version>
+            <version>2.10.1</version>
         </dependency>
         <dependency>
             <groupId>com.rometools</groupId>
