@@ -167,9 +167,21 @@ Maintenant que vous avez déclaré votre application sur la plateforme Discord, 
 
 Avant de continuer, il faut ajouter la base de données *bdd.sqlite* à la racine du dossier; celle-ci est en libre téléchargement sur le serveur de support KaellyBOT, dans le salon \#trucs_utiles.
 
-#### Démarrage du bot  
+#### Créer le .jar pour démarrer le bot :
 
-Du fait de la réécriture de la V2 en microservice plutôt qu'en monolithe, il n'y a pas encore de procédure automatique pour démarrer rapidement KaellyBot. Merci d'utiliser la version 1.5 disponible sur la branche /master !  
+Installer *Maven* sur votre machine puis exécutez les commandes suivantes :
+- `cd VotreProjet`
+- `mvn clean compile`
+- `mvn assembly:single`
+
+#### Démarrer le .jar :
+
+- En double-cliquant dessus (Ne prémunit pas d'éventuelles erreurs).
+- En l'exécutant depuis la console : `java -jar jarfile` (permet aussi d'avoir les logs du bot).
+
+#### Heberger le .jar :
+
+Kaelly peut être lancée depuis n'importe quelle distribution : elle est compatible Windows/Linux/MacOS. Un serveur VPS est nécessaire pour son autonomie (sans quoi, il devra tourner sur votre machine personnelle); il pourra fonctionner indépendamment en utilisant des commandes telles que `screen` ou encore `tmux` sur Linux, par exemple.
 
 ## Licence
 Ce projet est sous licence GPL(v3).
