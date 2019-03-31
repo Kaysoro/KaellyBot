@@ -12,9 +12,7 @@ import util.Translator;
 import util.URLManager;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 
 /**
  * Created by steve on 14/07/2016.
@@ -35,9 +33,12 @@ public class Item implements Embedded {
     private String panoplie;
     private String panoplieURL;
     private String recipe;
+    private List<String> drops;
+    private boolean error;
 
     private Item(String name, String type, String level, String description, String effects, String skinURL, String url,
-                 String caracteristics, String conditions, String panoplie, String panoplieURL, String recipe) {
+                 String caracteristics, String conditions, String panoplie, String panoplieURL, String recipe,
+                 List<String> drops, boolean error) {
         this.name = name;
         this.type = type;
         this.level = level;
@@ -50,6 +51,8 @@ public class Item implements Embedded {
         this.panoplie = panoplie;
         this.panoplieURL = panoplieURL;
         this.recipe = recipe;
+        this.drops = drops;
+        this.error = error;
     }
 
     @Override
@@ -77,6 +80,8 @@ public class Item implements Embedded {
 
         if (panoplie != null && panoplieURL != null)
             builder.appendField(Translator.getLabel(lg, "item.panoplie"), "[" + panoplie + "](" + panoplieURL + ")", true);
+
+        if (error) builder.withFooterText(Translator.getLabel(lg, "resource.error"));
 
         return builder.build();
     }
@@ -112,6 +117,14 @@ public class Item implements Embedded {
         if (recipe != null)
             builder.appendField(Translator.getLabel(lg, "item.recette"), recipe, true);
 
+        if (! drops.isEmpty())
+            for(int i = 0 ; i < drops.size(); i++)
+                builder.appendField(Translator.getLabel(lg, "resource.drops")
+                                + (drops.size() >1? " (" + (i + 1) + "/" + drops.size() + ")" : "") + " : ",
+                        drops.get(i), true);
+
+        if (error) builder.withFooterText(Translator.getLabel(lg, "monster.error"));
+
         return builder.build();
     }
 
@@ -133,6 +146,9 @@ public class Item implements Embedded {
         String set = null;
         String setURL = null;
         String recipe = null;
+        List<String> drops = new ArrayList<>();
+
+        boolean error = false;
 
         Elements titles = doc.getElementsByClass("ak-panel-title");
         Elements lines;
@@ -161,9 +177,11 @@ public class Item implements Embedded {
                                     .children().first().attr("abs:href")).append(")\n");
                 recipe = tmp.toString();
             }
+            else if (title.text().equals(Translator.getLabel(lg, "resource.extract.drops")))
+                error = error || extractDrops(drops, title.parent().getElementsByClass("ak-container ak-content-list ak-displaymode-image-col").first());
 
         return new Item(name, type, level, description, effects, URLManager.abs(skinURL), url,
-                caracteristics, conditions, set, setURL, recipe);
+                caracteristics, conditions, set, setURL, recipe, drops, error);
     }
 
     private static String extractLinesFromTitle(Element title)
@@ -199,6 +217,45 @@ public class Item implements Embedded {
         for (Element line : lines)
             tmp.append(EmojiManager.getEmojiForStat(lg, line.text())).append(line.text()).append("\n");
         return tmp.toString();
+    }
+
+    /**
+     *
+     * @param drops Liste des drops
+     * @param element Element contenant les drops
+     * @return true si c'est en erreur, false le cas échéant
+     */
+    private static boolean extractDrops(List<String> drops, Element element) {
+        boolean error = false;
+        StringBuilder field = new StringBuilder();
+        Elements lines = element.getElementsByClass("ak-column");
+        for (Element line : lines) {
+            StringBuilder tmp = new StringBuilder();
+            tmp.append(line.getElementsByClass("ak-front").text());
+
+            Elements titles = line.getElementsByClass("ak-title");
+            if (!titles.isEmpty()) {
+                if (!titles.first().children().isEmpty())
+                    tmp.append("[").append(titles.first().text()).append("](")
+                            .append(titles.first().children().first().attr("abs:href")).append(") ");
+                else
+                    tmp.append(titles.first().text()).append(" ");
+
+                tmp.append(line.getElementsByClass("ak-aside").first().text()).append("\n");
+
+                if (field.length() + tmp.length() > EmbedBuilder.FIELD_CONTENT_LIMIT) {
+                    drops.add(field.toString());
+                    field.setLength(0);
+                }
+                field.append(tmp.toString());
+            }
+            else error = true;
+        }
+
+        if (field.length() > 0)
+            drops.add(field.toString());
+
+        return error;
     }
 }
 
