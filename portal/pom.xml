@@ -12,7 +12,7 @@
 	<artifactId>portal</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>portal</name>
-	<description>Micro-service dedidacted to portal component</description>
+	<description>Micro-service dedicated to portal component</description>
 
 	<properties>
 		<java.version>1.8</java.version>
@@ -23,6 +23,18 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-webflux</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>org.springframework.kafka</groupId>
+			<artifactId>spring-kafka</artifactId>
+		</dependency>
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-jpa</artifactId>
+        </dependency>
 
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
