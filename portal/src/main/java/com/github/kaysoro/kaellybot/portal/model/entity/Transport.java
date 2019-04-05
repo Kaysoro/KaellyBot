@@ -6,7 +6,7 @@ public enum Transport {
     BORD_DE_LA_FORET_MALEFIQUE("transport.type.zaap", "transport.zone.amakna", "transport.souszone.bord_foret_malefique", Position.of(-1, 13), true),
     CHATEAU_D_AMAKNA("transport.type.zaap", "transport.zone.amakna", "transport.souszone.chateau_amakna", Position.of(3,-5), true),
     COIN_DES_BOUFTOUS("transport.type.zaap", "transport.zone.amakna", "transport.souszone.coin_bouftous", Position.of(5,7), true),
-    MONTAGNE_DES_CRAQUELEURS("transport.type.zaap", "transport.zone.amakna", "transport.souszone.montagne_craqueleurs", Position.of(-5,8), true),
+    MONTAGNE_DES_CRAQUELEURS("transport.type.zaap", "transport.zone.amakna", "transport.souszone.montagne_craqueleurs", Position.of(-5, -8), true),
     PLAINE_DES_SCARAFEUILLES("transport.type.zaap", "transport.zone.amakna", "transport.souszone.plaine_scarafeuilles", Position.of(-1,24), true),
     PORT_DE_MADRESTAM("transport.type.zaap", "transport.zone.amakna", "transport.souszone.port_madrestam", Position.of(7,-4), true),
     VILLAGE_D_AMAKNA("transport.type.zaap", "transport.zone.amakna", "transport.souszone.village_amakna", Position.of(-2,0), true),
