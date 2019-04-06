@@ -6,7 +6,7 @@ import reactor.core.publisher.Mono;
 
 public interface IPortalService {
 
-    Mono<Portal> getPortal(String server, String dimension);
+    Mono<Portal> findById(String server, String dimension);
 
-    Flux<Portal> getPortals(String server);
+    Flux<Portal> findAllByPortalIdServer(String server);
 }

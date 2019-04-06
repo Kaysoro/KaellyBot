@@ -7,5 +7,5 @@ import reactor.core.publisher.Flux;
 
 public interface PortalRepository extends ReactiveMongoRepository<Portal, PortalId> {
 
-    Flux<Portal> findAllByPortalIdServerIsLike(String server);
+    Flux<Portal> findAllByPortalIdServer(String server);
 }

@@ -17,14 +17,14 @@ public class PortalService implements IPortalService {
     }
 
     @Override
-    public Mono<Portal> getPortal(String server, String dimension){
+    public Mono<Portal> findById(String server, String dimension){
         return portalRepository.findById(new PortalId()
                 .withServer(server)
                 .withDimension(dimension));
     }
 
     @Override
-    public Flux<Portal> getPortals(String server) {
-        return portalRepository.findAllByPortalIdServerIsLike(server);
+    public Flux<Portal> findAllByPortalIdServer(String server) {
+        return portalRepository.findAllByPortalIdServer(server);
     }
 }

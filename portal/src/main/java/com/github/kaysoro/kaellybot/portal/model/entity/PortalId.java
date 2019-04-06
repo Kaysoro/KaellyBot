@@ -1,6 +1,8 @@
 package com.github.kaysoro.kaellybot.portal.model.entity;
 
-public class PortalId {
+import java.io.Serializable;
+
+public class PortalId implements Serializable {
 
     private String server;
     private String dimension;
