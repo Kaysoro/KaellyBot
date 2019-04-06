@@ -1,4 +1,4 @@
-package com.github.kaysoro.kaellybot.portal.constants;
+package com.github.kaysoro.kaellybot.portal.controller;
 
 public class PortalConstants {
 

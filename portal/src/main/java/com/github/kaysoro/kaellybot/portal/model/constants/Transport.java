@@ -1,4 +1,6 @@
-package com.github.kaysoro.kaellybot.portal.model.entity;
+package com.github.kaysoro.kaellybot.portal.model.constants;
+
+import com.github.kaysoro.kaellybot.portal.model.entity.Position;
 
 public enum Transport {
 

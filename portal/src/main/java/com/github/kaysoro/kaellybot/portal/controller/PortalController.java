@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import static com.github.kaysoro.kaellybot.portal.constants.PortalConstants.*;
+import static com.github.kaysoro.kaellybot.portal.controller.PortalConstants.*;
 
 @RestController
 @RequestMapping(API_PORTALS)

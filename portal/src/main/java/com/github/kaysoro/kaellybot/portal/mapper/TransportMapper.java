@@ -1,7 +1,7 @@
 package com.github.kaysoro.kaellybot.portal.mapper;
 
 import com.github.kaysoro.kaellybot.portal.model.dto.TransportDto;
-import com.github.kaysoro.kaellybot.portal.model.entity.Transport;
+import com.github.kaysoro.kaellybot.portal.model.constants.Transport;
 
 public class TransportMapper {
 

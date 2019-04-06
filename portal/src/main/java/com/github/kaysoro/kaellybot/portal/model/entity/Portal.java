@@ -1,5 +1,6 @@
 package com.github.kaysoro.kaellybot.portal.model.entity;
 
+import com.github.kaysoro.kaellybot.portal.model.constants.Transport;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
