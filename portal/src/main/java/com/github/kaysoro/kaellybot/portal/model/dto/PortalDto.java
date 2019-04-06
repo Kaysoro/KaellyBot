@@ -1,14 +1,12 @@
 package com.github.kaysoro.kaellybot.portal.model.dto;
 
-import com.github.kaysoro.kaellybot.portal.model.entity.Transport;
-
 public class PortalDto {
 
     private String server;
     private String dimension;
     private PositionDto position;
-    private Transport nearestZaap;
-    private Transport nearestTransportLimited;
+    private TransportDto nearestZaap;
+    private TransportDto nearestTransportLimited;
     private boolean transportLimitedNearest;
 
     public PortalDto withServer(String server) {
@@ -21,12 +19,12 @@ public class PortalDto {
         return this;
     }
 
-    public PortalDto withNearestZaap(Transport nearestZaap) {
+    public PortalDto withNearestZaap(TransportDto nearestZaap) {
         this.nearestZaap = nearestZaap;
         return this;
     }
 
-    public PortalDto withNearestTransportLimited(Transport nearestTransportLimited) {
+    public PortalDto withNearestTransportLimited(TransportDto nearestTransportLimited) {
         this.nearestTransportLimited = nearestTransportLimited;
         return this;
     }
@@ -53,11 +51,11 @@ public class PortalDto {
         return position;
     }
 
-    public Transport getNearestZaap() {
+    public TransportDto getNearestZaap() {
         return nearestZaap;
     }
 
-    public Transport getNearestTransportLimited() {
+    public TransportDto getNearestTransportLimited() {
         return nearestTransportLimited;
     }
 
