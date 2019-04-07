@@ -7,7 +7,6 @@ public class PositionMapper {
 
     public static PositionDto map(Position position){
         return new PositionDto()
-                .withUnknown(position.isUnknown())
                 .withX(position.getX())
                 .withY(position.getY());
     }

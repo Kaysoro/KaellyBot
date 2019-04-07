@@ -4,6 +4,8 @@ import com.github.kaysoro.kaellybot.portal.model.constants.Transport;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.time.Instant;
+
 
 @Document(collection = "portals")
 public class Portal {
@@ -11,19 +13,46 @@ public class Portal {
     @Id
     private PortalId portalId;
     private Position position;
+    private Integer utilisation;
+    private Instant creationDate;
+    private Author creationAuthor;
+    private Instant lastUpdateDate;
+    private Author lastAuthorUpdate;
     private Transport nearestZaap;
     private Transport nearestTransportLimited;
     private boolean transportLimitedNearest;
+    private boolean isUnknown;
+    private boolean isUpdated;
 
-    public String getServer() {
-        return portalId.getServer();
+    public PortalId getPortalId() {
+        return portalId;
     }
 
-    public String getDimension() {
-        return portalId.getDimension();
+    public Position getPosition() {
+        return position;
     }
 
-    public Transport getnearestZaap() {
+    public Integer getUtilisation() {
+        return utilisation;
+    }
+
+    public Instant getCreationDate() {
+        return creationDate;
+    }
+
+    public Author getCreationAuthor() {
+        return creationAuthor;
+    }
+
+    public Instant getLastUpdateDate() {
+        return lastUpdateDate;
+    }
+
+    public Author getLastAuthorUpdate() {
+        return lastAuthorUpdate;
+    }
+
+    public Transport getNearestZaap() {
         return nearestZaap;
     }
 
@@ -35,32 +64,11 @@ public class Portal {
         return transportLimitedNearest;
     }
 
-    public Position getPosition() {
-        return position;
+    public boolean isUnknown() {
+        return isUnknown;
     }
 
-    public Portal withPortalId(PortalId portalId) {
-        this.portalId = portalId;
-        return this;
-    }
-
-    public Portal withPosition(Position position) {
-        this.position = position;
-        return this;
-    }
-
-    public Portal withNearestZaap(Transport nearestZaap) {
-        this.nearestZaap = nearestZaap;
-        return this;
-    }
-
-    public Portal withNearestTransportLimited(Transport nearestTransportLimited) {
-        this.nearestTransportLimited = nearestTransportLimited;
-        return this;
-    }
-
-    public Portal withTransportLimitedNearest(boolean transportLimitedNearest) {
-        this.transportLimitedNearest = transportLimitedNearest;
-        return this;
+    public boolean isUpdated() {
+        return isUpdated;
     }
 }

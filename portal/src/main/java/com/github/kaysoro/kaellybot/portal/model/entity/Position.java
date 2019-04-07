@@ -4,13 +4,11 @@ public class Position {
 
     private int x;
     private int y;
-    private boolean isUnknown;
 
     public static Position of(int x, int y){
         return new Position()
                 .withX(x)
-                .withY(y)
-                .withUnknown(false);
+                .withY(y);
     }
 
     public int getX() {
@@ -19,10 +17,6 @@ public class Position {
 
     public int getY() {
         return y;
-    }
-
-    public boolean isUnknown() {
-        return isUnknown;
     }
 
     public Position withX(int x) {
@@ -35,15 +29,8 @@ public class Position {
         return this;
     }
 
-    public Position withUnknown(boolean unknown) {
-        isUnknown = unknown;
-        return this;
-    }
-
     @Override
     public String toString(){
-        if (! isUnknown)
-            return "[" + x + "," + y + "]";
-        return "Unknown";
+        return "[" + x + ", " + y + "]";
     }
 }
