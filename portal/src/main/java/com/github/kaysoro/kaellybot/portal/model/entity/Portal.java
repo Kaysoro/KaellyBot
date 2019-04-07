@@ -21,7 +21,7 @@ public class Portal {
     private Transport nearestZaap;
     private Transport nearestTransportLimited;
     private boolean transportLimitedNearest;
-    private boolean isUnknown;
+    private boolean isAvailable;
     private boolean isUpdated;
 
     public PortalId getPortalId() {
@@ -64,8 +64,8 @@ public class Portal {
         return transportLimitedNearest;
     }
 
-    public boolean isUnknown() {
-        return isUnknown;
+    public boolean isAvailable() {
+        return isAvailable;
     }
 
     public boolean isUpdated() {

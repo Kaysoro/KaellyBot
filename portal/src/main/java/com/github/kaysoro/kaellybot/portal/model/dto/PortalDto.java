@@ -1,5 +1,7 @@
 package com.github.kaysoro.kaellybot.portal.model.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import java.time.Instant;
 
 public class PortalDto {
@@ -8,8 +10,10 @@ public class PortalDto {
     private PositionDto position;
     private Boolean isAvailable;
     private Integer utilisation;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy hh:mm:ss")
     private Instant creationDate;
     private AuthorDto creationAuthor;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy hh:mm:ss")
     private Instant lastUpdateDate;
     private AuthorDto lastAuthorUpdate;
     private TransportDto nearestZaap;

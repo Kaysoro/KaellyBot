@@ -1,4 +1,4 @@
-package com.github.kaysoro.kaellybot.portal.config;
+package com.github.kaysoro.kaellybot.portal.util;
 
 import com.mongodb.reactivestreams.client.MongoClients;
 import com.mongodb.reactivestreams.client.MongoClient;

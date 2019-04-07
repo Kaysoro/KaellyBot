@@ -13,7 +13,7 @@ public class PortalMapper {
     public static PortalDto map(Portal portal) {
         PortalDto result = new PortalDto()
                 .withDimension(portal.getPortalId().getDimension())
-                .withAvailable(!portal.isUnknown());
+                .withAvailable(portal.isAvailable());
 
         if (isPortalStillFresh(portal)) {
             result.withPosition(PositionMapper.map(portal.getPosition()))
@@ -34,7 +34,7 @@ public class PortalMapper {
     }
 
     private static boolean isPortalStillFresh(Portal portal){
-        return !portal.isUnknown() &&
+        return portal.isAvailable() &&
                 Math.abs(Duration.between(Instant.now(), portal.getCreationDate()).toDays()) < PORTAL_LIFETIME_IN_DAYS;
     }
 }
