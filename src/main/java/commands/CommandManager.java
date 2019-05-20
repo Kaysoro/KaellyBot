@@ -37,6 +37,7 @@ public class CommandManager {
         addCommand(new GuildCommand());
         addCommand(new HelpCommand());
         addCommand(new ItemCommand());
+        addCommand(new InviteCommand());
         addCommand(new JobCommand());
         addCommand(new LanguageCommand());
         addCommand(new MapCommand());
