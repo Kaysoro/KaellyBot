@@ -34,10 +34,11 @@ public class CommandManager {
         addCommand(new AlmanaxAutoCommand());
         addCommand(new CommandCommand());
         addCommand(new DistanceCommand());
+        addCommand(new DonateCommand());
         addCommand(new GuildCommand());
         addCommand(new HelpCommand());
-        addCommand(new ItemCommand());
         addCommand(new InviteCommand());
+        addCommand(new ItemCommand());
         addCommand(new JobCommand());
         addCommand(new LanguageCommand());
         addCommand(new MapCommand());
