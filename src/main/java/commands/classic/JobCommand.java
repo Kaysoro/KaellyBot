@@ -213,7 +213,7 @@ public class JobCommand extends FetchCommand {
                     .toLowerCase().replaceAll("\\W+", "");
 
             if (jobLabel.equals(nameProposed))
-                return Arrays.asList(job);
+                return Collections.singletonList(job);
 
             if (jobLabel.startsWith(nameProposed))
                 jobs.add(job);
@@ -222,7 +222,7 @@ public class JobCommand extends FetchCommand {
     }
 
     private String getJobsNormalized(Language lg) {
-        StringBuilder sb = new StringBuilder("\n```");
+        StringBuilder sb = new StringBuilder("```");
         List<String> jobs = new ArrayList<>();
         String nameJob;
         long sizeMax = 0;

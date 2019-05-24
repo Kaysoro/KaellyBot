@@ -92,6 +92,14 @@ public class CommandPatternTest {
     }
 
     @Test
+    public void testDonateCommand(){
+        Command cmd = new DonateCommand();
+        Pattern pattern = Pattern.compile("^" + Constants.prefixCommand + cmd.getName() + cmd.getPattern() + "$");
+
+        assertTrue(pattern.matcher(Constants.prefixCommand + "donate").find());
+    }
+
+    @Test
     public void testDistCommand(){
         Command cmd = new DistanceCommand();
         Pattern pattern = Pattern.compile("^" + Constants.prefixCommand + cmd.getName() + cmd.getPattern() + "$");
@@ -125,6 +133,14 @@ public class CommandPatternTest {
         assertTrue(pattern.matcher(Constants.prefixCommand + "help hélp").find());
         assertTrue(pattern.matcher(Constants.prefixCommand + "help !help").find());
         assertTrue(pattern.matcher(Constants.prefixCommand + "help !help2").find());
+    }
+
+    @Test
+    public void testInviteCommand(){
+        Command cmd = new InviteCommand();
+        Pattern pattern = Pattern.compile("^" + Constants.prefixCommand + cmd.getName() + cmd.getPattern() + "$");
+
+        assertTrue(pattern.matcher(Constants.prefixCommand + "invite").find());
     }
 
     @Test
@@ -268,8 +284,11 @@ public class CommandPatternTest {
         Pattern pattern = Pattern.compile("^" + Constants.prefixCommand + cmd.getName() + cmd.getPattern() + "$");
 
         assertTrue(pattern.matcher(Constants.prefixCommand + "server").find());
+        assertTrue(pattern.matcher(Constants.prefixCommand + "server -list").find());
         assertTrue(pattern.matcher(Constants.prefixCommand + "server dofus").find());
         assertTrue(pattern.matcher(Constants.prefixCommand + "server -reset").find());
+        assertTrue(pattern.matcher(Constants.prefixCommand + "server -channel -reset").find());
+        assertTrue(pattern.matcher(Constants.prefixCommand + "server -channel dofus").find());
     }
 
     @Test
