@@ -43,6 +43,7 @@ public class CommandManager {
         addCommand(new LanguageCommand());
         addCommand(new MapCommand());
         addCommand(new MonsterCommand());
+        addCommand(new PingCommand());
         addCommand(new PortalCommand());
         addCommand(new PortalAutoCommand());
         addCommand(new PrefixCommand());

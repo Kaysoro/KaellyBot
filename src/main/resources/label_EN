@@ -592,6 +592,7 @@ monster.extract.resistance=Resistances
 monster.extract.zones=Areas
 monster.extract.butins=Drops
 monster.extract.butins_conditionnes=Conditional drops
+ping.help=measures the response time.
 portal.help=gives positions of dimension portals. These positions can be gathered automatically by precising your game server.
 portal.help.detailed.1=gives the position of all the portals.
 portal.help.detailed.2=gives the position of the dimension portal specified.

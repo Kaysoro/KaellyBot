@@ -702,6 +702,7 @@ monster.extract.resistance=Résistances
 monster.extract.zones=Zones
 monster.extract.butins=Butins
 monster.extract.butins_conditionnes=Butins conditionnés
+ping.help=mesure le temps de réponse.
 portal.help=donne la position des portails dimension. Ces positions peuvent être automatiquement renseignés en précisant votre serveur de jeu.
 portal.help.detailed.1=donne la position de tous les portails.
 portal.help.detailed.2=donne la position du portail de la dimension désirée.
