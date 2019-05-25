@@ -33,7 +33,7 @@ public class AboutCommand extends AbstractCommand {
                     .replace("{name}", Constants.name)
                     .replace("{version}", Constants.version))
                 .withDesc(Translator.getLabel(lg, "about.desc")
-                    .replace("{game}", Constants.game))
+                    .replace("{game}", Constants.game.getName()))
                 .withColor(new Random().nextInt(16777216))
                 .withThumbnail(ClientConfig.DISCORD().getApplicationIconURL())
                 .withAuthorName(author.getName())

@@ -42,7 +42,7 @@ public class GuildCreateListener {
 
                 customMessage = customMessage
                         .replaceAll("\\{name\\}", Constants.name)
-                        .replaceAll("\\{game\\}", Constants.game)
+                        .replaceAll("\\{game\\}", Constants.game.getName())
                         .replaceAll("\\{prefix\\}", Constants.prefixCommand)
                         .replaceAll("\\{help\\}", HelpCommand.NAME)
                         .replaceAll("\\{server\\}", new ServerCommand().getName())

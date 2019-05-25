@@ -59,7 +59,7 @@ public class RSSCommand extends AbstractCommand {
     @Override
     public String help(Language lg, String prefixe) {
         return "**" + prefixe + name + "** " + Translator.getLabel(lg, "rss.help")
-                .replace("{game}", Constants.game);
+                .replace("{game}", Constants.game.getName());
     }
 
     @Override
