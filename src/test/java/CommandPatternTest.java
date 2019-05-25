@@ -104,6 +104,14 @@ public class CommandPatternTest {
     }
 
     @Test
+    public void testDonateCommand(){
+        Command cmd = new DonateCommand();
+        Pattern pattern = Pattern.compile("^" + Constants.prefixCommand + cmd.getName() + cmd.getPattern() + "$");
+
+        assertTrue(pattern.matcher(Constants.prefixCommand + "donate").find());
+    }
+
+    @Test
     public void testGuildCommand(){
         Command cmd = new GuildCommand();
         Pattern pattern = Pattern.compile("^" + Constants.prefixCommand + cmd.getName() + cmd.getPattern() + "$");
