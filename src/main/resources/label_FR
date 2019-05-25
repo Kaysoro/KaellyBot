@@ -668,6 +668,7 @@ monster.extract.resistance=Résistances
 monster.extract.zones=Zones
 monster.extract.butins=Butins
 monster.extract.butins_conditionnes=Butins conditionnés
+ping.help=mesure le temps de réponse.
 prefix.request.1=Changement réussi. Pour invoquer une commande, il faudra désormais utiliser le préfixe {prefix}.
 prefix.request.2=RÉCAPITULATIF : pour invoquer une commande, il faudra désormais utiliser le préfixe {prefix} sur le serveur *{guild.name}*.
 prefix.help=change le préfixe utilisé pour invoquer une commande. Le droit de gérer le serveur est requis.

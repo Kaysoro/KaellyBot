@@ -268,6 +268,14 @@ public class CommandPatternTest {
     }
 
     @Test
+    public void testPingCommand(){
+        Command cmd = new PingCommand();
+        Pattern pattern = Pattern.compile("^" + Constants.prefixCommand + cmd.getName() + cmd.getPattern() + "$");
+
+        assertTrue(pattern.matcher(Constants.prefixCommand + "ping").find());
+    }
+
+    @Test
     public void testPrefixeCommand(){
         Command cmd = new PrefixCommand();
         Pattern pattern = Pattern.compile("^" + Constants.prefixCommand + cmd.getName() + cmd.getPattern() + "$");

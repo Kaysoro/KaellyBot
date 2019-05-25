@@ -590,6 +590,7 @@ monster.extract.resistance=Resistances
 monster.extract.zones=Areas
 monster.extract.butins=Drops
 monster.extract.butins_conditionnes=Conditional drops
+ping.help=measures the response time.
 prefix.request.1=Change succeed. To invoke a command, you will have to use the prefix {prefix}.
 prefix.request.2=SUMMARY: to invoke a command, you will have to use the prefix {prefix} on the server *{guild.name}*.
 prefix.help=changes the prefix used to invoke a command. Right to manage the server required.
