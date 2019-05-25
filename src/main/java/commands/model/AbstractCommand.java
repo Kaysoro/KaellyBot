@@ -57,7 +57,7 @@ public abstract class AbstractCommand implements Command {
                 return;
 
             // S'il s'agit d'une demande d'aide...
-            if (message.getContent().matches(getPrefix(message) + getName() + "\\s+help")){
+            if (message.getContent().matches(Pattern.quote(getPrefix(message)) + getName() + "\\s+help")){
                 Message.sendText(message.getChannel(), helpDetailed(lg, getPrefix(message)));
                 return;
             }
