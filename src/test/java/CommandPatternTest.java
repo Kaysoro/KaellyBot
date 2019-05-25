@@ -136,6 +136,14 @@ public class CommandPatternTest {
     }
 
     @Test
+    public void testInviteCommand(){
+        Command cmd = new InviteCommand();
+        Pattern pattern = Pattern.compile("^" + Constants.prefixCommand + cmd.getName() + cmd.getPattern() + "$");
+
+        assertTrue(pattern.matcher(Constants.prefixCommand + "invite").find());
+    }
+
+    @Test
     public void testItemCommand(){
         Command cmd = new ItemCommand();
         Pattern pattern = Pattern.compile("^" + Constants.prefixCommand + cmd.getName() + cmd.getPattern() + "$");

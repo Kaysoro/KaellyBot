@@ -536,6 +536,7 @@ guild.extract.members_size=Member(s)
 help.help=explains how work each command of {name}.
 help.help.detailed.1=briefly explains each command.
 help.help.detailed.2=explains precisely the specified command.
+invite.help=gives the invitation link for the bot and for the support server.
 item.help=displays statistics from a {game} item.
 item.help.detailed.1=displays statistics from a specified item: its name can be approximative if it's enough precise.
 item.help.detailed.2=displays detailed statistics from a specified item.

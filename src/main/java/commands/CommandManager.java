@@ -37,6 +37,7 @@ public class CommandManager {
         addCommand(new DonateCommand());
         addCommand(new GuildCommand());
         addCommand(new HelpCommand());
+        addCommand(new InviteCommand());
         addCommand(new ItemCommand());
         addCommand(new JobCommand());
         addCommand(new LanguageCommand());
