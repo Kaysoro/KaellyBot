@@ -12,6 +12,7 @@ import stats.CommandStatistics;
 import sx.blah.discord.handle.obj.IMessage;
 import sx.blah.discord.handle.obj.Permissions;
 import util.ClientConfig;
+import util.Message;
 import util.Reporter;
 import util.Translator;
 
@@ -54,6 +55,12 @@ public abstract class AbstractCommand implements Command {
             // Caché si la fonction est désactivée/réservée aux admin et que l'auteur n'est pas super-admin
             if ((!isPublic() || isAdmin()) && message.getAuthor().getLongID() != Constants.authorId)
                 return;
+
+            // S'il s'agit d'une demande d'aide...
+            if (message.getContent().matches(getPrefix(message) + getName() + "\\s+help")){
+                Message.sendText(message.getChannel(), helpDetailed(lg, getPrefix(message)));
+                return;
+            }
 
             // La commande est trouvée
             if (isFound) {
