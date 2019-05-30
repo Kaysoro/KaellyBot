@@ -106,4 +106,9 @@ public class ServerDofus {
     public long getLastSweetRefresh(){
         return lastSweetRefresh;
     }
+
+    @Override
+    public String toString(){
+        return getName();
+    }
 }
