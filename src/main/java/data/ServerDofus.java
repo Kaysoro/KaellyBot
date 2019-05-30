@@ -1,8 +1,8 @@
 package data;
 
+import enums.Game;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import util.ClientConfig;
 import util.Connexion;
 import util.Reporter;
 
@@ -27,13 +27,15 @@ public class ServerDofus {
     private String name;
     private String id;
     private String sweetId;
+    private Game game;
     private List<Portal> sweetPortals;
     private long lastSweetRefresh;
 
-    public ServerDofus(String name, String id, String sweetId) {
+    public ServerDofus(String name, String id, String sweetId, Game game) {
         this.name = name;
         this.id = id;
         this.sweetId = sweetId;
+        this.game = game;
         sweetPortals = new ArrayList<>();
         lastSweetRefresh = 0;
     }
@@ -47,13 +49,14 @@ public class ServerDofus {
         Connection connection = connexion.getConnection();
 
         try {
-            PreparedStatement query = connection.prepareStatement("SELECT name, id_dofus, id_sweet FROM Server");
+            PreparedStatement query = connection.prepareStatement("SELECT name, id_dofus, id_sweet, game FROM Server");
             ResultSet resultSet = query.executeQuery();
 
             while (resultSet.next()) {
                 ServerDofus sd = new ServerDofus(resultSet.getString("name"),
                         resultSet.getString("id_dofus"),
-                        resultSet.getString("id_sweet"));
+                        resultSet.getString("id_sweet"),
+                        Game.valueOf(resultSet.getString("game")));
                 servers.add(sd);
                 serversMap.put(sd.getName(), sd);
             }
@@ -85,6 +88,10 @@ public class ServerDofus {
 
     public String getSweetId(){
         return sweetId;
+    }
+
+    public Game getGame(){
+        return game;
     }
 
     public List<Portal> getSweetPortals(){
