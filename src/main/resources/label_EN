@@ -664,6 +664,7 @@ server.request.2=is now
 server.request.3=is not linked anymore to a {game} server.
 server.request.4=corresponds to the server
 server.request.5=does not correspond to any {game} server.
+job.list=Servers list:
 server.help=determines which {game} server correspond to the Discord server.
 server.help.detailed.1=displays the {game} server corresponding to the Discord server.
 server.help.detailed.2=determines which {game} server correspond to the Discord server.

@@ -774,6 +774,7 @@ server.request.2=est désormais
 server.request.3=n'est désormais plus rattachée à un serveur {game}.
 server.request.4=correspond au serveur
 server.request.5=ne correspond à aucun serveur {game}.
+server.list=Liste des serveurs :
 server.help=permet de déterminer à quel serveur {game} correspond ce serveur Discord.
 server.help.detailed.1=affiche le serveur {game} correspondant au serveur Discord.
 server.help.detailed.2=permet de déterminer à quel serveur {game} correspond ce serveur Discord.

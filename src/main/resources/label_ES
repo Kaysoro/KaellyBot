@@ -664,6 +664,7 @@ server.request.2=es ahora
 server.request.3=ya no está vinculado a un servidor de {game}.
 server.request.4=corresponde al servidor
 server.request.5=no corresponde a ningún servidor de {game}.
+server.list=Lista de servidores:
 server.help=determina qué servidor de {game} corresponde al servidor de Discord.
 server.help.detailed.1=muestra el servidor {game} correspondiente al servidor de Discord.
 server.help.detailed.2=determina qué servidor de {game} corresponde al servidor de Discord.
