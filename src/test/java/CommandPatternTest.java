@@ -3,22 +3,22 @@ import commands.classic.*;
 import commands.config.*;
 import commands.model.Command;
 import data.Constants;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.regex.Pattern;
 
-import static junit.framework.TestCase.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Created by steve on 08/11/2016.
  */
-public class CommandPatternTest {
+ class CommandPatternTest {
 
     // BASIC COMMANDS
 
     @Test
-    public void testAlmanaxCommand(){
+     void testAlmanaxCommand(){
         Command cmd = new AlmanaxCommand();
         Pattern pattern = Pattern.compile("^" + Constants.prefixCommand + cmd.getName() + cmd.getPattern() + "$");
 
@@ -28,7 +28,7 @@ public class CommandPatternTest {
     }
 
     @Test
-    public void testAlmanaxAutoCommand(){
+     void testAlmanaxAutoCommand(){
         Command cmd = new AlmanaxAutoCommand();
         Pattern pattern = Pattern.compile("^" + Constants.prefixCommand + cmd.getName() + cmd.getPattern() + "$");
 
@@ -41,7 +41,7 @@ public class CommandPatternTest {
     }
 
     @Test
-    public void testAlignmentCommand(){
+     void testAlignmentCommand(){
         Command cmd = new AlignmentCommand();
         Pattern pattern = Pattern.compile("^" + Constants.prefixCommand + cmd.getName() + cmd.getPattern() + "$");
 
@@ -56,7 +56,7 @@ public class CommandPatternTest {
     }
 
     @Test
-    public void testAllianceCommand(){
+     void testAllianceCommand(){
         Command cmd = new AllianceCommand();
         Pattern pattern = Pattern.compile("^" + Constants.prefixCommand + cmd.getName() + cmd.getPattern() + "$");
 
@@ -68,7 +68,7 @@ public class CommandPatternTest {
     }
 
     @Test
-    public void testAboutCommand(){
+     void testAboutCommand(){
         Command cmd = new AboutCommand();
         Pattern pattern = Pattern.compile("^" + Constants.prefixCommand + cmd.getName() + cmd.getPattern() + "$");
 
@@ -76,7 +76,7 @@ public class CommandPatternTest {
     }
 
     @Test
-    public void testCommandCommand(){
+     void testCommandCommand(){
         Command cmd = new CommandCommand();
         Pattern pattern = Pattern.compile("^" + Constants.prefixCommand + cmd.getName() + cmd.getPattern() + "$");
 
@@ -92,7 +92,7 @@ public class CommandPatternTest {
     }
 
     @Test
-    public void testDonateCommand(){
+     void testDonateCommand(){
         Command cmd = new DonateCommand();
         Pattern pattern = Pattern.compile("^" + Constants.prefixCommand + cmd.getName() + cmd.getPattern() + "$");
 
@@ -100,7 +100,7 @@ public class CommandPatternTest {
     }
 
     @Test
-    public void testDistCommand(){
+     void testDistCommand(){
         Command cmd = new DistanceCommand();
         Pattern pattern = Pattern.compile("^" + Constants.prefixCommand + cmd.getName() + cmd.getPattern() + "$");
 
@@ -112,7 +112,7 @@ public class CommandPatternTest {
     }
 
     @Test
-    public void testGuildCommand(){
+     void testGuildCommand(){
         Command cmd = new GuildCommand();
         Pattern pattern = Pattern.compile("^" + Constants.prefixCommand + cmd.getName() + cmd.getPattern() + "$");
 
@@ -124,7 +124,7 @@ public class CommandPatternTest {
     }
 
     @Test
-    public void testHelpCommand(){
+     void testHelpCommand(){
         Command cmd = new HelpCommand();
         Pattern pattern = Pattern.compile("^" + Constants.prefixCommand + cmd.getName() + cmd.getPattern() + "$");
 
@@ -136,7 +136,7 @@ public class CommandPatternTest {
     }
 
     @Test
-    public void testInviteCommand(){
+     void testInviteCommand(){
         Command cmd = new InviteCommand();
         Pattern pattern = Pattern.compile("^" + Constants.prefixCommand + cmd.getName() + cmd.getPattern() + "$");
 
@@ -144,7 +144,7 @@ public class CommandPatternTest {
     }
 
     @Test
-    public void testItemCommand(){
+     void testItemCommand(){
         Command cmd = new ItemCommand();
         Pattern pattern = Pattern.compile("^" + Constants.prefixCommand + cmd.getName() + cmd.getPattern() + "$");
 
@@ -155,7 +155,7 @@ public class CommandPatternTest {
     }
 
     @Test
-    public void testJobCommand(){
+     void testJobCommand(){
         Command cmd = new JobCommand();
         Pattern pattern = Pattern.compile("^" + Constants.prefixCommand + cmd.getName() + cmd.getPattern() + "$");
 
@@ -168,7 +168,7 @@ public class CommandPatternTest {
     }
 
     @Test
-    public void testLangCommand(){
+     void testLangCommand(){
         Command cmd = new LanguageCommand();
         Pattern pattern = Pattern.compile("^" + Constants.prefixCommand + cmd.getName() + cmd.getPattern() + "$");
 
@@ -178,7 +178,7 @@ public class CommandPatternTest {
     }
 
     @Test
-    public void testMapCommand(){
+     void testMapCommand(){
         Command cmd = new MapCommand();
         Pattern pattern = Pattern.compile("^" + Constants.prefixCommand + cmd.getName() + cmd.getPattern() + "$");
 
@@ -191,7 +191,7 @@ public class CommandPatternTest {
     }
 
     @Test
-    public void testMonsterCommand(){
+     void testMonsterCommand(){
         Command cmd = new MonsterCommand();
         Pattern pattern = Pattern.compile("^" + Constants.prefixCommand + cmd.getName() + cmd.getPattern() + "$");
 
@@ -202,7 +202,7 @@ public class CommandPatternTest {
     }
 
     @Test
-    public void testPortalCommand(){
+     void testPortalCommand(){
         Command cmd = new PortalCommand();
         Pattern pattern = Pattern.compile("^" + Constants.prefixCommand + cmd.getName() + cmd.getPattern() + "$");
 
@@ -217,7 +217,7 @@ public class CommandPatternTest {
     }
 
     @Test
-    public void testPortalAutoCommand(){
+     void testPortalAutoCommand(){
         Command cmd = new PortalAutoCommand();
         Pattern pattern = Pattern.compile("^" + Constants.prefixCommand + cmd.getName() + cmd.getPattern() + "$");
 
@@ -230,7 +230,7 @@ public class CommandPatternTest {
     }
 
     @Test
-    public void testTutorialCommand(){
+     void testTutorialCommand(){
         Command cmd = new TutorialCommand();
         Pattern pattern = Pattern.compile("^" + Constants.prefixCommand + cmd.getName() + cmd.getPattern() + "$");
 
@@ -240,7 +240,7 @@ public class CommandPatternTest {
     }
 
     @Test
-    public void testTwitterCommand(){
+     void testTwitterCommand(){
         Command cmd = new TwitterCommand();
         Pattern pattern = Pattern.compile("^" + Constants.prefixCommand + cmd.getName() + cmd.getPattern() + "$");
 
@@ -254,7 +254,7 @@ public class CommandPatternTest {
     }
 
     @Test
-    public void testRSSCommand(){
+     void testRSSCommand(){
         Command cmd = new RSSCommand();
         Pattern pattern = Pattern.compile("^" + Constants.prefixCommand + cmd.getName() + cmd.getPattern() + "$");
 
@@ -268,7 +268,7 @@ public class CommandPatternTest {
     }
 
     @Test
-    public void testSetCommand(){
+     void testSetCommand(){
         Command cmd = new SetCommand();
         Pattern pattern = Pattern.compile("^" + Constants.prefixCommand + cmd.getName() + cmd.getPattern() + "$");
 
@@ -279,7 +279,7 @@ public class CommandPatternTest {
     }
 
     @Test
-    public void testServerCommand(){
+     void testServerCommand(){
         Command cmd = new ServerCommand();
         Pattern pattern = Pattern.compile("^" + Constants.prefixCommand + cmd.getName() + cmd.getPattern() + "$");
 
@@ -292,7 +292,7 @@ public class CommandPatternTest {
     }
 
     @Test
-    public void testSoundCommand(){
+     void testSoundCommand(){
         Command cmd = new SoundCommand();
         Pattern pattern = Pattern.compile("^" + Constants.prefixCommand + cmd.getName() + cmd.getPattern() + "$");
 
@@ -302,7 +302,7 @@ public class CommandPatternTest {
     }
 
     @Test
-    public void testResourceCommand(){
+     void testResourceCommand(){
         Command cmd = new ResourceCommand();
         Pattern pattern = Pattern.compile("^" + Constants.prefixCommand + cmd.getName() + cmd.getPattern() + "$");
 
@@ -313,7 +313,7 @@ public class CommandPatternTest {
     }
 
     @Test
-    public void testRandomCommand(){
+     void testRandomCommand(){
         Command cmd = new RandomCommand();
         Pattern pattern = Pattern.compile("^" + Constants.prefixCommand + cmd.getName() + cmd.getPattern() + "$");
 
@@ -325,7 +325,7 @@ public class CommandPatternTest {
     }
 
     @Test
-    public void testWhoisCommand(){
+     void testWhoisCommand(){
         Command cmd = new WhoisCommand();
         Pattern pattern = Pattern.compile("^" + Constants.prefixCommand + cmd.getName() + cmd.getPattern() + "$");
 
@@ -338,7 +338,7 @@ public class CommandPatternTest {
     }
 
     @Test
-    public void testPingCommand(){
+     void testPingCommand(){
         Command cmd = new PingCommand();
         Pattern pattern = Pattern.compile("^" + Constants.prefixCommand + cmd.getName() + cmd.getPattern() + "$");
 
@@ -346,7 +346,7 @@ public class CommandPatternTest {
     }
 
     @Test
-    public void testPrefixeCommand(){
+     void testPrefixeCommand(){
         Command cmd = new PrefixCommand();
         Pattern pattern = Pattern.compile("^" + Constants.prefixCommand + cmd.getName() + cmd.getPattern() + "$");
 
@@ -357,7 +357,7 @@ public class CommandPatternTest {
 
     @Test
     // ADMIN COMMANDS
-    public void testAdminCommand(){
+     void testAdminCommand(){
         Command cmd = new AdminCommand();
         Pattern pattern = Pattern.compile("^" + Constants.prefixCommand + cmd.getName() + cmd.getPattern() + "$");
 
@@ -369,7 +369,7 @@ public class CommandPatternTest {
     }
 
     @Test
-    public void testAnnounceCommand(){
+     void testAnnounceCommand(){
         Command cmd = new AnnounceCommand();
         Pattern pattern = Pattern.compile("^" + Constants.prefixCommand + cmd.getName() + cmd.getPattern() + "$");
 
@@ -379,7 +379,7 @@ public class CommandPatternTest {
     }
 
     @Test
-    public void testAvailableCommand(){
+     void testAvailableCommand(){
         Command cmd = new AvailableCommand();
         Pattern pattern = Pattern.compile("^" + Constants.prefixCommand + cmd.getName() + cmd.getPattern() + "$");
 
@@ -395,7 +395,7 @@ public class CommandPatternTest {
     }
 
     @Test
-    public void testTalkCommand(){
+     void testTalkCommand(){
         Command cmd = new TalkCommand();
         Pattern pattern = Pattern.compile("^" + Constants.prefixCommand + cmd.getName() + cmd.getPattern() + "$");
 
@@ -405,7 +405,7 @@ public class CommandPatternTest {
     }
 
     @Test
-    public void testStatCommand(){
+     void testStatCommand(){
         Command cmd = new StatCommand();
         Pattern pattern = Pattern.compile("^" + Constants.prefixCommand + cmd.getName() + cmd.getPattern() + "$");
 
@@ -418,7 +418,7 @@ public class CommandPatternTest {
     }
 
     @Test
-    public void testVacuumCommand(){
+     void testVacuumCommand(){
         Command cmd = new VacuumCommand();
         Pattern pattern = Pattern.compile("^" + Constants.prefixCommand + cmd.getName() + cmd.getPattern() + "$");
 

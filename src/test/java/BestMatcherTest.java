@@ -1,33 +1,32 @@
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import util.BestMatcher;
 import util.Requestable;
 
 import java.util.ArrayList;
 
-import static junit.framework.TestCase.assertFalse;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Created by steve on 08/11/2016.
  */
-public class BestMatcherTest {
+class BestMatcherTest {
 
     private BestMatcher collection;
 
-    @Before
-    public void init(){
+    @BeforeEach
+    void init(){
         collection = new BestMatcher("test");
     }
 
-    @After
-    public void end(){
+    @AfterEach
+    void end(){
         collection = null;
     }
 
     @Test
-    public void testEmptySize(){
+    void testEmptySize(){
         assertTrue(collection.isEmpty());
         assertTrue(collection.getBests().isEmpty());
         assertNull(collection.getBest());
@@ -35,7 +34,7 @@ public class BestMatcherTest {
     }
 
     @Test
-    public void testOneElement(){
+    void testOneElement(){
         Requestable requestable = new Requestable("test", "http://test.tst");
         collection.evaluate(requestable);
         assertEquals(collection.getBests().size(), 1);
@@ -45,7 +44,7 @@ public class BestMatcherTest {
     }
 
     @Test
-    public void testDifferentElements(){
+    void testDifferentElements(){
         Requestable foo = new Requestable("foo", "http://foo.tst");
         Requestable requestable = new Requestable("test", "http://test.tst");
         Requestable bar = new Requestable("bar", "http://bar.tst");
@@ -61,7 +60,7 @@ public class BestMatcherTest {
     }
 
     @Test
-    public void testSimilarElements(){
+    void testSimilarElements(){
         Requestable test1 = new Requestable("test1", "http://test1.tst");
         Requestable test2 = new Requestable("test2", "http://test2.tst");
         Requestable test3 = new Requestable("test3", "http://test3.tst");
@@ -77,7 +76,7 @@ public class BestMatcherTest {
     }
 
     @Test
-    public void testSimilarElementsWithExactOne(){
+    void testSimilarElementsWithExactOne(){
         Requestable test1 = new Requestable("test1", "http://test1.tst");
         Requestable test = new Requestable("test", "http://test.tst");
         Requestable test3 = new Requestable("test3", "http://test3.tst");
@@ -93,7 +92,7 @@ public class BestMatcherTest {
     }
 
     @Test
-    public void testSimilarElementsWithBadOne(){
+    void testSimilarElementsWithBadOne(){
         Requestable test1 = new Requestable("test1", "http://test1.tst");
         Requestable bad = new Requestable("bad", "http://bad.tst");
         Requestable test3 = new Requestable("test3", "http://test3.tst");
@@ -109,7 +108,7 @@ public class BestMatcherTest {
     }
 
     @Test
-    public void testEvaluateAllEmpty(){
+    void testEvaluateAllEmpty(){
         collection.evaluateAll(new ArrayList<>());
 
         assertEquals(collection.getBests().size(), 0);
@@ -119,7 +118,7 @@ public class BestMatcherTest {
     }
 
     @Test
-    public void testEvaluateAll(){
+    void testEvaluateAll(){
         collection.evaluateAll(
                 new Requestable("test1", "http://test1.tst"),
                 new Requestable("tést2", "http://test2.tst"),

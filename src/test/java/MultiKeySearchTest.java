@@ -1,54 +1,47 @@
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import util.MultiKeySearch;
 
 import java.util.List;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Created by steve on 08/11/2016.
  */
-public class MultiKeySearchTest {
+class MultiKeySearchTest {
 
     private static final int NUMBER_FIELD = 4;
 
-    @Rule
-    public ExpectedException thrownException = ExpectedException.none();
-
     private MultiKeySearch<String> collection;
 
-    @Before
-    public void init() {
+    @BeforeEach
+    void init() {
         collection = new MultiKeySearch<>(NUMBER_FIELD);
     }
 
-    @After
-    public void end() {
+    @AfterEach
+    void end() {
         collection = null;
     }
 
     @Test
-    public void testEmptySize() {
+    void testEmptySize() {
         assertTrue(collection.isEmpty());
         assertSame(collection.size(), 0);
     }
 
     @Test
-    public void testIllegalArgumentException(){
-        thrownException.expect(IllegalArgumentException.class);
-        thrownException.expectMessage(String.valueOf(NUMBER_FIELD));
-        collection.containsKeys("test");
-        collection.add("test");
-        collection.remove("test");
-        collection.get("test");
+    void testIllegalArgumentException(){
+        assertThrows(IllegalArgumentException.class, () -> collection.containsKeys("test"), String.valueOf(NUMBER_FIELD));
+        assertThrows(IllegalArgumentException.class, () -> collection.add("test"), String.valueOf(NUMBER_FIELD));
+        assertThrows(IllegalArgumentException.class, () -> collection.remove("test"), String.valueOf(NUMBER_FIELD));
+        assertThrows(IllegalArgumentException.class, () -> collection.get("test"), String.valueOf(NUMBER_FIELD));
     }
 
     @Test
-    public void testAddElement() {
+    void testAddElement() {
         collection.add("test", "key1", "key2", "key3", "key4");
         assertFalse(collection.isEmpty());
         assertEquals(collection.size(), 1);
@@ -57,7 +50,7 @@ public class MultiKeySearchTest {
     }
 
     @Test
-    public void testRemoveElement() {
+    void testRemoveElement() {
         collection.add("test", "key1", "key2", "key3", "key4");
         collection.remove("key1", "key2", "key3", "key4");
         assertTrue(collection.isEmpty());
@@ -66,14 +59,14 @@ public class MultiKeySearchTest {
     }
 
     @Test
-    public void testGetEmptyElement() {
+    void testGetEmptyElement() {
         List<String> result = collection.get("key1", "key2", "key3", "key4");
         assertNotNull(result);
         assertTrue(result.isEmpty());
     }
 
     @Test
-    public void testGetOneElement() {
+    void testGetOneElement() {
         String value = "test";
         collection.add(value, "key1", "key2", "key3", "key4");
         List<String> result = collection.get("key1", "key2", "key3", "key4");
@@ -84,7 +77,7 @@ public class MultiKeySearchTest {
     }
 
     @Test
-    public void testPartialKey() {
+    void testPartialKey() {
         String value = "test";
         collection.add(value, "key1", "key2", "key3", "key4");
         List<String> result = collection.get(null, "key2", null, "key4");
@@ -93,7 +86,7 @@ public class MultiKeySearchTest {
     }
 
     @Test
-    public void testPartialKeyWithMultipleEntries() {
+    void testPartialKeyWithMultipleEntries() {
         String value1 = "test1";
         String value2 = "test2";
         String value3 = "test3";
