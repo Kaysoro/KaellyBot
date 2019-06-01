@@ -8,7 +8,6 @@ import org.slf4j.LoggerFactory;
 import sx.blah.discord.api.internal.json.objects.EmbedObject;
 import sx.blah.discord.handle.obj.IGuild;
 import sx.blah.discord.handle.obj.IUser;
-import sx.blah.discord.handle.obj.StatusType;
 import sx.blah.discord.util.EmbedBuilder;
 import util.*;
 
@@ -212,7 +211,7 @@ public class OrderUser extends ObjectUser {
                                                        IGuild guild, Language lg){
         List<OrderUser> result = new ArrayList<>();
         for(IUser user : users)
-            if (user.getPresence().getStatus() != StatusType.OFFLINE && ! user.isBot()){
+            if (! user.isBot()){
                 List<OrderUser> potentials = getOrders().get(user.getLongID(), server, null, null);
                 for(OrderUser order : potentials)
                     if (order.getLevel() >= level)
@@ -233,7 +232,7 @@ public class OrderUser extends ObjectUser {
                                                              Order order, IGuild guild, Language lg){
         List<OrderUser> result = new ArrayList<>();
         for(IUser user : users)
-            if (user.getPresence().getStatus() != StatusType.OFFLINE && ! user.isBot()){
+            if (! user.isBot()){
                 List<OrderUser> potentials = getOrders().get(user.getLongID(), server, city, order);
                 result.addAll(potentials);
             }
