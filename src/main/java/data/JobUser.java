@@ -7,7 +7,6 @@ import org.slf4j.LoggerFactory;
 import sx.blah.discord.api.internal.json.objects.EmbedObject;
 import sx.blah.discord.handle.obj.IGuild;
 import sx.blah.discord.handle.obj.IUser;
-import sx.blah.discord.handle.obj.StatusType;
 import sx.blah.discord.util.EmbedBuilder;
 import util.*;
 
@@ -168,7 +167,7 @@ public class JobUser extends ObjectUser {
                                                              int level, IGuild guild, Language lg){
         List<JobUser> result = new ArrayList<>();
         for(IUser user : users)
-            if (user.getPresence().getStatus() != StatusType.OFFLINE && ! user.isBot()){
+            if (! user.isBot()){
                 for(Job job : jobs) {
                     List<JobUser> potentials = getJobs().get(user.getLongID(), server, job);
                     if (level > 0) {
