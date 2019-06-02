@@ -20,6 +20,7 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.*;
 import java.util.regex.Matcher;
+import java.util.stream.Collectors;
 
 /**
  * Created by steve on 14/07/2016.
@@ -113,6 +114,21 @@ public class SoundCommand extends AbstractCommand {
         return sounds;
     }
 
+    private String getSoundsNameList() {
+        final List<String> SOUNDS = getSounds().stream()
+                .map(file -> file.getName().replaceFirst("[.][^.]+$", ""))
+                .collect(Collectors.toList());
+        final long SIZE_MAX = SOUNDS.stream()
+                .map(String::length)
+                .max(Integer::compare)
+                .orElse(20);
+
+        StringBuilder sb = new StringBuilder("```");
+        SOUNDS.forEach(soundsName -> sb.append(String.format("%-" + SIZE_MAX + "s", soundsName)).append("\t"));
+        sb.append("```");
+        return sb.toString();
+    }
+
     @Override
     public String help(Language lg, String prefixe) {
         return "**" + prefixe + name + "** " + Translator.getLabel(lg, "sound.help");
@@ -120,24 +136,8 @@ public class SoundCommand extends AbstractCommand {
 
     @Override
     public String helpDetailed(Language lg, String prefixe) {
-        StringBuilder st = new StringBuilder("\n```");
-
-        List<File> sounds = getSounds();
-        long sizeMax = 0;
-
-        for(File f : sounds)
-            if (f.getName().replaceFirst("[.][^.]+$", "").length() > sizeMax)
-                sizeMax = f.getName().replaceFirst("[.][^.]+$", "").length();
-
-        for(File f : sounds) {
-            st.append(f.getName().replaceFirst("[.][^.]+$", ""));
-            for(int i = 0 ; i < sizeMax-f.getName().replaceFirst("[.][^.]+$", "").length() ; i++)
-                st.append(" ");
-            st.append("\t");
-        }
-        st.append("```");
         return help(lg, prefixe)
-                + "\n`" + prefixe + name + "` : " + Translator.getLabel(lg, "sound.help.detailed.1") + " " + st.toString()
+                + "\n`" + prefixe + name + "` : " + Translator.getLabel(lg, "sound.help.detailed.1") + " " + getSoundsNameList()
                 + "\n`" + prefixe + name + " `*`sound`* : " + Translator.getLabel(lg, "sound.help.detailed.2")
                 + "\n`" + prefixe + name + " -leave` : " + Translator.getLabel(lg, "sound.help.detailed.3") + "\n";
     }
