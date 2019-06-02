@@ -12,6 +12,8 @@ import util.Translator;
 import util.URLManager;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 public class Resource implements Embedded {
@@ -26,9 +28,10 @@ public class Resource implements Embedded {
     private String bonus;
     private String sorts;
     private String recipe;
+    private List<String> monsterDrop;
 
     private Resource(String name, String type, String level, String description, String effects, String skinURL, String url,
-                 String bonus, String sorts, String recipe) {
+                 String bonus, String sorts, String recipe, List<String> monsterDrop) {
         this.name = name;
         this.type = type;
         this.level = level;
@@ -39,6 +42,7 @@ public class Resource implements Embedded {
         this.bonus = bonus;
         this.sorts = sorts;
         this.recipe = recipe;
+        this.monsterDrop = monsterDrop;
     }
 
     @Override
@@ -95,6 +99,12 @@ public class Resource implements Embedded {
         if (recipe != null)
             builder.appendField(Translator.getLabel(lg, "resource.recette"), recipe, true);
 
+        if (! monsterDrop.isEmpty())
+            for(int i = 0; i < monsterDrop.size(); i++)
+                builder.appendField(Translator.getLabel(lg, "resource.monster")
+                                + (monsterDrop.size() > 1? " (" + (i + 1) + "/" + monsterDrop.size() + ")" : "") + " : ",
+                        monsterDrop.get(i), true);
+
         return builder.build();
     }
 
@@ -116,6 +126,7 @@ public class Resource implements Embedded {
         String bonus = null;
         String sorts = null;
         String recipe = null;
+        List<String> monsterDrops = new ArrayList<>();
 
         Elements titles = doc.getElementsByClass("ak-panel-title");
         Elements lines;
@@ -129,6 +140,8 @@ public class Resource implements Embedded {
                 bonus = extractLinesFromTitle(title);
             else if (title.text().equals(Translator.getLabel(lg, "resource.extract.sorts")))
                 sorts = title.parent().getElementsByClass("ak-panel-content").first().text();
+            else if (title.text().equals(Translator.getLabel(lg, "resource.extract.monsterDrop")))
+                monsterDrops = extractDrops(title.parent());
             else if (title.text().equals(Translator.getLabel(lg, "resource.extract.recette"))){
                 lines = title.parent().getElementsByClass("ak-column");
                 tmp = new StringBuilder();
@@ -141,7 +154,7 @@ public class Resource implements Embedded {
             }
 
         return new Resource(name, type, level, description, effects, URLManager.abs(skinURL), url,
-                bonus, sorts, recipe);
+                bonus, sorts, recipe, monsterDrops);
     }
 
     private static String extractLinesFromTitle(Element title)
@@ -160,6 +173,40 @@ public class Resource implements Embedded {
         for (Element line : lines)
             tmp.append(EmojiManager.getEmojiForStat(lg, line.text())).append(line.text()).append("\n");
         return tmp.toString();
+    }
+
+    /**
+     * @param element Element contenant les drops
+     */
+    private static List<String> extractDrops(Element element){
+        List<String> result = new ArrayList<>();
+        StringBuilder field = new StringBuilder();
+        Elements lines = element.getElementsByClass("ak-column");
+        for (Element line : lines) {
+            StringBuilder tmp = new StringBuilder();
+
+            Elements titles = line.getElementsByClass("ak-title");
+            if (!titles.isEmpty()) {
+                if (!titles.first().children().isEmpty())
+                    tmp.append("[").append(titles.first().text()).append("](")
+                            .append(titles.first().children().first().attr("abs:href")).append(") ");
+                else
+                    tmp.append(titles.first().text()).append(" ");
+
+                tmp.append(line.getElementsByClass("ak-aside").first().text()).append("\n");
+
+                if (field.length() + tmp.length() > EmbedBuilder.FIELD_CONTENT_LIMIT) {
+                    result.add(field.toString());
+                    field.setLength(0);
+                }
+                field.append(tmp.toString());
+            }
+        }
+
+        if (field.length() > 0)
+            result.add(field.toString());
+
+        return result;
     }
 }
 
