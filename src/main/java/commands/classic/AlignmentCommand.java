@@ -12,6 +12,7 @@ import sx.blah.discord.api.internal.json.objects.EmbedObject;
 import sx.blah.discord.handle.obj.IMessage;
 import sx.blah.discord.handle.obj.IUser;
 import util.Message;
+import util.ServerUtils;
 import util.Translator;
 
 import java.text.Normalizer;
@@ -52,15 +53,19 @@ public class AlignmentCommand extends FetchCommand {
         Order order = null;
         IUser user = message.getAuthor();
         ServerDofus server = Guild.getGuild(message.getGuild()).getServerDofus();
-        List<ServerDofus> servers;
 
         // Consultation filtré par niveau
         if ((m = Pattern.compile(">\\s+(\\d{1,3})(\\s+.+)?").matcher(content)).matches()){
             int level = Integer.parseInt(m.group(1));
             if (m.group(2) != null) {
-                servers = findServer(m.group(2));
-                if (checkData(servers, tooMuchServers, notFoundServer, message, lg)) return;
-                server = servers.get(0);
+                ServerUtils.ServerQuery serverQuery = ServerUtils.getServerDofusFromName(m.group(2));
+                if (serverQuery.hasSucceed())
+                    server = serverQuery.getServer();
+                else {
+                    serverQuery.getExceptions()
+                            .forEach(e -> e.throwException(message, this, lg, serverQuery.getServersFound()));
+                    return;
+                }
             } else if (server == null){
                 notFoundServer.throwException(message, this, lg);
                 return;
@@ -82,15 +87,17 @@ public class AlignmentCommand extends FetchCommand {
             }
 
             //Consultation des données filtrés par utilisateur
-            if (!findServer(content).isEmpty() && Pattern.compile("(.+)").matcher(content).matches()
+            ServerUtils.ServerQuery serverQuery = ServerUtils.getServerDofusFromName(content);
+            if (! serverQuery.getServersFound().isEmpty() && Pattern.compile("(.+)").matcher(content).matches()
                     || content.isEmpty()){
-                boolean found = (m = Pattern.compile("(.+)").matcher(content)).matches();
-                if (found) {
-                    servers = findServer(m.group(1));
-                    if (checkData(servers, tooMuchServers, notFoundServer, message, lg)) return;
-                    server = servers.get(0);
-                } else if (server == null){
-                    notFoundServer.throwException(message, this, lg);
+                if (serverQuery.hasSucceed())
+                    server = serverQuery.getServer();
+                else if (server == null) {
+                    if (!content.isEmpty())
+                        serverQuery.getExceptions()
+                                .forEach(e -> e.throwException(message, this, lg, serverQuery.getServersFound()));
+                    else
+                        notFoundServer.throwException(message, this, lg);
                     return;
                 }
                 List<EmbedObject> embeds = OrderUser.getOrdersFromUser(user, server, message.getGuild(), lg);
@@ -110,9 +117,14 @@ public class AlignmentCommand extends FetchCommand {
                     int level = Integer.parseInt(m.group(3));
 
                     if (m.group(4) != null) {
-                        servers = findServer(m.group(4));
-                        if (checkData(servers, tooMuchServers, notFoundServer, message, lg)) return;
-                        server = servers.get(0);
+                        ServerUtils.ServerQuery query = ServerUtils.getServerDofusFromName(m.group(4));
+                        if (serverQuery.hasSucceed())
+                            server = serverQuery.getServer();
+                        else {
+                            serverQuery.getExceptions()
+                                    .forEach(e -> e.throwException(message, this, lg, query.getServersFound()));
+                            return;
+                        }
                     } else if (server == null){
                         notFoundServer.throwException(message, this, lg);
                         return;
@@ -139,20 +151,29 @@ public class AlignmentCommand extends FetchCommand {
             // Consultation filtré par cité et/ou par ordre
             else if((m = Pattern.compile("(\\p{L}+)(\\s+\\p{L}+)?(\\s+[\\p{L}|\\W]+)?").matcher(content)).matches()){
                 if (m.group(3) != null) {
-                    servers = findServer(m.group(3));
-                    if (checkData(servers, tooMuchServers, notFoundServer, message, lg)) return;
-                    server = servers.get(0);
+                    ServerUtils.ServerQuery query = ServerUtils.getServerDofusFromName(m.group(3));
+                    if (serverQuery.hasSucceed())
+                        server = serverQuery.getServer();
+                    else {
+                        serverQuery.getExceptions()
+                                .forEach(e -> e.throwException(message, this, lg, query.getServersFound()));
+                        return;
+                    }
                 }
 
                 // On a précisé à la fois une cité et un ordre
                 if (m.group(2) != null) {
                     boolean is2Server = false;
                     if (m.group(3) == null){
-                        servers = findServer(m.group(2));
-                        if (! servers.isEmpty()) {
-                            if (checkData(servers, tooMuchServers, notFoundServer, message, lg)) return;
-                            server = servers.get(0);
+                        ServerUtils.ServerQuery query = ServerUtils.getServerDofusFromName(m.group(2));
+                        if (serverQuery.hasSucceed()) {
+                            server = serverQuery.getServer();
                             is2Server = true;
+                        }
+                        else {
+                            serverQuery.getExceptions()
+                                    .forEach(e -> e.throwException(message, this, lg, query.getServersFound()));
+                            return;
                         }
                     }
 
