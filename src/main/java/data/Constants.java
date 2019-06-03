@@ -16,12 +16,12 @@ public class Constants {
     /**
      * Application version
      */
-    public final static String version = "1.5.1";
+    public final static String version = "1.5.2";
 
     /**
      * Changelog
      */
-    public final static String changelog = "https://i.imgur.com/IcH7gqc.png"; //https://i.imgur.com/9RzHtLP.jpg
+    public final static String changelog = "https://i.imgur.com/0qQSOac.png";
 
     /**
      * Author id
