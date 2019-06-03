@@ -10,6 +10,14 @@ Cette commande est destinée à expliciter les commandes de Kaelly avec des exem
 `!help` explique de manière succincte chaque commande.  
 `!help command` explique de façon détaillée la commande spécifiée.  
 
+### Align  
+Cette commande renvoie l'annuaire des alignés.  
+`!align server` : affiche vos alignements (serveur dofus optionnel sur la commande si celui-ci est précisé pour le serveur discord).  
+`!align order server` : affiche les alignés d'un ordre spécifique ou d'une cité spécifique.  
+`!align > level server` : affiche les alignés ayant un niveau supérieur ou égal à celui précisé.  
+`!align @user server` : affiche les alignements de l'utilisateur précisé.  
+`!align city order level server` : enregistre l'alignement précisé en paramètre. Indiquer 0 pour le niveau supprime l'alignement.  
+
 ### Alliance
 Affiche la page d'une alliance.  
 `!alliance nom` : donne la page d'alliance associée au nom. Celui-ci doit être exact.  
@@ -35,6 +43,9 @@ Autorise ou non l'utilisation d'une commande de Kaelly.
 `!cmd command true` : autorise l'utilisation de la commande. Fonctionne aussi avec `on` et `0`.  
 `!cmd command false` : interdit l'utilisation de la commande. Fonctionne aussi avec `off` et `1`.  
 
+### Donate  
+`!donate` donne un lien Paypal pour soutenir l'équipe de développement !  
+
 ### Dist
 Renvoie le transport le plus proche à vol d'oiseau.  
 `!dist [POS, POS]` : renvoie le transport le plus proche de la position indiquée à vol d'oiseau.  
@@ -44,18 +55,23 @@ Affiche la page d'une guilde.
 `!guild name` : donne la page d'une guilde associée au nom. Celui-ci doit être exact.  
 `!guild name -serv server` : est à utiliser lorsque le nom ne suffit pas pour déterminer la fiche d'une guilde.  
 
+### Invite
+`!invite` donne le lien d'invitation pour le bot et pour le serveur de support.  
 
 ### Item
 Renvoie les statistiques d'un item du jeu Dofus.  
 `!item item` : renvoie les statistiques de l'item spécifié : son nom peut être approximatif s'il est suffisamment précis.  
 `!item -more item` : renvoie les statistiques détaillés de l'item spécifiée.  
 
-### Job
-Gère un annuaire d'artisans.  
-`!job` : renvoie la liste des métiers du jeu Dofus.
-`!job job` : renvoie l'annuaire des artisans pour ce métier.  
-`!job job level` : vous ajoute à l'annuaire du métier correspondant. Si vous indiquez 0, vous êtes supprimé de l'annuaire pour ce métier.  
-`!job -all level` : vous ajoute à l'annuaire pour tous les métiers correspondants. Si vous indiquez 0, vous êtes supprimé de chaque annuaire.  
+### Job  
+Gère un annuaire d'artisans.   
+`!job server` : affiche vos métiers (serveur dofus optionnel sur la commande si celui-ci est précisé pour le serveur discord).  
+`!job @user server` : affiche les métiers de l'utilisateur précisé.  
+`!jobj ob1 job2 job3 server` : affiche les métiers précisés en paramètre.  
+`!job >l evel job1 job2 job3 server` : affiche les métiers précisés en paramètre, avec un filtre supplémentaire sur le niveau.  
+`!job job1, job2 job3 level server` : enregistre les métiers précisés en paramètre. Indiquer 0 pour le niveau supprime les métiers.  
+`!job -all level server` : enregistre tous les métiers. Indiquer 0 pour le niveau supprime les métiers.  
+`!job -list` : affiche tous les métiers disponibles avec l'orthographe reconnue par le bot.  
 
 ### Lang
 Change la langue utilisée pour communiquer avec Kaelly parmi la liste suivante : FR, EN, SP.  
@@ -72,6 +88,9 @@ Tire au hasard une carte du Goultarminator.
 Renvoie les statistiques d'un monstre du jeu Dofus.  
 `!monster monster` : renvoie les statistiques du monstre spécifié : son nom peut être approximatif s'il est suffisamment précis.    
 `!monster -more monster` : renvoie les statistiques détaillés du monstre spécifié.  
+
+### Ping
+`!ping` mesure le temps de réponse.  
 
 ### Pos (Dimensions)
 Gère les positions de portails de dimension.  
@@ -108,6 +127,7 @@ Autorise ou non Kaelly à poster du contenu RSS dans un salon.
 ### Server
 Permet de déterminer à quel serveur Dofus correspond ce serveur Discord.  
 `!server` : affiche le serveur Dofus rattaché au serveur Discord.  
+`!server -list` : affiche l'ensemble des serveurs Dofus.  
 `!server server` : permet de déterminer à quel serveur Dofus correspond ce serveur Discord.  
 `!server -reset` : permet de se détacher d'un quelconque serveur Dofus.  
 
