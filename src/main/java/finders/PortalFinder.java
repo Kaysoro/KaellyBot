@@ -1,17 +1,20 @@
 package finders;
 
 import data.Guild;
-import data.Portal;
+import data.Position;
 import data.ServerDofus;
 import enums.Language;
 import exceptions.ExceptionManager;
 import sx.blah.discord.handle.obj.IChannel;
+import sx.blah.discord.handle.obj.IGuild;
 import util.ClientConfig;
 import util.Message;
 import util.Translator;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -27,25 +30,23 @@ public class PortalFinder
             ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
             scheduler.scheduleAtFixedRate(() -> {
                 try {
-                    for (Guild guild : Guild.getGuilds().values())
-                        if (guild.getServerDofus() != null) { //Server renseigné ?
-                            ServerDofus server = guild.getServerDofus();
+                    Map<ServerDofus, List<Position>> positionsUpdated = new HashMap<>();
 
-                            // Si les positions ne sont plus d'actualités, on les met à jour
-                            if (System.currentTimeMillis() - server.getLastSweetRefresh() > DELTA
-                                    && ! server.getSweetId().equals(Portal.NOT_PRESENT))
-                                server.setSweetPortals(Portal.getSweetPortals(server));
+                    for (ServerDofus server : ServerDofus.getServersDofus())
+                        // Si les positions ne sont plus d'actualités, on les met à jour
+                        if (System.currentTimeMillis() - server.getLastSweetRefresh() > DELTA
+                                && ! server.getSweetId().equals(Position.NOT_PRESENT))
+                            positionsUpdated.put(server, server.mergeSweetPositions(Position.getSweetPositions(server)));
 
-                            List<Portal> newPortals = guild.mergePortals(server.getSweetPortals());
-                            for(PortalTracker tracker : guild.getPortalTrackers().values()) {
-                                IChannel chan = ClientConfig.DISCORD().getChannelByID(Long.parseLong(tracker.getChan()));
-                                if (chan != null && ! chan.isDeleted()) {
-                                    Language lg = Translator.getLanguageFrom(chan);
-                                    for (Portal portal : newPortals)
-                                        Message.sendEmbed(chan, portal.getEmbedObjectChange(lg));
-                                }
-                            }
+                    for(PortalTracker tracker : PortalTracker.getPortalTrackers()) {
+                        IGuild guild = ClientConfig.DISCORD().getGuildByID(Long.parseLong(tracker.getGuildId()));
+                        IChannel chan = ClientConfig.DISCORD().getChannelByID(Long.parseLong(tracker.getChan()));
+                        if (guild!= null && ! guild.isDeleted() && chan != null && ! chan.isDeleted()) {
+                            Language lg = Translator.getLanguageFrom(chan);
+                            for (Position position : positionsUpdated.get(Guild.getGuild(guild).getServerDofus()))
+                                Message.sendEmbed(chan, position.getEmbedObjectChange(lg));
                         }
+                    }
                 } catch (IOException e) {
                     ExceptionManager.manageSilentlyIOException(e);
                 } catch (Exception e) {

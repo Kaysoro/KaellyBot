@@ -44,10 +44,7 @@ public class ServerCommand extends AbstractCommand {
                     ServerUtils.ServerQuery query = ServerUtils.getServerDofusFromName(serverName);
 
                     if (query.hasSucceed()) {
-                        if (guild.getServerDofus() != null && guild.getServerDofus() != query.getServer())
-                            guild.resetPortals();
                         guild.setServer(query.getServer());
-                        guild.mergePortals(query.getServer().getSweetPortals());
                         Message.sendText(message.getChannel(), Translator.getLabel(lg, "server.request.1")
                                 .replace("{game}", Constants.game.getName())
                                 + " " + guild.getName() + " " + Translator.getLabel(lg, "server.request.2")

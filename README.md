@@ -48,7 +48,7 @@ Autorise ou non l'utilisation d'une commande de Kaelly.
 
 ### Dist
 Renvoie le transport le plus proche à vol d'oiseau.  
-`!dist [POS, POS]` : renvoie le transport le plus proche de la position indiquée à vol d'oiseau.  
+`!dist [POS, POS]` : renvoie le transport le plus proche de la coordinate indiquée à vol d'oiseau.  
 
 ### Guild
 Affiche la page d'une guilde.  

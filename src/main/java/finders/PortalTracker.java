@@ -10,7 +10,9 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class PortalTracker {
@@ -84,7 +86,8 @@ public class PortalTracker {
         Connection connection = connexion.getConnection();
 
         try {
-            PreparedStatement query = connection.prepareStatement("SELECT id_guild, id_chan FROM Portal_Tracker WHERE id_guild = ?;");
+            PreparedStatement query = connection
+                    .prepareStatement("SELECT id_guild, id_chan FROM Portal_Tracker WHERE id_guild = ?;");
             query.setString(1, guild.getId());
             ResultSet resultSet = query.executeQuery();
 
@@ -96,6 +99,36 @@ public class PortalTracker {
 
                 if (chan != null && ! chan.isDeleted())
                     portalTrackers.put(chan.getStringID(), new PortalTracker(chan.getGuild().getStringID(), chan.getStringID()));
+                else {
+                    PortalTracker.removeToDatabase(idGuild, idChan);
+                    LOG.info("Chan deleted : " + idChan);
+                }
+            }
+        } catch (SQLException e) {
+            Reporter.report(e);
+            LOG.error("getPortalTrackers", e);
+        }
+
+        return portalTrackers;
+    }
+
+    public static List<PortalTracker> getPortalTrackers(){
+        List<PortalTracker> portalTrackers = new ArrayList<>();
+        Connexion connexion = Connexion.getInstance();
+        Connection connection = connexion.getConnection();
+
+        try {
+            ResultSet resultSet = connection
+                    .prepareStatement("SELECT id_guild, id_chan FROM Portal_Tracker;")
+                    .executeQuery();
+
+            while (resultSet.next()){
+                String idChan = resultSet.getString("id_chan");
+                String idGuild = resultSet.getString("id_guild");
+                IChannel chan = ClientConfig.DISCORD().getChannelByID(Long.parseLong(idChan));
+
+                if (chan != null && ! chan.isDeleted())
+                    portalTrackers.add(new PortalTracker(chan.getGuild().getStringID(), chan.getStringID()));
                 else {
                     PortalTracker.removeToDatabase(idGuild, idChan);
                     LOG.info("Chan deleted : " + idChan);

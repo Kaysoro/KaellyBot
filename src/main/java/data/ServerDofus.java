@@ -28,7 +28,7 @@ public class ServerDofus {
     private String id;
     private String sweetId;
     private Game game;
-    private List<Portal> sweetPortals;
+    private List<Position> positions;
     private long lastSweetRefresh;
 
     public ServerDofus(String name, String id, String sweetId, Game game) {
@@ -36,7 +36,7 @@ public class ServerDofus {
         this.id = id;
         this.sweetId = sweetId;
         this.game = game;
-        sweetPortals = new ArrayList<>();
+        positions = Position.getPositions(this);
         lastSweetRefresh = 0;
     }
 
@@ -94,13 +94,19 @@ public class ServerDofus {
         return game;
     }
 
-    public List<Portal> getSweetPortals(){
-        return sweetPortals;
+    public List<Position> getPositions(){
+        return positions;
     }
 
-    public void setSweetPortals(List<Portal> sweetPortals) {
+    public List<Position> mergeSweetPositions(List<Position> positions) {
         this.lastSweetRefresh = System.currentTimeMillis();
-        this.sweetPortals = sweetPortals;
+
+        List<Position> positionsToTrack = new ArrayList<>();
+        for(Position newPosition : positions)
+            for(Position position : getPositions())
+                if (position.merge(newPosition))
+                    positionsToTrack.add(position);
+        return positionsToTrack;
     }
 
     public long getLastSweetRefresh(){

@@ -1,7 +1,7 @@
 package commands.classic;
 
 import commands.model.AbstractCommand;
-import data.Position;
+import data.Coordinate;
 import enums.Transport;
 import enums.Language;
 import sx.blah.discord.handle.obj.IMessage;
@@ -21,16 +21,16 @@ public class DistanceCommand extends AbstractCommand {
 
     @Override
     public void request(IMessage message, Matcher m, Language lg) {
-        Position position = new Position(Integer.parseInt(m.group(1)), Integer.parseInt(m.group(2)));
+        Coordinate coordinate = new Coordinate(Integer.parseInt(m.group(1)), Integer.parseInt(m.group(2)));
         StringBuilder st = new StringBuilder();
         Transport zaap = null;
         Transport transportLimited = null;
 
-        if(! position.isNull()) {
+        if(! coordinate.isNull()) {
             double minDist = Double.MAX_VALUE;
             double minDistLimited = Double.MAX_VALUE;
             for (Transport transport : Transport.values()) {
-                double tmp = transport.getPosition().getDistance(position);
+                double tmp = transport.getCoordinate().getDistance(coordinate);
                 if (transport.isFreeAccess() && (zaap == null || minDist > tmp)){
                     zaap = transport;
                     minDist = tmp;

@@ -9,8 +9,6 @@ import util.Connexion;
 import util.Reporter;
 
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -23,7 +21,6 @@ public class Guild {
     private static Map<String, Guild> guilds;
     private String id;
     private String name;
-    private List<Portal> portals;
     private Map<String, CommandForbidden> commands;
     private Map<String, PortalTracker> portalTrackers;
     private String prefix;
@@ -41,7 +38,6 @@ public class Guild {
         commands = CommandForbidden.getForbiddenCommands(this);
         this.language = lang;
         this.server = ServerDofus.getServersMap().get(serverDofus);
-        portals = Portal.getPortals(this);
         portalTrackers = PortalTracker.getPortalTrackers(this);
     }
 
@@ -59,21 +55,11 @@ public class Guild {
                 request.setString(2, name);
                 request.setString(3, prefix);
                 request.executeUpdate();
-
-                for(String portal : Portal.getPortals().keySet()) {
-                    request = connection.prepareStatement("INSERT INTO Portal_Guild"
-                            + "(name_portal, id_guild) VALUES (?, ?);");
-                    request.setString(1, portal);
-                    request.setString(2, id);
-                    request.executeUpdate();
-                }
-
             } catch (SQLException e) {
                 Reporter.report(e);
                 LOG.error(e.getMessage());
             }
         }
-        portals = Portal.getPortals(this);
     }
 
     public synchronized void removeToDatabase() {
@@ -175,7 +161,7 @@ public class Guild {
             guilds = new ConcurrentHashMap<>();
             String id;
             String name;
-            String prefixe;
+            String prefix;
             String server;
             String lang;
 
@@ -189,11 +175,11 @@ public class Guild {
                 while (resultSet.next()) {
                     id = resultSet.getString("id");
                     name = resultSet.getString("name");
-                    prefixe = resultSet.getString("prefixe");
+                    prefix = resultSet.getString("prefixe");
                     server = resultSet.getString("server_dofus");
                     lang = resultSet.getString("lang");
 
-                    guilds.put(id, new Guild(id, name, prefixe, Language.valueOf(lang), server));
+                    guilds.put(id, new Guild(id, name, prefix, Language.valueOf(lang), server));
                 }
             } catch (SQLException e) {
                 Reporter.report(e);
@@ -232,10 +218,6 @@ public class Guild {
         return language;
     }
 
-    public List<Portal> getPortals(){
-        return portals;
-    }
-
     public Map<String, CommandForbidden> getForbiddenCommands(){
         return commands;
     }
@@ -246,23 +228,5 @@ public class Guild {
 
     public ServerDofus getServerDofus() {
         return server;
-    }
-
-    /**
-     * @param newPortals new portals from a specific source
-     * @return Portals to track
-     */
-    public List<Portal> mergePortals(List<Portal> newPortals){
-        List<Portal> portalToTrack = new ArrayList<>();
-        for(Portal newPortal : newPortals)
-            for(Portal portal : portals)
-                if (portal.merge(newPortal))
-                    portalToTrack.add(portal);
-        return portalToTrack;
-    }
-
-    public void resetPortals() {
-        for(Portal portal : portals)
-            portal.reset();
     }
 }
