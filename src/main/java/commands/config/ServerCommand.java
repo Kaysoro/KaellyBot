@@ -30,15 +30,17 @@ public class ServerCommand extends AbstractCommand {
     public void request(IMessage message, Matcher m, Language lg) {
         Guild guild = Guild.getGuild(message.getGuild());
 
-        if (m.group(1) != null)
-            if (isUserHasEnoughRights(message)) {
-                String serverName = m.group(1).toLowerCase().trim();
+        if (m.group(1) != null){
+            String serverName = m.group(1).toLowerCase().trim();
 
-                if (serverName.equals("-list")){
-                    String sb = Translator.getLabel(lg, "server.list") + "\n" + getServersList();
-                    Message.sendText(message.getChannel(), sb);
-                }
-                else if (! serverName.equals("-reset")) {
+            if (serverName.equals("-list")) {
+                String sb = Translator.getLabel(lg, "server.list") + "\n" + getServersList();
+                Message.sendText(message.getChannel(), sb);
+                return;
+            }
+
+            if (isUserHasEnoughRights(message)) {
+                if (!serverName.equals("-reset")) {
                     ServerUtils.ServerQuery query = ServerUtils.getServerDofusFromName(serverName);
 
                     if (query.hasSucceed()) {
@@ -50,20 +52,18 @@ public class ServerCommand extends AbstractCommand {
                                 .replace("{game}", Constants.game.getName())
                                 + " " + guild.getName() + " " + Translator.getLabel(lg, "server.request.2")
                                 + " " + query.getServer().getName() + ".");
-                    }
-                    else
+                    } else
                         query.getExceptions()
-                            .forEach(exception -> exception.throwException(message, this, lg, query.getServersFound()));
-                }
-                else {
+                                .forEach(exception -> exception.throwException(message, this, lg, query.getServersFound()));
+                } else {
                     guild.setServer(null);
                     Message.sendText(message.getChannel(), guild.getName()
                             + " " + Translator.getLabel(lg, "server.request.3")
                             .replace("{game}", Constants.game.getName()));
                 }
-            }
-            else
+            } else
                 BasicDiscordException.NO_ENOUGH_RIGHTS.throwException(message, this, lg);
+        }
         else {
             if (guild.getServerDofus() != null)
                 Message.sendText(message.getChannel(), guild.getName() + " "
