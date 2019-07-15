@@ -108,7 +108,7 @@
         <dependency>
             <groupId>io.sentry</groupId>
             <artifactId>sentry</artifactId>
-            <version>1.7.23</version>
+            <version>1.7.24</version>
         </dependency>
         <dependency>
             <groupId>ch.qos.logback</groupId>
