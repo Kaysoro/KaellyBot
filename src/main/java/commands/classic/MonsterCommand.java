@@ -72,7 +72,7 @@ public class MonsterCommand extends DofusRequestCommand {
     @Override
     public String help(Language lg, String prefixe) {
         return "**" + prefixe + name + "** " + Translator.getLabel(lg, "monster.help")
-                .replace("{game}", Constants.game);
+                .replace("{game}", Constants.game.getName());
     }
 
     @Override

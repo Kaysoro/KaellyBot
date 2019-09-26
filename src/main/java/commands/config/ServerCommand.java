@@ -56,7 +56,7 @@ public class ServerCommand extends AbstractCommand {
                     if (result.size() == 1) {
                         guild.setServer(result.get(0));
                         Message.sendText(message.getChannel(), Translator.getLabel(lg, "server.request.1")
-                                .replace("{game}", Constants.game)
+                                .replace("{game}", Constants.game.getName())
                                 + " " + guild.getName() + " " + Translator.getLabel(lg, "server.request.2")
                                 + " " + result.get(0).getName() + ".");
                     } else if (result.isEmpty())
@@ -68,7 +68,7 @@ public class ServerCommand extends AbstractCommand {
                     guild.setServer(null);
                     Message.sendText(message.getChannel(), guild.getName()
                             + " " + Translator.getLabel(lg, "server.request.3")
-                            .replace("{game}", Constants.game));
+                            .replace("{game}", Constants.game.getName()));
                 }
             }
             else
@@ -81,24 +81,24 @@ public class ServerCommand extends AbstractCommand {
             else
                 Message.sendText(message.getChannel(), guild.getName()
                         + " " + Translator.getLabel(lg, "server.request.5")
-                        .replace("{game}", Constants.game));
+                        .replace("{game}", Constants.game.getName()));
         }
     }
 
     @Override
     public String help(Language lg, String prefixe) {
         return "**" + prefixe + name + "** " + Translator.getLabel(lg, "server.help")
-                .replace("{game}", Constants.game);
+                .replace("{game}", Constants.game.getName());
     }
 
     @Override
     public String helpDetailed(Language lg, String prefixe) {
         return help(lg, prefixe)
                 + "\n`" + prefixe + name + "` : " + Translator.getLabel(lg, "server.help.detailed.1")
-                .replace("{game}", Constants.game)
+                .replace("{game}", Constants.game.getName())
                 + "\n`" + prefixe + name + " `*`server`* : " + Translator.getLabel(lg, "server.help.detailed.2")
-                .replace("{game}", Constants.game)
+                .replace("{game}", Constants.game.getName())
                 + "\n`" + prefixe + name + " `*`-reset`* : " + Translator.getLabel(lg, "server.help.detailed.3")
-                .replace("{game}", Constants.game) + "\n";
+                .replace("{game}", Constants.game.getName()) + "\n";
     }
 }

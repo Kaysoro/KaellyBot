@@ -1,5 +1,6 @@
 package data;
 
+import enums.Game;
 import enums.Language;
 
 /**
@@ -85,7 +86,7 @@ public class Constants {
     /**
      * Game desserved
      */
-    public final static String game = "Dofus Touch";
+    public final static Game game = Game.DOFUS_TOUCH;
 
     /**
      * Official Ankama Game Logo
