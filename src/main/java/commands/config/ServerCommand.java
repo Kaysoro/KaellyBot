@@ -4,6 +4,7 @@ import commands.model.AbstractCommand;
 import data.Constants;
 import data.Guild;
 import data.ServerDofus;
+import enums.Game;
 import enums.Language;
 import exceptions.BasicDiscordException;
 import exceptions.DiscordException;
@@ -17,6 +18,7 @@ import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
+import java.util.stream.Collectors;
 
 /**
  * Created by steve on 14/07/2016.
@@ -116,8 +118,12 @@ public class ServerCommand extends AbstractCommand {
 
     private String getServersNormalized() {
         StringBuilder sb = new StringBuilder("```");
-        List<ServerDofus> servers = ServerDofus.getServersDofus();
-        long sizeMax = servers.stream().map(server -> server.getName().length()).max(Integer::compare).orElse(20);
+        List<ServerDofus> servers = ServerDofus.getServersDofus().stream()
+                .filter(server -> server.getGame() == Game.DOFUS_TOUCH)
+                .collect(Collectors.toList());
+        long sizeMax = servers.stream()
+                .map(server -> server.getName().length())
+                .max(Integer::compare).orElse(20);
 
         for(ServerDofus server : servers) {
             sb.append(server.getName());
