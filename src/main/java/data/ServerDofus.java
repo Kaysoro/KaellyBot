@@ -1,5 +1,6 @@
 package data;
 
+import enums.Game;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import util.Connexion;
@@ -25,10 +26,12 @@ public class ServerDofus {
     private static boolean initialized = false;
     private String name;
     private String id;
+    private Game game;
 
-    public ServerDofus(String name, String id) {
+    public ServerDofus(String name, String id, Game game) {
         this.name = name;
         this.id = id;
+        this.game = game;
     }
 
     private synchronized static void initialize(){
@@ -40,12 +43,13 @@ public class ServerDofus {
         Connection connection = connexion.getConnection();
 
         try {
-            PreparedStatement query = connection.prepareStatement("SELECT name, id_dofus FROM Server");
+            PreparedStatement query = connection.prepareStatement("SELECT name, id_dofus, game FROM Server");
             ResultSet resultSet = query.executeQuery();
 
             while (resultSet.next()) {
                 ServerDofus sd = new ServerDofus(resultSet.getString("name"),
-                        resultSet.getString("id_dofus"));
+                        resultSet.getString("id_dofus"),
+                        Game.valueOf(resultSet.getString("game")));
                 servers.add(sd);
                 serversMap.put(sd.getName(), sd);
             }
@@ -75,4 +79,7 @@ public class ServerDofus {
         return id;
     }
 
+    public Game getGame(){
+        return game;
+    }
 }
