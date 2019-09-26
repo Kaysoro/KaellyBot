@@ -4,7 +4,6 @@ import commands.model.AbstractCommand;
 import data.Character;
 import enums.Language;
 import util.JSoupManager;
-import data.ServerDofus;
 import util.Message;
 import exceptions.*;
 import org.jsoup.Connection;
