@@ -238,6 +238,19 @@ public class CommandPatternTest {
     }
 
     @Test
+    public void testServerCommand(){
+        Command cmd = new ServerCommand();
+        Pattern pattern = Pattern.compile("^" + Constants.prefixCommand + cmd.getName() + cmd.getPattern() + "$");
+
+        assertTrue(pattern.matcher(Constants.prefixCommand + "server").find());
+        assertTrue(pattern.matcher(Constants.prefixCommand + "server -list").find());
+        assertTrue(pattern.matcher(Constants.prefixCommand + "server dofus").find());
+        assertTrue(pattern.matcher(Constants.prefixCommand + "server -reset").find());
+        assertTrue(pattern.matcher(Constants.prefixCommand + "server -channel -reset").find());
+        assertTrue(pattern.matcher(Constants.prefixCommand + "server -channel dofus").find());
+    }
+
+    @Test
     public void testSoundCommand(){
         Command cmd = new SoundCommand();
         Pattern pattern = Pattern.compile("^" + Constants.prefixCommand + cmd.getName() + cmd.getPattern() + "$");

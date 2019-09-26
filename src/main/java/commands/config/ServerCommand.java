@@ -41,7 +41,12 @@ public class ServerCommand extends AbstractCommand {
             if (isUserHasEnoughRights(message)) {
                 String serverName = m.group(1).toLowerCase().trim();
 
-                if (! serverName.equals("-reset")) {
+                if (serverName.equals("-list")){
+                    String sb = Translator.getLabel(lg, "server.list") + "\n" +
+                            getServersNormalized();
+                    Message.sendText(message.getChannel(), sb);
+                }
+                else if (! serverName.equals("-reset")) {
                     serverName = Normalizer.normalize(serverName, Normalizer.Form.NFD)
                             .replaceAll("\\p{InCombiningDiacriticalMarks}+", "")
                             .replaceAll("\\W+", "").trim();
@@ -96,9 +101,31 @@ public class ServerCommand extends AbstractCommand {
         return help(lg, prefixe)
                 + "\n`" + prefixe + name + "` : " + Translator.getLabel(lg, "server.help.detailed.1")
                 .replace("{game}", Constants.game.getName())
-                + "\n`" + prefixe + name + " `*`server`* : " + Translator.getLabel(lg, "server.help.detailed.2")
+                + "\n`" + prefixe + name + " -list` : " + Translator.getLabel(lg, "server.help.detailed.2")
                 .replace("{game}", Constants.game.getName())
-                + "\n`" + prefixe + name + " `*`-reset`* : " + Translator.getLabel(lg, "server.help.detailed.3")
-                .replace("{game}", Constants.game.getName()) + "\n";
+                + "\n`" + prefixe + name + " `*`server`* : " + Translator.getLabel(lg, "server.help.detailed.3")
+                .replace("{game}", Constants.game.getName())
+                + "\n`" + prefixe + name + " -channel `*`server`* : " + Translator.getLabel(lg, "server.help.detailed.4")
+                .replace("{game}", Constants.game.getName())
+                + "\n`" + prefixe + name + " `*`-reset`* : " + Translator.getLabel(lg, "server.help.detailed.5")
+                .replace("{game}", Constants.game.getName())
+                + "\n`" + prefixe + name + " -channel -reset` : " + Translator.getLabel(lg, "server.help.detailed.6")
+                .replace("{game}", Constants.game.getName())
+                + "\n";
+    }
+
+    private String getServersNormalized() {
+        StringBuilder sb = new StringBuilder("```");
+        List<ServerDofus> servers = ServerDofus.getServersDofus();
+        long sizeMax = servers.stream().map(server -> server.getName().length()).max(Integer::compare).orElse(20);
+
+        for(ServerDofus server : servers) {
+            sb.append(server.getName());
+            for(int i = 0 ; i < sizeMax - server.getName().length() ; i++)
+                sb.append(" ");
+            sb.append("\t");
+        }
+        sb.append("```");
+        return sb.toString();
     }
 }
