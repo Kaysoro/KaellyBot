@@ -44,6 +44,7 @@ Autorise ou non l'utilisation d'une commande de Kaelly.
 
 ### Donate  
 `!donate` donne un lien Paypal pour soutenir l'équipe de développement !  
+
 ### Dist
 Renvoie le transport le plus proche à vol d'oiseau.  
 `!dist [POS, POS]` : renvoie le transport le plus proche de la position indiquée à vol d'oiseau.  
