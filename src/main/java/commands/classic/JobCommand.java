@@ -1,7 +1,6 @@
 package commands.classic;
 
 import commands.model.AbstractCommand;
-import commands.model.FetchCommand;
 import data.Guild;
 import data.JobUser;
 import data.ServerDofus;
@@ -26,7 +25,7 @@ import java.util.stream.Collectors;
 /**
  * Created by steve on 14/07/2016.
  */
-public class JobCommand extends FetchCommand {
+public class JobCommand extends AbstractCommand {
 
     private final static int MAX_JOB_DISPLAY = 3;
 
@@ -42,12 +41,12 @@ public class JobCommand extends FetchCommand {
     protected void request(IMessage message, Matcher m, Language lg) {
         String content = m.group(1).trim().replaceAll(",", "");
 
-        // Initialisation du Filtre
+        // Filter Initialisation
         IUser user = message.getAuthor();
         ServerDofus server = Guild.getGuild(message.getGuild()).getServerDofus();
         List<ServerDofus> servers;
 
-        // L'utilisateur concerné est-il l'auteur de la commande ?
+        // Concerned user is the author?
         if(Pattern.compile("^<@[!|&]?\\d+>").matcher(content).find()){
             content = content.replaceFirst("<@[!|&]?\\d+>", "").trim();
             if (message.getMentions().isEmpty()){
@@ -57,16 +56,18 @@ public class JobCommand extends FetchCommand {
             user = message.getMentions().get(0);
         }
 
-        //Consultation des données filtrés par utilisateur
-        if (!findServer(content).isEmpty() && Pattern.compile("(.+)").matcher(content).matches()
+        //user data consultation
+        ServerUtils.ServerQuery serverQuery = ServerUtils.getServerDofusFromName(content);
+        if (! serverQuery.getServersFound().isEmpty() && Pattern.compile("(.+)").matcher(content).matches()
                 || content.isEmpty()){
-            boolean found = (m = Pattern.compile("(.+)").matcher(content)).matches();
-            if (found) {
-                servers = findServer(m.group(1));
-                if (checkData(servers, tooMuchServers, notFoundServer, message, lg)) return;
-                server = servers.get(0);
-            } else if (server == null){
-                notFoundServer.throwException(message, this, lg);
+            if (serverQuery.hasSucceed())
+                server = serverQuery.getServer();
+            else if (server == null) {
+                if (!content.isEmpty())
+                    serverQuery.getExceptions()
+                            .forEach(e -> e.throwException(message, this, lg, serverQuery.getServersFound()));
+                else
+                    notFoundServer.throwException(message, this, lg);
                 return;
             }
 
@@ -74,11 +75,11 @@ public class JobCommand extends FetchCommand {
             for(EmbedObject embed : embeds)
                 Message.sendEmbed(message.getChannel(), embed);
         }
-        // Enregistrement des données
+        // Data recording
         else if((m = Pattern.compile("-list|(-all|\\p{L}+(?:\\s+\\p{L}+)*)\\s+(\\d{1,3})(\\s+.+)?").matcher(content)).matches()) {
             if (user == message.getAuthor()) {
                 if (!m.group(0).equals("-list")) {
-                    // Parsing des données et traitement des divers exceptions
+                    // Data Parsing and exceptions processing
                     Set<Job> jobs;
                     StringBuilder found = new StringBuilder();
                     StringBuilder notFound = new StringBuilder();
@@ -100,7 +101,7 @@ public class JobCommand extends FetchCommand {
                     } else
                         jobs = new HashSet<>(Arrays.asList(Job.values()));
 
-                    // Avant d'aller plus loin, on test si on a au moins un métier de trouvé
+                    // Check existing jobs
                     if (jobs.isEmpty()) {
                         Message.sendText(message.getChannel(), Translator.getLabel(lg, "job.noone"));
                         return;
@@ -116,12 +117,12 @@ public class JobCommand extends FetchCommand {
                     int level = Integer.parseInt(m.group(2));
 
                     if (m.group(3) != null) {
-                        ServerUtils.ServerQuery serverQuery = ServerUtils.getServerDofusFromName(m.group(3));
+                        ServerUtils.ServerQuery query = ServerUtils.getServerDofusFromName(m.group(3));
                         if (serverQuery.hasSucceed())
                             server = serverQuery.getServer();
                         else
                             serverQuery.getExceptions()
-                                    .forEach(e -> e.throwException(message, this, lg, serverQuery.getServersFound()));
+                                    .forEach(e -> e.throwException(message, this, lg, query.getServersFound()));
                     } else if (server == null) {
                         notFoundServer.throwException(message, this, lg);
                         return;
@@ -161,14 +162,14 @@ public class JobCommand extends FetchCommand {
 
             if (proposals.size() > 1) {
                 String potentialServer = proposals.get(proposals.size() - 1);
-                ServerUtils.ServerQuery serverQuery = ServerUtils.getServerDofusFromName(potentialServer);
+                ServerUtils.ServerQuery query = ServerUtils.getServerDofusFromName(potentialServer);
                 if (serverQuery.hasSucceed()){
                     server = serverQuery.getServer();
                     proposals.remove(potentialServer);
                 }
                 else {
                     serverQuery.getExceptions()
-                            .forEach(e -> e.throwException(message, this, lg, serverQuery.getServersFound()));
+                            .forEach(e -> e.throwException(message, this, lg, query.getServersFound()));
                     return;
                 }
             }
@@ -187,7 +188,7 @@ public class JobCommand extends FetchCommand {
                     }
                 }
 
-            // Avant d'aller plus loin, on test si on a au moins un métier de trouvé
+            // Check if a job is found
             if (jobs.isEmpty()) {
                 Message.sendText(message.getChannel(), Translator.getLabel(lg, "job.noone"));
                 return;

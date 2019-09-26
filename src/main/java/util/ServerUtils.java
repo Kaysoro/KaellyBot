@@ -22,7 +22,7 @@ public final class ServerUtils {
         ServerQuery result = new ServerQuery();
         final String PROPOSED_SERVER = Normalizer.normalize(proposedServer, Normalizer.Form.NFD)
                 .replaceAll("\\p{InCombiningDiacriticalMarks}+", "")
-                .replaceAll("\\W+", "").trim();
+                .replaceAll("\\W+", "").toLowerCase().trim();
 
         List<ServerDofus> allServers = ServerDofus.getServersDofus().stream()
                 .filter(server -> Normalizer.normalize(server.getName(), Normalizer.Form.NFD)
@@ -35,13 +35,13 @@ public final class ServerUtils {
                 .filter(server -> server.getGame() == Game.DOFUS)
                 .collect(Collectors.toList());
 
-        if (!serverDofusList.isEmpty())
-            if (serverDofusList.size() > 1){
-                result.serversFound = serverDofusList;
+        if (!serverDofusList.isEmpty()) {
+            result.serversFound = serverDofusList;
+            if (serverDofusList.size() > 1)
                 result.exceptions.add(TOO_MANY_SERVERS);
-            }
             else
                 result.server = serverDofusList.get(0);
+        }
         else if (!allServers.isEmpty()) {
             result.serversFound = allServers;
             result.exceptions.add(WRONG_BOT_USED);
