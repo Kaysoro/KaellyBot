@@ -7,17 +7,11 @@ import data.ServerDofus;
 import enums.Game;
 import enums.Language;
 import exceptions.BasicDiscordException;
-import exceptions.DiscordException;
-import exceptions.NotFoundDiscordException;
-import exceptions.TooMuchDiscordException;
 import util.Message;
 import sx.blah.discord.handle.obj.IMessage;
 import util.ServerUtils;
 import util.Translator;
 
-import java.text.Normalizer;
-import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.stream.Collectors;
@@ -41,8 +35,7 @@ public class ServerCommand extends AbstractCommand {
                 String serverName = m.group(1).toLowerCase().trim();
 
                 if (serverName.equals("-list")){
-                    String sb = Translator.getLabel(lg, "server.list") + "\n" +
-                            getServerList();
+                    String sb = Translator.getLabel(lg, "server.list") + "\n" + getServersList();
                     Message.sendText(message.getChannel(), sb);
                 }
                 else if (! serverName.equals("-reset")) {
@@ -104,22 +97,19 @@ public class ServerCommand extends AbstractCommand {
                 + "\n";
     }
 
-    private String getServerList() {
-        StringBuilder sb = new StringBuilder("```");
-        List<ServerDofus> servers = ServerDofus.getServersDofus().stream()
+    private String getServersList() {
+        final List<String> SERVERS = ServerDofus.getServersDofus().stream()
                 .filter(server -> server.getGame() == Game.DOFUS_TOUCH)
-                .sorted(Comparator.comparing(ServerDofus::getName))
+                .map(ServerDofus::getName)
+                .sorted()
                 .collect(Collectors.toList());
-        long sizeMax = servers.stream()
-                .map(server -> server.getName().length())
-                .max(Integer::compare).orElse(20);
+        final long SIZE_MAX = SERVERS.stream()
+                .map(String::length)
+                .max(Integer::compare)
+                .orElse(20);
 
-        for(ServerDofus server : servers) {
-            sb.append(server.getName());
-            for(int i = 0 ; i < sizeMax - server.getName().length() ; i++)
-                sb.append(" ");
-            sb.append("\t");
-        }
+        StringBuilder sb = new StringBuilder("```");
+        SERVERS.forEach(serverName -> sb.append(String.format("%-" + SIZE_MAX + "s", serverName)).append("\t"));
         sb.append("```");
         return sb.toString();
     }
