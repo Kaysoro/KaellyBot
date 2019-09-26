@@ -82,4 +82,9 @@ public class ServerDofus {
     public Game getGame(){
         return game;
     }
+
+    @Override
+    public String toString() {
+        return getName();
+    }
 }
