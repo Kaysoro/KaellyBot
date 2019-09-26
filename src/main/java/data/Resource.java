@@ -28,11 +28,10 @@ public class Resource implements Embedded {
     private String bonus;
     private String sorts;
     private String recipe;
-    private List<String> drops;
-    private boolean error;
+    private List<String> monsterDrop;
 
     private Resource(String name, String type, String level, String description, String effects, String skinURL,
-                     String url, String bonus, String sorts, String recipe, List<String> drops, boolean error) {
+                     String url, String bonus, String sorts, String recipe, List<String> monsterDrop) {
         this.name = name;
         this.type = type;
         this.level = level;
@@ -43,8 +42,7 @@ public class Resource implements Embedded {
         this.bonus = bonus;
         this.sorts = sorts;
         this.recipe = recipe;
-        this.drops = drops;
-        this.error = error;
+        this.monsterDrop = monsterDrop;
     }
 
     @Override
@@ -69,8 +67,6 @@ public class Resource implements Embedded {
 
         if (sorts != null && ! sorts.isEmpty())
             builder.appendField(Translator.getLabel(lg, "resource.sorts"),sorts, true);
-
-        if (error) builder.withFooterText(Translator.getLabel(lg, "resource.error"));
 
         return builder.build();
     }
@@ -103,13 +99,11 @@ public class Resource implements Embedded {
         if (recipe != null)
             builder.appendField(Translator.getLabel(lg, "resource.recette"), recipe, true);
 
-        if (! drops.isEmpty())
-            for(int i = 0 ; i < drops.size(); i++)
+        if (! monsterDrop.isEmpty())
+            for(int i = 0; i < monsterDrop.size(); i++)
                 builder.appendField(Translator.getLabel(lg, "resource.drops")
-                                + (drops.size() >1? " (" + (i + 1) + "/" + drops.size() + ")" : "") + " : ",
-                        drops.get(i), true);
-
-        if (error) builder.withFooterText(Translator.getLabel(lg, "monster.error"));
+                                + (monsterDrop.size() >1? " (" + (i + 1) + "/" + monsterDrop.size() + ")" : "") + " : ",
+                        monsterDrop.get(i), true);
 
         return builder.build();
     }
@@ -132,9 +126,7 @@ public class Resource implements Embedded {
         String bonus = null;
         String sorts = null;
         String recipe = null;
-        List<String> drops = new ArrayList<>();
-
-        boolean error = false;
+        List<String> monsterDrops  = new ArrayList<>();
 
         Elements titles = doc.getElementsByClass("ak-panel-title");
         Elements lines;
@@ -148,6 +140,8 @@ public class Resource implements Embedded {
                 bonus = extractLinesFromTitle(title);
             else if (title.text().equals(Translator.getLabel(lg, "resource.extract.sorts")))
                 sorts = title.parent().getElementsByClass("ak-panel-content").first().text();
+            else if (title.text().equals(Translator.getLabel(lg, "resource.extract.monsterDrop")))
+                monsterDrops = extractDrops(title.parent());
             else if (title.text().equals(Translator.getLabel(lg, "resource.extract.recette"))){
                 lines = title.parent().getElementsByClass("ak-column");
                 tmp = new StringBuilder();
@@ -158,11 +152,9 @@ public class Resource implements Embedded {
                                     .children().first().attr("abs:href")).append(")\n");
                 recipe = tmp.toString();
             }
-            else if (title.text().equals(Translator.getLabel(lg, "resource.extract.drops")))
-                error = error || extractDrops(drops, title.parent().getElementsByClass("ak-container ak-content-list ak-displaymode-image-col").first());
 
         return new Resource(name, type, level, description, effects, URLManager.abs(skinURL), url,
-                bonus, sorts, recipe, drops, error);
+                bonus, sorts, recipe, monsterDrops);
     }
 
     private static String extractLinesFromTitle(Element title)
@@ -184,18 +176,14 @@ public class Resource implements Embedded {
     }
 
     /**
-     *
-     * @param drops Liste des drops
      * @param element Element contenant les drops
-     * @return true si c'est en erreur, false le cas échéant
      */
-    private static boolean extractDrops(List<String> drops, Element element) {
-        boolean error = false;
+    private static List<String> extractDrops(Element element) {
+        List<String> result = new ArrayList<>();
         StringBuilder field = new StringBuilder();
         Elements lines = element.getElementsByClass("ak-column");
         for (Element line : lines) {
             StringBuilder tmp = new StringBuilder();
-            tmp.append(line.getElementsByClass("ak-front").text());
 
             Elements titles = line.getElementsByClass("ak-title");
             if (!titles.isEmpty()) {
@@ -208,18 +196,16 @@ public class Resource implements Embedded {
                 tmp.append(line.getElementsByClass("ak-aside").first().text()).append("\n");
 
                 if (field.length() + tmp.length() > EmbedBuilder.FIELD_CONTENT_LIMIT) {
-                    drops.add(field.toString());
+                    result.add(field.toString());
                     field.setLength(0);
                 }
                 field.append(tmp.toString());
             }
-            else error = true;
         }
 
         if (field.length() > 0)
-            drops.add(field.toString());
+            result.add(field.toString());
 
-        return error;
+        return result;
     }
 }
-
