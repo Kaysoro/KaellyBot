@@ -83,6 +83,7 @@ public class Constants {
     public final static String prefixCommand = "!";
 
     public final static Language defaultLanguage = Language.FR;
+
     /**
      * Game desserved
      */

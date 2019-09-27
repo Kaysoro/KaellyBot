@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.github.kaysoro</groupId>
-    <artifactId>Kaelly</artifactId>
+    <artifactId>KaellyTouch</artifactId>
     <version>1.0.2</version>
 
     <properties>
@@ -83,12 +83,12 @@
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
-            <version>3.8.1</version>
+            <version>3.9</version>
         </dependency>
         <dependency>
             <groupId>org.jsoup</groupId>
             <artifactId>jsoup</artifactId>
-            <version>1.11.3</version>
+            <version>1.12.1</version>
         </dependency>
         <dependency>
             <groupId>org.xerial</groupId>
@@ -103,7 +103,7 @@
         <dependency>
             <groupId>com.rometools</groupId>
             <artifactId>rome</artifactId>
-            <version>1.12.1</version>
+            <version>1.12.2</version>
         </dependency>
         <dependency>
             <groupId>io.sentry</groupId>
