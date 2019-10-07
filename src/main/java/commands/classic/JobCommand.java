@@ -44,7 +44,6 @@ public class JobCommand extends AbstractCommand {
         // Filter Initialisation
         IUser user = message.getAuthor();
         ServerDofus server = Guild.getGuild(message.getGuild()).getServerDofus();
-        List<ServerDofus> servers;
 
         // Concerned user is the author?
         if(Pattern.compile("^<@[!|&]?\\d+>").matcher(content).find()){
@@ -56,27 +55,33 @@ public class JobCommand extends AbstractCommand {
             user = message.getMentions().get(0);
         }
 
-        //user data consultation
-        ServerUtils.ServerQuery serverQuery = ServerUtils.getServerDofusFromName(content);
-        if (! serverQuery.getServersFound().isEmpty() && Pattern.compile("(.+)").matcher(content).matches()
-                || content.isEmpty()){
+        // Is the server specified ?
+        if(Pattern.compile("\\s*-serv\\s+").matcher(content).find()){
+            String[] split = content.split("\\s*-serv\\s+");
+            content = split[0];
+            ServerUtils.ServerQuery serverQuery = ServerUtils.getServerDofusFromName(split[1]);
             if (serverQuery.hasSucceed())
                 server = serverQuery.getServer();
-            else if (server == null) {
-                if (!content.isEmpty())
-                    serverQuery.getExceptions()
-                            .forEach(e -> e.throwException(message, this, lg, serverQuery.getServersFound()));
-                else
-                    notFoundServer.throwException(message, this, lg);
+            else {
+                serverQuery.getExceptions()
+                        .forEach(e -> e.throwException(message, this, lg, serverQuery.getServersFound()));
                 return;
             }
+        }
 
+        if (server == null) {
+            notFoundServer.throwException(message, this, lg);
+            return;
+        }
+
+        //user data consultation
+        if (content.isEmpty()){
             List<EmbedObject> embeds = JobUser.getJobsFromUser(user, server, message.getGuild(), lg);
             for(EmbedObject embed : embeds)
                 Message.sendEmbed(message.getChannel(), embed);
         }
         // Data recording
-        else if((m = Pattern.compile("-list|(-all|\\p{L}+(?:\\s+\\p{L}+)*)\\s+(\\d{1,3})(\\s+.+)?").matcher(content)).matches()) {
+        else if((m = Pattern.compile("-list|(-all|\\p{L}+(?:\\s+\\p{L}+)*)\\s+(\\d{1,3})").matcher(content)).matches()) {
             if (user == message.getAuthor()) {
                 if (!m.group(0).equals("-list")) {
                     // Data Parsing and exceptions processing
@@ -116,18 +121,6 @@ public class JobCommand extends AbstractCommand {
 
                     int level = Integer.parseInt(m.group(2));
 
-                    if (m.group(3) != null) {
-                        ServerUtils.ServerQuery query = ServerUtils.getServerDofusFromName(m.group(3));
-                        if (serverQuery.hasSucceed())
-                            server = serverQuery.getServer();
-                        else
-                            serverQuery.getExceptions()
-                                    .forEach(e -> e.throwException(message, this, lg, query.getServersFound()));
-                    } else if (server == null) {
-                        notFoundServer.throwException(message, this, lg);
-                        return;
-                    }
-
                     for (Job job : jobs)
                         if (JobUser.containsKeys(user.getLongID(), server, job))
                             JobUser.get(user.getLongID(), server, job).get(0).setLevel(level);
@@ -159,24 +152,6 @@ public class JobCommand extends AbstractCommand {
         }
         else if ((m = Pattern.compile("(?:>\\s*(\\d{1,3})\\s+)?(\\p{L}+(?:\\s+\\p{L}+)*)").matcher(content)).matches()){
             List<String> proposals = new LinkedList<>(Arrays.asList(m.group(2).split("\\s+")));
-
-            if (proposals.size() > 1) {
-                String potentialServer = proposals.get(proposals.size() - 1);
-                ServerUtils.ServerQuery query = ServerUtils.getServerDofusFromName(potentialServer);
-                if (serverQuery.hasSucceed()){
-                    server = serverQuery.getServer();
-                    proposals.remove(potentialServer);
-                }
-                else {
-                    serverQuery.getExceptions()
-                            .forEach(e -> e.throwException(message, this, lg, query.getServersFound()));
-                    return;
-                }
-            }
-            else if (server == null){
-                notFoundServer.throwException(message, this, lg);
-                return;
-            }
 
             Set<Job> jobs = new HashSet<>();
 
@@ -246,12 +221,12 @@ public class JobCommand extends AbstractCommand {
     @Override
     public String helpDetailed(Language lg, String prefix) {
         return help(lg, prefix)
-                + "\n`" + prefix + name + " `*`server`* : " + Translator.getLabel(lg, "job.help.detailed.1")
-                + "\n`" + prefix + name + " `*`@user server`* : " + Translator.getLabel(lg, "job.help.detailed.2")
-                + "\n`" + prefix + name + " `*`job1 job2 job3 server`* : " + Translator.getLabel(lg, "job.help.detailed.3")
-                + "\n`" + prefix + name + " > `*`level job1 job2 job3 server`* : " + Translator.getLabel(lg, "job.help.detailed.4")
-                + "\n`" + prefix + name + " `*`job1, job2 job3 level server`* : " + Translator.getLabel(lg, "job.help.detailed.5")
-                + "\n`" + prefix + name + " -all `*`level server`* : " + Translator.getLabel(lg, "job.help.detailed.6")
+                + "\n`" + prefix + name + " `*`-serv server`* : " + Translator.getLabel(lg, "job.help.detailed.1")
+                + "\n`" + prefix + name + " `*`@user -serv server`* : " + Translator.getLabel(lg, "job.help.detailed.2")
+                + "\n`" + prefix + name + " `*`job1 job2 job3 -serv server`* : " + Translator.getLabel(lg, "job.help.detailed.3")
+                + "\n`" + prefix + name + " > `*`level job1 job2 job3 -serv server`* : " + Translator.getLabel(lg, "job.help.detailed.4")
+                + "\n`" + prefix + name + " `*`job1, job2 job3 level -serv server`* : " + Translator.getLabel(lg, "job.help.detailed.5")
+                + "\n`" + prefix + name + " -all `*`level -serv server`* : " + Translator.getLabel(lg, "job.help.detailed.6")
                 + "\n`" + prefix + name + " -list` : " + Translator.getLabel(lg, "job.help.detailed.7") + "\n";
     }
 }

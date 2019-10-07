@@ -54,22 +54,28 @@ public class AlignmentCommand extends FetchCommand {
         IUser user = message.getAuthor();
         ServerDofus server = Guild.getGuild(message.getGuild()).getServerDofus();
 
-        // Consultation filtré par niveau
-        if ((m = Pattern.compile(">\\s+(\\d{1,3})(\\s+.+)?").matcher(content)).matches()){
-            int level = Integer.parseInt(m.group(1));
-            if (m.group(2) != null) {
-                ServerUtils.ServerQuery serverQuery = ServerUtils.getServerDofusFromName(m.group(2));
-                if (serverQuery.hasSucceed())
-                    server = serverQuery.getServer();
-                else {
-                    serverQuery.getExceptions()
-                            .forEach(e -> e.throwException(message, this, lg, serverQuery.getServersFound()));
-                    return;
-                }
-            } else if (server == null){
-                notFoundServer.throwException(message, this, lg);
+        // Is the server specified ?
+        if(Pattern.compile("\\s*-serv\\s+").matcher(content).find()){
+            String[] split = content.split("\\s*-serv\\s+");
+            content = split[0];
+            ServerUtils.ServerQuery serverQuery = ServerUtils.getServerDofusFromName(split[1]);
+            if (serverQuery.hasSucceed())
+                server = serverQuery.getServer();
+            else {
+                serverQuery.getExceptions()
+                        .forEach(e -> e.throwException(message, this, lg, serverQuery.getServersFound()));
                 return;
             }
+        }
+
+        if (server == null) {
+            notFoundServer.throwException(message, this, lg);
+            return;
+        }
+
+        // Consultation filtré par niveau
+        if ((m = Pattern.compile(">\\s*(\\d{1,3})").matcher(content)).matches()){
+            int level = Integer.parseInt(m.group(1));
             List<EmbedObject> embeds = OrderUser.getOrdersFromLevel(message.getGuild().getUsers(), server, level,
                     message.getGuild(), lg);
             for(EmbedObject embed : embeds)
@@ -87,25 +93,13 @@ public class AlignmentCommand extends FetchCommand {
             }
 
             //Consultation des données filtrés par utilisateur
-            ServerUtils.ServerQuery serverQuery = ServerUtils.getServerDofusFromName(content);
-            if (! serverQuery.getServersFound().isEmpty() && Pattern.compile("(.+)").matcher(content).matches()
-                    || content.isEmpty()){
-                if (serverQuery.hasSucceed())
-                    server = serverQuery.getServer();
-                else if (server == null) {
-                    if (!content.isEmpty())
-                        serverQuery.getExceptions()
-                                .forEach(e -> e.throwException(message, this, lg, serverQuery.getServersFound()));
-                    else
-                        notFoundServer.throwException(message, this, lg);
-                    return;
-                }
+            if (content.isEmpty()){
                 List<EmbedObject> embeds = OrderUser.getOrdersFromUser(user, server, message.getGuild(), lg);
                 for(EmbedObject embed : embeds)
                     Message.sendEmbed(message.getChannel(), embed);
             }
             // Enregistrement des données
-            else if((m = Pattern.compile("(\\p{L}+)\\s+(\\p{L}+)\\s+(\\d{1,3})(\\s+.+)?").matcher(content)).matches()){
+            else if((m = Pattern.compile("(\\p{L}+)\\s+(\\p{L}+)\\s+(\\d{1,3})").matcher(content)).matches()){
                 if(user == message.getAuthor()) {
                     // Parsing des données et traitement des divers exceptions
                     List<City> cities = findCity(m.group(1), lg);
@@ -116,19 +110,6 @@ public class AlignmentCommand extends FetchCommand {
                     order = orders.get(0);
                     int level = Integer.parseInt(m.group(3));
 
-                    if (m.group(4) != null) {
-                        ServerUtils.ServerQuery query = ServerUtils.getServerDofusFromName(m.group(4));
-                        if (serverQuery.hasSucceed())
-                            server = serverQuery.getServer();
-                        else {
-                            serverQuery.getExceptions()
-                                    .forEach(e -> e.throwException(message, this, lg, query.getServersFound()));
-                            return;
-                        }
-                    } else if (server == null){
-                        notFoundServer.throwException(message, this, lg);
-                        return;
-                    }
                     if(OrderUser.containsKeys(user.getLongID(), server, city, order)) {
                         OrderUser.get(user.getLongID(), server, city, order).get(0).setLevel(level);
                         if (level != 0)
@@ -149,58 +130,16 @@ public class AlignmentCommand extends FetchCommand {
 
             }
             // Consultation filtré par cité et/ou par ordre
-            else if((m = Pattern.compile("(\\p{L}+)(\\s+\\p{L}+)?(\\s+[\\p{L}|\\W]+)?").matcher(content)).matches()){
-                if (m.group(3) != null) {
-                    ServerUtils.ServerQuery query = ServerUtils.getServerDofusFromName(m.group(3));
-                    if (serverQuery.hasSucceed())
-                        server = serverQuery.getServer();
-                    else {
-                        serverQuery.getExceptions()
-                                .forEach(e -> e.throwException(message, this, lg, query.getServersFound()));
-                        return;
-                    }
-                }
+            else if((m = Pattern.compile("(\\p{L}+)(\\s+\\p{L}+)?").matcher(content)).matches()){
 
                 // On a précisé à la fois une cité et un ordre
                 if (m.group(2) != null) {
-                    boolean is2Server = false;
-                    if (m.group(3) == null){
-                        ServerUtils.ServerQuery query = ServerUtils.getServerDofusFromName(m.group(2));
-                        if (serverQuery.hasSucceed()) {
-                            server = serverQuery.getServer();
-                            is2Server = true;
-                        }
-                        else {
-                            serverQuery.getExceptions()
-                                    .forEach(e -> e.throwException(message, this, lg, query.getServersFound()));
-                            return;
-                        }
-                    }
-
-                    if (is2Server){
-                        // Est-ce un ordre ? une cité ?
-                        String value = m.group(1).trim();
-                        List<City> cities = findCity(value, lg);
-                        List<Order> orders = findOrder(value, lg);
-                        if (cities.isEmpty() && orders.isEmpty()){
-                            notFoundFilter.throwException(message, this, lg);
-                            return;
-                        }
-                        if (cities.size() > 1 || orders.size() > 1){
-                            tooMuchFilters.throwException(message, this, lg);
-                            return;
-                        }
-                        if (cities.size() == 1) city = cities.get(0);
-                        if (orders.size() == 1) order = orders.get(0);
-                    }
-                    else {
-                        List<City> cities = findCity(m.group(1).trim(), lg);
-                        if (checkData(cities, tooMuchCities, notFoundCity, message, lg)) return;
-                        city = cities.get(0);
-                        List<Order> orders = findOrder(m.group(2).trim(), lg);
-                        if (checkData(orders, tooMuchOrders, notFoundOrder, message, lg)) return;
-                        order = orders.get(0);
-                    }
+                    List<City> cities = findCity(m.group(1).trim(), lg);
+                    if (checkData(cities, tooMuchCities, notFoundCity, message, lg)) return;
+                    city = cities.get(0);
+                    List<Order> orders = findOrder(m.group(2).trim(), lg);
+                    if (checkData(orders, tooMuchOrders, notFoundOrder, message, lg)) return;
+                    order = orders.get(0);
                 }
                 else {
                     // Is an order ? a city ?
@@ -216,11 +155,6 @@ public class AlignmentCommand extends FetchCommand {
                     }
                     if (cities.size() == 1) city = cities.get(0);
                     if (orders.size() == 1) order = orders.get(0);
-                }
-
-                if (server == null){
-                    notFoundServer.throwException(message, this, lg);
-                    return;
                 }
 
                 List<EmbedObject> embeds = OrderUser
@@ -285,10 +219,10 @@ public class AlignmentCommand extends FetchCommand {
     @Override
     public String helpDetailed(Language lg, String prefixe) {
         return help(lg, prefixe)
-                + "\n`" + prefixe + name + " `*`server`* : " + Translator.getLabel(lg, "align.help.detailed.1")
-                + "\n`" + prefixe + name + " `*`order server`* : " + Translator.getLabel(lg, "align.help.detailed.2")
-                + "\n`" + prefixe + name + " `*`> level server`* : " + Translator.getLabel(lg, "align.help.detailed.3")
-                + "\n`" + prefixe + name + " `*`@user server`* : " + Translator.getLabel(lg, "align.help.detailed.4")
-                + "\n`" + prefixe + name + " `*`city order level server`* : " + Translator.getLabel(lg, "align.help.detailed.5") + "\n";
+                + "\n`" + prefixe + name + " `*`-serv server`* : " + Translator.getLabel(lg, "align.help.detailed.1")
+                + "\n`" + prefixe + name + " `*`order -serv server`* : " + Translator.getLabel(lg, "align.help.detailed.2")
+                + "\n`" + prefixe + name + " `*`> level -serv server`* : " + Translator.getLabel(lg, "align.help.detailed.3")
+                + "\n`" + prefixe + name + " `*`@user -serv server`* : " + Translator.getLabel(lg, "align.help.detailed.4")
+                + "\n`" + prefixe + name + " `*`city order level -serv server`* : " + Translator.getLabel(lg, "align.help.detailed.5") + "\n";
     }
 }
