@@ -26,8 +26,7 @@ import java.util.regex.Matcher;
  */
 public class TutorialCommand extends AbstractCommand {
 
-    private final static String forName = "q=";
-    private final static String filtered = "filter=page";
+    private final static String forName = "s=";
     private DiscordException tooMuchTutos;
     private DiscordException notFoundTuto;
 
@@ -49,7 +48,7 @@ public class TutorialCommand extends AbstractCommand {
 
             if (matcher.isUnique())// We have found it !
                 Message.sendText(message.getChannel(), Translator.getLabel(lg, "tutorial.request") + " " +
-                        Constants.dofusPourLesNoobURL + matcher.getBest().getUrl());
+                        Constants.papychaURL + matcher.getBest().getUrl());
             else if (! matcher.isEmpty())  // Too much tutos
                 tooMuchTutos.throwException(message, this, lg, matcher.getBests());
             else // empty
@@ -60,8 +59,8 @@ public class TutorialCommand extends AbstractCommand {
     }
 
     private String getSearchURL(String text) throws UnsupportedEncodingException {
-        return Constants.dofusPourLesNoobURL + Constants.dofusPourLesNoobSearch + "?"
-                + forName.toLowerCase() + URLEncoder.encode(text, "UTF-8") + "&" + filtered;
+        return Constants.papychaURL + "?"
+                + forName.toLowerCase() + URLEncoder.encode(text, "UTF-8");
     }
 
     private List<Requestable> getListTutoFrom(String url, IMessage message){
@@ -70,11 +69,11 @@ public class TutorialCommand extends AbstractCommand {
 
         try {
             Document doc = JSoupManager.getDocument(url);
-            Elements elems = doc.getElementById("wsite-search-list").getElementsByTag("a");
+            Elements elems = doc.getElementById("content").getElementsByTag("h2");
 
             for (Element element : elems)
                 result.add(new Requestable(element.child(0).text(),
-                        element.attr("href")));
+                        element.child(0).attr("href")));
 
         } catch(IOException e){
             ExceptionManager.manageIOException(e, message, this, lg, notFoundTuto);

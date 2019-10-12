@@ -21,7 +21,7 @@ public class Constants {
     /**
      * Changelog
      */ // ToDo : New changelog
-    public final static String changelog = "";
+    public final static String changelog = "https://i.imgur.com/Ba0jSiR.png";
 
     /**
      * Author id
@@ -97,12 +97,7 @@ public class Constants {
     /**
      * Tutorial URL
      */
-    public final static String dofusPourLesNoobURL = "http://www.dofuspourlesnoobs.com";
-
-    /**
-     * Tutorial Search URL
-     */
-    public final static String dofusPourLesNoobSearch = "/apps/search";
+    public final static String papychaURL = "https://papycha.fr/";
 
     /**
      * Twitter Icon from Wikipedia
