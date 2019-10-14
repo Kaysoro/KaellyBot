@@ -208,7 +208,10 @@ public class JobCommand extends AbstractCommand {
         final long SIZE_MAX = JOBS.stream().map(String::length).max(Integer::compareTo).orElse(20);
 
         StringBuilder sb = new StringBuilder("```");
-        JOBS.forEach(jobName -> sb.append(String.format("%-" + SIZE_MAX + "s", jobName)).append("\t"));
+        JOBS.forEach(jobName -> sb.append(String.format("%-" + SIZE_MAX + "s",
+                Normalizer.normalize(jobName, Normalizer.Form.NFD)
+                        .replaceAll("\\p{InCombiningDiacriticalMarks}+", "")
+                        .toLowerCase().replaceAll("\\W+", ""))).append("\t"));
         sb.append("```");
         return sb.toString();
     }
