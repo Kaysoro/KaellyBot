@@ -88,12 +88,12 @@ public class ServerCommand extends AbstractCommand {
                 .replace("{game}", Constants.game.getName())
                 + "\n`" + prefix + name + " `*`server`* : " + Translator.getLabel(lg, "server.help.detailed.3")
                 .replace("{game}", Constants.game.getName())
-                + "\n`" + prefix + name + " -channel `*`server`* : " + Translator.getLabel(lg, "server.help.detailed.4")
+                + "\n`" + prefix + name + " `*`-reset`* : " + Translator.getLabel(lg, "server.help.detailed.4")
                 .replace("{game}", Constants.game.getName())
-                + "\n`" + prefix + name + " `*`-reset`* : " + Translator.getLabel(lg, "server.help.detailed.5")
-                .replace("{game}", Constants.game.getName())
-                + "\n`" + prefix + name + " -channel -reset` : " + Translator.getLabel(lg, "server.help.detailed.6")
-                .replace("{game}", Constants.game.getName())
+                //+ "\n`" + prefix + name + " -channel `*`server`* : " + Translator.getLabel(lg, "server.help.detailed.5")
+                //.replace("{game}", Constants.game.getName())
+                //+ "\n`" + prefix + name + " -channel -reset` : " + Translator.getLabel(lg, "server.help.detailed.6")
+                //.replace("{game}", Constants.game.getName())
                 + "\n";
     }
 
