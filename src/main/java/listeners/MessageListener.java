@@ -3,12 +3,14 @@ package listeners;
 import commands.*;
 import commands.model.AbstractCommand;
 import commands.model.Command;
+import discord4j.core.DiscordClient;
+import discord4j.core.event.domain.message.MessageCreateEvent;
 import enums.Language;
 import exceptions.BasicDiscordException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import sx.blah.discord.api.events.EventSubscriber;
-import sx.blah.discord.handle.impl.events.guild.channel.message.MessageReceivedEvent;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 import util.Reporter;
 import util.Translator;
 
@@ -22,8 +24,7 @@ public class MessageListener {
 
     private final static Logger LOG = LoggerFactory.getLogger(MessageListener.class);
 
-    @EventSubscriber
-    public void onReady(MessageReceivedEvent event) {
+    public Mono<Void> onReady(DiscordClient client, MessageCreateEvent event) {
         Language lg = Translator.getLanguageFrom(event.getChannel());
         String prefixe = AbstractCommand.getPrefix(event.getMessage());
 
@@ -49,5 +50,7 @@ public class MessageListener {
 
             }
         }
+
+        return Mono.empty();
     }
 }

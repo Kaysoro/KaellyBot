@@ -1,11 +1,11 @@
 package listeners;
 
+import discord4j.core.event.domain.channel.TextChannelDeleteEvent;
 import finders.RSSFinder;
 import finders.TwitterFinder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import sx.blah.discord.api.events.EventSubscriber;
-import sx.blah.discord.handle.impl.events.guild.channel.ChannelDeleteEvent;
+import reactor.core.publisher.Flux;
 import util.Reporter;
 
 /**
@@ -19,20 +19,21 @@ public class ChannelDeleteListener {
         super();
     }
 
-    @EventSubscriber
-    public void onReady(ChannelDeleteEvent event) {
+    public Flux<Void> onReady(TextChannelDeleteEvent event) {
         try {
-            if (RSSFinder.getRSSFinders().containsKey(event.getChannel().getStringID()))
-                RSSFinder.getRSSFinders().get(event.getChannel().getStringID()).removeToDatabase();
+            if (RSSFinder.getRSSFinders().containsKey(event.getChannel().getId().asString()))
+                RSSFinder.getRSSFinders().get(event.getChannel().getId().asString()).removeToDatabase();
 
-            if (TwitterFinder.getTwitterChannels().containsKey(event.getChannel().getLongID()))
-                TwitterFinder.getTwitterChannels().get(event.getChannel().getLongID()).removeToDatabase();
+            if (TwitterFinder.getTwitterChannels().containsKey(event.getChannel().getId().asLong()))
+                TwitterFinder.getTwitterChannels().get(event.getChannel().getId().asLong()).removeToDatabase();
 
-            LOG.info(event.getGuild().getStringID() + " - Salon \"" + event.getChannel().getName()
-                    + "\" supprimé");
+
+            LOG.info("Salon \"" + event.getChannel().getName() + "\" supprimé");
         } catch(Exception e){
-            Reporter.report(e, event.getGuild(), event.getChannel());
+            Reporter.report(e, event.getChannel());
             LOG.error("onReady", e);
         }
+
+        return Flux.empty();
     }
 }

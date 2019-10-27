@@ -1,23 +1,20 @@
 package listeners;
 
+import discord4j.core.DiscordClient;
+import discord4j.core.event.domain.VoiceStateUpdateEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import sx.blah.discord.api.events.EventSubscriber;
-import sx.blah.discord.handle.impl.events.guild.voice.user.UserVoiceChannelLeaveEvent;
-import sx.blah.discord.handle.obj.IGuild;
-import sx.blah.discord.util.audio.AudioPlayer;
-import util.ClientConfig;
+import reactor.core.publisher.Mono;
 import util.Reporter;
 
 /**
  * Created by steve on 15/01/2017.
  */
-public class UserVoiceChannelLeaveListener {
+public class VoiceStateUpdateListener {
 
-    private final static Logger LOG = LoggerFactory.getLogger(UserVoiceChannelLeaveListener.class);
+    private final static Logger LOG = LoggerFactory.getLogger(VoiceStateUpdateListener.class);
 
-    @EventSubscriber
-    public void onUserVoiceChannelLeave(UserVoiceChannelLeaveEvent event) {
+    public Mono<Void> onUserVoiceChannelLeave(DiscordClient client, VoiceStateUpdateEvent event) {
         try {
             if (event.getVoiceChannel().isConnected() && event.getVoiceChannel().getConnectedUsers().size() == 1) {
                 AudioPlayer.getAudioPlayerForGuild(event.getGuild()).clear();
@@ -27,5 +24,7 @@ public class UserVoiceChannelLeaveListener {
             Reporter.report(e, event.getGuild(), event.getVoiceChannel());
             LOG.error("onUserVoiceChannelLeave", e);
         }
+
+        return Mono.empty();
     }
 }

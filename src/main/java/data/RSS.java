@@ -5,20 +5,21 @@ import com.rometools.rome.feed.synd.SyndFeed;
 import com.rometools.rome.io.FeedException;
 import com.rometools.rome.io.SyndFeedInput;
 import com.rometools.rome.io.XmlReader;
+import discord4j.core.spec.EmbedCreateSpec;
 import enums.Language;
 import exceptions.ExceptionManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import sx.blah.discord.api.internal.json.objects.EmbedObject;
-import sx.blah.discord.util.EmbedBuilder;
 import util.Reporter;
 import util.Translator;
 
+import java.awt.*;
 import java.io.IOException;
 import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -97,23 +98,17 @@ public class RSS implements Comparable<RSS>, Embedded {
     }
 
     @Override
-    public EmbedObject getEmbedObject(Language lg) {
-        EmbedBuilder builder = new EmbedBuilder();
-
-        builder.withAuthorName("Dofus.com");
-        builder.withAuthorUrl(getUrl());
-
-        builder.withTitle(getTitle());
-        builder.withColor(16747520);
-        builder.withImage(imageUrl);
-        builder.withThumbnail(Constants.rssIcon);
-        builder.withFooterText(dateFormat.format(new Date(getDate())));
-
-        return builder.build();
+    public void decorateEmbedObject(EmbedCreateSpec spec, Language lg) {
+        spec.setAuthor("Dofus.com", getUrl(), null)
+                .setTitle(getTitle())
+                .setColor(Color.ORANGE)
+                .setImage(imageUrl)
+                .setThumbnail(Constants.rssIcon)
+                .setFooter(dateFormat.format(new Date(getDate())), null);
     }
 
     @Override
-    public EmbedObject getMoreEmbedObject(Language lg) {
-        return getEmbedObject(lg);
+    public void decorateMoreEmbedObject(EmbedCreateSpec spec, Language lg) {
+        decorateEmbedObject(spec, lg);
     }
 }

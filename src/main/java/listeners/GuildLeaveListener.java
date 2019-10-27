@@ -1,6 +1,9 @@
 package listeners;
 
 import data.*;
+import discord4j.core.DiscordClient;
+import discord4j.core.event.domain.guild.GuildDeleteEvent;
+import reactor.core.publisher.Flux;
 import util.Message;
 import finders.AlmanaxCalendar;
 import finders.RSSFinder;
@@ -24,8 +27,7 @@ public class GuildLeaveListener {
         super();
     }
 
-    @EventSubscriber
-    public void onReady(GuildLeaveEvent event) {
+    public Flux<Void> onReady(DiscordClient client, GuildDeleteEvent event) {
         try {
             Guild guild = Guild.getGuild(event.getGuild(), false);
             if (guild != null) {
@@ -66,5 +68,7 @@ public class GuildLeaveListener {
             Reporter.report(e, event.getGuild());
             LOG.error("onReady", e);
         }
+
+        return Flux.empty();
     }
 }

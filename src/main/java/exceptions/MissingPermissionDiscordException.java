@@ -1,16 +1,14 @@
 package exceptions;
 
 import commands.model.Command;
+import discord4j.core.object.entity.Channel;
+import discord4j.core.object.entity.GuildChannel;
+import discord4j.core.object.entity.Message;
 import enums.Language;
-import sx.blah.discord.handle.obj.IChannel;
 import util.ClientConfig;
 import util.Translator;
-import util.Message;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import sx.blah.discord.handle.obj.IMessage;
-import sx.blah.discord.handle.obj.Permissions;
-import sx.blah.discord.util.MissingPermissionsException;
 
 /**
  * Created by steve on 14/11/2016.
@@ -21,11 +19,11 @@ public class MissingPermissionDiscordException implements DiscordException {
     private final static String PERMISSION_PREFIX = "permission.";
 
     @Override
-    public void throwException(IMessage message, Command command, Language lg, Object... arguments) {
+    public void throwException(Message message, Command command, Language lg, Object... arguments) {
         throwException(message.getChannel(), lg, (MissingPermissionsException) arguments[0]);
     }
 
-    public void throwException(IChannel channel, Language lg, MissingPermissionsException e) {
+    public void throwException(GuildChannel channel, Language lg, MissingPermissionsException e) {
         StringBuilder st = new StringBuilder(Translator.getLabel(lg, "exception.missing_permission")
                 .replace("{channel.name}", channel.getName()));
 

@@ -2,17 +2,16 @@ package listeners;
 
 import commands.classic.HelpCommand;
 import commands.config.*;
+import discord4j.core.DiscordClient;
+import discord4j.core.event.domain.guild.GuildCreateEvent;
 import enums.Language;
-import sx.blah.discord.util.DiscordException;
+import reactor.core.publisher.Mono;
 import util.ClientConfig;
 import data.Constants;
 import data.Guild;
 import util.Message;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import sx.blah.discord.api.events.EventSubscriber;
-import sx.blah.discord.handle.impl.events.guild.GuildCreateEvent;
-import sx.blah.discord.handle.obj.Permissions;
 import util.Reporter;
 import util.Translator;
 
@@ -23,16 +22,13 @@ public class GuildCreateListener {
 
     private final static Logger LOG = LoggerFactory.getLogger(GuildCreateListener.class);
 
-    public GuildCreateListener(){
-        super();
-    }
-
-    @EventSubscriber
-    public void onReady(GuildCreateEvent event) {
+    public Mono<Void> onReady(DiscordClient client, GuildCreateEvent event) {
         try {
-            if (!Guild.getGuilds().containsKey(event.getGuild().getStringID())) {
-                Guild guild = new Guild(event.getGuild().getStringID(), event.getGuild().getName(),
-                        Translator.detectLanguage(event.getGuild().getDefaultChannel()));
+            if (!Guild.getGuilds().containsKey(event.getGuild().getId().asString())) {
+
+
+                Guild guild = new Guild(event.getGuild().getId().asString(), event.getGuild().getName(),
+                        Translator.detectLanguage(event.getGuild().getChannels().blockFirst()));
                 guild.addToDatabase();
 
                 Language lg = guild.getLanguage();
@@ -73,5 +69,7 @@ public class GuildCreateListener {
             Reporter.report(e, event.getGuild());
             LOG.error("onReady", e);
         }
+
+        return Mono.empty();
     }
 }

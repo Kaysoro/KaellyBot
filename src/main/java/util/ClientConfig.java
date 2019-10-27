@@ -1,17 +1,20 @@
 package util;
 
+import discord4j.core.DiscordClient;
+import discord4j.core.DiscordClientBuilder;
+import discord4j.core.shard.ShardingClientBuilder;
 import io.sentry.Sentry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import sx.blah.discord.api.ClientBuilder;
-import sx.blah.discord.api.IDiscordClient;
-import sx.blah.discord.util.DiscordException;
+import reactor.core.publisher.Mono;
 import twitter4j.TwitterStream;
 import twitter4j.TwitterStreamFactory;
 import twitter4j.conf.ConfigurationBuilder;
 
 import java.io.*;
 import java.net.URLDecoder;
+import java.util.Collections;
+import java.util.List;
 import java.util.Properties;
 
 /**
@@ -22,7 +25,7 @@ public class ClientConfig {
     private static ClientConfig instance = null;
     private final static Logger LOG = LoggerFactory.getLogger(ClientConfig.class);
     private final static String FILENAME = "config.properties";
-    private IDiscordClient DISCORD;
+    private List<DiscordClient> DISCORD;
     private TwitterStream TWITTER;
 
     private ClientConfig(){
@@ -34,11 +37,17 @@ public class ClientConfig {
             prop.load(file);
 
             try {
-                DISCORD = new ClientBuilder()
-                        .withToken(prop.getProperty("discord.token"))
-                        .withRecommendedShardCount()
-                        .login();
-            } catch(DiscordException e){
+                DISCORD = new ShardingClientBuilder(prop.getProperty("discord.token"))
+                        .build()
+                        .map(DiscordClientBuilder::build)
+                        .cache()
+                        .collectList().blockOptional().orElse(Collections.emptyList());
+
+                DISCORD.stream()
+                        .map(DiscordClient::login)
+                        .forEach(Mono::block);
+
+            } catch(Throwable e){
                     LOG.error("Impossible de se connecter à Discord : verifiez votre token dans "
                             + FILENAME + " ainsi que votre connexion.");
             }
@@ -82,7 +91,7 @@ public class ClientConfig {
     public static TwitterStream TWITTER() {
         return getInstance().TWITTER;
     }
-    public static IDiscordClient DISCORD() {
+    public static List<DiscordClient> DISCORD() {
         return getInstance().DISCORD;
     }
 }

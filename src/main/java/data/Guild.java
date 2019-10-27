@@ -4,7 +4,6 @@ import enums.Language;
 import finders.PortalTracker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import sx.blah.discord.handle.obj.IGuild;
 import util.Connexion;
 import util.Reporter;
 
@@ -189,15 +188,15 @@ public class Guild {
         return guilds;
     }
 
-    public static Guild getGuild(IGuild guild){
+    public static Guild getGuild(discord4j.core.object.entity.Guild guild){
         return getGuild(guild, true);
     }
 
-    public synchronized static Guild getGuild(IGuild discordGuild, boolean forceCache){
-        Guild guild = getGuilds().get(discordGuild.getStringID());
+    public synchronized static Guild getGuild(discord4j.core.object.entity.Guild discordGuild, boolean forceCache){
+        Guild guild = getGuilds().get(discordGuild.getId().asString());
 
         if (guild == null && forceCache){
-            guild = new Guild(discordGuild.getStringID(), discordGuild.getName(), Constants.defaultLanguage);
+            guild = new Guild(discordGuild.getId().asString(), discordGuild.getName(), Constants.defaultLanguage);
             guild.addToDatabase();
         }
 
