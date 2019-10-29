@@ -1,11 +1,10 @@
 package exceptions;
 
 import commands.model.Command;
+import discord4j.core.object.entity.Message;
 import enums.Language;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import sx.blah.discord.handle.obj.IMessage;
-import util.Message;
 import util.Translator;
 
 /**
@@ -40,7 +39,7 @@ public class BasicDiscordException implements DiscordException {
         this.messageKey = message;
     }
     @Override
-    public void throwException(IMessage message, Command command, Language lg, Object... arguments) {
-        Message.sendText(message.getChannel(), Translator.getLabel(lg, messageKey));
+    public void throwException(Message message, Command command, Language lg, Object... arguments) {
+        message.getChannel().flatMap(chan -> chan.createMessage(Translator.getLabel(lg, messageKey))).subscribe();
     }
 }

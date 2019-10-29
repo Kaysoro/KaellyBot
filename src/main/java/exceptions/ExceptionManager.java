@@ -1,11 +1,11 @@
 package exceptions;
 
 import commands.model.Command;
+import discord4j.core.object.entity.Message;
 import enums.Language;
 import org.jsoup.HttpStatusException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import sx.blah.discord.handle.obj.IMessage;
 import util.Reporter;
 
 import java.io.FileNotFoundException;
@@ -26,7 +26,7 @@ public abstract class ExceptionManager {
     private static DiscordException gameWebsite503 = new AdvancedDiscordException("exception.advanced.game_website_503",
             new String[]{"game.url"}, new Boolean[]{true});
 
-    public static void manageIOException(Exception e, IMessage message, Command command, Language lg, DiscordException notFound){
+    public static void manageIOException(Exception e, Message message, Command command, Language lg, DiscordException notFound){
         // First we try parsing the exception message to see if it contains the response code
         Matcher exMsgStatusCodeMatcher = Pattern.compile("^Server returned HTTP response code: (\\d+)")
                 .matcher(e.getMessage());
@@ -37,7 +37,6 @@ public abstract class ExceptionManager {
                 gameWebsite503.throwException(message, command, lg);
             }
             else {
-                Reporter.report(e, message.getGuild(), message.getChannel(), message.getAuthor(), message);
                 LOG.error("manageIOException", e);
                 BasicDiscordException.UNKNOWN_ERROR.throwException(message, command, lg);
             }
@@ -49,7 +48,6 @@ public abstract class ExceptionManager {
             notFound.throwException(message, command, lg);
         }
         else {
-            Reporter.report(e, message.getGuild(), message.getChannel(), message.getAuthor(), message);
             LOG.error("manageIOException", e);
             BasicDiscordException.UNKNOWN_ERROR.throwException(message, command, lg);
         }
@@ -77,8 +75,7 @@ public abstract class ExceptionManager {
 
     }
 
-    public static void manageException(Exception e, IMessage message, Command command, Language lg){
-        Reporter.report(e, message.getGuild(), message.getChannel(), message.getAuthor(), message);
+    public static void manageException(Exception e, Message message, Command command, Language lg){
         LOG.error("manageException", e);
         BasicDiscordException.UNKNOWN_ERROR.throwException(message, command, lg);
     }

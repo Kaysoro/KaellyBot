@@ -1,11 +1,10 @@
 package exceptions;
 
 import commands.model.Command;
+import discord4j.core.object.entity.Message;
 import enums.Language;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import sx.blah.discord.handle.obj.IMessage;
-import util.Message;
 import util.Translator;
 
 /**
@@ -32,13 +31,14 @@ public class AdvancedDiscordException implements DiscordException {
     }
 
     @Override
-    public void throwException(IMessage message, Command command, Language lg, Object... arguments) {
+    public void throwException(Message message, Command command, Language lg, Object... arguments) {
         String content = Translator.getLabel(lg, messageKey);
         for(int i = 0; i < parameters.length; i++)
             if (translatable.length > i && translatable[i])
                 content = content.replace("{" + i + "}", Translator.getLabel(lg, parameters[i]));
             else
                 content = content.replace("{" + i + "}", parameters[i]);
-        Message.sendText(message.getChannel(), content);
+            final String CONTENT = content;
+            message.getChannel().flatMap(chan -> chan.createMessage(CONTENT)).subscribe();
     }
 }

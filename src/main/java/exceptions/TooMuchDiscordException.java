@@ -7,8 +7,6 @@ import commands.model.Command;
 import discord4j.core.object.entity.Message;
 import enums.AnkamaBug;
 import enums.Language;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import util.Translator;
 
 import java.util.List;
@@ -18,8 +16,6 @@ import java.util.stream.Collectors;
  * Created by steve on 14/11/2016.
  */
 public class TooMuchDiscordException implements DiscordException {
-
-    private final static Logger LOG = LoggerFactory.getLogger(TooMuchDiscordException.class);
     private final static int ITEM_LIMIT = 25;
     private String objectKey;
     private boolean isTranslatable;
