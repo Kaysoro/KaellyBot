@@ -1,14 +1,14 @@
 package data;
 
+import discord4j.core.object.util.Image;
+import discord4j.core.spec.EmbedCreateSpec;
 import enums.Language;
-import sx.blah.discord.api.internal.json.objects.EmbedObject;
-import sx.blah.discord.handle.obj.IGuild;
-import sx.blah.discord.util.EmbedBuilder;
 import util.Translator;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
+import java.util.function.Consumer;
 
 public abstract class ObjectUser {
 
@@ -28,12 +28,12 @@ public abstract class ObjectUser {
         return server;
     }
 
-    protected abstract String displayLine(IGuild guild, Language lg);
+    protected abstract String displayLine(discord4j.core.object.entity.Guild guild, Language lg);
 
-    protected static<T extends ObjectUser> List<EmbedObject> getPlayersList(List<T> objUsers, IGuild guild,
-                                                                            ServerDofus server, Language lg,
-                                                                            String prefix){
-        List<EmbedObject> embed = new ArrayList<>();
+    protected static<T extends ObjectUser> List<Consumer<EmbedCreateSpec>> getPlayersList(List<T> objUsers, discord4j.core.object.entity.Guild guild,
+                                                                                          ServerDofus server, Language lg,
+                                                                                          String prefix){
+        List<Consumer<EmbedCreateSpec>> embed = new ArrayList<>();
 
         // On s'occupe d'abord de générer chaque ligne de field
         if (!objUsers.isEmpty()){
@@ -66,31 +66,32 @@ public abstract class ObjectUser {
                 fieldsPerEmbed.add(fields);
 
             // Il ne reste plus qu'à les parcourir et à créer autant d'embed que nécessaire
-            for(int i = 0; i < fieldsPerEmbed.size(); i++){
-                EmbedBuilder builder = new EmbedBuilder()
-                        .withTitle(Translator.getLabel(lg, prefix + ".list")
-                                + (fieldsPerEmbed.size() > 1? " (" + (i + 1) + "/"
-                                + fieldsPerEmbed.size() + ")" : ""))
-                        .withThumbnail(guild.getIconURL())
-                        .withColor(new Random().nextInt(16777216));
+            for(int i = 0; i < fieldsPerEmbed.size(); i++) {
+                final int I = i;
+                embed.add(spec -> {
+                    spec.setTitle(Translator.getLabel(lg, prefix + ".list")
+                            + (fieldsPerEmbed.size() > 1 ? " (" + (I + 1) + "/"
+                            + fieldsPerEmbed.size() + ")" : ""))
+                            .setThumbnail(guild.getIconUrl(Image.Format.PNG).orElse(null))
+                            .setColor(Color.GRAY);
 
-                List<String> texts = fieldsPerEmbed.get(i);
-                for(int j = 0; j < texts.size(); j++){
-                    builder.appendField(Translator.getLabel(lg, prefix + "." + prefix + "s")
-                                    + (texts.size() > 1? " (" + (j + 1) + "/"
-                                    + texts.size() + ")" : "") + " : ",
-                            texts.get(j), true);
-                }
-                builder.withFooterText(server.getName());
-                embed.add(builder.build());
+                    List<String> texts = fieldsPerEmbed.get(I);
+                    for (int j = 0; j < texts.size(); j++) {
+                        spec.addField(Translator.getLabel(lg, prefix + "." + prefix + "s")
+                                        + (texts.size() > 1 ? " (" + (j + 1) + "/"
+                                        + texts.size() + ")" : "") + " : ",
+                                texts.get(j), true);
+                    }
+                    spec.setFooter(server.getName(), null);
+                });
             }
         }
         else
-            embed.add(new EmbedBuilder()
-                    .withThumbnail(guild.getIconURL())
-                    .withColor(new Random().nextInt(16777216))
-                    .withDescription(Translator.getLabel(lg, prefix + ".empty"))
-                    .withFooterText(server.getName()).build());
+            embed.add(spec -> spec
+                    .setThumbnail(guild.getIconUrl(Image.Format.PNG).orElse(null))
+                    .setColor(Color.GRAY)
+                    .setDescription(Translator.getLabel(lg, prefix + ".empty"))
+                    .setFooter(server.getName(), null));
 
         return embed;
     }

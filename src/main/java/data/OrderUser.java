@@ -1,14 +1,16 @@
 package data;
 
+import discord4j.core.object.entity.Member;
+import discord4j.core.object.presence.Presence;
+import discord4j.core.object.presence.Status;
+import discord4j.core.object.util.Snowflake;
+import discord4j.core.spec.EmbedCreateSpec;
 import enums.City;
 import enums.Language;
 import enums.Order;
+import java.awt.Color;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import sx.blah.discord.api.internal.json.objects.EmbedObject;
-import sx.blah.discord.handle.obj.IGuild;
-import sx.blah.discord.handle.obj.IUser;
-import sx.blah.discord.util.EmbedBuilder;
 import util.*;
 
 import java.sql.Connection;
@@ -16,6 +18,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
+import java.util.function.Consumer;
 
 /**
  * Created by steve on 19/02/2018.
@@ -73,7 +76,6 @@ public class OrderUser extends ObjectUser {
 
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
-            Reporter.report(e, ClientConfig.DISCORD().getUserByID(idUser));
             LOG.error("setLevel", e);
         }
     }
@@ -99,7 +101,6 @@ public class OrderUser extends ObjectUser {
 
                 preparedStatement.executeUpdate();
             } catch (SQLException e) {
-                Reporter.report(e, ClientConfig.DISCORD().getUserByID(idUser));
                 LOG.error("addToDatabase", e);
             }
         }
@@ -114,11 +115,16 @@ public class OrderUser extends ObjectUser {
     }
 
     @Override
-    protected String displayLine(IGuild guild, Language lg) {
-        IUser user = ClientConfig.DISCORD().getUserByID(idUser);
-        return EmojiManager.getEmojiForPresence(user.getPresence().getStatus()) + " "
-                + city.getLogo() + " " + order.getLabel(lg) + ", " + level + " : **"
-                + user.getDisplayName(guild) + "**\n";
+    protected String displayLine(discord4j.core.object.entity.Guild guild, Language lg) {
+        Optional<Member> member = guild.getMemberById(Snowflake.of(idUser)).blockOptional();
+
+        if (member.isPresent()) {
+            Status status = member.get().getPresence().blockOptional().map(Presence::getStatus).orElse(Status.OFFLINE);
+            return EmojiManager.getEmojiForPresence(status) + " "
+                    + city.getLogo() + " " + order.getLabel(lg) + ", " + level + " : **"
+                    + member.get().getDisplayName() + "**\n";
+        }
+        return "";
     }
 
     private static synchronized MultiKeySearch<OrderUser> getOrders(){
@@ -177,27 +183,28 @@ public class OrderUser extends ObjectUser {
      * @param server Serveur dofus
      * @return Liste des résultats de la recherche
      */
-    public static List<EmbedObject> getOrdersFromUser(IUser user, ServerDofus server, IGuild guild, Language lg){
-        List<OrderUser> result = getOrders().get(user.getLongID(), server, null, null);
+    public static List<Consumer<EmbedCreateSpec>> getOrdersFromUser(Member user, ServerDofus server, Language lg){
+        List<OrderUser> result = getOrders().get(user.getId().asLong(), server, null, null);
         result.sort(OrderUser::compare);
-        List<EmbedObject> embed = new ArrayList<>();
+        List<Consumer<EmbedCreateSpec>> embed = new ArrayList<>();
 
-        EmbedBuilder builder = new EmbedBuilder();
-        builder.withTitle(Translator.getLabel(lg, "align.user").replace("{user}", user.getDisplayName(guild)));
-        builder.withThumbnail(user.getAvatarURL());
-        builder.withColor(new Random().nextInt(16777216));
+        embed.add(spec -> {
+            spec.setTitle(Translator.getLabel(lg, "align.user").replace("{user}", user.getDisplayName()))
+                    .setThumbnail(user.getAvatarUrl())
+                    .setColor(Color.GRAY);
 
-        if (! result.isEmpty()) {
-            StringBuilder st = new StringBuilder();
-            for (OrderUser orderUser : result)
-                st.append(orderUser.city.getLogo()).append(orderUser.order.getLabel(lg)).append(" : ")
-                        .append(orderUser.level).append("\n");
-            builder.appendField(Translator.getLabel(lg, "align.aligns"), st.toString(), true);
-        }
-        else
-            builder.withDescription(Translator.getLabel(lg, "align.empty"));
-        builder.withFooterText(server.getName());
-        embed.add(builder.build());
+            if (! result.isEmpty()) {
+                StringBuilder st = new StringBuilder();
+                for (OrderUser orderUser : result)
+                    st.append(orderUser.city.getLogo()).append(orderUser.order.getLabel(lg)).append(" : ")
+                            .append(orderUser.level).append("\n");
+                spec.addField(Translator.getLabel(lg, "align.aligns"), st.toString(), true);
+            }
+            else
+                spec.setDescription(Translator.getLabel(lg, "align.empty"));
+            spec.setFooter(server.getName(), null);
+        });
+
         return embed;
     }
 
@@ -207,12 +214,12 @@ public class OrderUser extends ObjectUser {
      * @param level Niveau pallier
      * @return Liste des résultats de la recherche
      */
-    public static List<EmbedObject> getOrdersFromLevel(List<IUser> users, ServerDofus server, int level,
-                                                       IGuild guild, Language lg){
+    public static List<Consumer<EmbedCreateSpec>> getOrdersFromLevel(List<Member> users, ServerDofus server, int level,
+                                                                     discord4j.core.object.entity.Guild guild, Language lg){
         List<OrderUser> result = new ArrayList<>();
-        for(IUser user : users)
+        for(Member user : users)
             if (! user.isBot()){
-                List<OrderUser> potentials = getOrders().get(user.getLongID(), server, null, null);
+                List<OrderUser> potentials = getOrders().get(user.getId().asLong(), server, null, null);
                 for(OrderUser order : potentials)
                     if (order.getLevel() >= level)
                         result.add(order);
@@ -228,12 +235,12 @@ public class OrderUser extends ObjectUser {
      * @param order Ordre (coeur, oeil, esprit)
      * @return Liste des résultats de la recherche
      */
-    public static List<EmbedObject> getOrdersFromCityOrOrder(List<IUser> users, ServerDofus server, City city,
-                                                             Order order, IGuild guild, Language lg){
+    public static List<Consumer<EmbedCreateSpec>> getOrdersFromCityOrOrder(List<Member> users, ServerDofus server, City city,
+                                                             Order order, discord4j.core.object.entity.Guild guild, Language lg){
         List<OrderUser> result = new ArrayList<>();
-        for(IUser user : users)
+        for(Member user : users)
             if (! user.isBot()){
-                List<OrderUser> potentials = getOrders().get(user.getLongID(), server, city, order);
+                List<OrderUser> potentials = getOrders().get(user.getId().asLong(), server, city, order);
                 result.addAll(potentials);
             }
         result.sort(OrderUser::compare);
