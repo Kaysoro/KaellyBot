@@ -2,6 +2,8 @@ package commands.model;
 
 import data.Constants;
 import data.Guild;
+import discord4j.core.object.entity.GuildMessageChannel;
+import discord4j.core.object.entity.Message;
 import enums.Language;
 import exceptions.BadUseCommandDiscordException;
 import exceptions.BasicDiscordException;
@@ -9,10 +11,7 @@ import exceptions.DiscordException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import stats.CommandStatistics;
-import sx.blah.discord.handle.obj.IMessage;
-import sx.blah.discord.handle.obj.Permissions;
 import util.ClientConfig;
-import util.Message;
 import util.Reporter;
 import util.Translator;
 
@@ -111,10 +110,10 @@ public abstract class AbstractCommand implements Command {
         return Pattern.compile("^" + Pattern.quote(prefixe) + name + pattern + "$").matcher(message.getContent());
     }
 
-    public static String getPrefix(IMessage message){
+    public static String getPrefix(Message message){
         String prefix = "";
-        if (! message.getChannel().isPrivate())
-            prefix = Guild.getGuild(message.getGuild()).getPrefix();
+        if (message.getChannel() instanceof GuildMessageChannel)
+            prefix = Guild.getGuild(message.getGuild().block()).getPrefix();
         return prefix;
     }
 

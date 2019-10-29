@@ -2,7 +2,6 @@ package listeners;
 
 import data.*;
 import discord4j.core.DiscordClient;
-import discord4j.core.event.domain.VoiceStateUpdateEvent;
 import discord4j.core.event.domain.channel.TextChannelDeleteEvent;
 import discord4j.core.event.domain.guild.GuildCreateEvent;
 import discord4j.core.event.domain.guild.GuildDeleteEvent;
@@ -11,12 +10,12 @@ import discord4j.core.event.domain.message.MessageCreateEvent;
 import discord4j.core.object.presence.Activity;
 import discord4j.core.object.presence.Presence;
 import finders.AlmanaxCalendar;
-import finders.PortalFinder;
 import finders.RSSFinder;
 import finders.TwitterFinder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 /**
  * Created by steve on 14/07/2016.
@@ -29,7 +28,6 @@ public class ReadyListener {
     private GuildLeaveListener guildLeaveListener;
     private GuildUpdateListener guildUpdateListener;
     private ChannelDeleteListener channelDeleteListener;
-    private VoiceStateUpdateListener voiceStateUpdateListener;
 
     public ReadyListener(){
          messageListener = new MessageListener();
@@ -37,7 +35,6 @@ public class ReadyListener {
          guildLeaveListener = new GuildLeaveListener();
          guildUpdateListener = new GuildUpdateListener();
          channelDeleteListener = new ChannelDeleteListener();
-         voiceStateUpdateListener = new VoiceStateUpdateListener();
     }
 
     public Flux<Void> onReady(DiscordClient client) {
@@ -47,13 +44,11 @@ public class ReadyListener {
         Flux<Void> result = client.getEventDispatcher().on(GuildCreateEvent.class)
                 .flatMap(guildCreateEvent -> guildCreateListener.onReady(client, guildCreateEvent))
                 .thenMany(client.getEventDispatcher().on(GuildDeleteEvent.class))
-                .flatMap(guildDeleteEvent -> guildLeaveListener.onReady(client, guildDeleteEvent))
+                .flatMap(guildDeleteEvent -> guildLeaveListener.onReady(guildDeleteEvent))
                 .thenMany(client.getEventDispatcher().on(GuildUpdateEvent.class))
                 .flatMap(guildUpdateEvent -> guildUpdateListener.onReady(guildUpdateEvent))
                 .thenMany(client.getEventDispatcher().on(TextChannelDeleteEvent.class))
-                .flatMap(textChannelDeleteEvent -> channelDeleteListener.onReady(textChannelDeleteEvent))
-                .thenMany(client.getEventDispatcher().on(VoiceStateUpdateEvent.class))
-                .flatMap(voiceStateUpdateEvent -> voiceStateUpdateListener.onUserVoiceChannelLeave(client, voiceStateUpdateEvent));
+                .flatMap(textChannelDeleteEvent -> channelDeleteListener.onReady(textChannelDeleteEvent));
 
         LOG.info("Check des guildes...");
 
@@ -74,9 +69,6 @@ public class ReadyListener {
         LOG.info("Ecoute des flux RSS du site Dofus...");
         RSSFinder.start();
 
-        LOG.info("Récupération des positions de portails...");
-        PortalFinder.start();
-
         LOG.info("Lancement du calendrier Almanax...");
         AlmanaxCalendar.start();
 
@@ -85,7 +77,8 @@ public class ReadyListener {
 
         LOG.info("Ecoute des messages...");
         result = result.thenMany(client.getEventDispatcher().on(MessageCreateEvent.class)
-                .flatMap(msgEvent -> messageListener.onReady(client, msgEvent)));
+                .flatMap(msgEvent -> messageListener.onReady(client, msgEvent)))
+        .then().concatWith(Mono.empty());
 
         LOG.info("Mise en place des ressources en " + (System.currentTimeMillis() - time) + "ms");
         return result;

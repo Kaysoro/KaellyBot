@@ -52,7 +52,6 @@ public class CommandManager {
         addCommand(new RSSCommand());
         addCommand(new ServerCommand());
         addCommand(new SetCommand());
-        addCommand(new SoundCommand());
         addCommand(new TutorialCommand());
         addCommand(new TwitterCommand());
         addCommand(new WhoisCommand());

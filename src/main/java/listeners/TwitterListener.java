@@ -1,21 +1,21 @@
 package listeners;
 
+import discord4j.core.object.entity.MessageChannel;
+import discord4j.core.object.util.Snowflake;
+import discord4j.core.spec.EmbedCreateSpec;
 import enums.Language;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import sx.blah.discord.api.internal.json.objects.EmbedObject;
-import sx.blah.discord.handle.obj.IChannel;
+import reactor.core.publisher.Flux;
 import util.ClientConfig;
 import data.Constants;
 import finders.TwitterFinder;
-import util.Message;
-import sx.blah.discord.util.EmbedBuilder;
 import twitter4j.MediaEntity;
 import twitter4j.Status;
 import twitter4j.StatusAdapter;
-import util.Reporter;
 import util.Translator;
 
+import java.awt.*;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -38,35 +38,32 @@ public class TwitterListener extends StatusAdapter {
                 || twitterIDs.containsKey(status.getInReplyToUserId())))
             for (TwitterFinder twitterFinder : TwitterFinder.getTwitterChannels().values())
                 try {
-                    IChannel chan = ClientConfig.DISCORD().getChannelByID(twitterFinder.getChannelId());
-
-                    if (chan != null && Translator.getLanguageFrom(chan).equals(language))
-                            Message.sendEmbed(chan, createEmbedFor(status));
+                    Flux.fromIterable(ClientConfig.DISCORD())
+                            .flatMap(client -> client.getChannelById(Snowflake.of(twitterFinder.getChannelId())))
+                            .filter(chan -> chan instanceof MessageChannel)
+                            .map(chan -> (MessageChannel) chan)
+                            .filter(chan -> Translator.getLanguageFrom(chan).equals(language))
+                            .flatMap(chan -> chan.createEmbed(spec -> createEmbedFor(spec, status)))
+                    .subscribe();
 
                 } catch(Exception e){
-                    Reporter.report(e, ClientConfig.DISCORD().getChannelByID(twitterFinder.getChannelId()));
                     LOG.error("onStatus", e);
                 }
     }
 
-    private EmbedObject createEmbedFor(Status status){
-        EmbedBuilder builder = new EmbedBuilder();
+    private void createEmbedFor(EmbedCreateSpec spec, Status status){
+        spec.setAuthor("@" + status.getUser().getScreenName(), "https://twitter.com/"
+                + status.getUser().getScreenName(), status.getUser().getMiniProfileImageURL())
 
-        builder.withAuthorName("@" + status.getUser().getScreenName());
-        builder.withAuthorIcon(status.getUser().getMiniProfileImageURL());
-        builder.withAuthorUrl("https://twitter.com/" + status.getUser().getScreenName());
-
-        builder.withTitle("Tweet");
-        builder.withUrl("https://twitter.com/" + status.getUser().getScreenName() + "/status/" + status.getId());
-        builder.withColor(1942002);
-        builder.withDescription(status.getText());
-        builder.withThumbnail(Constants.twitterIcon);
+            .setTitle("Tweet")
+            .setUrl("https://twitter.com/" + status.getUser().getScreenName() + "/status/" + status.getId())
+            .setColor(new Color(29, 161, 242))
+            .setDescription(status.getText())
+            .setThumbnail(Constants.twitterIcon);
 
         if (status.getMediaEntities().length > 0) {
             MediaEntity media = status.getMediaEntities()[0];
-            builder.withImage(media.getMediaURL());
+            spec.setImage(media.getMediaURL());
         }
-
-        return builder.build();
     }
 }

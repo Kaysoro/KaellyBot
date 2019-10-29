@@ -4,12 +4,16 @@ import commands.classic.HelpCommand;
 import commands.config.*;
 import discord4j.core.DiscordClient;
 import discord4j.core.event.domain.guild.GuildCreateEvent;
+import discord4j.core.object.entity.Member;
+import discord4j.core.object.entity.TextChannel;
+import discord4j.core.object.util.Permission;
+import discord4j.core.object.util.Snowflake;
 import enums.Language;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import util.ClientConfig;
 import data.Constants;
 import data.Guild;
-import util.Message;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import util.Reporter;
@@ -26,44 +30,46 @@ public class GuildCreateListener {
         try {
             if (!Guild.getGuilds().containsKey(event.getGuild().getId().asString())) {
 
+                return event.getGuild().getChannels()
+                        .filter(chan -> chan instanceof TextChannel)
+                        .map(chan -> (TextChannel) chan).take(1).flatMap(chan -> {
+                    Guild guild = new Guild(event.getGuild().getId().asString(), event.getGuild().getName(),
+                            Translator.detectLanguage(chan));
+                    guild.addToDatabase();
 
-                Guild guild = new Guild(event.getGuild().getId().asString(), event.getGuild().getName(),
-                        Translator.detectLanguage(event.getGuild().getChannels().blockFirst()));
-                guild.addToDatabase();
+                    Language lg = guild.getLanguage();
+                    LOG.info("La guilde " + guild.getId() + " - " + guild.getName() + " a ajouté " + Constants.name);
 
-                Language lg = guild.getLanguage();
-                LOG.info("La guilde " + guild.getId() + " - " + guild.getName() + " a ajouté " + Constants.name);
+                    return event.getGuild().getOwner().flatMap(owner -> {
+                        String customMessage = Translator.getLabel(lg, "welcome.message")
+                                .replaceAll("\\{name}", Constants.name)
+                                .replaceAll("\\{game}", Constants.game.getName())
+                                .replaceAll("\\{prefix}", Constants.prefixCommand)
+                                .replaceAll("\\{help}", HelpCommand.NAME)
+                                .replaceAll("\\{server}", new ServerCommand().getName())
+                                .replaceAll("\\{lang}", new LanguageCommand().getName())
+                                .replaceAll("\\{twitter}", new TwitterCommand().getName())
+                                .replaceAll("\\{almanax-auto}", new AlmanaxAutoCommand().getName())
+                                .replaceAll("\\{rss}", new RSSCommand().getName())
+                                .replaceAll("\\{owner}", owner.getMention())
+                                .replaceAll("\\{guild}", event.getGuild().getName());
 
-                String customMessage = Translator.getLabel(lg, "welcome.message");
-
-                customMessage = customMessage
-                        .replaceAll("\\{name\\}", Constants.name)
-                        .replaceAll("\\{game\\}", Constants.game.getName())
-                        .replaceAll("\\{prefix\\}", Constants.prefixCommand)
-                        .replaceAll("\\{help\\}", HelpCommand.NAME)
-                        .replaceAll("\\{server\\}", new ServerCommand().getName())
-                        .replaceAll("\\{lang\\}", new LanguageCommand().getName())
-                        .replaceAll("\\{twitter\\}", new TwitterCommand().getName())
-                        .replaceAll("\\{almanax-auto\\}", new AlmanaxAutoCommand().getName())
-                        .replaceAll("\\{rss\\}", new RSSCommand().getName())
-                        .replaceAll("\\{owner\\}", event.getGuild().getOwner().mention())
-                        .replaceAll("\\{guild\\}", event.getGuild().getName());
-
-                if (event.getGuild().getDefaultChannel() != null && event.getGuild().getDefaultChannel()
-                        .getModifiedPermissions(ClientConfig.DISCORD().getOurUser())
-                        .contains(Permissions.SEND_MESSAGES))
-                    Message.sendText(event.getGuild().getDefaultChannel(), customMessage);
-                else try {
-                    Message.sendText(event.getGuild().getOwner().getOrCreatePMChannel(), customMessage);
-                } catch (DiscordException e) {
-                    LOG.warn("onReady", "Impossible de contacter l'administrateur de la guilde ["
-                            + guild.getName() + "].");
-                }
-
-                Message.sendText(ClientConfig.DISCORD().getChannelByID(Constants.chanReportID),
-                        "[NEW] **" + guild.getName() + "** (" + guild.getLanguage().getAbrev() + "), +"
-                                + event.getGuild().getUsers().size() + " utilisateurs");
-
+                        return chan.getEffectivePermissions(client.getSelfId().orElse(null))
+                                .flatMap(perm -> perm.contains(Permission.SEND_MESSAGES) ?
+                                        chan.createMessage(customMessage) : event.getGuild().getOwner()
+                                        .flatMap(Member::getPrivateChannel)
+                                        .flatMap(ownerChan -> ownerChan.createMessage(customMessage)))
+                                .thenMany(Flux.fromIterable(ClientConfig.DISCORD())
+                                        .flatMap(cli -> cli.getChannelById(Snowflake.of(Constants.chanReportID)))
+                                        .filter(channel -> channel instanceof TextChannel)
+                                        .map(channel -> (TextChannel) channel)
+                                        .flatMap(channel -> channel.getGuild().flatMap(guildWon -> channel
+                                                .createMessage("[NEW] **" + guildWon.getName() + "** ("
+                                                        + guild.getLanguage().getAbrev() + "), +"
+                                                        + guildWon.getMemberCount().orElse(0) +  " utilisateurs"))))
+                                .collectList();
+                    });
+                }).collectList().then();
             }
         } catch(Exception e){
             Reporter.report(e, event.getGuild());
