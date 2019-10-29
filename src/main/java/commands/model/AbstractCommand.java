@@ -2,8 +2,10 @@ package commands.model;
 
 import data.Constants;
 import data.Guild;
-import discord4j.core.object.entity.GuildMessageChannel;
-import discord4j.core.object.entity.Message;
+import discord4j.core.object.entity.*;
+import discord4j.core.object.util.Permission;
+import discord4j.core.object.util.PermissionSet;
+import discord4j.core.object.util.Snowflake;
 import enums.Language;
 import exceptions.BadUseCommandDiscordException;
 import exceptions.BasicDiscordException;
@@ -11,10 +13,8 @@ import exceptions.DiscordException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import stats.CommandStatistics;
-import util.ClientConfig;
-import util.Reporter;
 import util.Translator;
-
+import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -46,38 +46,44 @@ public abstract class AbstractCommand implements Command {
     }
 
     @Override
-    public final void request(IMessage message) {
+    public final void request(Message message) {
         try {
-            Language lg = Translator.getLanguageFrom(message.getChannel());
+            Language lg = Translator.getLanguageFrom(message.getChannel().block());
             Matcher m = getMatcher(message);
             boolean isFound = m.find();
 
             // Caché si la fonction est désactivée/réservée aux admin et que l'auteur n'est pas super-admin
-            if ((!isPublic() || isAdmin()) && message.getAuthor().getLongID() != Constants.authorId)
+            if ((!isPublic() || isAdmin()) && message.getAuthor()
+                    .map(user -> user.getId().asLong() != Constants.authorId).orElse(false))
                 return;
 
             // S'il s'agit d'une demande d'aide...
-            if (message.getContent().matches(Pattern.quote(getPrefix(message)) + getName() + "\\s+help")){
-                Message.sendText(message.getChannel(), helpDetailed(lg, getPrefix(message)));
+            if (message.getContent().map(content -> content
+                    .matches(Pattern.quote(getPrefix(message)) + getName() + "\\s+help")).orElse(false)){
+                message.getChannel().flatMap(chan -> chan
+                        .createMessage(helpDetailed(lg, getPrefix(message)))).subscribe();
                 return;
             }
 
             // La commande est trouvée
             if (isFound) {
                 // Mais n'est pas utilisable en MP
-                if (!isUsableInMP() && message.getChannel().isPrivate()) {
+                MessageChannel channel = message.getChannel().block();
+                if (!isUsableInMP() && channel instanceof PrivateChannel) {
                     BasicDiscordException.NOT_USABLE_IN_MP.throwException(message, this, lg);
                     return;
                 }
                 // Mais est désactivée par la guilde
-                else if (!message.getChannel().isPrivate() && message.getAuthor().getLongID() != Constants.authorId
-                        && isForbidden(Guild.getGuild(message.getGuild()))) {
+                else if (!(channel instanceof PrivateChannel) && message.getAuthor()
+                        .map(user -> user.getId().asLong() != Constants.authorId).orElse(false)
+                        && isForbidden(Guild.getGuild(message.getGuild().block()))) {
                     BasicDiscordException.COMMAND_FORBIDDEN.throwException(message, this, lg);
                     return;
                 }
             }
             // Mais est mal utilisée
-            else if (message.getContent().startsWith(getPrefix(message) + getName())) {
+            else if (message.getContent().map(content -> content
+                    .startsWith(getPrefix(message) + getName())).orElse(false)) {
                 badUse.throwException(message, this, lg);
                 return;
             }
@@ -87,7 +93,6 @@ public abstract class AbstractCommand implements Command {
                 request(message, m, lg);
             }
         } catch(Exception e){
-            Reporter.report(e, message.getGuild(), message.getChannel(), message.getAuthor(), message);
             LOG.error("request", e);
         }
     }
@@ -97,7 +102,7 @@ public abstract class AbstractCommand implements Command {
      * @param m Matcher that permit to fetch data
      * @param lg Language of the channel (FR, EN, ES..)
      */
-    protected abstract void request(IMessage message, Matcher m, Language lg);
+    protected abstract void request(Message message, Matcher m, Language lg);
 
     @Override
     public boolean isForbidden(Guild g){
@@ -105,21 +110,22 @@ public abstract class AbstractCommand implements Command {
     }
 
     @Override
-    public Matcher getMatcher(IMessage message){
+    public Matcher getMatcher(Message message){
         String prefixe = getPrefix(message);
-        return Pattern.compile("^" + Pattern.quote(prefixe) + name + pattern + "$").matcher(message.getContent());
+        return Pattern.compile("^" + Pattern.quote(prefixe) + name + pattern + "$")
+                .matcher(message.getContent().orElse(""));
     }
 
     public static String getPrefix(Message message){
         String prefix = "";
-        if (message.getChannel() instanceof GuildMessageChannel)
+        if (message.getChannel().block() instanceof GuildMessageChannel)
             prefix = Guild.getGuild(message.getGuild().block()).getPrefix();
         return prefix;
     }
 
-    protected String getPrefixMdEscaped(IMessage message){
-        if (! message.getChannel().isPrivate())
-            return Guild.getGuild(message.getGuild()).getPrefix()
+    protected String getPrefixMdEscaped(Message message){
+        if (!(message.getChannel().block() instanceof PrivateChannel))
+            return Guild.getGuild(message.getGuild().block()).getPrefix()
                 .replaceAll("\\*", "\\\\*")      // Italic & Bold
                 .replaceAll("_", "\\_")          // Underline
                 .replaceAll("~", "\\~")          // Strike
@@ -131,12 +137,15 @@ public abstract class AbstractCommand implements Command {
      * @param message message d'origine
      * @return true si les permissions sont suffisantes, false le cas échéant
      */
-    protected boolean isChannelHasExternalEmojisPermission(IMessage message){
-        return message.getChannel().isPrivate() ||
-                message.getChannel().getModifiedPermissions(ClientConfig.DISCORD().getOurUser())
-                        .contains(Permissions.USE_EXTERNAL_EMOJIS)
-                && ClientConfig.DISCORD().getOurUser().getPermissionsForGuild(message.getGuild())
-                        .contains(Permissions.USE_EXTERNAL_EMOJIS);
+    protected boolean isChannelHasExternalEmojisPermission(Message message){
+        Optional<MessageChannel> channel = message.getChannel().blockOptional();
+
+        if (channel.isPresent())
+            return channel.get() instanceof PrivateChannel ||
+                    ((TextChannel) channel.get()).getEffectivePermissions(message.getClient().getSelfId()
+                            .orElse(Snowflake.of(0L))).blockOptional().orElse(PermissionSet.none())
+                            .contains(Permission.USE_EXTERNAL_EMOJIS);
+        return false;
     }
 
     /**
@@ -144,10 +153,15 @@ public abstract class AbstractCommand implements Command {
      * @param message Message reçu
      * @return true si l'utilisateur a les droits nécessaires, false le cas échéant
      */
-    protected boolean isUserHasEnoughRights(IMessage message){
-        return ! message.getChannel().isPrivate() && (message.getAuthor().getLongID() == Constants.authorId
-                || message.getAuthor().getPermissionsForGuild(message.getGuild()).contains(Permissions.MANAGE_SERVER)
-                || message.getChannel().getModifiedPermissions(message.getAuthor()).contains(Permissions.MANAGE_SERVER));
+    protected boolean isUserHasEnoughRights(Message message){
+        Optional<MessageChannel> channel = message.getChannel().blockOptional();
+        if (channel.isPresent())
+            return ! (channel.get() instanceof PrivateChannel)
+                    && (message.getAuthor().map(user -> user.getId().asLong() == Constants.authorId).orElse(false)
+                    || ((TextChannel) channel.get()).getEffectivePermissions(message.getClient().getSelfId()
+                    .orElse(Snowflake.of(0L))).blockOptional().orElse(PermissionSet.none())
+                    .contains(Permission.MANAGE_GUILD));
+        return false;
     }
 
     @Override
