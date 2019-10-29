@@ -60,13 +60,7 @@ public class CommandManager {
         addCommand(new SendNudeCommand());
 
         // Admin commands
-        addCommand(new AdminCommand());
-        addCommand(new AvailableCommand());
-        addCommand(new AnnounceCommand());
-        addCommand(new PurgeCommand());
         addCommand(new StatCommand());
-        addCommand(new TalkCommand());
-        addCommand(new VacuumCommand());
     }
 
     public static CommandManager getInstance(){
