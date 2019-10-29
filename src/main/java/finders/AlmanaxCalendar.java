@@ -1,12 +1,14 @@
 package finders;
 
 import data.Almanax;
+import discord4j.core.object.entity.TextChannel;
+import discord4j.core.object.util.Snowflake;
 import enums.Language;
+import reactor.core.publisher.Flux;
 import util.*;
 import exceptions.ExceptionManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import sx.blah.discord.handle.obj.IChannel;
 
 import java.io.IOException;
 import java.sql.Connection;
@@ -16,9 +18,7 @@ import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -63,10 +63,16 @@ public class AlmanaxCalendar {
 
                     for(AlmanaxCalendar calendar : getAlmanaxCalendars().values())
                         try {
-                            IChannel chan = ClientConfig.DISCORD().getChannelByID(Long.parseLong(calendar.getChan()));
-                            Language lg = Translator.getLanguageFrom(chan);
-                            if (chan != null && ! chan.isDeleted())
-                                Message.sendEmbed(chan, almanax.get(lg).getMoreEmbedObject(lg));
+                            List<TextChannel> chans = Flux.fromIterable(ClientConfig.DISCORD())
+                                    .flatMap(client -> client.getChannelById(Snowflake.of(calendar.chan)))
+                                    .filter(channel -> channel instanceof TextChannel)
+                                    .map(channel -> (TextChannel) channel)
+                                    .collectList().blockOptional().orElse(Collections.emptyList());
+
+                            for(TextChannel chan : chans) {
+                                Language lg = Translator.getLanguageFrom(chan);
+                                chan.createEmbed(spec -> almanax.get(lg).decorateMoreEmbedObject(spec, lg)).subscribe();
+                            }
                         } catch(Exception e){
                             LOG.error("AlmanaxCalendar", e);
                         }
@@ -89,8 +95,6 @@ public class AlmanaxCalendar {
 
                 preparedStatement.executeUpdate();
             } catch (SQLException e) {
-                Reporter.report(e, ClientConfig.DISCORD().getGuildByID(Long.parseLong(getGuildId())),
-                        ClientConfig.DISCORD().getChannelByID(Long.parseLong(getChan())));
                 LOG.error("addToDatabase", e);
             }
         }
@@ -108,8 +112,6 @@ public class AlmanaxCalendar {
             request.executeUpdate();
 
         } catch (SQLException e) {
-            Reporter.report(e, ClientConfig.DISCORD().getGuildByID(Long.parseLong(getGuildId())),
-                    ClientConfig.DISCORD().getChannelByID(Long.parseLong(getChan())));
             LOG.error("removeToDatabase", e);
         }
     }
@@ -129,14 +131,13 @@ public class AlmanaxCalendar {
                     String idChan = resultSet.getString("id_chan");
                     String idGuild = resultSet.getString("id_guild");
 
-                    IChannel chan = ClientConfig.DISCORD().getChannelByID(Long.parseLong(idChan));
-
-                    if (chan != null && ! chan.isDeleted())
-                        almanaxCalendar.put(chan.getStringID(), new AlmanaxCalendar(chan.getGuild().getStringID(), chan.getStringID()));
-                    else {
-                        new AlmanaxCalendar(idGuild, idChan).removeToDatabase();
-                        LOG.info("Chan deleted : " + idChan);
-                    }
+                    Flux.fromIterable(ClientConfig.DISCORD())
+                            .flatMap(client -> client.getChannelById(Snowflake.of(idChan)))
+                            .filter(channel -> channel instanceof TextChannel)
+                            .map(channel -> (TextChannel) channel)
+                            .collectList().blockOptional().orElse(Collections.emptyList())
+                            .forEach(chan -> almanaxCalendar.put(chan.getId().asString(),
+                                    new AlmanaxCalendar(idGuild, chan.getId().asString())));
                 }
             } catch (SQLException e) {
                 Reporter.report(e);

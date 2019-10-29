@@ -1,16 +1,19 @@
 package finders;
 
 import data.RSS;
+import discord4j.core.object.entity.TextChannel;
+import discord4j.core.object.util.Snowflake;
 import enums.Language;
+import reactor.core.publisher.Flux;
 import util.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import sx.blah.discord.handle.obj.IChannel;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -56,8 +59,6 @@ public class RSSFinder {
 
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
-            Reporter.report(e, ClientConfig.DISCORD().getGuildByID(Long.parseLong(getGuildId())),
-                    ClientConfig.DISCORD().getChannelByID(Long.parseLong(getChan())));
             LOG.error("setLastRSS", e);
         }
     }
@@ -77,8 +78,6 @@ public class RSSFinder {
 
                 preparedStatement.executeUpdate();
             } catch (SQLException e) {
-                Reporter.report(e, ClientConfig.DISCORD().getGuildByID(Long.parseLong(getGuildId())),
-                        ClientConfig.DISCORD().getChannelByID(Long.parseLong(getChan())));
                 LOG.error("addToDatabase", e);
             }
         }
@@ -96,8 +95,6 @@ public class RSSFinder {
             request.executeUpdate();
 
         } catch (SQLException e) {
-            Reporter.report(e, ClientConfig.DISCORD().getGuildByID(Long.parseLong(getGuildId())),
-                    ClientConfig.DISCORD().getChannelByID(Long.parseLong(getChan())));
             LOG.error("removeToDatabase", e);
         }
     }
@@ -118,14 +115,13 @@ public class RSSFinder {
                     String idGuild = resultSet.getString("id_guild");
                     long lastUpdate = resultSet.getLong("last_update");
 
-                    IChannel chan = ClientConfig.DISCORD().getChannelByID(Long.parseLong(idChan));
-
-                    if (chan != null && ! chan.isDeleted())
-                        rssFinders.put(chan.getStringID(), new RSSFinder(chan.getGuild().getStringID(), chan.getStringID(), lastUpdate));
-                    else {
-                        new RSSFinder(idGuild, idChan).removeToDatabase();
-                        LOG.info("Chan deleted : " + idChan);
-                    }
+                    Flux.fromIterable(ClientConfig.DISCORD())
+                            .flatMap(client -> client.getChannelById(Snowflake.of(idChan)))
+                            .filter(channel -> channel instanceof TextChannel)
+                            .map(channel -> (TextChannel) channel)
+                            .collectList().blockOptional().orElse(Collections.emptyList())
+                            .forEach(chan -> rssFinders.put(chan.getId().asString(),
+                                    new RSSFinder(idGuild, chan.getId().asString(), lastUpdate)));
                 }
             } catch (SQLException e) {
                 Reporter.report(e);
@@ -147,15 +143,20 @@ public class RSSFinder {
 
                 for (RSSFinder finder : getRSSFinders().values())
                     try {
-                        IChannel chan = ClientConfig.DISCORD().getChannelByID(Long.parseLong(finder.getChan()));
-                        if (chan != null) {
+                        List<TextChannel> chans = Flux.fromIterable(ClientConfig.DISCORD())
+                                .flatMap(client -> client.getChannelById(Snowflake.of(finder.chan)))
+                                .filter(channel -> channel instanceof TextChannel)
+                                .map(channel -> (TextChannel) channel)
+                                .collectList().blockOptional().orElse(Collections.emptyList());
+
+                        for(TextChannel chan : chans) {
                             Language lg = Translator.getLanguageFrom(chan);
                             List<RSS> rssFeeds = allFeeds.get(Translator.getLanguageFrom(chan));
                             long lastRSS = -1;
 
                             for (RSS rss : rssFeeds)
                                 if (rss.getDate() > finder.getLastRSS()) {
-                                    Message.sendEmbed(chan, rss.getEmbedObject(lg));
+                                    chan.createEmbed(spec -> rss.decorateEmbedObject(spec, lg)).subscribe();
                                     lastRSS = rss.getDate();
                                 }
 

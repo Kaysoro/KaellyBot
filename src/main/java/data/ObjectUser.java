@@ -1,5 +1,6 @@
 package data;
 
+import discord4j.core.object.Embed;
 import discord4j.core.object.util.Image;
 import discord4j.core.spec.EmbedCreateSpec;
 import enums.Language;
@@ -46,13 +47,13 @@ public abstract class ObjectUser {
                 String line = objUser.displayLine(guild, lg);
 
                 // Est-ce qu'on dépasse l'embed ? Si oui, on change de collection
-                if (fieldsSize + line.length() > EmbedBuilder.MAX_CHAR_LIMIT){
+                if (fieldsSize + line.length() > Embed.MAX_CHARACTER_LENGTH){
                     fieldsPerEmbed.add(fields);
                     fields = new ArrayList<>();
                     fieldsSize = 0;
                 }
                 // Est-ce qu'on dépasse le field ? Si oui, on change de field
-                else if (field.length() + line.length() > EmbedBuilder.FIELD_CONTENT_LIMIT){
+                else if (field.length() + line.length() > Embed.Field.MAX_VALUE_LENGTH){
                     fields.add(field.toString());
                     fieldsSize += field.length();
                     field.setLength(0);

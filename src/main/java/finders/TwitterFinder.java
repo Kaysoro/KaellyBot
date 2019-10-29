@@ -1,10 +1,11 @@
 package finders;
 
+import discord4j.core.object.util.Snowflake;
 import enums.Language;
 import listeners.TwitterListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import sx.blah.discord.handle.obj.IChannel;
+import reactor.core.publisher.Flux;
 import twitter4j.FilterQuery;
 import util.ClientConfig;
 import util.Connexion;
@@ -15,6 +16,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Collections;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -46,13 +48,12 @@ public class TwitterFinder{
                 while (resultSet.next()){
                     long idChan = Long.parseLong(resultSet.getString("id_chan"));
                     long idGuild = Long.parseLong(resultSet.getString("id_guild"));
-                    IChannel chan = ClientConfig.DISCORD().getChannelByID(idChan);
-                    if (chan != null && ! chan.isDeleted())
-                        twitterChannels.put(chan.getLongID(), new TwitterFinder(idGuild, idChan));
-                    else {
-                        new TwitterFinder(idGuild, idChan).removeToDatabase();
-                        LOG.info("Chan deleted : " + idChan);
-                    }
+
+                    Flux.fromIterable(ClientConfig.DISCORD())
+                            .flatMap(client -> client.getChannelById(Snowflake.of(idChan)))
+                            .collectList().blockOptional().orElse(Collections.emptyList())
+                            .forEach(chan -> twitterChannels.put(chan.getId().asLong(),
+                                    new TwitterFinder(idGuild, idChan)));
                 }
             } catch (SQLException e) {
                 Reporter.report(e);
@@ -76,8 +77,6 @@ public class TwitterFinder{
 
                 preparedStatement.executeUpdate();
             } catch (SQLException e) {
-                Reporter.report(e, ClientConfig.DISCORD().getGuildByID(getGuildId()),
-                        ClientConfig.DISCORD().getChannelByID(getChannelId()));
                 LOG.error("addToDatabase", e);
             }
         }
@@ -95,8 +94,6 @@ public class TwitterFinder{
             request.executeUpdate();
 
         } catch (SQLException e) {
-            Reporter.report(e, ClientConfig.DISCORD().getGuildByID(getGuildId()),
-                    ClientConfig.DISCORD().getChannelByID(getChannelId()));
             LOG.error("removeToDatabase", e);
         }
     }
