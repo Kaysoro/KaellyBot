@@ -1,7 +1,6 @@
 package data;
 
 import enums.Language;
-import finders.PortalTracker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import util.Connexion;
@@ -21,7 +20,6 @@ public class Guild {
     private String id;
     private String name;
     private Map<String, CommandForbidden> commands;
-    private Map<String, PortalTracker> portalTrackers;
     private String prefix;
     private ServerDofus server;
     private Language language;
@@ -37,7 +35,6 @@ public class Guild {
         commands = CommandForbidden.getForbiddenCommands(this);
         this.language = lang;
         this.server = ServerDofus.getServersMap().get(serverDofus);
-        portalTrackers = PortalTracker.getPortalTrackers(this);
     }
 
     public synchronized void addToDatabase(){
@@ -219,10 +216,6 @@ public class Guild {
 
     public Map<String, CommandForbidden> getForbiddenCommands(){
         return commands;
-    }
-
-    public Map<String, PortalTracker> getPortalTrackers(){
-        return portalTrackers;
     }
 
     public ServerDofus getServerDofus() {

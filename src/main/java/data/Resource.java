@@ -1,20 +1,20 @@
 package data;
 
+import discord4j.core.object.Embed;
+import discord4j.core.spec.EmbedCreateSpec;
 import enums.Language;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-import sx.blah.discord.api.internal.json.objects.EmbedObject;
-import sx.blah.discord.util.EmbedBuilder;
 import util.EmojiManager;
 import util.JSoupManager;
 import util.Translator;
 import util.URLManager;
 
+import java.awt.*;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 public class Resource implements Embedded {
 
@@ -46,66 +46,57 @@ public class Resource implements Embedded {
     }
 
     @Override
-    public EmbedObject getEmbedObject(Language lg) {
-        EmbedBuilder builder = new EmbedBuilder();
-
-        builder.withTitle(name);
-        builder.withUrl(url);
-
-        builder.withColor(new Random().nextInt(16777216));
-        builder.withThumbnail(skinURL);
+    public void decorateEmbedObject(EmbedCreateSpec spec, Language lg) {
+        spec.setTitle(name)
+            .setUrl(url)
+            .setColor(Color.GRAY)
+            .setThumbnail(skinURL);
 
         if (level != null && ! level.isEmpty())
-            builder.appendField(Translator.getLabel(lg, "resource.niveau"), level, true);
-        builder.appendField(Translator.getLabel(lg, "resource.type"), type, true);
+            spec.addField(Translator.getLabel(lg, "resource.niveau"), level, true);
+        spec.addField(Translator.getLabel(lg, "resource.type"), type, true);
 
         if (effects != null && ! effects.isEmpty())
-            builder.appendField(Translator.getLabel(lg, "resource.effets"), effects, true);
+            spec.addField(Translator.getLabel(lg, "resource.effets"), effects, true);
 
         if (bonus != null && ! bonus.isEmpty())
-            builder.appendField(Translator.getLabel(lg, "resource.bonus"), bonus, true);
+            spec.addField(Translator.getLabel(lg, "resource.bonus"), bonus, true);
 
         if (sorts != null && ! sorts.isEmpty())
-            builder.appendField(Translator.getLabel(lg, "resource.sorts"),sorts, true);
-
-        return builder.build();
+            spec.addField(Translator.getLabel(lg, "resource.sorts"),sorts, true);
     }
 
     @Override
-    public EmbedObject getMoreEmbedObject(Language lg) {
-        EmbedBuilder builder = new EmbedBuilder();
-
-        builder.withTitle(name);
-        builder.withUrl(url);
+    public void decorateMoreEmbedObject(EmbedCreateSpec spec, Language lg) {
+        spec.setTitle(name)
+            .setUrl(url);
         if (description != null && ! description.isEmpty())
-            builder.withDescription(description);
+            spec.setDescription(description);
 
-        builder.withColor(new Random().nextInt(16777216));
-        builder.withImage(skinURL);
+        spec.setColor(Color.GRAY)
+            .setImage(skinURL);
 
         if (level != null && ! level.isEmpty())
-            builder.appendField(Translator.getLabel(lg, "resource.niveau"), level, true);
-        builder.appendField(Translator.getLabel(lg, "resource.type"), type, true);
+            spec.addField(Translator.getLabel(lg, "resource.niveau"), level, true);
+        spec.addField(Translator.getLabel(lg, "resource.type"), type, true);
 
         if (effects != null && ! effects.isEmpty())
-            builder.appendField(Translator.getLabel(lg, "resource.effets"), effects, true);
+            spec.addField(Translator.getLabel(lg, "resource.effets"), effects, true);
 
         if (bonus != null && ! bonus.isEmpty())
-            builder.appendField(Translator.getLabel(lg, "resource.bonus"), bonus, true);
+            spec.addField(Translator.getLabel(lg, "resource.bonus"), bonus, true);
 
         if (sorts != null && ! sorts.isEmpty())
-            builder.appendField(Translator.getLabel(lg, "resource.sorts"),sorts, true);
+            spec.addField(Translator.getLabel(lg, "resource.sorts"),sorts, true);
 
         if (recipe != null)
-            builder.appendField(Translator.getLabel(lg, "resource.recette"), recipe, true);
+            spec.addField(Translator.getLabel(lg, "resource.recette"), recipe, true);
 
         if (! monsterDrop.isEmpty())
             for(int i = 0; i < monsterDrop.size(); i++)
-                builder.appendField(Translator.getLabel(lg, "resource.monster")
+                spec.addField(Translator.getLabel(lg, "resource.monster")
                                 + (monsterDrop.size() > 1? " (" + (i + 1) + "/" + monsterDrop.size() + ")" : "") + " : ",
                         monsterDrop.get(i), true);
-
-        return builder.build();
     }
 
     public static Resource getResource(Language lg, String url) throws IOException {
@@ -195,7 +186,7 @@ public class Resource implements Embedded {
 
                 tmp.append(line.getElementsByClass("ak-aside").first().text()).append("\n");
 
-                if (field.length() + tmp.length() > EmbedBuilder.FIELD_CONTENT_LIMIT) {
+                if (field.length() + tmp.length() > Embed.Field.MAX_VALUE_LENGTH) {
                     result.add(field.toString());
                     field.setLength(0);
                 }

@@ -1,15 +1,15 @@
 package data;
 
+import discord4j.core.spec.EmbedCreateSpec;
 import enums.Language;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-import sx.blah.discord.api.internal.json.objects.EmbedObject;
-import sx.blah.discord.util.EmbedBuilder;
 import util.EmojiManager;
 import util.JSoupManager;
 import util.Translator;
 
+import java.awt.*;
 import java.io.IOException;
 import java.util.Random;
 
@@ -81,67 +81,58 @@ public class Character implements Embedded {
     }
 
     @Override
-    public EmbedObject getEmbedObject(Language lg){
-        EmbedBuilder builder = new EmbedBuilder();
-
-        builder.withTitle(pseudo);
-        builder.withUrl(url);
-        builder.withDescription(classe);
-
-        builder.withColor(new Random().nextInt(16777216));
-        builder.withThumbnail(littleSkinURL);
-        builder.withImage(bigSkinURL);
-        builder.withFooterText(Translator.getLabel(lg, "whois.server") + " " + server);
+    public void decorateEmbedObject(EmbedCreateSpec spec, Language lg){
+        spec.setTitle(pseudo)
+            .setUrl(url)
+            .setDescription(classe)
+            .setColor(Color.GRAY)
+            .setThumbnail(littleSkinURL)
+            .setImage(bigSkinURL)
+            .setFooter(Translator.getLabel(lg, "whois.server") + " " + server, null);
 
         if (ladderXP != null && ! ladderXP.isEmpty())
-            builder.appendField(Translator.getLabel(lg, "whois.level") + " " + level, ladderXP, true);
+            spec.addField(Translator.getLabel(lg, "whois.level") + " " + level, ladderXP, true);
         else
-            builder.appendField(Translator.getLabel(lg, "whois.level") + " " + level,
+            spec.addField(Translator.getLabel(lg, "whois.level") + " " + level,
                     Translator.getLabel(lg, "whois.ladder.none"), true);
 
         if (ladderSuccess != null && ! ladderSuccess.isEmpty())
-            builder.appendField(Translator.getLabel(lg, "whois.success") + " " + score,
+            spec.addField(Translator.getLabel(lg, "whois.success") + " " + score,
                     ladderSuccess, true);
         else
-            builder.appendField(Translator.getLabel(lg, "whois.success") + " " + score,
+            spec.addField(Translator.getLabel(lg, "whois.success") + " " + score,
                     Translator.getLabel(lg, "whois.ladder.none"), true);
 
         if (ladderKoli != null && ! ladderKoli.isEmpty())
-            builder.appendField(Translator.getLabel(lg, "whois.ladder_koli"), ladderKoli, true);
+            spec.addField(Translator.getLabel(lg, "whois.ladder_koli"), ladderKoli, true);
 
         if (guildName != null)
-            builder.appendField(Translator.getLabel(lg, "whois.guild"), "[" + guildName + "](" + guildUrl + ")", true);
+            spec.addField(Translator.getLabel(lg, "whois.guild"), "[" + guildName + "](" + guildUrl + ")", true);
         if (alliName != null)
-            builder.appendField(Translator.getLabel(lg, "whois.ally"), "[" + alliName + "](" + alliUrl + ")", true);
-
-        return builder.build();
+            spec.addField(Translator.getLabel(lg, "whois.ally"), "[" + alliName + "](" + alliUrl + ")", true);
     }
 
     @Override
-    public EmbedObject getMoreEmbedObject(Language lg) {
-        EmbedBuilder builder = new EmbedBuilder();
-
-        builder.withTitle(pseudo);
-        builder.withUrl(url);
-        builder.withDescription(classe + ", " + level);
-        builder.withColor(new Random().nextInt(16777216));
-        builder.withThumbnail(littleSkinURL);
-        builder.withFooterText(Translator.getLabel(lg, "whois.server") + " " + server);
+    public void decorateMoreEmbedObject(EmbedCreateSpec spec, Language lg) {
+        spec.setTitle(pseudo)
+            .setUrl(url)
+            .setDescription(classe + ", " + level)
+            .setColor(Color.GRAY)
+            .setThumbnail(littleSkinURL)
+            .setFooter(Translator.getLabel(lg, "whois.server") + " " + server, null);
 
         if (stuffAvailable){
-            builder.withImage(bigSkinURL);
-            builder.appendField(Translator.getLabel(lg, "whois.stuff.primary"), primaire, true);
-            builder.appendField(Translator.getLabel(lg, "whois.stuff.secondary"), secondaire, true);
-            builder.appendField(Translator.getLabel(lg, "whois.stuff.damages"), dommage, true);
-            builder.appendField(Translator.getLabel(lg, "whois.stuff.resistances"), resistance, true);
+            spec.setImage(bigSkinURL)
+                .addField(Translator.getLabel(lg, "whois.stuff.primary"), primaire, true)
+                .addField(Translator.getLabel(lg, "whois.stuff.secondary"), secondaire, true)
+                .addField(Translator.getLabel(lg, "whois.stuff.damages"), dommage, true)
+                .addField(Translator.getLabel(lg, "whois.stuff.resistances"), resistance, true);
         }
         else {
             String[] punchlines = Translator.getLabel(lg, "whois.stuff.none.punchlines").split(";");
             String punchline = punchlines[new Random().nextInt(punchlines.length)];
-            builder.appendField(Translator.getLabel(lg, "whois.stuff.none.title"), punchline, true);
+            spec.addField(Translator.getLabel(lg, "whois.stuff.none.title"), punchline, true);
         }
-
-        return builder.build();
     }
 
     public static Character getCharacter(String url, Language lg) throws IOException {
