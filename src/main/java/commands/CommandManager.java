@@ -45,7 +45,6 @@ public class CommandManager {
         addCommand(new MonsterCommand());
         addCommand(new PingCommand());
         addCommand(new PortalCommand());
-        addCommand(new PortalAutoCommand());
         addCommand(new PrefixCommand());
         addCommand(new RandomCommand());
         addCommand(new ResourceCommand());
