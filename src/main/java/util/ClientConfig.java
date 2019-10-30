@@ -2,8 +2,10 @@ package util;
 
 import discord4j.core.DiscordClient;
 import discord4j.core.DiscordClientBuilder;
+import discord4j.core.event.domain.lifecycle.ReadyEvent;
 import discord4j.core.shard.ShardingClientBuilder;
 import io.sentry.Sentry;
+import listeners.ReadyListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import reactor.core.publisher.Mono;
@@ -43,9 +45,11 @@ public class ClientConfig {
                         .cache()
                         .collectList().blockOptional().orElse(Collections.emptyList());
 
-                DISCORD.stream()
-                        .map(DiscordClient::login)
-                        .forEach(Mono::block);
+                ReadyListener readyListener = new ReadyListener();
+
+                DISCORD.forEach(client -> client.getEventDispatcher().on(ReadyEvent.class)
+                        .flatMap(event -> readyListener.onReady(client))
+                        .subscribe());
 
             } catch(Throwable e){
                     LOG.error("Impossible de se connecter à Discord : verifiez votre token dans "
@@ -93,5 +97,11 @@ public class ClientConfig {
     }
     public static List<DiscordClient> DISCORD() {
         return getInstance().DISCORD;
+    }
+
+    public static void loginDiscord(){
+        DISCORD().stream()
+                .map(DiscordClient::login)
+                .forEach(Mono::block);
     }
 }
