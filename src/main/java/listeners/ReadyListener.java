@@ -14,8 +14,8 @@ import finders.RSSFinder;
 import finders.TwitterFinder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
+
+import java.util.Collections;
 
 /**
  * Created by steve on 14/07/2016.
@@ -37,34 +37,31 @@ public class ReadyListener {
          channelDeleteListener = new ChannelDeleteListener();
     }
 
-    public Flux<Void> onReady(DiscordClient client) {
+    public void onReady(DiscordClient client) {
         long time = System.currentTimeMillis();
 
         LOG.info("Ajout des différents listeners...");
-        Flux<Void> result = client.getEventDispatcher().on(GuildCreateEvent.class)
-                .flatMap(guildCreateEvent -> guildCreateListener.onReady(client, guildCreateEvent))
-                .thenMany(client.getEventDispatcher().on(GuildDeleteEvent.class))
-                .flatMap(guildDeleteEvent -> guildLeaveListener.onReady(guildDeleteEvent))
-                .thenMany(client.getEventDispatcher().on(GuildUpdateEvent.class))
-                .flatMap(guildUpdateEvent -> guildUpdateListener.onReady(guildUpdateEvent))
-                .thenMany(client.getEventDispatcher().on(TextChannelDeleteEvent.class))
-                .flatMap(textChannelDeleteEvent -> channelDeleteListener.onReady(textChannelDeleteEvent));
+        client.getEventDispatcher().on(GuildCreateEvent.class)
+                .subscribe(guildCreateEvent -> guildCreateListener.onReady(client, guildCreateEvent));
+        client.getEventDispatcher().on(GuildDeleteEvent.class)
+                .subscribe(guildDeleteEvent -> guildLeaveListener.onReady(guildDeleteEvent));
+        client.getEventDispatcher().on(GuildUpdateEvent.class)
+                .subscribe(guildUpdateEvent -> guildUpdateListener.onReady(guildUpdateEvent));
+        client.getEventDispatcher().on(TextChannelDeleteEvent.class)
+                .subscribe(textChannelDeleteEvent -> channelDeleteListener.onReady(textChannelDeleteEvent));
 
         LOG.info("Check des guildes...");
-
-        result = result.thenMany(client.getGuilds().collectList())
-                .flatMap(guilds -> {
-                    for (discord4j.core.object.entity.Guild guild : guilds)
+        client.getGuilds().collectList().blockOptional().orElse(Collections.emptyList())
+                .forEach(guild -> {
                         if (Guild.getGuilds().containsKey(guild.getId().asString())
                                 && !guild.getName().equals(Guild.getGuild(guild).getName()))
                             Guild.getGuild(guild).setName(guild.getName());
                         else
                             client.getEventDispatcher().publish(new GuildCreateEvent(client, guild));
-                    return Flux.empty();
                 });
 
         // Joue à...
-        result = result.thenMany(client.updatePresence(Presence.online(Activity.watching(Constants.discordInvite))));
+        client.updatePresence(Presence.online(Activity.watching(Constants.discordInvite))).subscribe();
 
         LOG.info("Ecoute des flux RSS du site Dofus...");
         RSSFinder.start();
@@ -76,11 +73,9 @@ public class ReadyListener {
         TwitterFinder.start();
 
         LOG.info("Ecoute des messages...");
-        result = result.thenMany(client.getEventDispatcher().on(MessageCreateEvent.class)
-                .flatMap(msgEvent -> messageListener.onReady(client, msgEvent)))
-        .then().concatWith(Mono.empty());
+        client.getEventDispatcher().on(MessageCreateEvent.class)
+                .subscribe(event -> messageListener.onReady(event));
 
         LOG.info("Mise en place des ressources en " + (System.currentTimeMillis() - time) + "ms");
-        return result;
     }
 }

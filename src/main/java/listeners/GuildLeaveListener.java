@@ -2,7 +2,6 @@ package listeners;
 
 import data.*;
 import discord4j.core.event.domain.guild.GuildDeleteEvent;
-import discord4j.core.object.entity.Message;
 import discord4j.core.object.entity.TextChannel;
 import discord4j.core.object.util.Snowflake;
 import reactor.core.publisher.Flux;
@@ -29,7 +28,7 @@ public class GuildLeaveListener {
         super();
     }
 
-    public Flux<Message> onReady(GuildDeleteEvent event) {
+    public void onReady(GuildDeleteEvent event) {
         try {
 
             Optional<Guild> optionalGuild = event.getGuild().map(guildEvent -> Guild.getGuild(guildEvent, false));
@@ -62,19 +61,18 @@ public class GuildLeaveListener {
                     }
                 }
 
-                return Flux.fromIterable(ClientConfig.DISCORD())
+                Flux.fromIterable(ClientConfig.DISCORD())
                         .flatMap(cli -> cli.getChannelById(Snowflake.of(Constants.chanReportID)))
                         .filter(chan -> chan instanceof TextChannel)
                         .map(chan -> (TextChannel) chan)
                         .flatMap(chan -> chan.getGuild().flatMap(guildLost -> chan
                                 .createMessage("[LOSE] **" + guildLost.getName() + "**, -"
-                                        + guildLost.getMemberCount().orElse(0) +  " utilisateurs")));
+                                        + guildLost.getMemberCount().orElse(0) +  " utilisateurs")))
+                .subscribe();
             }
         } catch(Exception e){
             Reporter.report(e, event.getGuild().orElse(null));
             LOG.error("onReady", e);
         }
-
-        return Flux.empty();
     }
 }

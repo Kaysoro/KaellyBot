@@ -5,7 +5,6 @@ import finders.RSSFinder;
 import finders.TwitterFinder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import reactor.core.publisher.Flux;
 import util.Reporter;
 
 /**
@@ -19,7 +18,7 @@ public class ChannelDeleteListener {
         super();
     }
 
-    public Flux<Void> onReady(TextChannelDeleteEvent event) {
+    public void onReady(TextChannelDeleteEvent event) {
         try {
             if (RSSFinder.getRSSFinders().containsKey(event.getChannel().getId().asString()))
                 RSSFinder.getRSSFinders().get(event.getChannel().getId().asString()).removeToDatabase();
@@ -33,7 +32,5 @@ public class ChannelDeleteListener {
             Reporter.report(e, event.getChannel());
             LOG.error("onReady", e);
         }
-
-        return Flux.empty();
     }
 }

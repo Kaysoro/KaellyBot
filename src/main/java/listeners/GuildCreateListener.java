@@ -10,7 +10,6 @@ import discord4j.core.object.util.Permission;
 import discord4j.core.object.util.Snowflake;
 import enums.Language;
 import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
 import util.ClientConfig;
 import data.Constants;
 import data.Guild;
@@ -26,11 +25,11 @@ public class GuildCreateListener {
 
     private final static Logger LOG = LoggerFactory.getLogger(GuildCreateListener.class);
 
-    public Mono<Void> onReady(DiscordClient client, GuildCreateEvent event) {
+    public void onReady(DiscordClient client, GuildCreateEvent event) {
         try {
             if (!Guild.getGuilds().containsKey(event.getGuild().getId().asString())) {
 
-                return event.getGuild().getChannels()
+                event.getGuild().getChannels()
                         .filter(chan -> chan instanceof TextChannel)
                         .map(chan -> (TextChannel) chan).take(1).flatMap(chan -> {
                     Guild guild = new Guild(event.getGuild().getId().asString(), event.getGuild().getName(),
@@ -69,13 +68,11 @@ public class GuildCreateListener {
                                                         + guildWon.getMemberCount().orElse(0) +  " utilisateurs"))))
                                 .collectList();
                     });
-                }).collectList().then();
+                }).subscribe();
             }
         } catch(Exception e){
             Reporter.report(e, event.getGuild());
             LOG.error("onReady", e);
         }
-
-        return Mono.empty();
     }
 }

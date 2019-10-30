@@ -3,15 +3,12 @@ package listeners;
 import commands.*;
 import commands.model.AbstractCommand;
 import commands.model.Command;
-import discord4j.core.DiscordClient;
 import discord4j.core.event.domain.message.MessageCreateEvent;
-import discord4j.core.object.entity.MessageChannel;
 import discord4j.core.object.entity.User;
 import enums.Language;
 import exceptions.BasicDiscordException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import reactor.core.publisher.Mono;
 import util.Reporter;
 import util.Translator;
 
@@ -25,8 +22,8 @@ public class MessageListener {
 
     private final static Logger LOG = LoggerFactory.getLogger(MessageListener.class);
 
-    public Mono<MessageChannel> onReady(DiscordClient client, MessageCreateEvent event) {
-        return event.getMessage().getChannel()
+    public void onReady(MessageCreateEvent event) {
+        event.getMessage().getChannel()
                 .doOnSuccess(channel -> {
                     Language lg = Translator.getLanguageFrom(channel);
                     String prefixe = AbstractCommand.getPrefix(event.getMessage());
@@ -55,6 +52,6 @@ public class MessageListener {
 
                         }
                     }
-                });
+                }).subscribe();
     }
 }

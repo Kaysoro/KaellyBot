@@ -48,8 +48,7 @@ public class ClientConfig {
                 ReadyListener readyListener = new ReadyListener();
 
                 DISCORD.forEach(client -> client.getEventDispatcher().on(ReadyEvent.class)
-                        .flatMap(event -> readyListener.onReady(client))
-                        .subscribe());
+                        .subscribe(event -> readyListener.onReady(client)));
 
             } catch(Throwable e){
                     LOG.error("Impossible de se connecter à Discord : verifiez votre token dans "
