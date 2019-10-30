@@ -1,6 +1,10 @@
 package commands.admin;
 
 import commands.model.AbstractCommand;
+import discord4j.core.DiscordClient;
+import discord4j.core.object.entity.Guild;
+import discord4j.core.object.entity.Message;
+import discord4j.core.spec.MessageCreateSpec;
 import enums.Language;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
@@ -8,15 +12,18 @@ import org.jfree.data.general.DefaultPieDataset;
 import org.jfree.data.time.Day;
 import org.jfree.data.time.TimeSeries;
 import org.jfree.data.time.TimeSeriesCollection;
+import org.slf4j.LoggerFactory;
+import reactor.core.publisher.Flux;
 import stats.CommandStatistics;
-import sx.blah.discord.handle.obj.IGuild;
-import sx.blah.discord.handle.obj.IMessage;
-import sx.blah.discord.handle.obj.IUser;
 import util.ClientConfig;
-import util.Message;
+import util.Reporter;
 import util.Translator;
 
+import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.ZoneId;
@@ -42,43 +49,68 @@ public class StatCommand extends AbstractCommand {
     }
 
     @Override
-    public void request(IMessage message, Matcher m, Language lg) {
+    public void request(Message message, Matcher m, Language lg) {
         if (m.group(1) == null || m.group(1).replaceAll("^\\s+", "").isEmpty()){
-            int totalUser = 0;
-            for (IGuild guild : ClientConfig.DISCORD().getGuilds())
-                totalUser += guild.getUsers().size();
+            long totalGuild = Flux.fromIterable(ClientConfig.DISCORD())
+                    .flatMap(DiscordClient::getGuilds)
+                    .count().blockOptional().orElse(0L);
+
+            int totalUser = Flux.fromIterable(ClientConfig.DISCORD())
+                    .flatMap(DiscordClient::getGuilds)
+                    .map(Guild::getMemberCount)
+                    .map(count -> count.orElse(0))
+                    .collect(Collectors.summingInt(Integer::intValue))
+                    .blockOptional().orElse(0);
 
             String answer = Translator.getLabel(lg, "stat.request")
-                    .replace("{guilds.size}", String.valueOf(ClientConfig.DISCORD().getGuilds().size()))
-                    .replace("{users.size}", String.valueOf(ClientConfig.DISCORD().getUsers().size()))
+                    .replace("{guilds.size}", String.valueOf(totalGuild))
                     .replace("{users_max.size}", String.valueOf(totalUser));
-            Message.sendText(message.getChannel(), answer);
+            message.getChannel().flatMap(chan -> chan.createMessage(answer)).subscribe();
         }
         else if (m.group(1).matches("\\s+-g(\\s+\\d+)?")){
             int limit = GULD_LIMIT;
             if (m.group(2) != null) limit = Integer.parseInt(m.group(2).trim());
             StringBuilder st = new StringBuilder();
-            List<IGuild> guilds = getBiggestGuilds(limit);
+            List<discord4j.core.object.entity.Guild> guilds = getBiggestGuilds(limit);
             int ladder = 1;
-            for(IGuild guild : guilds)
+            for(discord4j.core.object.entity.Guild guild : guilds)
                 st.append(ladder++).append(" : **").append(guild.getName()).append("**, ")
-                        .append(guild.getTotalMemberCount()).append(" users\n");
+                        .append(guild.getMemberCount()).append(" users\n");
 
-            Message.sendText(message.getChannel(), st.toString());
+            message.getChannel().flatMap(chan -> chan.createMessage(st.toString())).subscribe();
         }
         else if (m.group(1).matches("\\s+-cmd(\\s+\\d+)?")){
             int limit = CMD_LIMIT;
             if (m.group(3) != null) limit = Integer.parseInt(m.group(3).trim());
-            Message.sendImage(message.getChannel(), getNumberCmdCalledPerCmd(limit),
-                    "stats -cmd : " + Instant.now() + ".png");
-            Message.sendImage(message.getChannel(), getNumberCmdCalled(limit),
-                    "stats -cmd : " + Instant.now() + ".png");
-            Message.sendImage(message.getChannel(), getForbiddenCommandsChart(),
-                    "stats -cmd : " + Instant.now() + ".png");
+            final int LIMIT = limit;
+
+            message.getChannel().flatMap(chan ->
+                chan.createMessage(spec ->
+                        decorateImageMessage(spec, "stats -cmd : " + Instant.now() + ".png", getNumberCmdCalledPerCmd(LIMIT)))
+                        .then(chan.createMessage(spec ->
+                                decorateImageMessage(spec,"stats -cmd : " + Instant.now() + ".png", getNumberCmdCalled(LIMIT))))
+                        .then(chan.createMessage(spec ->
+                                decorateImageMessage(spec,"stats -cmd : " + Instant.now() + ".png", getForbiddenCommandsChart())))
+            ).subscribe();
         }
         else if (m.group(1).matches("\\s+-hist"))
-            Message.sendImage(message.getChannel(), getJoinTimeGuildsGraph(),
-                    "stats -hist : " + Instant.now() + ".png");
+            message.getChannel().flatMap(chan -> chan.createMessage(spec -> decorateImageMessage(spec,
+                    "stats -hist : " + Instant.now() + ".png", getJoinTimeGuildsGraph())))
+            .subscribe();
+    }
+
+    private void decorateImageMessage(MessageCreateSpec spec, String text, BufferedImage image){
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        try {
+            ImageIO.write(image, "png", os);
+            InputStream is = new ByteArrayInputStream(os.toByteArray());
+            spec.addFile(Instant.now().toString(), is);
+        } catch(Exception e){
+            Reporter.report(e);
+            LoggerFactory.getLogger(StatCommand.class).error("decorateImageMessage", e);
+        }
+
+        spec.setContent(text);
     }
 
     /**
@@ -86,11 +118,11 @@ public class StatCommand extends AbstractCommand {
      * @param limit nombre de guildes à afficher
      * @return Liste des limit plus grandes guildes qui utilisent kaelly
      */
-    private List<IGuild> getBiggestGuilds(int limit){
-        return ClientConfig.DISCORD().getGuilds().stream()
-                .sorted((guild1, guild2) -> guild2.getTotalMemberCount() - guild1.getTotalMemberCount())
-                .limit(limit)
-                .collect(Collectors.toList());
+    private List<discord4j.core.object.entity.Guild> getBiggestGuilds(int limit){
+        return Flux.fromIterable(ClientConfig.DISCORD()).flatMap(DiscordClient::getGuilds)
+                .sort((guild1, guild2) -> guild2.getMemberCount().orElse(0) - guild1.getMemberCount().orElse(0))
+                .take(limit)
+                .collectList().block();
     }
 
     /**
@@ -98,17 +130,16 @@ public class StatCommand extends AbstractCommand {
      * @return Graphique des arrivés des guildes utilisant kaelly
      */
     private BufferedImage getJoinTimeGuildsGraph(){
-        IUser me = ClientConfig.DISCORD().getOurUser();
-
-        List<IGuild> guilds = ClientConfig.DISCORD().getGuilds().stream()
-                .sorted(Comparator.comparing(guild -> guild.getJoinTimeForUser(me)))
-                .collect(Collectors.toList());
+        List<discord4j.core.object.entity.Guild> guilds = Flux.fromIterable(ClientConfig.DISCORD())
+                .flatMap(DiscordClient::getGuilds)
+                .sort(Comparator.comparing(guild -> guild.getJoinTime().orElse(Instant.EPOCH)))
+                .collectList().blockOptional().orElse(Collections.emptyList());
 
         TimeSeriesCollection dataSet = new TimeSeriesCollection();
         TimeSeries series = new TimeSeries("data");
         int guildNumber = 1;
-        for(IGuild guild : guilds)
-            series.addOrUpdate(new Day(Date.from(guild.getJoinTimeForUser(me))), guildNumber++);
+        for(discord4j.core.object.entity.Guild guild : guilds)
+            series.addOrUpdate(new Day(Date.from(guild.getJoinTime().orElse(Instant.EPOCH))), guildNumber++);
         dataSet.addSeries(series);
 
         JFreeChart chart = ChartFactory.createTimeSeriesChart(
