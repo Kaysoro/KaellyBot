@@ -5,11 +5,11 @@ import commands.model.AbstractCommand;
 import commands.model.Command;
 import data.Constants;
 import data.Guild;
+import discord4j.core.object.entity.Message;
+import discord4j.core.object.entity.PrivateChannel;
 import enums.Language;
 import exceptions.DiscordException;
 import exceptions.NotFoundDiscordException;
-import util.Message;
-import sx.blah.discord.handle.obj.IMessage;
 import util.Translator;
 
 import java.util.ArrayList;
@@ -31,7 +31,7 @@ public class HelpCommand extends AbstractCommand {
     }
 
     @Override
-    public void request(IMessage message, Matcher m, Language lg) {
+    public void request(Message message, Matcher m, Language lg) {
         String prefix = getPrefixMdEscaped(message);
         StringBuilder st = new StringBuilder();
         List<String> messages = new ArrayList<>();
@@ -39,10 +39,11 @@ public class HelpCommand extends AbstractCommand {
         boolean argumentFound = m.group(1) != null && m.group(1).replaceAll("^\\s+", "").length() > 0;
         for(Command command : CommandManager.getCommands())
             if (command.isPublic() && ! command.isAdmin() && (!command.isHidden() || argumentFound)
-                    && (message.getChannel().isPrivate() || ! command.isForbidden(Guild.getGuild(message.getGuild())))){
+                    && (message.getChannel().block() instanceof PrivateChannel
+                    || ! command.isForbidden(Guild.getGuild(message.getGuild().block())))){
                 if (! argumentFound) {
                     String helpCmd = command.help(lg, prefix) + "\n";
-                    if (st.length() + helpCmd.length() > IMessage.MAX_MESSAGE_LENGTH){
+                    if (st.length() + helpCmd.length() > Message.MAX_CONTENT_LENGTH){
                         messages.add(st.toString());
                         st.setLength(0);
                     }
@@ -61,7 +62,7 @@ public class HelpCommand extends AbstractCommand {
             notFoundCmd.throwException(message, this, lg);
         else
             for(String msg : messages)
-                Message.sendText(message.getChannel(), msg);
+                message.getChannel().flatMap(chan -> chan.createMessage(msg)).subscribe();
     }
 
     @Override

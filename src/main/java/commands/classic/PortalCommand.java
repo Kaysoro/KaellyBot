@@ -2,12 +2,11 @@ package commands.classic;
 
 import commands.model.AbstractCommand;
 import data.*;
+import discord4j.core.object.entity.Message;
 import enums.Language;
 import exceptions.DiscordException;
 import exceptions.NotFoundDiscordException;
-import util.Message;
 import exceptions.TooMuchDiscordException;
-import sx.blah.discord.handle.obj.IMessage;
 import util.Translator;
 
 import java.text.Normalizer;
@@ -33,28 +32,25 @@ public class PortalCommand extends AbstractCommand {
     }
 
     @Override
-    public void request(IMessage message, Matcher m, Language lg) {
-        ServerDofus server = Guild.getGuild(message.getGuild()).getServerDofus();
+    public void request(Message message, Matcher m, Language lg) {
+        ServerDofus server = Guild.getGuild(message.getGuild().block()).getServerDofus();
 
         if (server != null){
             if (m.group(1) == null && m.group(5) == null) { // No dimension precised
                 for(Position pos : server.getPositions())
-                    Message.sendEmbed(message.getChannel(), pos.getEmbedObject(lg));
+                    message.getChannel().flatMap(chan -> chan
+                            .createEmbed(spec -> pos.decorateEmbedObject(spec, lg)))
+                            .subscribe();
             }
             else {
                 List<Position> positions = new ArrayList<>();
                 if (m.group(1) != null)
                     positions = getPosition(m.group(1), server);
-                if (positions.size() == 1) {
-                    if (m.group(2) != null)
-                        positions.get(0).setCoordinate(Coordinate.parse("[" + m.group(3) + "," + m.group(4) + "]"),
-                                message.getAuthor().getDisplayName(message.getGuild()));
-                    if (m.group(5) != null)
-                        positions.get(0).setUtilisation(Integer.parseInt(m.group(5).replaceAll("\\s", "")),
-                                message.getAuthor().getDisplayName(message.getGuild()));
-
-                    Message.sendEmbed(message.getChannel(), positions.get(0).getEmbedObject(lg));
-                }
+                final Position POSITION = positions.get(0);
+                if (positions.size() == 1)
+                    message.getChannel().flatMap(chan -> chan
+                            .createEmbed(spec -> POSITION.decorateEmbedObject(spec, lg)))
+                            .subscribe();
                 else if(positions.size() > 1)
                     tooMuchPortals.throwException(message, this, lg);
                 else

@@ -2,13 +2,13 @@ package commands.classic;
 
 import commands.model.AbstractCommand;
 import data.Constants;
+import discord4j.core.object.entity.Message;
 import enums.Language;
-import sx.blah.discord.util.EmbedBuilder;
-import util.Message;
-import sx.blah.discord.handle.obj.IMessage;
 import util.Translator;
 
+import java.awt.*;
 import java.util.*;
+import java.util.List;
 import java.util.regex.Matcher;
 
 /**
@@ -26,7 +26,7 @@ public class MapCommand extends AbstractCommand {
     }
 
     @Override
-    public void request(IMessage message, Matcher m, Language lg) {
+    public void request(Message message, Matcher m, Language lg) {
         List<String> classicMaps = new ArrayList<>();
         for(int i = 1; i < 18; i++)
             classicMaps.add(String.valueOf(i));
@@ -61,15 +61,14 @@ public class MapCommand extends AbstractCommand {
 
         String[] punchlines = Translator.getLabel(lg, "map.punchline").split(";");
         String punchline = punchlines[new Random().nextInt(punchlines.length)];
-        EmbedBuilder builder = new EmbedBuilder();
 
-        builder.withTitle(Translator.getLabel(lg, "map.embed.title") + " " + numberToRoman(number));
-        builder.withDescription(punchline);
-        builder.withImage(url);
-        builder.withColor(new Random().nextInt(16777216));
-        builder.withImage(url);
-
-        Message.sendEmbed(message.getChannel(), builder.build());
+        message.getChannel().flatMap(chan -> chan
+                .createEmbed(spec -> spec.setTitle(Translator.getLabel(lg, "map.embed.title") + " " + numberToRoman(number))
+                        .setDescription(punchline)
+                        .setImage(url)
+                        .setColor(Color.GRAY)
+                        .setImage(url)))
+                .subscribe();
     }
 
     @Override

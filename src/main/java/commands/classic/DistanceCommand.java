@@ -2,10 +2,9 @@ package commands.classic;
 
 import commands.model.AbstractCommand;
 import data.Coordinate;
+import discord4j.core.object.entity.Message;
 import enums.Transport;
 import enums.Language;
-import sx.blah.discord.handle.obj.IMessage;
-import util.Message;
 import util.Translator;
 
 import java.util.regex.Matcher;
@@ -20,7 +19,7 @@ public class DistanceCommand extends AbstractCommand {
     }
 
     @Override
-    public void request(IMessage message, Matcher m, Language lg) {
+    public void request(Message message, Matcher m, Language lg) {
         Coordinate coordinate = new Coordinate(Integer.parseInt(m.group(1)), Integer.parseInt(m.group(2)));
         StringBuilder st = new StringBuilder();
         Transport zaap = null;
@@ -48,7 +47,7 @@ public class DistanceCommand extends AbstractCommand {
         else
             st.append(Translator.getLabel(lg, "distance.request.3"));
 
-        Message.sendText(message.getChannel(), st.toString());
+        message.getChannel().flatMap(chan -> chan.createMessage(st.toString())).subscribe();
     }
 
     @Override

@@ -2,16 +2,19 @@ package commands.classic;
 
 import commands.model.AbstractCommand;
 import data.Constants;
+import discord4j.core.object.entity.ApplicationInfo;
+import discord4j.core.object.entity.Message;
+import discord4j.core.object.entity.User;
+import discord4j.core.object.util.Image;
 import enums.Language;
-import sx.blah.discord.handle.obj.IMessage;
-import sx.blah.discord.handle.obj.IUser;
-import sx.blah.discord.util.EmbedBuilder;
-import util.ClientConfig;
-import util.Message;
 import util.Translator;
 
-import java.util.Random;
+import java.awt.*;
+import java.util.Optional;
 import java.util.regex.Matcher;
+
+import static data.Constants.authorAvatar;
+import static data.Constants.authorName;
 
 /**
  * Created by Kaysoro on 20/05/2019.
@@ -23,27 +26,30 @@ public class InviteCommand extends AbstractCommand {
     }
 
     @Override
-    public void request(IMessage message, Matcher m, Language lg) {
-        EmbedBuilder builder = new EmbedBuilder();
-        IUser author = ClientConfig.DISCORD().getApplicationOwner();
-        builder.withTitle(Translator.getLabel(lg, "about.title")
-                    .replace("{name}", Constants.name)
-                    .replace("{version}", Constants.version))
-                .withColor(new Random().nextInt(16777216))
-                .withThumbnail(ClientConfig.DISCORD().getApplicationIconURL())
-                .withAuthorName(author.getName())
-                .withAuthorIcon(author.getAvatarURL());
+    public void request(Message message, Matcher m, Language lg) {
+        Optional<ApplicationInfo> appInfo = message.getClient().getApplicationInfo().blockOptional();
 
-        builder.appendField(Translator.getLabel(lg, "about.invite.title"),
-                Translator.getLabel(lg, "about.invite.desc")
-                    .replace("{name}", Constants.name)
-                    .replace("{invite}", Constants.invite), true)
-        .appendField(Translator.getLabel(lg, "about.support.title"),
-                Translator.getLabel(lg, "about.support.desc")
-                    .replace("{name}", Constants.name)
-                    .replace("{discordInvite}", Constants.discordInvite), true);
+        if (appInfo.isPresent()) {
+            Optional<User> author = appInfo.get().getOwner().blockOptional();
 
-        Message.sendEmbed(message.getChannel(), builder.build());
+            message.getChannel().flatMap(chan -> chan
+                    .createEmbed(spec -> spec.setTitle(Translator.getLabel(lg, "about.title")
+                            .replace("{name}", Constants.name)
+                            .replace("{version}", Constants.version))
+                            .setColor(Color.GRAY)
+                            .setThumbnail(appInfo.get().getIcon(Image.Format.PNG).orElse(null))
+                            .setAuthor(author.map(User::getUsername).orElse(authorName), null,
+                                    author.map(User::getAvatarUrl).orElse(authorAvatar))
+                            .addField(Translator.getLabel(lg, "about.invite.title"),
+                                    Translator.getLabel(lg, "about.invite.desc")
+                                            .replace("{name}", Constants.name)
+                                            .replace("{invite}", Constants.invite), true)
+                            .addField(Translator.getLabel(lg, "about.support.title"),
+                                    Translator.getLabel(lg, "about.support.desc")
+                                            .replace("{name}", Constants.name)
+                                            .replace("{discordInvite}", Constants.discordInvite), true)))
+                    .subscribe();
+        }
     }
 
     @Override

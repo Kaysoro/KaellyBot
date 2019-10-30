@@ -3,13 +3,12 @@ package commands.classic;
 import commands.model.DofusEncyclopediaRequestCommand;
 import data.Embedded;
 import data.Resource;
+import discord4j.core.object.entity.Message;
 import enums.Language;
 import enums.SuperTypeResource;
 import enums.TypeResource;
 import exceptions.*;
-import sx.blah.discord.handle.obj.IMessage;
 import util.BestMatcher;
-import util.Message;
 import util.Translator;
 
 import java.io.IOException;
@@ -41,7 +40,7 @@ public class ResourceCommand extends DofusEncyclopediaRequestCommand {
     }
 
     @Override
-    public void request(IMessage message, Matcher m, Language lg) {
+    public void request(Message message, Matcher m, Language lg) {
         if (isChannelHasExternalEmojisPermission(message)) {
             String normalName = Normalizer.normalize(m.group(2).trim(), Normalizer.Form.NFD)
                     .replaceAll("\\p{InCombiningDiacriticalMarks}+", "").toLowerCase();
@@ -62,9 +61,13 @@ public class ResourceCommand extends DofusEncyclopediaRequestCommand {
                     Embedded resource = Resource.getResource(lg, Translator.getLabel(lg, "game.url")
                             + matcher.getBest().getUrl());
                     if (m.group(1) != null)
-                        Message.sendEmbed(message.getChannel(), resource.getMoreEmbedObject(lg));
+                        message.getChannel().flatMap(chan -> chan
+                                .createEmbed(spec -> resource.decorateMoreEmbedObject(spec, lg)))
+                                .subscribe();
                     else
-                        Message.sendEmbed(message.getChannel(), resource.getEmbedObject(lg));
+                        message.getChannel().flatMap(chan -> chan
+                                .createEmbed(spec -> resource.decorateEmbedObject(spec, lg)))
+                                .subscribe();
                 } else if (!matcher.isEmpty()) // Too much items
                     tooMuchRsrcs.throwException(message, this, lg, matcher.getBests());
                 else // empty

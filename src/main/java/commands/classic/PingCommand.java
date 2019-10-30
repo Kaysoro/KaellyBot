@@ -1,9 +1,8 @@
 package commands.classic;
 
 import commands.model.AbstractCommand;
+import discord4j.core.object.entity.Message;
 import enums.Language;
-import sx.blah.discord.handle.obj.IMessage;
-import util.Message;
 import util.Translator;
 
 import java.time.Instant;
@@ -20,8 +19,10 @@ public class PingCommand extends AbstractCommand {
     }
 
     @Override
-    public void request(IMessage message, Matcher m, Language lg) {
-        Message.sendText(message.getChannel(), ChronoUnit.MILLIS.between(Instant.now(), message.getTimestamp()) + "ms!");
+    public void request(Message message, Matcher m, Language lg) {
+        message.getChannel().flatMap(chan -> chan
+                .createMessage(Math.abs(ChronoUnit.MILLIS.between(Instant.now(), message.getTimestamp())) + "ms!"))
+                .subscribe();
     }
 
     @Override

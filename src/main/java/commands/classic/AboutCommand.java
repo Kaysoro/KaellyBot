@@ -2,18 +2,21 @@ package commands.classic;
 
 import commands.model.AbstractCommand;
 import data.Constants;
+import discord4j.core.object.entity.ApplicationInfo;
+import discord4j.core.object.entity.Message;
+import discord4j.core.object.entity.User;
+import discord4j.core.object.util.Image;
 import enums.Donator;
 import enums.Graphist;
 import enums.Language;
-import sx.blah.discord.handle.obj.IUser;
-import sx.blah.discord.util.EmbedBuilder;
-import util.ClientConfig;
-import util.Message;
-import sx.blah.discord.handle.obj.IMessage;
 import util.Translator;
 
-import java.util.Random;
+import java.awt.*;
+import java.util.Optional;
 import java.util.regex.Matcher;
+
+import static data.Constants.authorAvatar;
+import static data.Constants.authorName;
 
 /**
  * Created by Songfu on 29/05/2017.
@@ -25,50 +28,51 @@ public class AboutCommand extends AbstractCommand {
     }
 
     @Override
-    public void request(IMessage message, Matcher m, Language lg) {
-        IUser author = ClientConfig.DISCORD().getApplicationOwner();
-        EmbedBuilder builder = new EmbedBuilder();
+    public void request(Message message, Matcher m, Language lg) {
+        Optional<ApplicationInfo> appInfo = message.getClient().getApplicationInfo().blockOptional();
 
-        builder.withTitle(Translator.getLabel(lg, "about.title")
-                    .replace("{name}", Constants.name)
-                    .replace("{version}", Constants.version))
-                .withDesc(Translator.getLabel(lg, "about.desc")
-                    .replace("{game}", Constants.game.getName()))
-                .withColor(new Random().nextInt(16777216))
-                .withThumbnail(ClientConfig.DISCORD().getApplicationIconURL())
-                .withAuthorName(author.getName())
-                .withAuthorIcon(author.getAvatarURL())
-                .withImage(Constants.changelog);
+        if (appInfo.isPresent()) {
+            Optional<User> author = appInfo.get().getOwner().blockOptional();
 
-        builder.appendField(Translator.getLabel(lg, "about.invite.title"),
-                Translator.getLabel(lg, "about.invite.desc")
-                    .replace("{name}", Constants.name)
-                    .replace("{invite}", Constants.invite), true)
-        .appendField(Translator.getLabel(lg, "about.support.title"),
-                Translator.getLabel(lg, "about.support.desc")
-                    .replace("{name}", Constants.name)
-                    .replace("{discordInvite}", Constants.discordInvite), true)
-        .appendField(Translator.getLabel(lg, "about.twitter.title"),
-                Translator.getLabel(lg, "about.twitter.desc")
-                    .replace("{name}", Constants.name)
-                    .replace("{twitter}", Constants.twitterAccount), true)
-        .appendField(Translator.getLabel(lg, "about.opensource.title"),
-                Translator.getLabel(lg, "about.opensource.desc")
-                    .replace("{git}", Constants.git), true)
-        .appendField(Translator.getLabel(lg, "about.free.title"),
-                Translator.getLabel(lg, "about.free.desc")
-                    .replace("{paypal}", Constants.paypal), true)
-        .appendField(Translator.getLabel(lg, "about.graphist.title"),
-                Translator.getLabel(lg, "about.graphist.desc")
-                        .replace("{graphist}", Graphist.ELYCANN.toMarkdown()), true);
+            message.getChannel().flatMap(chan -> chan.createEmbed(spec -> {
 
-        StringBuilder st = new StringBuilder();
-        for(Donator donator : Donator.values())
-            st.append(donator.getName()).append(", ");
-        st.setLength(st.length() - 2);
-        builder.appendField(Translator.getLabel(lg, "about.donators.title"), st.toString() + ".", true);
-
-        Message.sendEmbed(message.getChannel(), builder.build());
+                spec.setTitle(Translator.getLabel(lg, "about.title")
+                        .replace("{name}", Constants.name)
+                        .replace("{version}", Constants.version))
+                        .setColor(Color.GRAY)
+                        .setImage(Constants.changelog)
+                        .setThumbnail(appInfo.get().getIcon(Image.Format.PNG).orElse(null))
+                        .setAuthor(author.map(User::getUsername).orElse(authorName), null,
+                                author.map(User::getAvatarUrl).orElse(authorAvatar))
+                        .addField(Translator.getLabel(lg, "about.invite.title"),
+                                Translator.getLabel(lg, "about.invite.desc")
+                                        .replace("{name}", Constants.name)
+                                        .replace("{invite}", Constants.invite), true)
+                        .addField(Translator.getLabel(lg, "about.support.title"),
+                                Translator.getLabel(lg, "about.support.desc")
+                                        .replace("{name}", Constants.name)
+                                        .replace("{discordInvite}", Constants.discordInvite), true)
+                        .addField(Translator.getLabel(lg, "about.twitter.title"),
+                                Translator.getLabel(lg, "about.twitter.desc")
+                                        .replace("{name}", Constants.name)
+                                        .replace("{twitter}", Constants.twitterAccount), true)
+                        .addField(Translator.getLabel(lg, "about.opensource.title"),
+                                Translator.getLabel(lg, "about.opensource.desc")
+                                        .replace("{git}", Constants.git), true)
+                        .addField(Translator.getLabel(lg, "about.free.title"),
+                                Translator.getLabel(lg, "about.free.desc")
+                                        .replace("{paypal}", Constants.paypal), true)
+                        .addField(Translator.getLabel(lg, "about.graphist.title"),
+                                Translator.getLabel(lg, "about.graphist.desc")
+                                        .replace("{graphist}", Graphist.ELYCANN.toMarkdown()), true);
+                StringBuilder st = new StringBuilder();
+                for(Donator donator : Donator.values())
+                    st.append(donator.getName()).append(", ");
+                st.setLength(st.length() - 2);
+                spec.addField(Translator.getLabel(lg, "about.donators.title"),
+                        st.toString() + ".", true);
+            })).subscribe();
+        }
     }
 
     @Override

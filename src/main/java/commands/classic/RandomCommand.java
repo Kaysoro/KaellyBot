@@ -1,10 +1,9 @@
 package commands.classic;
 
 import commands.model.AbstractCommand;
+import discord4j.core.object.entity.Message;
 import enums.Dungeon;
 import enums.Language;
-import util.Message;
-import sx.blah.discord.handle.obj.IMessage;
 import util.Translator;
 
 import java.util.Arrays;
@@ -29,25 +28,33 @@ public class RandomCommand extends AbstractCommand {
     }
 
     @Override
-    public void request(IMessage message, Matcher m, Language lg) {
+    public void request(Message message, Matcher m, Language lg) {
         Random r = new Random();
         Matcher tmp;
 
         if (m.group(1) == null || m.group(1).trim().isEmpty()) {
             boolean value = r.nextBoolean();
-            Message.sendText(message.getChannel(), value ? Translator.getLabel(lg, "random.request.1") :
-                    Translator.getLabel(lg, "random.request.2") + " !");
+            message.getChannel().flatMap(chan -> chan
+                    .createMessage(value ? Translator.getLabel(lg, "random.request.1") :
+                            Translator.getLabel(lg, "random.request.2") + " !"))
+                    .subscribe();
         }
         else if (m.group(1).matches("\\s+-?\\d+")){
             try {
                 int limit = Integer.parseInt(m.group(1).trim());
                 if (limit > 0)
-                    Message.sendText(message.getChannel(),r.nextInt(limit) + " !");
+                    message.getChannel().flatMap(chan -> chan
+                            .createMessage(r.nextInt(limit) + " !"))
+                            .subscribe();
                 else
-                    Message.sendText(message.getChannel(), Translator.getLabel(lg, "random.request.3"));
+                    message.getChannel().flatMap(chan -> chan
+                            .createMessage(Translator.getLabel(lg, "random.request.3")))
+                            .subscribe();
             } catch(NumberFormatException e){
-                Message.sendText(message.getChannel(), Translator.getLabel(lg, "random.request.4")
-                        + " " + Integer.MAX_VALUE + ").");
+                message.getChannel().flatMap(chan -> chan
+                        .createMessage(Translator.getLabel(lg, "random.request.4")
+                                + " " + Integer.MAX_VALUE + ")."))
+                        .subscribe();
             }
         }
         else if ((tmp = Pattern.compile("\\s+-dj(\\s+\\d{1,3})?(\\s+\\d{1,3})?").matcher(m.group(1))).matches()){
@@ -78,22 +85,29 @@ public class RandomCommand extends AbstractCommand {
                 while(selected == selected2 || selected2.isEvent())
                     selected2 = djs.get(r.nextInt(djs.size()));
 
-                Message.sendText(message.getChannel(), Translator.getLabel(lg, "random.request.6")
-                        .replace("{dj}", selected.getLabel(lg))
-                        .replace("{dj2}", selected2.getLabel(lg))
-                        .replace("{size}", String.valueOf(djs.size())));
+                final Dungeon SELECTED2 = selected2;
+                message.getChannel().flatMap(chan -> chan
+                        .createMessage(Translator.getLabel(lg, "random.request.6")
+                                .replace("{dj}", selected.getLabel(lg))
+                                .replace("{dj2}", SELECTED2.getLabel(lg))
+                                .replace("{size}", String.valueOf(djs.size()))))
+                        .subscribe();
             }
             else
-                Message.sendText(message.getChannel(), Translator.getLabel(lg, "random.request.5")
-                        .replace("{dj}", selected.getLabel(lg))
-                        .replace("{size}", String.valueOf(djs.size())));
+                message.getChannel().flatMap(chan -> chan
+                        .createMessage(Translator.getLabel(lg, "random.request.5")
+                                .replace("{dj}", selected.getLabel(lg))
+                                .replace("{size}", String.valueOf(djs.size()))))
+                        .subscribe();
         }
         else if (m.group(1).matches("\\s+-dj(\\s+\\d+)?(\\s+\\d+)?"))
             badUse.throwException(message, this, lg);
         else {
             String value = m.group(1).trim();
             String[] values = value.split("\\s+");
-            Message.sendText(message.getChannel(), values[r.nextInt(values.length)] + " !");
+            message.getChannel().flatMap(chan -> chan
+                    .createMessage(values[r.nextInt(values.length)] + " !"))
+                    .subscribe();
         }
     }
 
