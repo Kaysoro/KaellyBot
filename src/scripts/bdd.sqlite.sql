@@ -44,30 +44,6 @@ CREATE TABLE IF NOT EXISTS `Portal_Tracker` (
 	PRIMARY KEY(`id_chan`,`id_guild`),
 	FOREIGN KEY(`id_guild`) REFERENCES `Guild`(`id`) ON UPDATE CASCADE ON DELETE CASCADE
 );
-DROP TABLE IF EXISTS `Portal_Guild`;
-CREATE TABLE IF NOT EXISTS `Portal_Guild` (
-	`name_portal`	TEXT NOT NULL,
-	`id_guild`	TEXT NOT NULL,
-	`pos`	TEXT,
-	`utilisation`	INTEGER DEFAULT -1,
-	`creation`	INTEGER DEFAULT -1,
-	`last_update`	INTEGER DEFAULT -1,
-	`creation_source`	TEXT,
-	`update_source`	TEXT,
-	PRIMARY KEY(`name_portal`,`id_guild`),
-	FOREIGN KEY(`id_guild`) REFERENCES `Guild`(`id`) ON UPDATE CASCADE ON DELETE CASCADE
-);
-DROP TABLE IF EXISTS `Portal`;
-CREATE TABLE IF NOT EXISTS `Portal` (
-	`name`	TEXT NOT NULL,
-	`url`	TEXT,
-	`color`	INTEGER,
-	PRIMARY KEY(`name`)
-);
-INSERT INTO `Portal` (name,url,color) VALUES ('Enutrosor','http://www.sweet.ovh/images/portals/Enutrosor.png',16777064);
-INSERT INTO `Portal` (name,url,color) VALUES ('Srambad','http://www.sweet.ovh/images/portals/Srambad.png',3097192);
-INSERT INTO `Portal` (name,url,color) VALUES ('Xélorium','http://www.sweet.ovh/images/portals/Xelorium.png',7229801);
-INSERT INTO `Portal` (name,url,color) VALUES ('Ecaflipus','http://www.sweet.ovh/images/portals/Ecaflipus.png',13490334);
 DROP TABLE IF EXISTS `Order_User`;
 CREATE TABLE IF NOT EXISTS `Order_User` (
 	`id_user`	TEXT NOT NULL,
