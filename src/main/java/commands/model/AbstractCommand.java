@@ -13,6 +13,7 @@ import exceptions.DiscordException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import stats.CommandStatistics;
+import util.Reporter;
 import util.Translator;
 import java.util.Optional;
 import java.util.regex.Matcher;
@@ -47,8 +48,8 @@ public abstract class AbstractCommand implements Command {
 
     @Override
     public final void request(Message message) {
+        Language lg = Translator.getLanguageFrom(message.getChannel().block());
         try {
-            Language lg = Translator.getLanguageFrom(message.getChannel().block());
             Matcher m = getMatcher(message);
             boolean isFound = m.find();
 
@@ -93,6 +94,8 @@ public abstract class AbstractCommand implements Command {
                 request(message, m, lg);
             }
         } catch(Exception e){
+            BasicDiscordException.UNKNOWN_ERROR.throwException(message, this, lg);
+            Reporter.report(e);
             LOG.error("request", e);
         }
     }

@@ -16,12 +16,12 @@ public class BadUseCommandDiscordException implements DiscordException {
 
     @Override
     public void throwException(Message message, Command command, Language lg, Object... arguments) {
-        message.getChannel().flatMap(chan -> chan
+        message.getAuthor().ifPresent(author -> message.getChannel().flatMap(chan -> chan
                 .createMessage(Translator.getLabel(lg, "exception.bad_use_command")
-                        .replace("{author}", Matcher.quoteReplacement(message.getAuthor().toString()))
+                        .replace("{author}", Matcher.quoteReplacement(author.getMention()))
                         .replaceAll("\\{prefix}", Matcher.quoteReplacement(AbstractCommand.getPrefix(message)))
                         .replaceAll("\\{cmd.name}", command.getName())
                         .replace("{HelpCmd.name}", HelpCommand.NAME)))
-                .subscribe();
+                .subscribe());
     }
 }
