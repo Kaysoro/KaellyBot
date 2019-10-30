@@ -217,19 +217,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
     }
 
     @Test
-     void testPortalAutoCommand(){
-        Command cmd = new PortalAutoCommand();
-        Pattern pattern = Pattern.compile("^" + Constants.prefixCommand + cmd.getName() + cmd.getPattern() + "$");
-
-        assertTrue(pattern.matcher(Constants.prefixCommand + "pos-auto true").find());
-        assertTrue(pattern.matcher(Constants.prefixCommand + "pos-auto on").find());
-        assertTrue(pattern.matcher(Constants.prefixCommand + "pos-auto 0").find());
-        assertTrue(pattern.matcher(Constants.prefixCommand + "pos-auto false").find());
-        assertTrue(pattern.matcher(Constants.prefixCommand + "pos-auto off").find());
-        assertTrue(pattern.matcher(Constants.prefixCommand + "pos-auto 1").find());
-    }
-
-    @Test
      void testTutorialCommand(){
         Command cmd = new TutorialCommand();
         Pattern pattern = Pattern.compile("^" + Constants.prefixCommand + cmd.getName() + cmd.getPattern() + "$");
@@ -292,16 +279,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
     }
 
     @Test
-     void testSoundCommand(){
-        Command cmd = new SoundCommand();
-        Pattern pattern = Pattern.compile("^" + Constants.prefixCommand + cmd.getName() + cmd.getPattern() + "$");
-
-        assertTrue(pattern.matcher(Constants.prefixCommand + "sound").find());
-        assertTrue(pattern.matcher(Constants.prefixCommand + "sound dofus").find());
-        assertTrue(pattern.matcher(Constants.prefixCommand + "sound -leave").find());
-    }
-
-    @Test
      void testResourceCommand(){
         Command cmd = new ResourceCommand();
         Pattern pattern = Pattern.compile("^" + Constants.prefixCommand + cmd.getName() + cmd.getPattern() + "$");
@@ -356,55 +333,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
     }
 
     @Test
-    // ADMIN COMMANDS
-     void testAdminCommand(){
-        Command cmd = new AdminCommand();
-        Pattern pattern = Pattern.compile("^" + Constants.prefixCommand + cmd.getName() + cmd.getPattern() + "$");
-
-        assertTrue(pattern.matcher(Constants.prefixCommand + "admin").find());
-        assertTrue(pattern.matcher(Constants.prefixCommand + "admin help").find());
-        assertTrue(pattern.matcher(Constants.prefixCommand + "admin hélp").find());
-        assertTrue(pattern.matcher(Constants.prefixCommand + "admin !help").find());
-        assertTrue(pattern.matcher(Constants.prefixCommand + "admin !help2").find());
-    }
-
-    @Test
-     void testAnnounceCommand(){
-        Command cmd = new AnnounceCommand();
-        Pattern pattern = Pattern.compile("^" + Constants.prefixCommand + cmd.getName() + cmd.getPattern() + "$");
-
-        assertTrue(pattern.matcher(Constants.prefixCommand + "announce test").find());
-        assertTrue(pattern.matcher(Constants.prefixCommand + "announce -confirm test").find());
-        assertFalse(pattern.matcher(Constants.prefixCommand + "announce").find());
-    }
-
-    @Test
-     void testAvailableCommand(){
-        Command cmd = new AvailableCommand();
-        Pattern pattern = Pattern.compile("^" + Constants.prefixCommand + cmd.getName() + cmd.getPattern() + "$");
-
-        assertTrue(pattern.matcher(Constants.prefixCommand + "available CommandForbidden true").find());
-        assertTrue(pattern.matcher(Constants.prefixCommand + "available CommandForbidden on").find());
-        assertTrue(pattern.matcher(Constants.prefixCommand + "available CommandForbidden 0").find());
-        assertTrue(pattern.matcher(Constants.prefixCommand + "available CommandForbidden false").find());
-        assertTrue(pattern.matcher(Constants.prefixCommand + "available CommandForbidden off").find());
-        assertTrue(pattern.matcher(Constants.prefixCommand + "available CommandForbidden 1").find());
-        assertFalse(pattern.matcher(Constants.prefixCommand + "available").find());
-        assertFalse(pattern.matcher(Constants.prefixCommand + "available CommandForbidden").find());
-        assertTrue(pattern.matcher(Constants.prefixCommand + "available Command-Forbidden true").find());
-    }
-
-    @Test
-     void testTalkCommand(){
-        Command cmd = new TalkCommand();
-        Pattern pattern = Pattern.compile("^" + Constants.prefixCommand + cmd.getName() + cmd.getPattern() + "$");
-
-        assertTrue(pattern.matcher(Constants.prefixCommand + "talk test").find());
-        assertTrue(pattern.matcher(Constants.prefixCommand + "talk 5681 test").find());
-        assertFalse(pattern.matcher(Constants.prefixCommand + "talk").find());
-    }
-
-    @Test
      void testStatCommand(){
         Command cmd = new StatCommand();
         Pattern pattern = Pattern.compile("^" + Constants.prefixCommand + cmd.getName() + cmd.getPattern() + "$");
@@ -415,14 +343,5 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
         assertTrue(pattern.matcher(Constants.prefixCommand + "stats -cmd").find());
         assertTrue(pattern.matcher(Constants.prefixCommand + "stats -cmd 200").find());
         assertTrue(pattern.matcher(Constants.prefixCommand + "stats -hist").find());
-    }
-
-    @Test
-     void testVacuumCommand(){
-        Command cmd = new VacuumCommand();
-        Pattern pattern = Pattern.compile("^" + Constants.prefixCommand + cmd.getName() + cmd.getPattern() + "$");
-
-        assertTrue(pattern.matcher(Constants.prefixCommand + "vacuum").find());
-        assertFalse(pattern.matcher(Constants.prefixCommand + "  ").find());
     }
 }
