@@ -2,11 +2,13 @@ package commands.config;
 
 import commands.model.AbstractCommand;
 import data.Constants;
+import discord4j.core.object.entity.Guild;
+import discord4j.core.object.entity.Message;
+import discord4j.core.object.entity.MessageChannel;
+import discord4j.core.object.util.Snowflake;
 import enums.Language;
 import exceptions.*;
 import finders.RSSFinder;
-import util.Message;
-import sx.blah.discord.handle.obj.IMessage;
 import util.Translator;
 
 import java.util.regex.Matcher;
@@ -27,26 +29,35 @@ public class RSSCommand extends AbstractCommand {
     }
 
     @Override
-    public void request(IMessage message, Matcher m, Language lg) {
+    public void request(Message message, Matcher m, Language lg) {
         //On check si la personne a bien les droits pour exécuter cette commande
         if (isUserHasEnoughRights(message)) {
             String value = m.group(1);
 
+            String guildId = message.getGuild().blockOptional()
+                    .map(Guild::getId).map(Snowflake::asString).orElse("");
+            String channelId = message.getChannel().blockOptional()
+                    .map(MessageChannel::getId).map(Snowflake::asString).orElse("");
+
             if (value.matches("\\s+true") || value.matches("\\s+0") || value.matches("\\s+on")){
 
-                if (!RSSFinder.getRSSFinders().containsKey(message.getChannel().getStringID())) {
-                    new RSSFinder(message.getGuild().getStringID(), message.getChannel().getStringID()).addToDatabase();
-                    Message.sendText(message.getChannel(), Translator.getLabel(lg, "rss.request.1")
-                            .replace("{game.url}", Translator.getLabel(lg, "game.url")));
+                if (!RSSFinder.getRSSFinders().containsKey(channelId)) {
+                    new RSSFinder(guildId, channelId).addToDatabase();
+                    message.getChannel().flatMap(chan -> chan
+                            .createMessage(Translator.getLabel(lg, "rss.request.1")
+                                    .replace("{game.url}", Translator.getLabel(lg, "game.url"))))
+                            .subscribe();
                 }
                 else
                     rssFound.throwException(message, this, lg);
             }
             else if (value.matches("\\s+false") || value.matches("\\s+1") || value.matches("\\s+off"))
-                if (RSSFinder.getRSSFinders().containsKey(message.getChannel().getStringID())){
-                    RSSFinder.getRSSFinders().get(message.getChannel().getStringID()).removeToDatabase();
-                    Message.sendText(message.getChannel(), Translator.getLabel(lg, "rss.request.2")
-                            .replace("{game.url}", Translator.getLabel(lg, "game.url")));
+                if (RSSFinder.getRSSFinders().containsKey(channelId)){
+                    RSSFinder.getRSSFinders().get(channelId).removeToDatabase();
+                    message.getChannel().flatMap(chan -> chan
+                            .createMessage(Translator.getLabel(lg, "rss.request.2")
+                                    .replace("{game.url}", Translator.getLabel(lg, "game.url"))))
+                            .subscribe();
                 }
                 else
                     rssNotFound.throwException(message, this, lg);

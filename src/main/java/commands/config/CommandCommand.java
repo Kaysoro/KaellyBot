@@ -5,10 +5,9 @@ import commands.model.AbstractCommand;
 import commands.model.Command;
 import data.CommandForbidden;
 import data.Guild;
+import discord4j.core.object.entity.Message;
 import enums.Language;
-import util.Message;
 import exceptions.*;
-import sx.blah.discord.handle.obj.IMessage;
 import util.Translator;
 
 import java.util.ArrayList;
@@ -31,9 +30,9 @@ public class CommandCommand extends AbstractCommand {
     }
 
     @Override
-    public void request(IMessage message, Matcher m, Language lg) {
+    public void request(Message message, Matcher m, Language lg) {
         if (isUserHasEnoughRights(message)) {
-            Guild guild = Guild.getGuild(message.getGuild());
+            Guild guild = Guild.getGuild(message.getGuild().block());
             List<Command> potentialCmds = new ArrayList<>();
             String commandName = m.group(1).trim();
             for (Command command : CommandManager.getCommands())
@@ -45,14 +44,18 @@ public class CommandCommand extends AbstractCommand {
                 String value = m.group(2);
 
                 if (command instanceof CommandCommand){
-                    Message.sendText(message.getChannel(), Translator.getLabel(lg, "command.request.1"));
+                    message.getChannel().flatMap(chan -> chan
+                            .createMessage(Translator.getLabel(lg, "command.request.1")))
+                            .subscribe();
                     return;
                 }
                 if (value.matches("false") || value.matches("1") || value.matches("off")){
                     if (! guild.getForbiddenCommands().containsKey(command.getName())) {
                         new CommandForbidden(command, guild).addToDatabase();
-                        Message.sendText(message.getChannel(), Translator.getLabel(lg, "command.request.2") + " *" + commandName
-                                + "* " + Translator.getLabel(lg, "command.request.3"));
+                        message.getChannel().flatMap(chan -> chan
+                                .createMessage(Translator.getLabel(lg, "command.request.2") + " *" + commandName
+                                        + "* " + Translator.getLabel(lg, "command.request.3")))
+                                .subscribe();
                     }
                     else
                         BasicDiscordException.FORBIDDEN_COMMAND_FOUND.throwException(message, this, lg);
@@ -60,8 +63,10 @@ public class CommandCommand extends AbstractCommand {
                 else if (value.matches("true") || value.matches("0") || value.matches("on")){
                     if (guild.getForbiddenCommands().containsKey(command.getName())) {
                         guild.getForbiddenCommands().get(command.getName()).removeToDatabase();
-                        Message.sendText(message.getChannel(), Translator.getLabel(lg, "command.request.2") + " *" + commandName
-                                + "* " + Translator.getLabel(lg, "command.request.4"));
+                        message.getChannel().flatMap(chan -> chan
+                                .createMessage(Translator.getLabel(lg, "command.request.2") + " *" + commandName
+                                        + "* " + Translator.getLabel(lg, "command.request.4")))
+                                .subscribe();
                     }
                     else
                         BasicDiscordException.FORBIDDEN_COMMAND_NOTFOUND.throwException(message, this, lg);
