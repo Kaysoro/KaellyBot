@@ -6,7 +6,7 @@ import data.JobUser;
 import data.ServerDofus;
 import discord4j.core.object.entity.Member;
 import discord4j.core.object.entity.Message;
-import discord4j.core.object.entity.User;
+import discord4j.core.object.util.Snowflake;
 import discord4j.core.spec.EmbedCreateSpec;
 import enums.Job;
 import enums.Language;
@@ -44,7 +44,7 @@ public class JobCommand extends AbstractCommand {
 
         // Filter Initialisation
         Optional<discord4j.core.object.entity.Guild> guild = message.getGuild().blockOptional();
-        Optional<User> user = message.getAuthor();
+        Optional<Member> user = message.getAuthorAsMember().blockOptional();
 
         if (guild.isPresent() && user.isPresent()){
             ServerDofus server = Guild.getGuild(guild.get()).getServerDofus();
@@ -52,13 +52,12 @@ public class JobCommand extends AbstractCommand {
             // Concerned user is the author?
             if(Pattern.compile("^<@[!|&]?\\d+>").matcher(content).find()){
                 content = content.replaceFirst("<@[!|&]?\\d+>", "").trim();
-                List<User> members = message.getUserMentions().collectList().blockOptional()
-                        .orElse(Collections.emptyList());
-                if (members.isEmpty()){
+                Optional<Snowflake> memberId = message.getUserMentionIds().stream().findFirst();
+                if (! memberId.isPresent()){
                     BasicDiscordException.USER_NEEDED.throwException(message, this, lg);
                     return;
                 }
-                user = Optional.ofNullable(members.get(0));
+                user = guild.get().getMemberById(memberId.get()).blockOptional();
             }
 
             //user data consultation
@@ -77,14 +76,14 @@ public class JobCommand extends AbstractCommand {
                 }
 
                 if (user.isPresent()) {
-                    List<Consumer<EmbedCreateSpec>> embeds = JobUser.getJobsFromUser((Member) user.get(), server, lg);
+                    List<Consumer<EmbedCreateSpec>> embeds = JobUser.getJobsFromUser(user.get(), server, lg);
                     for (Consumer<EmbedCreateSpec> embed : embeds)
                         message.getChannel().flatMap(chan -> chan.createEmbed(embed)).subscribe();
                 }
             }
             // Data recording
             else if((m = Pattern.compile("-list|(-all|\\p{L}+(?:\\s+\\p{L}+)*)\\s+(\\d{1,3})(\\s+.+)?").matcher(content)).matches()) {
-                if (user == message.getAuthor()) {
+                if (user.isPresent() && message.getAuthor().isPresent() && user.get().getId().equals(message.getAuthor().get().getId())) {
                     if (!m.group(0).equals("-list")) {
                         // Data Parsing and exceptions processing
                         Set<Job> jobs;
@@ -136,12 +135,11 @@ public class JobCommand extends AbstractCommand {
                             return;
                         }
 
-                        if (user.isPresent())
-                            for (Job job : jobs)
-                                if (JobUser.containsKeys(user.get().getId().asLong(), server, job))
-                                    JobUser.get(user.get().getId().asLong(), server, job).get(0).setLevel(level);
-                                else
-                                    new JobUser(user.get().getId().asLong(), server, job, level).addToDatabase();
+                        for (Job job : jobs)
+                            if (JobUser.containsKeys(user.get().getId().asLong(), server, job))
+                                JobUser.get(user.get().getId().asLong(), server, job).get(0).setLevel(level);
+                            else
+                                new JobUser(user.get().getId().asLong(), server, job, level).addToDatabase();
 
                         StringBuilder sb = new StringBuilder();
 

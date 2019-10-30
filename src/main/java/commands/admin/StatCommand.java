@@ -75,7 +75,7 @@ public class StatCommand extends AbstractCommand {
             int ladder = 1;
             for(discord4j.core.object.entity.Guild guild : guilds)
                 st.append(ladder++).append(" : **").append(guild.getName()).append("**, ")
-                        .append(guild.getMemberCount()).append(" users\n");
+                        .append(guild.getMemberCount().orElse(0)).append(" users\n");
 
             message.getChannel().flatMap(chan -> chan.createMessage(st.toString())).subscribe();
         }
@@ -86,31 +86,29 @@ public class StatCommand extends AbstractCommand {
 
             message.getChannel().flatMap(chan ->
                 chan.createMessage(spec ->
-                        decorateImageMessage(spec, "stats -cmd : " + Instant.now() + ".png", getNumberCmdCalledPerCmd(LIMIT)))
+                        decorateImageMessage(spec, getNumberCmdCalledPerCmd(LIMIT)))
                         .then(chan.createMessage(spec ->
-                                decorateImageMessage(spec,"stats -cmd : " + Instant.now() + ".png", getNumberCmdCalled(LIMIT))))
+                                decorateImageMessage(spec, getNumberCmdCalled(LIMIT))))
                         .then(chan.createMessage(spec ->
-                                decorateImageMessage(spec,"stats -cmd : " + Instant.now() + ".png", getForbiddenCommandsChart())))
+                                decorateImageMessage(spec, getForbiddenCommandsChart())))
             ).subscribe();
         }
         else if (m.group(1).matches("\\s+-hist"))
-            message.getChannel().flatMap(chan -> chan.createMessage(spec -> decorateImageMessage(spec,
-                    "stats -hist : " + Instant.now() + ".png", getJoinTimeGuildsGraph())))
+            message.getChannel().flatMap(chan -> chan.createMessage(spec ->
+                    decorateImageMessage(spec, getJoinTimeGuildsGraph())))
             .subscribe();
     }
 
-    private void decorateImageMessage(MessageCreateSpec spec, String text, BufferedImage image){
+    private void decorateImageMessage(MessageCreateSpec spec, BufferedImage image){
         ByteArrayOutputStream os = new ByteArrayOutputStream();
         try {
             ImageIO.write(image, "png", os);
             InputStream is = new ByteArrayInputStream(os.toByteArray());
-            spec.addFile(Instant.now().toString(), is);
+            spec.addFile(Instant.now().toString() + ".png", is);
         } catch(Exception e){
             Reporter.report(e);
             LoggerFactory.getLogger(StatCommand.class).error("decorateImageMessage", e);
         }
-
-        spec.setContent(text);
     }
 
     /**

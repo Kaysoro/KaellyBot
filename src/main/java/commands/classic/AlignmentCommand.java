@@ -6,7 +6,7 @@ import data.OrderUser;
 import data.ServerDofus;
 import discord4j.core.object.entity.Member;
 import discord4j.core.object.entity.Message;
-import discord4j.core.object.entity.User;
+import discord4j.core.object.util.Snowflake;
 import discord4j.core.spec.EmbedCreateSpec;
 import enums.City;
 import enums.Language;
@@ -51,7 +51,7 @@ public class AlignmentCommand extends FetchCommand {
     public void request(Message message, Matcher m, Language lg) {
         String content = m.group(1).trim();
         Optional<discord4j.core.object.entity.Guild> guild = message.getGuild().blockOptional();
-        Optional<User> user = message.getAuthor();
+        Optional<Member> user = message.getAuthorAsMember().blockOptional();
 
         // Initialisation du Filtre
         City city = null;
@@ -86,13 +86,12 @@ public class AlignmentCommand extends FetchCommand {
                 // L'utilisateur concerné est-il l'auteur de la commande ?
                 if(Pattern.compile("^<@[!|&]?\\d+>").matcher(content).find()){
                     content = content.replaceFirst("<@[!|&]?\\d+>", "").trim();
-                    List<User> members = message.getUserMentions().collectList().blockOptional()
-                            .orElse(Collections.emptyList());
-                    if (members.isEmpty()){
+                    Optional<Snowflake> memberId = message.getUserMentionIds().stream().findFirst();
+                    if (! memberId.isPresent()){
                         BasicDiscordException.USER_NEEDED.throwException(message, this, lg);
                         return;
                     }
-                    user = Optional.ofNullable(members.get(0));
+                    user = guild.get().getMemberById(memberId.get()).blockOptional();
                 }
 
                 //Consultation des données filtrés par utilisateur
@@ -111,14 +110,14 @@ public class AlignmentCommand extends FetchCommand {
                     }
 
                     if (user.isPresent()) {
-                        List<Consumer<EmbedCreateSpec>> embeds = OrderUser.getOrdersFromUser((Member) user.get(), server, lg);
+                        List<Consumer<EmbedCreateSpec>> embeds = OrderUser.getOrdersFromUser(user.get(), server, lg);
                         for (Consumer<EmbedCreateSpec> embed : embeds)
                             message.getChannel().flatMap(chan -> chan.createEmbed(embed)).subscribe();
                     }
                 }
                 // Enregistrement des données
                 else if((m = Pattern.compile("(\\p{L}+)\\s+(\\p{L}+)\\s+(\\d{1,3})(\\s+.+)?").matcher(content)).matches()){
-                    if(user == message.getAuthor()) {
+                    if(user.isPresent() && message.getAuthor().isPresent() && user.get().getId().equals(message.getAuthor().get().getId())) {
                         // Parsing des données et traitement des divers exceptions
                         List<City> cities = findCity(m.group(1), lg);
                         if (checkData(cities, tooMuchCities, notFoundCity, message, lg)) return;
@@ -141,7 +140,7 @@ public class AlignmentCommand extends FetchCommand {
                             notFoundServer.throwException(message, this, lg);
                             return;
                         }
-                        if(user.isPresent() && OrderUser.containsKeys(user.get().getId().asLong(), server, city, order)) {
+                        if(OrderUser.containsKeys(user.get().getId().asLong(), server, city, order)) {
                             OrderUser.get(user.get().getId().asLong(), server, city, order).get(0).setLevel(level);
                             if (level != 0)
                                 message.getChannel().flatMap(chan -> chan
@@ -150,7 +149,7 @@ public class AlignmentCommand extends FetchCommand {
                                 message.getChannel().flatMap(chan -> chan
                                     .createMessage(Translator.getLabel(lg, "align.reset"))).subscribe();
                         }
-                        else if (user.isPresent()){
+                        else {
                             new OrderUser(user.get().getId().asLong(), server, city, order, level).addToDatabase();
                             if (level != 0)
                                 message.getChannel().flatMap(chan -> chan
