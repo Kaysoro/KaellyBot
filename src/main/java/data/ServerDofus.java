@@ -24,13 +24,11 @@ public class ServerDofus {
     private String name;
     private String id;
     private Game game;
-    private List<Position> positions;
 
     public ServerDofus(String name, String id, Game game) {
         this.name = name;
         this.id = id;
         this.game = game;
-        positions = Collections.emptyList();
     }
 
     private synchronized static void initialize(){
@@ -80,10 +78,6 @@ public class ServerDofus {
 
     public Game getGame(){
         return game;
-    }
-
-    public List<Position> getPositions(){
-        return positions;
     }
 
     @Override

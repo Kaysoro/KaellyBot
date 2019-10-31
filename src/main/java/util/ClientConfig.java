@@ -29,6 +29,7 @@ public class ClientConfig {
     private final static String FILENAME = "config.properties";
     private List<DiscordClient> DISCORD;
     private TwitterStream TWITTER;
+    private String KAELLY_PORTALS_URL;
 
     private ClientConfig(){
         super();
@@ -37,6 +38,8 @@ public class ClientConfig {
 
         try (FileInputStream file = new FileInputStream(URLDecoder.decode(config, "UTF-8"))){
             prop.load(file);
+
+            KAELLY_PORTALS_URL = prop.getProperty("kaelly.portals.url");
 
             try {
                 DISCORD = new ShardingClientBuilder(prop.getProperty("discord.token"))
@@ -102,5 +105,9 @@ public class ClientConfig {
         DISCORD().stream()
                 .map(DiscordClient::login)
                 .forEach(Mono::block);
+    }
+
+    public static String KAELLY_PORTALS_URL(){
+        return getInstance().KAELLY_PORTALS_URL;
     }
 }

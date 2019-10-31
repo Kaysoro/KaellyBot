@@ -3,15 +3,21 @@ package commands.classic;
 import commands.model.AbstractCommand;
 import data.*;
 import discord4j.core.object.entity.Message;
+import enums.Dimension;
 import enums.Language;
 import exceptions.DiscordException;
 import exceptions.NotFoundDiscordException;
 import exceptions.TooMuchDiscordException;
+import finders.PortalFinder;
+import mapper.PortalMapper;
+import payloads.PortalDto;
 import util.Translator;
 
 import java.text.Normalizer;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.regex.Matcher;
 
 /**
@@ -19,13 +25,15 @@ import java.util.regex.Matcher;
  */
 public class PortalCommand extends AbstractCommand {
 
+    private PortalFinder portalFinder;
     private DiscordException tooMuchPortals;
     private DiscordException notFoundPortal;
     private DiscordException notFoundServer;
 
     public PortalCommand(){
-        super("pos", "(\\s+\\p{L}+)?(\\s+\\[?(-?\\d{1,2})\\s*[,|\\s]\\s*(-?\\d{1,2})\\]?)?(\\s+\\d{1,3})?");
+        super("pos", "(\\s+\\p{L}+)?");
         setUsableInMP(false);
+        portalFinder = new PortalFinder();
         tooMuchPortals = new TooMuchDiscordException("portal");
         notFoundPortal = new NotFoundDiscordException("portal");
         notFoundServer = new NotFoundDiscordException("server");
@@ -36,43 +44,43 @@ public class PortalCommand extends AbstractCommand {
         ServerDofus server = Guild.getGuild(message.getGuild().block()).getServerDofus();
 
         if (server != null){
-            if (m.group(1) == null && m.group(5) == null) { // No dimension precised
-                for(Position pos : server.getPositions())
+            if (m.group(1) == null) { // No dimension precised
+                List<PortalDto> portals = Optional.ofNullable(portalFinder.getPositions(server, lg)).orElse(Collections.emptyList());
+                for(PortalDto pos : portals)
                     message.getChannel().flatMap(chan -> chan
-                            .createEmbed(spec -> pos.decorateEmbedObject(spec, lg)))
+                            .createEmbed(spec -> PortalMapper.decorateSpec(spec, pos, lg)))
                             .subscribe();
             }
             else {
-                List<Position> positions = new ArrayList<>();
-                if (m.group(1) != null)
-                    positions = getPosition(m.group(1), server);
-                final Position POSITION = positions.get(0);
-                if (positions.size() == 1)
-                    message.getChannel().flatMap(chan -> chan
-                            .createEmbed(spec -> POSITION.decorateEmbedObject(spec, lg)))
-                            .subscribe();
-                else if(positions.size() > 1)
-                    tooMuchPortals.throwException(message, this, lg);
-                else
+                final List<Dimension> DIMENSIONS = getDimensions(m.group(1));
+                if (DIMENSIONS.size() == 1) {
+                    Optional.ofNullable(portalFinder.getPosition(server, DIMENSIONS.get(0), lg))
+                            .ifPresent(pos -> message.getChannel().flatMap(chan -> chan
+                                    .createEmbed(spec -> PortalMapper.decorateSpec(spec, pos, lg)))
+                                    .subscribe());
+                }
+                else if (DIMENSIONS.isEmpty())
                     notFoundPortal.throwException(message, this, lg);
+                else
+                    tooMuchPortals.throwException(message, this, lg);
             }
         }
         else
             notFoundServer.throwException(message, this, lg);
     }
 
-    private List<Position> getPosition(String nameProposed, ServerDofus server){
+    private List<Dimension> getDimensions(String nameProposed){
         nameProposed = Normalizer.normalize(nameProposed, Normalizer.Form.NFD)
                 .replaceAll("\\p{InCombiningDiacriticalMarks}+", "").toLowerCase();
         nameProposed = nameProposed.replaceAll("\\W+", "");
-        List<Position> positions = new ArrayList<>();
+        List<Dimension> dimensions = new ArrayList<>();
 
-        for(Position position : server.getPositions())
-            if (Normalizer.normalize(position.getPortal().getName(), Normalizer.Form.NFD)
+        for(Dimension dimension : Dimension.values())
+            if (Normalizer.normalize(dimension.name(), Normalizer.Form.NFD)
                     .replaceAll("\\p{InCombiningDiacriticalMarks}+", "")
                     .toLowerCase().startsWith(nameProposed))
-                positions.add(position);
-        return positions;
+                dimensions.add(dimension);
+        return dimensions;
     }
 
     @Override
@@ -85,12 +93,6 @@ public class PortalCommand extends AbstractCommand {
         return help(lg, prefix)
                 + "\n`" + prefix + name + "` : " + Translator.getLabel(lg, "portal.help.detailed.1")
                 + "\n`" + prefix + name + " `*`dimension`* : " + Translator.getLabel(lg, "portal.help.detailed.2")
-                + "\n`" + prefix + name + " `*`dimension`*` [POS, POS]` : "
-                        + Translator.getLabel(lg, "portal.help.detailed.3")
-                + "\n`" + prefix + name + " `*`dimension`*` [POS, POS] `*`utilisation`* : "
-                        + Translator.getLabel(lg, "portal.help.detailed.4")
-                + "\n`" + prefix + name + " `*`dimension` `utilisation`* : "
-                        + Translator.getLabel(lg, "portal.help.detailed.5")
                 + "\n";
     }
 }
