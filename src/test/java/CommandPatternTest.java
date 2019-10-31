@@ -209,11 +209,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
         assertTrue(pattern.matcher(Constants.prefixCommand + "pos").find());
         assertTrue(pattern.matcher(Constants.prefixCommand + "pos dimension").find());
         assertTrue(pattern.matcher(Constants.prefixCommand + "pos dimensiôn").find());
-        assertTrue(pattern.matcher(Constants.prefixCommand + "pos dimension [1,-1]").find());
-        assertTrue(pattern.matcher(Constants.prefixCommand + "pos dimension -1 1").find());
-        assertTrue(pattern.matcher(Constants.prefixCommand + "pos dimension 1,-1 1").find());
-        assertTrue(pattern.matcher(Constants.prefixCommand + "pos dimension [1,-1] 1").find());
-        assertTrue(pattern.matcher(Constants.prefixCommand + "pos dimension 1").find());
     }
 
     @Test
