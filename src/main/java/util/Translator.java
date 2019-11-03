@@ -84,8 +84,8 @@ public class Translator {
 
         if (channel != null) {
             try {
-                List<Message> messages = channel.getMessagesAfter(Snowflake.of(Instant.EPOCH))
-                        .take(MAX_MESSAGES_READ).collectList().block();
+                List<Message> messages = channel.getMessagesBefore(Snowflake.of(Instant.now()))
+                        .take(MAX_MESSAGES_READ).collectList().blockOptional().orElse(Collections.emptyList());
                 for (Message message : messages) {
                     String content = message.getContent()
                             .map(s -> s.replaceAll(":\\w+:", "").trim()).orElse("");
@@ -93,7 +93,7 @@ public class Translator {
                         result.add(content);
                 }
             } catch (Exception e){
-                LOG.warn("Impossible to gather data from " + channel.getId().asString() + "/" + channel.getId().asString());
+                LOG.warn("Impossible to gather data from " + channel.getId().asString());
             }
         }
         return result;
