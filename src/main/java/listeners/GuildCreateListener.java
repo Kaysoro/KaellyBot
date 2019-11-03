@@ -62,10 +62,9 @@ public class GuildCreateListener {
                                         .flatMap(cli -> cli.getChannelById(Snowflake.of(Constants.chanReportID)))
                                         .filter(channel -> channel instanceof TextChannel)
                                         .map(channel -> (TextChannel) channel)
-                                        .flatMap(channel -> channel.getGuild().flatMap(guildWon -> channel
-                                                .createMessage("[NEW] **" + guildWon.getName() + "** ("
-                                                        + guild.getLanguage().getAbrev() + "), +"
-                                                        + guildWon.getMemberCount().orElse(0) +  " utilisateurs"))))
+                                        .flatMap(channel -> channel.createMessage("[NEW] **" + event.getGuild().getName()
+                                                + "** (" + guild.getLanguage().getAbrev() + "), +"
+                                                + event.getGuild().getMemberCount().orElse(0) +  " utilisateurs")))
                                 .collectList();
                     });
                 }).subscribe();
