@@ -35,7 +35,7 @@ public class GuildLeaveListener {
                 LOG.info("La guilde " + event.getGuildId().asString() + " - " + guild.getName()
                         + " a supprimé " + Constants.name);
 
-                Flux.fromIterable(ClientConfig.DISCORD())
+                ClientConfig.DISCORD()
                         .flatMap(cli -> cli.getChannelById(Snowflake.of(Constants.chanReportID)))
                         .filter(chan -> chan instanceof TextChannel)
                         .map(chan -> (TextChannel) chan)

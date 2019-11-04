@@ -38,7 +38,7 @@ public class TwitterListener extends StatusAdapter {
                 || twitterIDs.containsKey(status.getInReplyToUserId())))
             for (TwitterFinder twitterFinder : TwitterFinder.getTwitterChannels().values())
                 try {
-                    Flux.fromIterable(ClientConfig.DISCORD())
+                    ClientConfig.DISCORD()
                             .flatMap(client -> client.getChannelById(Snowflake.of(twitterFinder.getChannelId())))
                             .filter(chan -> chan instanceof MessageChannel)
                             .map(chan -> (MessageChannel) chan)

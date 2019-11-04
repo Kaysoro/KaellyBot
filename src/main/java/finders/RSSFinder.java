@@ -115,7 +115,7 @@ public class RSSFinder {
                     String idGuild = resultSet.getString("id_guild");
                     long lastUpdate = resultSet.getLong("last_update");
 
-                    Flux.fromIterable(ClientConfig.DISCORD())
+                    ClientConfig.DISCORD()
                             .flatMap(client -> client.getChannelById(Snowflake.of(idChan)))
                             .filter(channel -> channel instanceof TextChannel)
                             .map(channel -> (TextChannel) channel)
@@ -143,7 +143,7 @@ public class RSSFinder {
 
                 for (RSSFinder finder : getRSSFinders().values())
                     try {
-                        List<TextChannel> chans = Flux.fromIterable(ClientConfig.DISCORD())
+                        List<TextChannel> chans = ClientConfig.DISCORD()
                                 .flatMap(client -> client.getChannelById(Snowflake.of(finder.chan)))
                                 .filter(channel -> channel instanceof TextChannel)
                                 .map(channel -> (TextChannel) channel)

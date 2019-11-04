@@ -8,15 +8,13 @@ import io.sentry.Sentry;
 import listeners.ReadyListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import reactor.core.publisher.Mono;
+import reactor.core.publisher.Flux;
 import twitter4j.TwitterStream;
 import twitter4j.TwitterStreamFactory;
 import twitter4j.conf.ConfigurationBuilder;
 
 import java.io.*;
 import java.net.URLDecoder;
-import java.util.Collections;
-import java.util.List;
 import java.util.Properties;
 
 /**
@@ -27,7 +25,7 @@ public class ClientConfig {
     private static ClientConfig instance = null;
     private final static Logger LOG = LoggerFactory.getLogger(ClientConfig.class);
     private final static String FILENAME = "config.properties";
-    private List<DiscordClient> DISCORD;
+    private Flux<DiscordClient> DISCORD;
     private TwitterStream TWITTER;
     private String KAELLY_PORTALS_URL;
 
@@ -45,13 +43,12 @@ public class ClientConfig {
                 DISCORD = new ShardingClientBuilder(prop.getProperty("discord.token"))
                         .build()
                         .map(DiscordClientBuilder::build)
-                        .cache()
-                        .collectList().blockOptional().orElse(Collections.emptyList());
+                        .cache();
 
                 ReadyListener readyListener = new ReadyListener();
 
-                DISCORD.forEach(client -> client.getEventDispatcher().on(ReadyEvent.class)
-                        .subscribe(event -> readyListener.onReady(client)));
+                DISCORD.flatMap(client -> client.getEventDispatcher().on(ReadyEvent.class))
+                        .subscribe(event -> readyListener.onReady(event.getClient()));
 
             } catch(Throwable e){
                     LOG.error("Impossible de se connecter à Discord : verifiez votre token dans "
@@ -97,14 +94,12 @@ public class ClientConfig {
     public static TwitterStream TWITTER() {
         return getInstance().TWITTER;
     }
-    public static List<DiscordClient> DISCORD() {
+    public static Flux<DiscordClient> DISCORD() {
         return getInstance().DISCORD;
     }
 
     public static void loginDiscord(){
-        DISCORD().stream()
-                .map(DiscordClient::login)
-                .forEach(Mono::block);
+        DISCORD().flatMap(DiscordClient::login).blockLast();
     }
 
     public static String KAELLY_PORTALS_URL(){

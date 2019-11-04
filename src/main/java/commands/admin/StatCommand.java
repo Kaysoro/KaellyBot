@@ -13,7 +13,6 @@ import org.jfree.data.time.Day;
 import org.jfree.data.time.TimeSeries;
 import org.jfree.data.time.TimeSeriesCollection;
 import org.slf4j.LoggerFactory;
-import reactor.core.publisher.Flux;
 import stats.CommandStatistics;
 import util.ClientConfig;
 import util.Reporter;
@@ -51,11 +50,11 @@ public class StatCommand extends AbstractCommand {
     @Override
     public void request(Message message, Matcher m, Language lg) {
         if (m.group(1) == null || m.group(1).replaceAll("^\\s+", "").isEmpty()){
-            long totalGuild = Flux.fromIterable(ClientConfig.DISCORD())
+            long totalGuild = ClientConfig.DISCORD()
                     .flatMap(DiscordClient::getGuilds)
                     .count().blockOptional().orElse(0L);
 
-            int totalUser = Flux.fromIterable(ClientConfig.DISCORD())
+            int totalUser = ClientConfig.DISCORD()
                     .flatMap(DiscordClient::getGuilds)
                     .map(Guild::getMemberCount)
                     .map(count -> count.orElse(0))
@@ -117,7 +116,7 @@ public class StatCommand extends AbstractCommand {
      * @return Liste des limit plus grandes guildes qui utilisent kaelly
      */
     private List<discord4j.core.object.entity.Guild> getBiggestGuilds(int limit){
-        return Flux.fromIterable(ClientConfig.DISCORD()).flatMap(DiscordClient::getGuilds)
+        return ClientConfig.DISCORD().flatMap(DiscordClient::getGuilds)
                 .sort((guild1, guild2) -> guild2.getMemberCount().orElse(0) - guild1.getMemberCount().orElse(0))
                 .take(limit)
                 .collectList().block();
@@ -128,7 +127,7 @@ public class StatCommand extends AbstractCommand {
      * @return Graphique des arrivés des guildes utilisant kaelly
      */
     private BufferedImage getJoinTimeGuildsGraph(){
-        List<discord4j.core.object.entity.Guild> guilds = Flux.fromIterable(ClientConfig.DISCORD())
+        List<discord4j.core.object.entity.Guild> guilds = ClientConfig.DISCORD()
                 .flatMap(DiscordClient::getGuilds)
                 .sort(Comparator.comparing(guild -> guild.getJoinTime().orElse(Instant.EPOCH)))
                 .collectList().blockOptional().orElse(Collections.emptyList());

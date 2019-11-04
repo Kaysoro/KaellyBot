@@ -58,7 +58,7 @@ public class GuildCreateListener {
                                         chan.createMessage(customMessage) : event.getGuild().getOwner()
                                         .flatMap(Member::getPrivateChannel)
                                         .flatMap(ownerChan -> ownerChan.createMessage(customMessage)))
-                                .thenMany(Flux.fromIterable(ClientConfig.DISCORD())
+                                .thenMany(ClientConfig.DISCORD()
                                         .flatMap(cli -> cli.getChannelById(Snowflake.of(Constants.chanReportID)))
                                         .filter(channel -> channel instanceof TextChannel)
                                         .map(channel -> (TextChannel) channel)

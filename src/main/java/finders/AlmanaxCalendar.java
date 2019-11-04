@@ -63,7 +63,7 @@ public class AlmanaxCalendar {
 
                     for(AlmanaxCalendar calendar : getAlmanaxCalendars().values())
                         try {
-                            List<TextChannel> chans = Flux.fromIterable(ClientConfig.DISCORD())
+                            List<TextChannel> chans = ClientConfig.DISCORD()
                                     .flatMap(client -> client.getChannelById(Snowflake.of(calendar.chan)))
                                     .filter(channel -> channel instanceof TextChannel)
                                     .map(channel -> (TextChannel) channel)
@@ -131,7 +131,7 @@ public class AlmanaxCalendar {
                     String idChan = resultSet.getString("id_chan");
                     String idGuild = resultSet.getString("id_guild");
 
-                    Flux.fromIterable(ClientConfig.DISCORD())
+                    ClientConfig.DISCORD()
                             .flatMap(client -> client.getChannelById(Snowflake.of(idChan)))
                             .filter(channel -> channel instanceof TextChannel)
                             .map(channel -> (TextChannel) channel)
