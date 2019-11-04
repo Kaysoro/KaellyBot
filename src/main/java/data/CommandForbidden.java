@@ -48,8 +48,10 @@ public class CommandForbidden {
 
             while (resultSet.next()) {
                 String commandName = resultSet.getString("name_command");
-                CommandForbidden tmp = new CommandForbidden(CommandManager.getCommand(commandName), g, true);
-                commands.put(tmp.getCommand().getName(), tmp);
+                if (CommandManager.getCommand(commandName) != null) {
+                    CommandForbidden tmp = new CommandForbidden(CommandManager.getCommand(commandName), g, true);
+                    commands.put(tmp.getCommand().getName(), tmp);
+                }
             }
 
         } catch (SQLException e) {
