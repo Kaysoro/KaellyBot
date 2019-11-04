@@ -144,7 +144,7 @@ public class RSSFinder {
                 for (RSSFinder finder : getRSSFinders().values())
                     try {
                         List<TextChannel> chans = ClientConfig.DISCORD()
-                                .flatMap(client -> client.getChannelById(Snowflake.of(finder.chan)))
+                                .flatMap(client -> client.getChannelById(Snowflake.of(finder.chan))).distinct()
                                 .filter(channel -> channel instanceof TextChannel)
                                 .map(channel -> (TextChannel) channel)
                                 .collectList().blockOptional().orElse(Collections.emptyList());

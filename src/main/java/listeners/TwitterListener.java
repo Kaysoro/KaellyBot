@@ -39,7 +39,7 @@ public class TwitterListener extends StatusAdapter {
             for (TwitterFinder twitterFinder : TwitterFinder.getTwitterChannels().values())
                 try {
                     ClientConfig.DISCORD()
-                            .flatMap(client -> client.getChannelById(Snowflake.of(twitterFinder.getChannelId())))
+                            .flatMap(client -> client.getChannelById(Snowflake.of(twitterFinder.getChannelId()))).distinct()
                             .filter(chan -> chan instanceof MessageChannel)
                             .map(chan -> (MessageChannel) chan)
                             .filter(chan -> Translator.getLanguageFrom(chan).equals(language))

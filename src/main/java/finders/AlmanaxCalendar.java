@@ -65,6 +65,7 @@ public class AlmanaxCalendar {
                         try {
                             List<TextChannel> chans = ClientConfig.DISCORD()
                                     .flatMap(client -> client.getChannelById(Snowflake.of(calendar.chan)))
+                                    .distinct()
                                     .filter(channel -> channel instanceof TextChannel)
                                     .map(channel -> (TextChannel) channel)
                                     .collectList().blockOptional().orElse(Collections.emptyList());
@@ -130,14 +131,7 @@ public class AlmanaxCalendar {
                 while (resultSet.next()){
                     String idChan = resultSet.getString("id_chan");
                     String idGuild = resultSet.getString("id_guild");
-
-                    ClientConfig.DISCORD()
-                            .flatMap(client -> client.getChannelById(Snowflake.of(idChan)))
-                            .filter(channel -> channel instanceof TextChannel)
-                            .map(channel -> (TextChannel) channel)
-                            .collectList().blockOptional().orElse(Collections.emptyList())
-                            .forEach(chan -> almanaxCalendar.put(chan.getId().asString(),
-                                    new AlmanaxCalendar(idGuild, chan.getId().asString())));
+                    almanaxCalendar.put(idChan, new AlmanaxCalendar(idGuild, idChan));
                 }
             } catch (SQLException e) {
                 Reporter.report(e);

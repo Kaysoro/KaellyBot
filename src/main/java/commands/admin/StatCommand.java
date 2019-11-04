@@ -13,6 +13,7 @@ import org.jfree.data.time.Day;
 import org.jfree.data.time.TimeSeries;
 import org.jfree.data.time.TimeSeriesCollection;
 import org.slf4j.LoggerFactory;
+import reactor.core.publisher.Flux;
 import stats.CommandStatistics;
 import util.ClientConfig;
 import util.Reporter;
@@ -51,11 +52,11 @@ public class StatCommand extends AbstractCommand {
     public void request(Message message, Matcher m, Language lg) {
         if (m.group(1) == null || m.group(1).replaceAll("^\\s+", "").isEmpty()){
             long totalGuild = ClientConfig.DISCORD()
-                    .flatMap(DiscordClient::getGuilds)
+                    .flatMap(DiscordClient::getGuilds).distinct()
                     .count().blockOptional().orElse(0L);
 
             int totalUser = ClientConfig.DISCORD()
-                    .flatMap(DiscordClient::getGuilds)
+                    .flatMap(DiscordClient::getGuilds).distinct()
                     .map(Guild::getMemberCount)
                     .map(count -> count.orElse(0))
                     .collect(Collectors.summingInt(Integer::intValue))
@@ -116,7 +117,7 @@ public class StatCommand extends AbstractCommand {
      * @return Liste des limit plus grandes guildes qui utilisent kaelly
      */
     private List<discord4j.core.object.entity.Guild> getBiggestGuilds(int limit){
-        return ClientConfig.DISCORD().flatMap(DiscordClient::getGuilds)
+        return ClientConfig.DISCORD().flatMap(DiscordClient::getGuilds).distinct()
                 .sort((guild1, guild2) -> guild2.getMemberCount().orElse(0) - guild1.getMemberCount().orElse(0))
                 .take(limit)
                 .collectList().block();
@@ -128,7 +129,7 @@ public class StatCommand extends AbstractCommand {
      */
     private BufferedImage getJoinTimeGuildsGraph(){
         List<discord4j.core.object.entity.Guild> guilds = ClientConfig.DISCORD()
-                .flatMap(DiscordClient::getGuilds)
+                .flatMap(DiscordClient::getGuilds).distinct()
                 .sort(Comparator.comparing(guild -> guild.getJoinTime().orElse(Instant.EPOCH)))
                 .collectList().blockOptional().orElse(Collections.emptyList());
 

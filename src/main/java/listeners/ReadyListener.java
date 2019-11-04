@@ -54,16 +54,7 @@ public class ReadyListener {
             client.getEventDispatcher().on(TextChannelDeleteEvent.class)
                     .subscribe(textChannelDeleteEvent -> channelDeleteListener.onReady(textChannelDeleteEvent));
 
-            LOG.info("Check des guildes...");
-            client.getGuilds().collectList().blockOptional().orElse(Collections.emptyList())
-                    .forEach(guild -> {
-                        if (Guild.getGuilds().containsKey(guild.getId().asString())
-                                && !guild.getName().equals(Guild.getGuild(guild).getName()))
-                            Guild.getGuild(guild).setName(guild.getName());
-                        else
-                            client.getEventDispatcher().publish(new GuildCreateEvent(client, guild));
-                    });
-
+            LOG.info("Présence mise à jour...");
             // Joue à...
             client.updatePresence(Presence.online(Activity.watching(Constants.discordInvite))).subscribe();
 

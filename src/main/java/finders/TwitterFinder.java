@@ -48,12 +48,7 @@ public class TwitterFinder{
                 while (resultSet.next()){
                     long idChan = Long.parseLong(resultSet.getString("id_chan"));
                     long idGuild = Long.parseLong(resultSet.getString("id_guild"));
-
-                    ClientConfig.DISCORD()
-                            .flatMap(client -> client.getChannelById(Snowflake.of(idChan)))
-                            .collectList().blockOptional().orElse(Collections.emptyList())
-                            .forEach(chan -> twitterChannels.put(chan.getId().asLong(),
-                                    new TwitterFinder(idGuild, idChan)));
+                    twitterChannels.put(idChan, new TwitterFinder(idGuild, idChan));
                 }
             } catch (SQLException e) {
                 Reporter.report(e);
