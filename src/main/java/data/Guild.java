@@ -46,10 +46,11 @@ public class Guild {
 
             try {
                 PreparedStatement request = connection.prepareStatement("INSERT INTO"
-                        + " Guild(id, name, prefixe) VALUES (?, ?, ?);");
+                        + " Guild(id, name, prefixe, lang) VALUES (?, ?, ?, ?);");
                 request.setString(1, id);
                 request.setString(2, name);
                 request.setString(3, prefix);
+                request.setString(4, language.getAbrev());
                 request.executeUpdate();
             } catch (SQLException e) {
                 Reporter.report(e);
