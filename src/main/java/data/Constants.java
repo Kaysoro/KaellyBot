@@ -21,7 +21,7 @@ public class Constants {
     /**
      * Changelog
      */
-    public final static String changelog = "https://i.imgur.com/0qQSOac.png";
+    public final static String changelog = "https://i.imgur.com/Qq5Wfpt.png";
 
     /**
      * Author id
