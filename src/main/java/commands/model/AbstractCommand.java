@@ -15,7 +15,6 @@ import org.slf4j.LoggerFactory;
 import stats.CommandStatistics;
 import util.Reporter;
 import util.Translator;
-import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -141,14 +140,10 @@ public abstract class AbstractCommand implements Command {
      * @return true si les permissions sont suffisantes, false le cas échéant
      */
     protected boolean isChannelHasExternalEmojisPermission(Message message){
-        Optional<MessageChannel> channel = message.getChannel().blockOptional();
-
-        if (channel.isPresent())
-            return channel.get() instanceof PrivateChannel ||
-                    ((TextChannel) channel.get()).getEffectivePermissions(message.getClient().getSelfId()
-                            .orElse(Snowflake.of(0L))).blockOptional().orElse(PermissionSet.none())
-                            .contains(Permission.USE_EXTERNAL_EMOJIS);
-        return false;
+        return message.getChannel().blockOptional().filter(messageChannel -> messageChannel instanceof PrivateChannel ||
+                ((TextChannel) messageChannel).getEffectivePermissions(message.getClient().getSelfId()
+                        .orElse(Snowflake.of(0L))).blockOptional().orElse(PermissionSet.none())
+                        .contains(Permission.USE_EXTERNAL_EMOJIS)).isPresent();
     }
 
     /**
@@ -157,14 +152,12 @@ public abstract class AbstractCommand implements Command {
      * @return true si l'utilisateur a les droits nécessaires, false le cas échéant
      */
     protected boolean isUserHasEnoughRights(Message message){
-        Optional<MessageChannel> channel = message.getChannel().blockOptional();
-        if (channel.isPresent())
-            return ! (channel.get() instanceof PrivateChannel)
-                    && (message.getAuthor().map(user -> user.getId().asLong() == Constants.authorId).orElse(false)
-                    || ((TextChannel) channel.get()).getEffectivePermissions(message.getClient().getSelfId()
-                    .orElse(Snowflake.of(0L))).blockOptional().orElse(PermissionSet.none())
-                    .contains(Permission.MANAGE_GUILD));
-        return false;
+        return message.getChannel().blockOptional()
+                .filter(messageChannel -> !(messageChannel instanceof PrivateChannel) && (message.getAuthor()
+                        .map(user -> user.getId().asLong() == Constants.authorId).orElse(false)
+                || ((TextChannel) messageChannel).getEffectivePermissions(message.getAuthor()
+                        .map(User::getId).orElse(Snowflake.of(0L))).blockOptional().orElse(PermissionSet.none())
+                .contains(Permission.MANAGE_GUILD))).isPresent();
     }
 
     @Override
