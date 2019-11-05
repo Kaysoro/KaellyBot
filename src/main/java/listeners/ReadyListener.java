@@ -16,6 +16,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Collections;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Created by steve on 14/07/2016.
@@ -28,7 +30,7 @@ public class ReadyListener {
     private GuildLeaveListener guildLeaveListener;
     private GuildUpdateListener guildUpdateListener;
     private ChannelDeleteListener channelDeleteListener;
-    private boolean isReadyOnce;
+    private Map<DiscordClient, Boolean> isReadyOnce;
 
     public ReadyListener(){
          messageListener = new MessageListener();
@@ -36,12 +38,12 @@ public class ReadyListener {
          guildLeaveListener = new GuildLeaveListener();
          guildUpdateListener = new GuildUpdateListener();
          channelDeleteListener = new ChannelDeleteListener();
-         isReadyOnce = false;
+         isReadyOnce = new ConcurrentHashMap<>();
     }
 
     public void onReady(DiscordClient client) {
 
-        if (!isReadyOnce) {
+        if (!isReadyOnce.containsKey(client)) {
             long time = System.currentTimeMillis();
 
             LOG.info("Ajout des différents listeners...");
@@ -71,7 +73,7 @@ public class ReadyListener {
             client.getEventDispatcher().on(MessageCreateEvent.class)
                     .subscribe(event -> messageListener.onReady(event));
 
-            isReadyOnce = true;
+            isReadyOnce.put(client, true);
             LOG.info("Mise en place des ressources en " + (System.currentTimeMillis() - time) + "ms");
 
         }
