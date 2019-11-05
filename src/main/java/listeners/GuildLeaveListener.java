@@ -39,6 +39,7 @@ public class GuildLeaveListener {
                         .flatMap(cli -> cli.getChannelById(Snowflake.of(Constants.chanReportID)))
                         .filter(chan -> chan instanceof TextChannel)
                         .map(chan -> (TextChannel) chan)
+                        .distinct()
                         .flatMap(chan -> chan.createMessage("[LOSE] **" + optionalGuild.get().getName() + "**, -"
                                         + event.getGuild().map(discord4j.core.object.entity.Guild::getMemberCount)
                                 .orElse(OptionalInt.empty()).orElse(0) +  " utilisateurs"))
