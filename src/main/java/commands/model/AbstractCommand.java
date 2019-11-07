@@ -155,7 +155,7 @@ public abstract class AbstractCommand implements Command {
         return message.getChannel().blockOptional()
                 .filter(messageChannel -> !(messageChannel instanceof PrivateChannel) && (message.getAuthor()
                         .map(user -> user.getId().asLong() == Constants.authorId).orElse(false)
-                || ((TextChannel) messageChannel).getEffectivePermissions(message.getAuthor()
+                || ((GuildMessageChannel) messageChannel).getEffectivePermissions(message.getAuthor()
                         .map(User::getId).orElse(Snowflake.of(0L))).blockOptional().orElse(PermissionSet.none())
                 .contains(Permission.MANAGE_GUILD))).isPresent();
     }
