@@ -1,11 +1,9 @@
 package finders;
 
-import discord4j.core.object.util.Snowflake;
 import enums.Language;
 import listeners.TwitterListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import reactor.core.publisher.Flux;
 import twitter4j.FilterQuery;
 import util.ClientConfig;
 import util.Connexion;
@@ -16,7 +14,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Collections;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -25,9 +22,11 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class TwitterFinder{
     private final static Logger LOG = LoggerFactory.getLogger(TwitterFinder.class);
-    protected static Map<Long, TwitterFinder> twitterChannels;
+    private static boolean isReady = false;
+    private static Map<Long, TwitterFinder> twitterChannels;
     private long guildId;
     private long channelId;
+
 
     public TwitterFinder(long guidId, long channelId) {
         this.guildId = guidId;
@@ -101,8 +100,8 @@ public class TwitterFinder{
         return guildId;
     }
 
-    public static void start() {
-        if (ClientConfig.TWITTER() != null) {
+    public static synchronized void start() {
+        if (ClientConfig.TWITTER() != null && !isReady) {
             ClientConfig.TWITTER().addListener(new TwitterListener());
 
             long[] twitterIDs = new long[Language.values().length];
@@ -110,6 +109,7 @@ public class TwitterFinder{
             for(Language lg : Language.values())
                 twitterIDs[i++] = Long.parseLong(Translator.getLabel(lg, "twitter.id"));
             ClientConfig.TWITTER().filter(new FilterQuery(0, twitterIDs, new String[]{}));
+            isReady = true;
         }
     }
 }
