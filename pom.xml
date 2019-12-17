@@ -133,7 +133,7 @@
         <dependency>
             <groupId>io.sentry</groupId>
             <artifactId>sentry</artifactId>
-            <version>1.7.28</version>
+            <version>1.7.29</version>
         </dependency>
         <dependency>
             <groupId>ch.qos.logback</groupId>
