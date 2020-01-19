@@ -1,20 +1,22 @@
 package data;
 
+import discord4j.core.object.entity.Member;
+import discord4j.core.object.presence.Presence;
+import discord4j.core.object.presence.Status;
+import discord4j.core.object.util.Snowflake;
+import discord4j.core.spec.EmbedCreateSpec;
 import enums.Job;
 import enums.Language;
+import java.awt.Color;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import sx.blah.discord.api.internal.json.objects.EmbedObject;
-import sx.blah.discord.handle.obj.IGuild;
-import sx.blah.discord.handle.obj.IUser;
-import sx.blah.discord.util.EmbedBuilder;
 import util.*;
-
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
+import java.util.function.Consumer;
 
 /**
  * Created by steve on 12/11/2016.
@@ -66,7 +68,6 @@ public class JobUser extends ObjectUser {
 
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
-            Reporter.report(e, ClientConfig.DISCORD().getUserByID(idUser));
             LOG.error("setLevel", e);
         }
     }
@@ -91,7 +92,6 @@ public class JobUser extends ObjectUser {
 
                 preparedStatement.executeUpdate();
             } catch (SQLException e) {
-                Reporter.report(e, ClientConfig.DISCORD().getUserByID(idUser));
                 LOG.error("addToDatabase", e);
             }
         }
@@ -133,26 +133,27 @@ public class JobUser extends ObjectUser {
      * @param server Serveur dofus
      * @return Liste des résultats de la recherche
      */
-    public static List<EmbedObject> getJobsFromUser(IUser user, ServerDofus server, IGuild guild, Language lg){
-        List<JobUser> result = getJobs().get(user.getLongID(), server, null);
+    public static List<Consumer<EmbedCreateSpec>> getJobsFromUser(Member user, ServerDofus server, Language lg){
+        List<JobUser> result = getJobs().get(user.getId().asLong(), server, null);
         result.sort(JobUser::compare);
-        List<EmbedObject> embed = new ArrayList<>();
+        List<Consumer<EmbedCreateSpec>> embed = new ArrayList<>();
 
-        EmbedBuilder builder = new EmbedBuilder();
-        builder.withTitle(Translator.getLabel(lg, "job.user").replace("{user}", user.getDisplayName(guild)));
-        builder.withThumbnail(user.getAvatarURL());
-        builder.withColor(new Random().nextInt(16777216));
+        embed.add(spec -> {
+            spec.setTitle(Translator.getLabel(lg, "job.user").replace("{user}", user.getDisplayName()))
+            .setThumbnail(user.getAvatarUrl())
+            .setColor(Color.GRAY);
 
-        if (! result.isEmpty()) {
-            StringBuilder st = new StringBuilder();
-            for (JobUser jobUser : result)
-                st.append(jobUser.job.getLabel(lg)).append(" : ").append(jobUser.level).append("\n");
-            builder.appendField(Translator.getLabel(lg, "job.jobs"), st.toString(), true);
-        }
-        else
-            builder.withDescription(Translator.getLabel(lg, "job.empty"));
-        builder.withFooterText(server.getName());
-        embed.add(builder.build());
+            if (! result.isEmpty()) {
+                StringBuilder st = new StringBuilder();
+                for (JobUser jobUser : result)
+                    st.append(jobUser.job.getLabel(lg)).append(" : ").append(jobUser.level).append("\n");
+                spec.addField(Translator.getLabel(lg, "job.jobs"), st.toString(), true);
+            }
+            else
+                spec.setDescription(Translator.getLabel(lg, "job.empty"));
+            spec.setFooter(server.getName(), null);
+        });
+
         return embed;
     }
 
@@ -163,13 +164,13 @@ public class JobUser extends ObjectUser {
      * @param level Niveau; si ingérieur à 0, filtre ignoré
      * @return Liste des résultats de la recherche
      */
-    public static List<EmbedObject> getJobsFromFilters(List<IUser> users, ServerDofus server, Set<Job> jobs,
-                                                       int level, IGuild guild, Language lg){
+    public static List<Consumer<EmbedCreateSpec>> getJobsFromFilters(List<Member> users, ServerDofus server, Set<Job> jobs,
+                                                             int level, discord4j.core.object.entity.Guild guild, Language lg){
         List<JobUser> result = new ArrayList<>();
-        for(IUser user : users)
+        for(Member user : users)
             if (! user.isBot()){
                 for(Job job : jobs) {
-                    List<JobUser> potentials = getJobs().get(user.getLongID(), server, job);
+                    List<JobUser> potentials = getJobs().get(user.getId().asLong(), server, job);
                     if (level > 0) {
                         for (JobUser potential : potentials)
                             if (potential.getLevel() >= level)
@@ -183,11 +184,16 @@ public class JobUser extends ObjectUser {
     }
 
     @Override
-    protected String displayLine(IGuild guild, Language lg) {
-        IUser user = ClientConfig.DISCORD().getUserByID(idUser);
-        return EmojiManager.getEmojiForPresence(user.getPresence().getStatus()) + " "
-                + job.getLabel(lg) + ", " + level + " : **"
-                + user.getDisplayName(guild) + "**\n";
+    protected String displayLine(discord4j.core.object.entity.Guild guild, Language lg) {
+        Optional<Member> member = guild.getMemberById(Snowflake.of(idUser)).blockOptional();
+
+        if (member.isPresent()) {
+            Status status = member.get().getPresence().blockOptional().map(Presence::getStatus).orElse(Status.OFFLINE);
+            return EmojiManager.getEmojiForPresence(status) + " "
+                    + job.getLabel(lg) + ", " + level + " : **"
+                    + member.get().getDisplayName() + "**\n";
+        }
+        return "";
     }
 
     /**

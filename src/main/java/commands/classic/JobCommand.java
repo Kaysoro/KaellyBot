@@ -4,20 +4,21 @@ import commands.model.AbstractCommand;
 import data.Guild;
 import data.JobUser;
 import data.ServerDofus;
+import discord4j.core.object.entity.Member;
+import discord4j.core.object.entity.Message;
+import discord4j.core.object.util.Snowflake;
+import discord4j.core.spec.EmbedCreateSpec;
 import enums.Job;
 import enums.Language;
 import exceptions.BasicDiscordException;
 import exceptions.DiscordException;
 import exceptions.NotFoundDiscordException;
-import sx.blah.discord.api.internal.json.objects.EmbedObject;
-import sx.blah.discord.handle.obj.IUser;
-import util.Message;
-import sx.blah.discord.handle.obj.IMessage;
 import util.ServerUtils;
 import util.Translator;
 
 import java.text.Normalizer;
 import java.util.*;
+import java.util.function.Consumer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -38,148 +39,154 @@ public class JobCommand extends AbstractCommand {
     }
 
     @Override
-    protected void request(IMessage message, Matcher m, Language lg) {
+    protected void request(Message message, Matcher m, Language lg) {
         String content = m.group(1).trim().replaceAll(",", "");
 
         // Filter Initialisation
-        IUser user = message.getAuthor();
-        ServerDofus server = Guild.getGuild(message.getGuild()).getServerDofus();
+        Optional<discord4j.core.object.entity.Guild> guild = message.getGuild().blockOptional();
+        Optional<Member> user = message.getAuthorAsMember().blockOptional();
 
-        // Concerned user is the author?
-        if(Pattern.compile("^<@[!|&]?\\d+>").matcher(content).find()){
-            content = content.replaceFirst("<@[!|&]?\\d+>", "").trim();
-            if (message.getMentions().isEmpty()){
-                BasicDiscordException.USER_NEEDED.throwException(message, this, lg);
+        if (guild.isPresent() && user.isPresent()) {
+            ServerDofus server = Guild.getGuild(guild.get()).getServerDofus();
+
+            // Concerned user is the author?
+            if (Pattern.compile("^<@[!|&]?\\d+>").matcher(content).find()) {
+                content = content.replaceFirst("<@[!|&]?\\d+>", "").trim();
+                Optional<Snowflake> memberId = message.getUserMentionIds().stream().findFirst();
+                if (!memberId.isPresent()) {
+                    BasicDiscordException.USER_NEEDED.throwException(message, this, lg);
+                    return;
+                }
+                user = guild.get().getMemberById(memberId.get()).blockOptional();
+            }
+
+            // Is the server specified ?
+            if (Pattern.compile("\\s*-serv\\s+").matcher(content).find()) {
+                String[] split = content.split("\\s*-serv\\s+");
+                content = split[0];
+                ServerUtils.ServerQuery serverQuery = ServerUtils.getServerDofusFromName(split[1]);
+                if (serverQuery.hasSucceed())
+                    server = serverQuery.getServer();
+                else {
+                    serverQuery.getExceptions()
+                            .forEach(e -> e.throwException(message, this, lg, serverQuery.getServersFound()));
+                    return;
+                }
+            }
+
+            if (server == null) {
+                notFoundServer.throwException(message, this, lg);
                 return;
             }
-            user = message.getMentions().get(0);
-        }
 
-        // Is the server specified ?
-        if(Pattern.compile("\\s*-serv\\s+").matcher(content).find()){
-            String[] split = content.split("\\s*-serv\\s+");
-            content = split[0];
-            ServerUtils.ServerQuery serverQuery = ServerUtils.getServerDofusFromName(split[1]);
-            if (serverQuery.hasSucceed())
-                server = serverQuery.getServer();
-            else {
-                serverQuery.getExceptions()
-                        .forEach(e -> e.throwException(message, this, lg, serverQuery.getServersFound()));
-                return;
+            //user data consultation
+            if (content.isEmpty()) {
+                List<Consumer<EmbedCreateSpec>> embeds = JobUser.getJobsFromUser(user.get(), server, lg);
+                for (Consumer<EmbedCreateSpec> embed : embeds)
+                    message.getChannel().flatMap(chan -> chan.createEmbed(embed)).subscribe();
             }
-        }
+            // Data recording
+            else if ((m = Pattern.compile("-list|(-all|\\p{L}+(?:\\s+\\p{L}+)*)\\s+(\\d{1,3})").matcher(content)).matches()) {
+                if (user.isPresent() && message.getAuthor().isPresent() && user.get().getId().equals(message.getAuthor().get().getId())) {
+                    if (!m.group(0).equals("-list")) {
+                        // Data Parsing and exceptions processing
+                        Set<Job> jobs;
+                        StringBuilder found = new StringBuilder();
+                        StringBuilder notFound = new StringBuilder();
+                        StringBuilder tooMuch = new StringBuilder();
+                        if (!m.group(1).equals("-all")) {
+                            jobs = new HashSet<>();
+                            String[] proposals = m.group(1).split("\\s+");
+                            for (String proposal : proposals)
+                                if (!proposal.trim().isEmpty()) {
+                                    List<Job> tmp = getJob(lg, proposal);
+                                    if (tmp.size() == 1) {
+                                        jobs.add(tmp.get(0));
+                                        found.append(tmp.get(0).getLabel(lg)).append(", ");
+                                    } else if (tmp.isEmpty())
+                                        notFound.append("*").append(proposal).append("*, ");
+                                    else
+                                        tooMuch.append("*").append(proposal).append("*, ");
+                                }
+                        } else
+                            jobs = new HashSet<>(Arrays.asList(Job.values()));
 
-        if (server == null) {
-            notFoundServer.throwException(message, this, lg);
-            return;
-        }
+                        // Check existing jobs
+                        if (jobs.isEmpty()) {
+                            message.getChannel().flatMap(chan -> chan.createMessage(Translator
+                                    .getLabel(lg, "job.noone"))).subscribe();
+                            return;
+                        }
 
-        //user data consultation
-        if (content.isEmpty()){
-            List<EmbedObject> embeds = JobUser.getJobsFromUser(user, server, message.getGuild(), lg);
-            for(EmbedObject embed : embeds)
-                Message.sendEmbed(message.getChannel(), embed);
-        }
-        // Data recording
-        else if((m = Pattern.compile("-list|(-all|\\p{L}+(?:\\s+\\p{L}+)*)\\s+(\\d{1,3})").matcher(content)).matches()) {
-            if (user == message.getAuthor()) {
-                if (!m.group(0).equals("-list")) {
-                    // Data Parsing and exceptions processing
-                    Set<Job> jobs;
-                    StringBuilder found = new StringBuilder();
-                    StringBuilder notFound = new StringBuilder();
-                    StringBuilder tooMuch = new StringBuilder();
-                    if (!m.group(1).equals("-all")) {
-                        jobs = new HashSet<>();
-                        String[] proposals = m.group(1).split("\\s+");
-                        for (String proposal : proposals)
-                            if (!proposal.trim().isEmpty()) {
-                                List<Job> tmp = getJob(lg, proposal);
-                                if (tmp.size() == 1) {
-                                    jobs.add(tmp.get(0));
-                                    found.append(tmp.get(0).getLabel(lg)).append(", ");
-                                } else if (tmp.isEmpty())
-                                    notFound.append("*").append(proposal).append("*, ");
-                                else
-                                    tooMuch.append("*").append(proposal).append("*, ");
-                            }
-                    } else
-                        jobs = new HashSet<>(Arrays.asList(Job.values()));
+                        if (found.length() > 0)
+                            found.setLength(found.length() - 2);
+                        if (notFound.length() > 0)
+                            notFound.setLength(notFound.length() - 2);
+                        if (tooMuch.length() > 0)
+                            tooMuch.setLength(tooMuch.length() - 2);
 
-                    // Check existing jobs
-                    if (jobs.isEmpty()) {
-                        Message.sendText(message.getChannel(), Translator.getLabel(lg, "job.noone"));
-                        return;
+                        int level = Integer.parseInt(m.group(2));
+
+                        for (Job job : jobs)
+                            if (JobUser.containsKeys(user.get().getId().asLong(), server, job))
+                                JobUser.get(user.get().getId().asLong(), server, job).get(0).setLevel(level);
+                            else
+                                new JobUser(user.get().getId().asLong(), server, job, level).addToDatabase();
+
+                        StringBuilder sb = new StringBuilder();
+
+                        if (jobs.size() < Job.values().length)
+                            sb.append(Translator.getLabel(lg, level > 0 ? "job.save" : "job.reset")
+                                    .replace("{jobs}", found.toString()));
+                        else
+                            sb.append(Translator.getLabel(lg, level > 0 ? "job.all_save" : "job.all_reset"));
+
+                        if (notFound.length() > 0)
+                            sb.append("\n").append(Translator.getLabel(lg, "job.not_found")
+                                    .replace("{jobs}", notFound.toString()));
+                        if (tooMuch.length() > 0)
+                            sb.append("\n").append(Translator.getLabel(lg, "job.too_much")
+                                    .replace("{jobs}", tooMuch.toString()));
+
+                        final String CONTENT = sb.toString();
+                        message.getChannel().flatMap(chan -> chan.createMessage(CONTENT)).subscribe();
+                    } else {
+                        String sb = Translator.getLabel(lg, "job.list") + "\n" + getJobsList(lg);
+                        message.getChannel().flatMap(chan -> chan.createMessage(sb)).subscribe();
+                    }
+                } else
+                    badUse.throwException(message, this, lg);
+            } else if ((m = Pattern.compile("(?:>\\s*(\\d{1,3})\\s+)?(\\p{L}+(?:\\s+\\p{L}+)*)").matcher(content)).matches()) {
+                List<String> proposals = new LinkedList<>(Arrays.asList(m.group(2).split("\\s+")));
+
+                Set<Job> jobs = new HashSet<>();
+
+                for (String proposal : proposals)
+                    if (jobs.size() < MAX_JOB_DISPLAY) {
+                        if (!proposal.trim().isEmpty()) {
+                            List<Job> tmp = getJob(lg, proposal);
+                            if (tmp.size() == 1) jobs.add(tmp.get(0));
+                        }
                     }
 
-                    if (found.length() > 0)
-                        found.setLength(found.length() - 2);
-                    if (notFound.length() > 0)
-                        notFound.setLength(notFound.length() - 2);
-                    if (tooMuch.length() > 0)
-                        tooMuch.setLength(tooMuch.length() - 2);
-
-                    int level = Integer.parseInt(m.group(2));
-
-                    for (Job job : jobs)
-                        if (JobUser.containsKeys(user.getLongID(), server, job))
-                            JobUser.get(user.getLongID(), server, job).get(0).setLevel(level);
-                        else
-                            new JobUser(user.getLongID(), server, job, level).addToDatabase();
-
-                    StringBuilder sb = new StringBuilder();
-
-                    if (jobs.size() < Job.values().length)
-                        sb.append(Translator.getLabel(lg, level > 0 ? "job.save" : "job.reset")
-                                .replace("{jobs}", found.toString()));
-                    else
-                        sb.append(Translator.getLabel(lg, level > 0 ? "job.all_save" : "job.all_reset"));
-
-                    if (notFound.length() > 0)
-                        sb.append("\n").append(Translator.getLabel(lg, "job.not_found")
-                                .replace("{jobs}", notFound.toString()));
-                    if (tooMuch.length() > 0)
-                        sb.append("\n").append(Translator.getLabel(lg, "job.too_much")
-                                .replace("{jobs}", tooMuch.toString()));
-
-                    Message.sendText(message.getChannel(), sb.toString());
-                } else {
-                    String sb = Translator.getLabel(lg, "job.list") + "\n" + getJobsList(lg);
-                    Message.sendText(message.getChannel(), sb);
+                // Check if a job is found
+                if (jobs.isEmpty()) {
+                    message.getChannel().flatMap(chan -> chan.createMessage(Translator.getLabel(lg, "job.noone")))
+                            .subscribe();
                 }
+
+                int level = -1;
+                if (m.group(1) != null) level = Integer.parseInt(m.group(1));
+
+                List<Consumer<EmbedCreateSpec>> embeds = JobUser.getJobsFromFilters(guild.get().getMembers()
+                                .collectList().blockOptional().orElse(Collections.emptyList()),
+                        server, jobs, level, guild.get(), lg);
+
+                for (Consumer<EmbedCreateSpec> embed : embeds)
+                    message.getChannel().flatMap(chan -> chan.createEmbed(embed)).subscribe();
             } else
                 badUse.throwException(message, this, lg);
         }
-        else if ((m = Pattern.compile("(?:>\\s*(\\d{1,3})\\s+)?(\\p{L}+(?:\\s+\\p{L}+)*)").matcher(content)).matches()){
-            List<String> proposals = new LinkedList<>(Arrays.asList(m.group(2).split("\\s+")));
-
-            Set<Job> jobs = new HashSet<>();
-
-            for (String proposal : proposals)
-                if (jobs.size() < MAX_JOB_DISPLAY) {
-                    if (!proposal.trim().isEmpty()) {
-                        List<Job> tmp = getJob(lg, proposal);
-                        if (tmp.size() == 1) jobs.add(tmp.get(0));
-                    }
-                }
-
-            // Check if a job is found
-            if (jobs.isEmpty()) {
-                Message.sendText(message.getChannel(), Translator.getLabel(lg, "job.noone"));
-                return;
-            }
-
-            int level = -1;
-            if (m.group(1) != null) level = Integer.parseInt(m.group(1));
-
-            List<EmbedObject> embeds = JobUser.getJobsFromFilters(message.getGuild().getUsers(), server,
-                    jobs, level, message.getGuild(), lg);
-
-            for(EmbedObject embed : embeds)
-                Message.sendEmbed(message.getChannel(), embed);
-        }
-        else
-            badUse.throwException(message, this, lg);
     }
 
     private List<Job> getJob(Language lg, String nameProposed){

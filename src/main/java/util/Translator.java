@@ -11,14 +11,18 @@ import com.optimaize.langdetect.text.TextObject;
 import data.ChannelLanguage;
 import data.Constants;
 import data.Guild;
+import discord4j.core.object.entity.GuildMessageChannel;
+import discord4j.core.object.entity.Message;
+import discord4j.core.object.entity.MessageChannel;
+import discord4j.core.object.entity.TextChannel;
+import discord4j.core.object.util.Snowflake;
 import enums.Language;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import sx.blah.discord.handle.obj.IChannel;
-import sx.blah.discord.handle.obj.IMessage;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
+import java.time.Instant;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
@@ -43,7 +47,7 @@ public class Translator {
 
                 List<LanguageProfile> languageProfiles = new LanguageProfileReader().read(languages);
                 languageDetector = LanguageDetectorBuilder.create(NgramExtractors.standard())
-                        .withProfiles(languageProfiles).build();
+                                .withProfiles(languageProfiles).build();
             }
             catch (IOException e) {
                 LOG.error("Translator.getLanguageDetector", e);
@@ -57,12 +61,13 @@ public class Translator {
      * @param channel Salon textuel
      * @return Langue de la guilde ou du salon si précisé
      */
-    public static Language getLanguageFrom(IChannel channel){
+    public static Language getLanguageFrom(MessageChannel channel){
         Language result = Constants.defaultLanguage;
-        if (! channel.isPrivate()) {
-            Guild guild = Guild.getGuild(channel.getGuild());
+        if (channel instanceof GuildMessageChannel) {
+
+            Guild guild = Guild.getGuild(((GuildMessageChannel) channel).getGuild().block());
             result = guild.getLanguage();
-            ChannelLanguage channelLanguage = ChannelLanguage.getChannelLanguages().get(channel.getLongID());
+            ChannelLanguage channelLanguage = ChannelLanguage.getChannelLanguages().get(channel.getId().asLong());
             if (channelLanguage != null)
                 result = channelLanguage.getLang();
         }
@@ -74,19 +79,21 @@ public class Translator {
      * @param channel Salon d'origine
      * @return Liste de message éligibles à une reconnaissance de langue
      */
-    private static List<String> getReformatedMessages(IChannel channel){
+    private static List<String> getReformatedMessages(MessageChannel channel){
         List<String> result = new ArrayList<>();
 
         if (channel != null) {
             try {
-                IMessage[] messages = channel.getMessageHistory(MAX_MESSAGES_READ).asArray();
-                for (IMessage message : messages) {
-                    String content = message.getContent().replaceAll(":\\w+:", "").trim();
+                List<Message> messages = channel.getMessagesBefore(Snowflake.of(Instant.now()))
+                        .take(MAX_MESSAGES_READ).collectList().blockOptional().orElse(Collections.emptyList());
+                for (Message message : messages) {
+                    String content = message.getContent()
+                            .map(s -> s.replaceAll(":\\w+:", "").trim()).orElse("");
                     if (content.length() > MAX_CHARACTER_ACCEPTANCE)
                         result.add(content);
                 }
             } catch (Exception e){
-                LOG.warn("Impossible to gather data from " + channel.getStringID() + "/" + channel.getName());
+                LOG.warn("Impossible to gather data from " + channel.getId().asString());
             }
         }
         return result;
@@ -113,7 +120,7 @@ public class Translator {
      * @param channel Salon textuel à étudier
      * @return Langue majoritaire (ou Constants.defaultLanguage si non trouvée)
      */
-    public static Language detectLanguage(IChannel channel){
+    public static Language detectLanguage(TextChannel channel){
         Language result = Constants.defaultLanguage;
         Map<Language, LanguageOccurrence> languages = new HashMap<>();
         for(Language lang : Language.values())

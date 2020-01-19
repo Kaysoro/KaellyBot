@@ -4,20 +4,23 @@ import commands.model.FetchCommand;
 import data.Guild;
 import data.OrderUser;
 import data.ServerDofus;
+import discord4j.core.object.entity.Member;
+import discord4j.core.object.entity.Message;
+import discord4j.core.object.util.Snowflake;
+import discord4j.core.spec.EmbedCreateSpec;
 import enums.City;
 import enums.Language;
 import enums.Order;
 import exceptions.*;
-import sx.blah.discord.api.internal.json.objects.EmbedObject;
-import sx.blah.discord.handle.obj.IMessage;
-import sx.blah.discord.handle.obj.IUser;
-import util.Message;
 import util.ServerUtils;
 import util.Translator;
 
 import java.text.Normalizer;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
+import java.util.function.Consumer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -45,14 +48,15 @@ public class AlignmentCommand extends FetchCommand {
     }
 
     @Override
-    public void request(IMessage message, Matcher m, Language lg) {
+    public void request(Message message, Matcher m, Language lg) {
         String content = m.group(1).trim();
+        Optional<discord4j.core.object.entity.Guild> guild = message.getGuild().blockOptional();
+        Optional<Member> user = message.getAuthorAsMember().blockOptional();
 
         // Initialisation du Filtre
         City city = null;
         Order order = null;
-        IUser user = message.getAuthor();
-        ServerDofus server = Guild.getGuild(message.getGuild()).getServerDofus();
+        ServerDofus server = Guild.getGuild(message.getGuild().block()).getServerDofus();
 
         // Is the server specified ?
         if(Pattern.compile("\\s*-serv\\s+").matcher(content).find()){
@@ -76,31 +80,32 @@ public class AlignmentCommand extends FetchCommand {
         // Consultation filtré par niveau
         if ((m = Pattern.compile(">\\s*(\\d{1,3})").matcher(content)).matches()){
             int level = Integer.parseInt(m.group(1));
-            List<EmbedObject> embeds = OrderUser.getOrdersFromLevel(message.getGuild().getUsers(), server, level,
-                    message.getGuild(), lg);
-            for(EmbedObject embed : embeds)
-                Message.sendEmbed(message.getChannel(), embed);
+            List<Consumer<EmbedCreateSpec>> embeds = OrderUser.getOrdersFromLevel(guild.get().getMembers()
+                    .collectList().blockOptional().orElse(Collections.emptyList()), server, level, guild.get(), lg);
+            for (Consumer<EmbedCreateSpec> embed : embeds)
+                message.getChannel().flatMap(chan -> chan.createEmbed(embed)).subscribe();
         }
         else {
             // L'utilisateur concerné est-il l'auteur de la commande ?
             if(Pattern.compile("^<@[!|&]?\\d+>").matcher(content).find()){
                 content = content.replaceFirst("<@[!|&]?\\d+>", "").trim();
-                if (message.getMentions().isEmpty()){
+                Optional<Snowflake> memberId = message.getUserMentionIds().stream().findFirst();
+                if (! memberId.isPresent()){
                     BasicDiscordException.USER_NEEDED.throwException(message, this, lg);
                     return;
                 }
-                user = message.getMentions().get(0);
+                user = guild.get().getMemberById(memberId.get()).blockOptional();
             }
 
             //Consultation des données filtrés par utilisateur
             if (content.isEmpty()){
-                List<EmbedObject> embeds = OrderUser.getOrdersFromUser(user, server, message.getGuild(), lg);
-                for(EmbedObject embed : embeds)
-                    Message.sendEmbed(message.getChannel(), embed);
+                List<Consumer<EmbedCreateSpec>> embeds = OrderUser.getOrdersFromUser(user.get(), server, lg);
+                for (Consumer<EmbedCreateSpec> embed : embeds)
+                    message.getChannel().flatMap(chan -> chan.createEmbed(embed)).subscribe();
             }
             // Enregistrement des données
             else if((m = Pattern.compile("(\\p{L}+)\\s+(\\p{L}+)\\s+(\\d{1,3})").matcher(content)).matches()){
-                if(user == message.getAuthor()) {
+                if(user.isPresent() && message.getAuthor().isPresent() && user.get().getId().equals(message.getAuthor().get().getId())) {
                     // Parsing des données et traitement des divers exceptions
                     List<City> cities = findCity(m.group(1), lg);
                     if (checkData(cities, tooMuchCities, notFoundCity, message, lg)) return;
@@ -110,19 +115,23 @@ public class AlignmentCommand extends FetchCommand {
                     order = orders.get(0);
                     int level = Integer.parseInt(m.group(3));
 
-                    if(OrderUser.containsKeys(user.getLongID(), server, city, order)) {
-                        OrderUser.get(user.getLongID(), server, city, order).get(0).setLevel(level);
+                    if(OrderUser.containsKeys(user.get().getId().asLong(), server, city, order)) {
+                        OrderUser.get(user.get().getId().asLong(), server, city, order).get(0).setLevel(level);
                         if (level != 0)
-                            Message.sendText(message.getChannel(), Translator.getLabel(lg, "align.update"));
+                            message.getChannel().flatMap(chan -> chan
+                                    .createMessage(Translator.getLabel(lg, "align.update"))).subscribe();
                         else
-                            Message.sendText(message.getChannel(), Translator.getLabel(lg, "align.reset"));
+                            message.getChannel().flatMap(chan -> chan
+                                    .createMessage(Translator.getLabel(lg, "align.reset"))).subscribe();
                     }
                     else {
-                        new OrderUser(user.getLongID(), server, city, order, level).addToDatabase();
+                        new OrderUser(user.get().getId().asLong(), server, city, order, level).addToDatabase();
                         if (level != 0)
-                            Message.sendText(message.getChannel(), Translator.getLabel(lg, "align.save"));
+                            message.getChannel().flatMap(chan -> chan
+                                    .createMessage(Translator.getLabel(lg, "align.save"))).subscribe();
                         else
-                            Message.sendText(message.getChannel(), Translator.getLabel(lg, "align.no_reset"));
+                            message.getChannel().flatMap(chan -> chan
+                                    .createMessage(Translator.getLabel(lg, "align.no_reset"))).subscribe();
                     }
                 }
                 else
@@ -157,11 +166,11 @@ public class AlignmentCommand extends FetchCommand {
                     if (orders.size() == 1) order = orders.get(0);
                 }
 
-                List<EmbedObject> embeds = OrderUser
-                        .getOrdersFromCityOrOrder(message.getGuild().getUsers(), server, city, order,
-                                message.getGuild(), lg);
-                for(EmbedObject embed : embeds)
-                    Message.sendEmbed(message.getChannel(), embed);
+                List<Consumer<EmbedCreateSpec>> embeds = OrderUser.getOrdersFromCityOrOrder(guild.get().getMembers()
+                                .collectList().blockOptional().orElse(Collections.emptyList()),
+                        server, city, order, guild.get(), lg);
+                for (Consumer<EmbedCreateSpec> embed : embeds)
+                    message.getChannel().flatMap(chan -> chan.createEmbed(embed)).subscribe();
             }
             else
                 badUse.throwException(message, this, lg);

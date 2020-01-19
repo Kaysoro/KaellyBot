@@ -1,11 +1,13 @@
 package commands.config;
 
 import commands.model.AbstractCommand;
+import discord4j.core.object.entity.Guild;
+import discord4j.core.object.entity.Message;
+import discord4j.core.object.entity.MessageChannel;
+import discord4j.core.object.util.Snowflake;
 import enums.Language;
 import exceptions.BasicDiscordException;
 import finders.AlmanaxCalendar;
-import sx.blah.discord.handle.obj.IMessage;
-import util.Message;
 import util.Translator;
 import java.util.regex.Matcher;
 
@@ -20,20 +22,33 @@ public class AlmanaxAutoCommand extends AbstractCommand {
     }
 
     @Override
-    public void request(IMessage message, Matcher m, Language lg) {
+    public void request(Message message, Matcher m, Language lg) {
         if (isUserHasEnoughRights(message)) {
+            String guildId = message.getGuild().blockOptional()
+                    .map(Guild::getId).map(Snowflake::asString).orElse("");
+            String channelId = message.getChannel().blockOptional()
+                    .map(MessageChannel::getId).map(Snowflake::asString).orElse("");
+
             if (m.group(1).matches("\\s+true") || m.group(1).matches("\\s+0") || m.group(1).matches("\\s+on"))
-                if (!AlmanaxCalendar.getAlmanaxCalendars().containsKey(message.getChannel().getStringID())) {
-                    new AlmanaxCalendar(message.getGuild().getStringID(), message.getChannel().getStringID()).addToDatabase();
-                    Message.sendText(message.getChannel(), Translator.getLabel(lg, "almanax-auto.request.1"));
+                if (!AlmanaxCalendar.getAlmanaxCalendars().containsKey(channelId)) {
+                    new AlmanaxCalendar(guildId, channelId).addToDatabase();
+                    message.getChannel().flatMap(chan -> chan
+                            .createMessage(Translator.getLabel(lg, "almanax-auto.request.1")))
+                            .subscribe();
                 } else
-                    Message.sendText(message.getChannel(), Translator.getLabel(lg, "almanax-auto.request.2"));
+                    message.getChannel().flatMap(chan -> chan
+                            .createMessage(Translator.getLabel(lg, "almanax-auto.request.2")))
+                            .subscribe();
             else if (m.group(1).matches("\\s+false") || m.group(1).matches("\\s+1") || m.group(1).matches("\\s+off"))
-                if (AlmanaxCalendar.getAlmanaxCalendars().containsKey(message.getChannel().getStringID())) {
-                    AlmanaxCalendar.getAlmanaxCalendars().get(message.getChannel().getStringID()).removeToDatabase();
-                    Message.sendText(message.getChannel(), Translator.getLabel(lg, "almanax-auto.request.3"));
+                if (AlmanaxCalendar.getAlmanaxCalendars().containsKey(channelId)) {
+                    AlmanaxCalendar.getAlmanaxCalendars().get(channelId).removeToDatabase();
+                    message.getChannel().flatMap(chan -> chan
+                            .createMessage(Translator.getLabel(lg, "almanax-auto.request.3")))
+                            .subscribe();
                 } else
-                    Message.sendText(message.getChannel(), Translator.getLabel(lg, "almanax-auto.request.4"));
+                    message.getChannel().flatMap(chan -> chan
+                            .createMessage(Translator.getLabel(lg, "almanax-auto.request.4")))
+                            .subscribe();
         } else
             BasicDiscordException.NO_ENOUGH_RIGHTS.throwException(message, this, lg);
     }

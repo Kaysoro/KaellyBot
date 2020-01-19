@@ -1,9 +1,9 @@
 package commands.model;
 
+import discord4j.core.object.entity.Message;
 import enums.Language;
 import enums.Type;
 import exceptions.DiscordException;
-import sx.blah.discord.handle.obj.IMessage;
 import util.BestMatcher;
 import util.Translator;
 
@@ -16,9 +16,9 @@ public abstract class DofusEncyclopediaRequestCommand extends DofusRequestComman
         super(name, pattern);
     }
 
-    protected void gatherData(IMessage message, BestMatcher matcher, String[] names, String normalName, Type type,
+    protected void gatherData(Message message, BestMatcher matcher, String[] names, String normalName, Type type,
                               DiscordException notFound) throws UnsupportedEncodingException{
-        Language lg = Translator.getLanguageFrom(message.getChannel());
+        Language lg = Translator.getLanguageFrom(message.getChannel().block());
         String editedName = removeUselessWords(normalName);
 
         for (String name : names) {

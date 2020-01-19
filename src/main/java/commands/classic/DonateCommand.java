@@ -2,21 +2,24 @@ package commands.classic;
 
 import commands.model.AbstractCommand;
 import data.Constants;
+import discord4j.core.object.entity.ApplicationInfo;
+import discord4j.core.object.entity.Message;
+import discord4j.core.object.entity.User;
+import discord4j.core.object.util.Image;
 import enums.Donator;
 import enums.Language;
-import sx.blah.discord.handle.obj.IMessage;
-import sx.blah.discord.handle.obj.IUser;
-import sx.blah.discord.util.EmbedBuilder;
-import util.ClientConfig;
-import util.Message;
 import util.Translator;
 
-import java.util.Random;
+import java.awt.*;
+import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.stream.Stream;
 
+import static data.Constants.authorAvatar;
+import static data.Constants.authorName;
+
 /**
- * Created by Kaysoro on 25/05/2019.
+ * Created by Kaysoro on 20/05/2019.
  */
 public class DonateCommand extends AbstractCommand {
 
@@ -25,24 +28,29 @@ public class DonateCommand extends AbstractCommand {
     }
 
     @Override
-    public void request(IMessage message, Matcher m, Language lg) {
-        IUser author = ClientConfig.DISCORD().getApplicationOwner();
-        EmbedBuilder builder = new EmbedBuilder();
+    public void request(Message message, Matcher m, Language lg) {
+        Optional<ApplicationInfo> appInfo = message.getClient().getApplicationInfo().blockOptional();
 
-        builder.withTitle(Translator.getLabel(lg, "about.title")
-                .replace("{name}", Constants.name)
-                .replace("{version}", Constants.version))
-                .withDesc(Translator.getLabel(lg, "about.free.desc")
-                        .replace("{paypal}", Constants.paypal))
-                .withColor(new Random().nextInt(16777216))
-                .withThumbnail(ClientConfig.DISCORD().getApplicationIconURL())
-                .withAuthorName(author.getName())
-                .withAuthorIcon(author.getAvatarURL());
+        if (appInfo.isPresent()) {
+            Optional<User> author = appInfo.get().getOwner().blockOptional();
 
-        Stream.of(Donator.values())
-                .forEach(donator -> builder.appendField(donator.getName(),
-                        Translator.getLabel(lg, "donator." + donator.name().toLowerCase() + ".desc"), false));
-        Message.sendEmbed(message.getChannel(), builder.build());
+            message.getChannel().flatMap(chan -> chan
+                    .createEmbed(spec -> {
+                        spec.setTitle(Translator.getLabel(lg, "about.title")
+                                .replace("{name}", Constants.name)
+                                .replace("{version}", Constants.version))
+                                .setDescription(Translator.getLabel(lg, "about.free.desc")
+                                        .replace("{paypal}", Constants.paypal))
+                                .setColor(Color.GRAY)
+                                .setThumbnail(appInfo.get().getIcon(Image.Format.PNG).orElse(null))
+                                .setAuthor(author.map(User::getUsername).orElse(authorName), null,
+                                        author.map(User::getAvatarUrl).orElse(authorAvatar));
+
+                        Stream.of(Donator.values()).forEach(donator -> spec.addField(donator.getName(),
+                                        Translator.getLabel(lg, "donator."
+                                                + donator.name().toLowerCase() + ".desc"), false));
+                    })).subscribe();
+        }
     }
 
     @Override

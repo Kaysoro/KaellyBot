@@ -1,10 +1,9 @@
 package listeners;
 
 import data.Guild;
+import discord4j.core.event.domain.guild.GuildUpdateEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import sx.blah.discord.api.events.EventSubscriber;
-import sx.blah.discord.handle.impl.events.guild.GuildUpdateEvent;
 import util.Reporter;
 
 /**
@@ -13,15 +12,15 @@ import util.Reporter;
 public class GuildUpdateListener {
     private final static Logger LOG = LoggerFactory.getLogger(GuildUpdateListener.class);
 
-    @EventSubscriber
     public void onReady(GuildUpdateEvent event) {
         try {
-            if (! event.getOldGuild().getName().equals(event.getNewGuild().getName())){
-                Guild.getGuild(event.getNewGuild()).setName(event.getNewGuild().getName());
-                LOG.info("'" + event.getOldGuild().getName() + "' renommé en '" + event.getNewGuild().getName() + "'");
+            if (! event.getOld().map(guild -> guild.getName().equals(event.getCurrent().getName())).orElse(false)){
+                Guild.getGuild(event.getCurrent()).setName(event.getCurrent().getName());
+                LOG.info("'" + event.getOld().map(discord4j.core.object.entity.Guild::getName).orElse("")
+                        + "' renommé en '" + event.getCurrent().getName() + "'");
             }
-        } catch (Exception e) {
-            Reporter.report(e, event.getGuild());
+        } catch(Exception e){
+            Reporter.report(e, event.getCurrent());
             LOG.error("onReady", e);
         }
     }

@@ -3,8 +3,6 @@ package data;
 import enums.Language;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import sx.blah.discord.handle.obj.IChannel;
-import util.ClientConfig;
 import util.Connexion;
 import util.Reporter;
 
@@ -43,17 +41,11 @@ public class ChannelLanguage {
                 while (resultSet.next()){
                     long idChan = Long.parseLong(resultSet.getString("id_chan"));
                     Language lang = Language.valueOf(resultSet.getString("lang"));
-                    IChannel chan = ClientConfig.DISCORD().getChannelByID(idChan);
-                    if (chan != null && ! chan.isDeleted())
-                        channelLanguages.put(chan.getLongID(), new ChannelLanguage(lang, idChan));
-                    else {
-                        new ChannelLanguage(lang, idChan).removeToDatabase();
-                        LOG.info("Chan deleted : " + idChan);
-                    }
+                    channelLanguages.put(idChan, new ChannelLanguage(lang, idChan));
                 }
             } catch (SQLException e) {
                 Reporter.report(e);
-                LOG.error("getChannelLanguages", e);
+                LOG.error("getChannlLanguages", e);
             }
         }
         return channelLanguages;
@@ -73,8 +65,6 @@ public class ChannelLanguage {
 
                 preparedStatement.executeUpdate();
             } catch (SQLException e) {
-                Reporter.report(e, ClientConfig.DISCORD().getChannelByID(getChannelId()).getGuild(),
-                        ClientConfig.DISCORD().getChannelByID(getChannelId()));
                 LOG.error("addToDatabase", e);
             }
         }
@@ -92,8 +82,6 @@ public class ChannelLanguage {
             preparedStatement.setString(2, String.valueOf(getChannelId()));
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
-            Reporter.report(e, ClientConfig.DISCORD().getChannelByID(getChannelId()).getGuild(),
-                    ClientConfig.DISCORD().getChannelByID(getChannelId()));
             LOG.error("setLanguage", e);
         }
     }
@@ -110,8 +98,6 @@ public class ChannelLanguage {
             request.executeUpdate();
 
         } catch (SQLException e) {
-            Reporter.report(e, ClientConfig.DISCORD().getChannelByID(getChannelId()).getGuild(),
-                    ClientConfig.DISCORD().getChannelByID(getChannelId()));
             LOG.error("removeToDatabase", e);
         }
     }

@@ -1,7 +1,7 @@
 package util;
 
-import data.Constants;
 import data.ServerDofus;
+import enums.Game;
 import exceptions.DiscordException;
 import exceptions.NotFoundDiscordException;
 import exceptions.TooMuchDiscordException;
@@ -32,7 +32,7 @@ public final class ServerUtils {
                 .collect(Collectors.toList());
 
         List<ServerDofus> serverDofusList = allServers.stream()
-                .filter(server -> server.getGame() == Constants.game)
+                .filter(server -> server.getGame() == Game.DOFUS_TOUCH)
                 .collect(Collectors.toList());
 
         if (!serverDofusList.isEmpty()) {

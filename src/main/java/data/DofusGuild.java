@@ -1,28 +1,24 @@
 package data;
 
+import discord4j.core.object.Embed;
+import discord4j.core.spec.EmbedCreateSpec;
 import enums.GuildRank;
 import enums.Language;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import sx.blah.discord.api.internal.json.objects.EmbedObject;
-import sx.blah.discord.util.EmbedBuilder;
 import util.JSoupManager;
 import util.Translator;
 
+import java.awt.*;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 /**
  * Created by steve on 30/03/2018.
  */
 public class DofusGuild implements Embedded {
-
-    private final static Logger LOG = LoggerFactory.getLogger(DofusGuild.class);
 
     private String name;
     private String level;
@@ -53,38 +49,32 @@ public class DofusGuild implements Embedded {
     }
 
     @Override
-    public EmbedObject getEmbedObject(Language lg){
-        EmbedBuilder builder = new EmbedBuilder();
-
-        builder.withTitle(name);
-        builder.withUrl(url);
-        builder.withDescription(Translator.getLabel(lg, "guild.desc"));
-
-        builder.withColor(new Random().nextInt(16777216));
-        builder.withThumbnail(littleSkinURL);
-        builder.withImage(bigSkinURL);
-
-        builder.appendField(Translator.getLabel(lg, "guild.level"), level, true);
-        builder.appendField(Translator.getLabel(lg, "guild.server"), server, true);
-        builder.appendField(Translator.getLabel(lg, "guild.creation_date"), creationDate, true);
-        builder.appendField(Translator.getLabel(lg, "guild.members_size"), membersSize, true);
+    public void decorateEmbedObject(EmbedCreateSpec spec, Language lg){
+        spec.setTitle(name)
+        .setUrl(url)
+        .setDescription(Translator.getLabel(lg, "guild.desc"))
+        .setColor(Color.GRAY)
+        .setThumbnail(littleSkinURL)
+        .setImage(bigSkinURL)
+        .addField(Translator.getLabel(lg, "guild.level"), level, true)
+        .addField(Translator.getLabel(lg, "guild.server"), server, true)
+        .addField(Translator.getLabel(lg, "guild.creation_date"), creationDate, true)
+        .addField(Translator.getLabel(lg, "guild.members_size"), membersSize, true);
 
         if (alliName != null)
-            builder.appendField(Translator.getLabel(lg, "guild.ally"), "[" + alliName + "](" + alliUrl + ")", true);
+            spec.addField(Translator.getLabel(lg, "guild.ally"), "[" + alliName + "](" + alliUrl + ")", true);
 
         if (! mainMembers.isEmpty())
             for(int i = 0; i < mainMembers.size(); i++)
-                builder.appendField(Translator.getLabel(lg, "guild.main_members")
+                spec.addField(Translator.getLabel(lg, "guild.main_members")
                                 + (mainMembers.size() > 1? " (" + (i + 1) + "/"
                                 + mainMembers.size() + ")" : "") + " : ",
                         mainMembers.get(i), true);
-
-        return builder.build();
     }
 
     @Override
-    public EmbedObject getMoreEmbedObject(Language lg) {
-        return getEmbedObject(lg);
+    public void decorateMoreEmbedObject(EmbedCreateSpec spec, Language lg) {
+        decorateEmbedObject(spec, lg);
     }
 
     public static DofusGuild getDofusGuild(String url, Language lg) throws IOException {
@@ -110,7 +100,7 @@ public class DofusGuild implements Embedded {
                 String nameMember = elem.getElementsByClass("ak-member-name").text();
                 String urlPagePerso = elem.attr("abs:href");
                 String line = "[" + nameMember + "](" + urlPagePerso + ") *" + status + "*\n";
-                if (st.length() + line.length() > EmbedBuilder.FIELD_CONTENT_LIMIT){
+                if (st.length() + line.length() > Embed.Field.MAX_VALUE_LENGTH){
                     mainMembers.add(st.toString());
                     st.setLength(0);
                 }

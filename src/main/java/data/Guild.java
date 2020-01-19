@@ -3,7 +3,6 @@ package data;
 import enums.Language;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import sx.blah.discord.handle.obj.IGuild;
 import util.Connexion;
 import util.Reporter;
 
@@ -47,12 +46,12 @@ public class Guild {
 
             try {
                 PreparedStatement request = connection.prepareStatement("INSERT INTO"
-                        + " Guild(id, name, prefix) VALUES (?, ?, ?);");
+                        + " Guild(id, name, prefix, lang) VALUES (?, ?, ?, ?);");
                 request.setString(1, id);
                 request.setString(2, name);
                 request.setString(3, prefix);
+                request.setString(4, language.getAbrev());
                 request.executeUpdate();
-
             } catch (SQLException e) {
                 Reporter.report(e);
                 LOG.error(e.getMessage());
@@ -187,15 +186,15 @@ public class Guild {
         return guilds;
     }
 
-    public static Guild getGuild(IGuild guild){
+    public static Guild getGuild(discord4j.core.object.entity.Guild guild){
         return getGuild(guild, true);
     }
 
-    public synchronized static Guild getGuild(IGuild discordGuild, boolean forceCache){
-        Guild guild = getGuilds().get(discordGuild.getStringID());
+    public synchronized static Guild getGuild(discord4j.core.object.entity.Guild discordGuild, boolean forceCache){
+        Guild guild = getGuilds().get(discordGuild.getId().asString());
 
         if (guild == null && forceCache){
-            guild = new Guild(discordGuild.getStringID(), discordGuild.getName(), Constants.defaultLanguage);
+            guild = new Guild(discordGuild.getId().asString(), discordGuild.getName(), Constants.defaultLanguage);
             guild.addToDatabase();
         }
 
@@ -216,11 +215,11 @@ public class Guild {
         return language;
     }
 
-    public ServerDofus getServerDofus() {
-        return server;
-    }
-
     public Map<String, CommandForbidden> getForbiddenCommands(){
         return commands;
+    }
+
+    public ServerDofus getServerDofus() {
+        return server;
     }
 }

@@ -1,23 +1,23 @@
 package listeners;
 
 import data.*;
+import discord4j.core.DiscordClient;
+import discord4j.core.event.domain.channel.TextChannelDeleteEvent;
+import discord4j.core.event.domain.guild.GuildCreateEvent;
+import discord4j.core.event.domain.guild.GuildDeleteEvent;
+import discord4j.core.event.domain.guild.GuildUpdateEvent;
+import discord4j.core.event.domain.message.MessageCreateEvent;
+import discord4j.core.object.presence.Activity;
+import discord4j.core.object.presence.Presence;
 import finders.AlmanaxCalendar;
 import finders.RSSFinder;
 import finders.TwitterFinder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import sx.blah.discord.api.events.EventSubscriber;
-import sx.blah.discord.handle.impl.events.ReadyEvent;
-import sx.blah.discord.handle.impl.events.guild.GuildCreateEvent;
-import sx.blah.discord.handle.impl.events.guild.voice.user.UserVoiceChannelLeaveEvent;
-import sx.blah.discord.handle.impl.events.guild.voice.user.UserVoiceChannelMoveEvent;
-import sx.blah.discord.handle.obj.ActivityType;
-import sx.blah.discord.handle.obj.IGuild;
-import sx.blah.discord.handle.obj.StatusType;
-import util.ClientConfig;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Collections;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Created by steve on 14/07/2016.
@@ -25,51 +25,57 @@ import java.util.List;
 public class ReadyListener {
     private final static Logger LOG = LoggerFactory.getLogger(ReadyListener.class);
 
-    @EventSubscriber
-    public void onReady(ReadyEvent event) {
-        long time = System.currentTimeMillis();
+    private MessageListener messageListener;
+    private GuildCreateListener guildCreateListener;
+    private GuildLeaveListener guildLeaveListener;
+    private GuildUpdateListener guildUpdateListener;
+    private ChannelDeleteListener channelDeleteListener;
+    private Map<DiscordClient, Boolean> isReadyOnce;
 
-        LOG.info("Ajout des différents listeners...");
-        ClientConfig.DISCORD().getDispatcher().registerListener(new GuildCreateListener());
-        ClientConfig.DISCORD().getDispatcher().registerListener(new GuildLeaveListener());
-        ClientConfig.DISCORD().getDispatcher().registerListener(new GuildUpdateListener());
-        ClientConfig.DISCORD().getDispatcher().registerListener(new ChannelDeleteListener());
-        ClientConfig.DISCORD().getDispatcher().registerListener(new UserVoiceChannelMoveListener());
-        ClientConfig.DISCORD().getDispatcher().registerListener(new UserVoiceChannelLeaveListener());
+    public ReadyListener(){
+         messageListener = new MessageListener();
+         guildCreateListener = new GuildCreateListener();
+         guildLeaveListener = new GuildLeaveListener();
+         guildUpdateListener = new GuildUpdateListener();
+         channelDeleteListener = new ChannelDeleteListener();
+         isReadyOnce = new ConcurrentHashMap<>();
+    }
 
-        LOG.info("Check des guildes...");
-        for(IGuild guild : ClientConfig.DISCORD().getGuilds())
-            if (Guild.getGuilds().containsKey(guild.getStringID())
-                    && !guild.getName().equals(Guild.getGuild(guild).getName()))
-                Guild.getGuild(guild).setName(guild.getName());
-            else
-                ClientConfig.DISCORD().getDispatcher().dispatch(new GuildCreateEvent(guild));
+    public void onReady(DiscordClient client) {
 
-        // Check des guildes éventuellement supprimé durant l'absence
-        List<String> ids =  new ArrayList<>(Guild.getGuilds().keySet());
+        if (!isReadyOnce.containsKey(client)) {
+            long time = System.currentTimeMillis();
 
-        for(String guildID : ids)
-            if (ClientConfig.DISCORD().getGuildByID(Long.parseLong(guildID)) == null) {
-                LOG.info(Guild.getGuilds().get(guildID).getName() + " a supprimé "
-                        + Constants.name + " en son absence.");
-                Guild.getGuilds().get(guildID).removeToDatabase();
-            }
+            LOG.info("Ajout des différents listeners...");
+            client.getEventDispatcher().on(GuildCreateEvent.class)
+                    .subscribe(guildCreateEvent -> guildCreateListener.onReady(client, guildCreateEvent));
+            client.getEventDispatcher().on(GuildDeleteEvent.class)
+                    .subscribe(guildDeleteEvent -> guildLeaveListener.onReady(guildDeleteEvent));
+            client.getEventDispatcher().on(GuildUpdateEvent.class)
+                    .subscribe(guildUpdateEvent -> guildUpdateListener.onReady(guildUpdateEvent));
+            client.getEventDispatcher().on(TextChannelDeleteEvent.class)
+                    .subscribe(textChannelDeleteEvent -> channelDeleteListener.onReady(textChannelDeleteEvent));
 
-        // Joue à...
-        ClientConfig.DISCORD().changePresence(StatusType.ONLINE, ActivityType.WATCHING, Constants.discordInvite);
+            LOG.info("Présence mise à jour...");
+            // Joue à...
+            client.updatePresence(Presence.online(Activity.watching(Constants.discordInvite))).subscribe();
 
-        LOG.info("Ecoute des flux RSS du site Dofus...");
-        RSSFinder.start();
+            LOG.info("Ecoute des flux RSS du site Dofus...");
+            RSSFinder.start();
 
-        LOG.info("Lancement du calendrier Almanax...");
-        AlmanaxCalendar.start();
+            LOG.info("Lancement du calendrier Almanax...");
+            AlmanaxCalendar.start();
 
-        LOG.info("Connexion à l'API Twitter...");
-        TwitterFinder.start();
+            LOG.info("Connexion à l'API Twitter...");
+            TwitterFinder.start();
 
-        LOG.info("Ecoute des messages...");
-        ClientConfig.DISCORD().getDispatcher().registerListener(new MessageListener());
+            LOG.info("Ecoute des messages...");
+            client.getEventDispatcher().on(MessageCreateEvent.class)
+                    .subscribe(event -> messageListener.onReady(event));
 
-        LOG.info("Mise en place des ressources en " + (System.currentTimeMillis() - time) + "ms");
+            isReadyOnce.put(client, true);
+            LOG.info("Mise en place des ressources en " + (System.currentTimeMillis() - time) + "ms");
+
+        }
     }
 }

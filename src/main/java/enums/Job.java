@@ -63,7 +63,7 @@ public enum Job {
     public static synchronized Job getJob(String name){
         if (jobs == null){
             jobs = new HashMap<>();
-            for (Job job : Job.values())
+            for(Job job : Job.values())
                 jobs.put(job.getName(), job);
         }
 

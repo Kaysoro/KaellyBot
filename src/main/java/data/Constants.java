@@ -16,12 +16,12 @@ public class Constants {
     /**
      * Application version
      */
-    public final static String version = "1.0.2";
+    public final static String version = "1.1.0";
 
     /**
      * Changelog
      */ // ToDo : New changelog
-    public final static String changelog = "https://i.imgur.com/Ba0jSiR.png";
+    public final static String changelog = "https://i.imgur.com/jAZP5vp.png";
 
     /**
      * Author id
@@ -125,7 +125,7 @@ public class Constants {
     public final static long chanReportID = 321197720629149698L;
 
     /**
-     * User or channel dedicated to receive error logs
+     * User or channel dedicated to receive error logs.
      */
     public final static long chanErrorID = 358201712600678400L;
 

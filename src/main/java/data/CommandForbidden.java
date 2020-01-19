@@ -4,9 +4,7 @@ import commands.model.Command;
 import commands.CommandManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import util.ClientConfig;
 import util.Connexion;
-import util.Reporter;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -50,12 +48,13 @@ public class CommandForbidden {
 
             while (resultSet.next()) {
                 String commandName = resultSet.getString("name_command");
-                CommandForbidden tmp = new CommandForbidden(CommandManager.getCommand(commandName), g, true);
-                commands.put(tmp.getCommand().getName(), tmp);
+                if (CommandManager.getCommand(commandName) != null) {
+                    CommandForbidden tmp = new CommandForbidden(CommandManager.getCommand(commandName), g, true);
+                    commands.put(tmp.getCommand().getName(), tmp);
+                }
             }
 
         } catch (SQLException e) {
-            Reporter.report(e, ClientConfig.DISCORD().getGuildByID(Long.parseLong(g.getId())));
             LOG.error("getForbiddenCommands", e);
         }
 
@@ -77,7 +76,6 @@ public class CommandForbidden {
                 getGuild().getForbiddenCommands().put(getCommand().getName(), this);
                 isSaved = true;
             } catch (SQLException e) {
-                Reporter.report(e, ClientConfig.DISCORD().getGuildByID(Long.parseLong(getGuild().getId())));
                 LOG.error("addToDatabase", e);
             }
         }
@@ -99,7 +97,6 @@ public class CommandForbidden {
                 isSaved = false;
 
             } catch (SQLException e) {
-                Reporter.report(e, ClientConfig.DISCORD().getGuildByID(Long.parseLong(getGuild().getId())));
                 LOG.error("removeToDatabase", e);
             }
         }

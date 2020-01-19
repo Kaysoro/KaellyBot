@@ -4,12 +4,9 @@ import commands.classic.AllianceCommand;
 import commands.classic.GuildCommand;
 import commands.classic.WhoisCommand;
 import commands.model.Command;
+import discord4j.core.object.entity.Message;
 import enums.AnkamaBug;
 import enums.Language;
-import util.Message;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import sx.blah.discord.handle.obj.IMessage;
 import util.Translator;
 
 import java.util.List;
@@ -19,8 +16,6 @@ import java.util.stream.Collectors;
  * Created by steve on 14/11/2016.
  */
 public class TooMuchDiscordException implements DiscordException {
-
-    private final static Logger LOG = LoggerFactory.getLogger(TooMuchDiscordException.class);
     private final static int ITEM_LIMIT = 25;
     private String objectKey;
     private boolean isTranslatable;
@@ -36,7 +31,7 @@ public class TooMuchDiscordException implements DiscordException {
     }
 
     @Override
-    public void throwException(IMessage message, Command command, Language lg, Object... arguments) {
+    public void throwException(Message message, Command command, Language lg, Object... arguments) {
         AnkamaBug bug = null;
 
         String gender = Translator.getLabel(lg, "exception.object." + objectKey + ".gender");
@@ -81,9 +76,15 @@ public class TooMuchDiscordException implements DiscordException {
             st.append(".");
         }
 
-        if (bug != null)
-            Message.sendEmbed(message.getChannel(), bug.getEmbed(st.toString(), lg));
+        if (bug != null){
+            final AnkamaBug BUG = bug;
+            message.getChannel().flatMap(channel -> channel
+                    .createEmbed(spec -> BUG.decorateEmbed(spec, st.toString(), lg)))
+                    .subscribe();
+        }
         else
-            Message.sendText(message.getChannel(), st.toString());
+            message.getChannel().flatMap(channel -> channel
+                    .createMessage(st.toString()))
+                    .subscribe();
     }
 }

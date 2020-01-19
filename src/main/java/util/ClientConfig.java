@@ -1,23 +1,20 @@
 package util;
 
+import discord4j.core.DiscordClient;
+import discord4j.core.DiscordClientBuilder;
+import discord4j.core.event.domain.lifecycle.ReadyEvent;
+import discord4j.core.shard.ShardingClientBuilder;
 import io.sentry.Sentry;
+import listeners.ReadyListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import sx.blah.discord.api.ClientBuilder;
-import sx.blah.discord.api.IDiscordClient;
-import sx.blah.discord.util.DiscordException;
+import reactor.core.publisher.Flux;
 import twitter4j.TwitterStream;
 import twitter4j.TwitterStreamFactory;
 import twitter4j.conf.ConfigurationBuilder;
 
-import javax.net.ssl.*;
 import java.io.*;
 import java.net.URLDecoder;
-import java.security.KeyManagementException;
-import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
-import java.security.cert.CertificateException;
-import java.security.cert.X509Certificate;
 import java.util.Properties;
 
 /**
@@ -28,7 +25,7 @@ public class ClientConfig {
     private static ClientConfig instance = null;
     private final static Logger LOG = LoggerFactory.getLogger(ClientConfig.class);
     private final static String FILENAME = "config.properties";
-    private IDiscordClient DISCORD;
+    private Flux<DiscordClient> DISCORD;
     private TwitterStream TWITTER;
 
     private ClientConfig(){
@@ -44,20 +41,26 @@ public class ClientConfig {
             prop.load(file);
 
             try {
-                DISCORD = new ClientBuilder()
-                        .withToken(prop.getProperty("discord.token"))
-                        .withRecommendedShardCount()
-                        .login();
-            } catch(DiscordException e){
-                LOG.error("Impossible de se connecter à Discord : verifiez votre token dans "
-                        + FILENAME + " ainsi que votre connexion.");
+                DISCORD = new ShardingClientBuilder(prop.getProperty("discord.token"))
+                        .build()
+                        .map(DiscordClientBuilder::build)
+                        .cache();
+
+                ReadyListener readyListener = new ReadyListener();
+
+                DISCORD.flatMap(client -> client.getEventDispatcher().on(ReadyEvent.class))
+                        .subscribe(event -> readyListener.onReady(event.getClient()));
+
+            } catch(Throwable e){
+                    LOG.error("Impossible de se connecter à Discord : verifiez votre token dans "
+                            + FILENAME + " ainsi que votre connexion.");
             }
 
             if (! prop.get("sentry.dsn").equals(""))
                 Sentry.init(prop.getProperty("sentry.dsn"));
 
             if (! prop.get("twitter.consumer_key").equals("") && ! prop.get("twitter.consumer_secret").equals("")
-                    && ! prop.get("twitter.access_token").equals("") && ! prop.get("twitter.access_token_secret").equals("")) {
+            && ! prop.get("twitter.access_token").equals("") && ! prop.get("twitter.access_token_secret").equals("")) {
                 ConfigurationBuilder cb = new ConfigurationBuilder();
                 cb.setDebugEnabled(false)
                         .setOAuthConsumerKey(prop.getProperty("twitter.consumer_key"))
@@ -72,17 +75,15 @@ public class ClientConfig {
                 TWITTER = null;
             }
 
-            enableSSLSocket();
-
-        } catch(FileNotFoundException e){
-            LOG.error("Fichier de configuration non trouvé.");
-            TWITTER = null;
-        } catch (UnsupportedEncodingException | NoSuchAlgorithmException | KeyManagementException e) {
-            LOG.error(e.getMessage());
-        } catch (IOException e) {
-            LOG.error("IOException rencontré : " + e.getMessage());
-            TWITTER = null;
-        }
+            } catch(FileNotFoundException e){
+                LOG.error("Fichier de configuration non trouvé.");
+                TWITTER = null;
+            } catch (UnsupportedEncodingException e) {
+                LOG.error(e.getMessage());
+            } catch (IOException e) {
+                LOG.error("IOException rencontré : " + e.getMessage());
+                TWITTER = null;
+            }
     }
 
     public static synchronized ClientConfig getInstance(String path){
@@ -100,32 +101,20 @@ public class ClientConfig {
     public static TwitterStream TWITTER() {
         return getInstance().TWITTER;
     }
-    public static IDiscordClient DISCORD(String path) {
+
+    public static Flux<DiscordClient> DISCORD(String path) {
         return getInstance(path).DISCORD;
     }
-    public static IDiscordClient DISCORD() {
+
+    public static Flux<DiscordClient> DISCORD() {
         return getInstance().DISCORD;
     }
 
-    public static void enableSSLSocket() throws KeyManagementException, NoSuchAlgorithmException {
-        HttpsURLConnection.setDefaultHostnameVerifier(new HostnameVerifier() {
-            public boolean verify(String hostname, SSLSession session) {
-                return true;
-            }
-        });
+    public static void loginDiscord(){
+        DISCORD().flatMap(DiscordClient::login).blockLast();
+    }
 
-        SSLContext context = SSLContext.getInstance("TLS");
-        context.init(null, new X509TrustManager[]{new X509TrustManager() {
-            public void checkClientTrusted(X509Certificate[] chain, String authType) throws CertificateException {
-            }
-
-            public void checkServerTrusted(X509Certificate[] chain, String authType) throws CertificateException {
-            }
-
-            public X509Certificate[] getAcceptedIssuers() {
-                return new X509Certificate[0];
-            }
-        }}, new SecureRandom());
-        HttpsURLConnection.setDefaultSSLSocketFactory(context.getSocketFactory());
+    public static void loginDiscord(String path){
+        DISCORD(path).flatMap(DiscordClient::login).blockLast();
     }
 }

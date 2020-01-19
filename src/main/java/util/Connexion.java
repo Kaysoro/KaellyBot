@@ -50,7 +50,7 @@ public class Connexion {
 			statement.close();
             LOG.info("Fermeture de la connexion");
 		} catch (SQLException e) {
-            Reporter.report(e);
+			Reporter.report(e);
             LOG.error("Erreur lors de la fermeture de la connexion");
 		}
 	}
@@ -68,7 +68,7 @@ public class Connexion {
 		try {
 			resultat = statement.executeQuery(requet);
 		} catch (SQLException e) {
-            Reporter.report(e);
+			Reporter.report(e);
 			LOG.error("Erreur dans la requête : " + requet);
 		}
 		return resultat;

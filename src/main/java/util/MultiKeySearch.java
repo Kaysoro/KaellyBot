@@ -49,7 +49,7 @@ public class MultiKeySearch<V> implements Serializable {
         if (isNotNull) {
             V value = register.get(Arrays.asList(args));
             if (value != null)
-                result.add(value);
+            result.add(value);
             return result;
         }
 

@@ -19,7 +19,7 @@ public enum Order {
         return name;
     }
 
-    public String getLogo() {
+    public String getLogo(){
         return logo;
     }
 

@@ -1,14 +1,15 @@
 package commands.hidden;
 
 import commands.model.AbstractCommand;
+import discord4j.core.object.entity.Message;
+import discord4j.core.object.entity.PrivateChannel;
+import discord4j.core.object.entity.TextChannel;
 import enums.Language;
 import enums.Nude;
 import exceptions.BasicDiscordException;
-import sx.blah.discord.handle.obj.IMessage;
-import sx.blah.discord.util.EmbedBuilder;
-import util.Message;
 import util.Translator;
 
+import java.awt.*;
 import java.util.regex.Matcher;
 
 /**
@@ -16,7 +17,7 @@ import java.util.regex.Matcher;
  */
 public class SendNudeCommand extends AbstractCommand {
 
-    private final static int PINK_COLOR = 16720000;
+    private final static Color PINK_COLOR = new Color(255, 32, 128);
 
     public SendNudeCommand() {
         super("sendnude", "");
@@ -24,18 +25,18 @@ public class SendNudeCommand extends AbstractCommand {
     }
 
     @Override
-    public void request(IMessage message, Matcher m, Language lg) {
-        if (message.getChannel().isPrivate() || message.getChannel().isNSFW()) {
-            EmbedBuilder builder = new EmbedBuilder();
-
-            builder.withTitle(Translator.getLabel(lg, "sendnude.title"))
-                    .withColor(PINK_COLOR)
-                    .withFooterText(Translator.getLabel(lg, "sendnude.author")
-                            .replace("{author}", Nude.MOAM.getAuthor())
-                            .replace("{position}", "1")
-                            .replace("{number}", "1"))
-                    .withImage(Nude.MOAM.getImage());
-            Message.sendEmbed(message.getChannel(), builder.build());
+    public void request(Message message, Matcher m, Language lg) {
+        if (message.getChannel().blockOptional().map(chan -> chan instanceof PrivateChannel).orElse(false)
+                || message.getChannel().blockOptional().map(chan -> ((TextChannel) chan).isNsfw()).orElse(false)){
+            message.getChannel().flatMap(chan -> chan.createEmbed(spec -> {
+                spec.setTitle(Translator.getLabel(lg, "sendnude.title"))
+                        .setColor(PINK_COLOR)
+                        .setFooter(Translator.getLabel(lg, "sendnude.author")
+                                .replace("{author}", Nude.MOAM.getAuthor())
+                                .replace("{position}", "1")
+                                .replace("{number}", "1"), null)
+                        .setImage(Nude.MOAM.getImage());
+            })).subscribe();
         }
         else // Exception NSFW
             BasicDiscordException.NO_NSFW_CHANNEL.throwException(message, this, lg);

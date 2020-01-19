@@ -1,8 +1,8 @@
 package util;
 
+import discord4j.core.object.presence.Status;
 import enums.Language;
 import enums.Statistique;
-import sx.blah.discord.handle.obj.StatusType;
 
 public class EmojiManager {
 
@@ -35,11 +35,11 @@ public class EmojiManager {
         }
     }
 
-    public static String getEmojiForPresence(StatusType presence){
+    public static String getEmojiForPresence(Status presence){
         switch (presence){
             case ONLINE : return "<:here:435696207776710656>";
-            case DND    : return "<:busy:435696207256354817>";
-            case IDLE   : return "<:away:435696207302492173>";
+            case DO_NOT_DISTURB : return "<:busy:435696207256354817> ";
+            case IDLE   : return "<:away:435696207302492173> ";
             default     : return "<:invisible:435697900601868288>";
         }
     }

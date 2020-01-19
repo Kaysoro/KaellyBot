@@ -3,14 +3,13 @@ package commands.classic;
 import commands.model.AbstractCommand;
 import data.Alliance;
 import data.ServerDofus;
+import discord4j.core.object.entity.Message;
 import enums.Language;
 import exceptions.*;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-import sx.blah.discord.handle.obj.IMessage;
 import util.JSoupManager;
-import util.Message;
 import util.Translator;
 
 import java.io.IOException;
@@ -43,7 +42,7 @@ public class AllianceCommand extends AbstractCommand {
     }
 
     @Override
-    public void request(IMessage message, Matcher m, Language lg) {
+    public void request(Message message, Matcher m, Language lg) {
         String pseudo = m.group(1).trim().toLowerCase();
         String serverName = null;
 
@@ -102,7 +101,9 @@ public class AllianceCommand extends AbstractCommand {
                 if (result.size() == 1) {
                     Alliance alliancePage = Alliance.getAlliance(Translator.getLabel(lg, "game.url")
                             + result.get(0), lg);
-                    Message.sendEmbed(message.getChannel(), alliancePage.getEmbedObject(lg));
+                    message.getChannel().flatMap(chan -> chan
+                            .createEmbed(spec -> alliancePage.decorateEmbedObject(spec, lg)))
+                            .subscribe();
                 }
                 else if (result.size() > 1)
                     tooMuchAlliances.throwException(message, this, lg, servers);

@@ -1,8 +1,8 @@
 package commands.model;
 
 import data.Guild;
+import discord4j.core.object.entity.Message;
 import enums.Language;
-import sx.blah.discord.handle.obj.IMessage;
 
 import java.util.regex.Matcher;
 
@@ -12,8 +12,8 @@ import java.util.regex.Matcher;
 public interface Command {
     String getName();
     String getPattern();
-    Matcher getMatcher(IMessage message);
-    void request(IMessage message);
+    Matcher getMatcher(Message message);
+    void request(Message message);
 
     /**
      * Is the command usable in MP?

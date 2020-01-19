@@ -1,9 +1,9 @@
 package enums;
 
-import sx.blah.discord.api.internal.json.objects.EmbedObject;
-import sx.blah.discord.util.EmbedBuilder;
+import discord4j.core.spec.EmbedCreateSpec;
 import util.Translator;
 
+import java.awt.*;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.Random;
@@ -33,17 +33,14 @@ public enum AnkamaBug {
         return Translator.getLabel(lg, bug);
     }
 
-    public EmbedObject getEmbed(String title, Language lg){
+    public void decorateEmbed(EmbedCreateSpec spec, String title, Language lg){
         String[] bible = Translator.getLabel(lg, "ankama.bug.bible").split(";");
-
-        EmbedBuilder builder = new EmbedBuilder();
-        builder.withTitle(title);
-        builder.withDescription(Translator.getLabel(lg, "ankama.bug.description") + "```" + getLabel(lg)
-                + "```\n" + Translator.getLabel(lg, "ankama.bug.duration")
-                .replace("{days}", String.valueOf(getDuration())));
-        builder.withColor(16711680);
-        builder.withImage("https://s.ankama.com/www/static.ankama.com/dofus/ng/modules/mmorpg/encyclopedia/no-result.png");
-        builder.withFooterText(bible[new Random().nextInt(bible.length)]);
-        return builder.build();
+        spec.setTitle(title)
+                .setDescription(Translator.getLabel(lg, "ankama.bug.description") + "```" + getLabel(lg)
+                        + "```\n" + Translator.getLabel(lg, "ankama.bug.duration")
+                        .replace("{days}", String.valueOf(getDuration())))
+                .setColor(Color.RED)
+                .setImage("https://s.ankama.com/www/static.ankama.com/dofus/ng/modules/mmorpg/encyclopedia/no-result.png")
+                .setFooter(bible[new Random().nextInt(bible.length)], null);
     }
 }

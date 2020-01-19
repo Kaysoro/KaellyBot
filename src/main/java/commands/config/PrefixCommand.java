@@ -3,16 +3,14 @@ package commands.config;
 import commands.model.AbstractCommand;
 import data.Constants;
 import data.Guild;
+import discord4j.core.object.entity.Message;
+import discord4j.core.object.entity.User;
 import enums.Language;
 import exceptions.AdvancedDiscordException;
 import exceptions.BasicDiscordException;
-import sx.blah.discord.util.DiscordException;
-import util.Message;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import sx.blah.discord.handle.obj.IMessage;
 import util.Translator;
 
+import java.util.Optional;
 import java.util.regex.Matcher;
 
 /**
@@ -20,7 +18,6 @@ import java.util.regex.Matcher;
  */
 public class PrefixCommand extends AbstractCommand {
 
-    private final static Logger LOG = LoggerFactory.getLogger(PrefixCommand.class);
     private exceptions.DiscordException prefixeOutOfBounds;
 
     public PrefixCommand(){
@@ -31,24 +28,22 @@ public class PrefixCommand extends AbstractCommand {
     }
 
     @Override
-    public void request(IMessage message, Matcher m, Language lg) {
+    public void request(Message message, Matcher m, Language lg) {
         if (isUserHasEnoughRights(message)) {
             String newPrefix = m.group(1).trim();
+            Optional<discord4j.core.object.entity.Guild> guildOptional = message.getGuild().blockOptional();
+            if (newPrefix.length() >= 1 && newPrefix.length() <= Constants.prefixeLimit && guildOptional.isPresent()) {
+                Guild.getGuild(guildOptional.get()).setPrefix(newPrefix);
+                message.getChannel().flatMap(chan -> chan
+                        .createMessage(Translator.getLabel(lg, "prefix.request.1")
+                                .replace("{prefix}", getPrefixMdEscaped(message))))
+                        .subscribe();
 
-            if (newPrefix.length() >= 1 && newPrefix.length() <= Constants.prefixeLimit) {
-                Guild.getGuild(message.getGuild()).setPrefix(newPrefix);
-                Message.sendText(message.getChannel(), Translator.getLabel(lg, "prefix.request.1")
-                        .replace("{prefix}", getPrefixMdEscaped(message)));
-
-                try {
-                    Message.sendText(message.getGuild().getOwner().getOrCreatePMChannel(),
-                            Translator.getLabel(lg, "prefix.request.2")
-                                    .replace("{prefix}", getPrefixMdEscaped(message))
-                                    .replace("{guild.name}", message.getGuild().getName()));
-                } catch (DiscordException e){
-                    LOG.warn("request", "Impossible de contacter l'administrateur de la guilde ["
-                            + message.getGuild().getName() + "].");
-                }
+                guildOptional.get().getOwner().flatMap(User::getPrivateChannel)
+                        .flatMap(chan -> chan.createMessage(Translator.getLabel(lg, "prefix.request.2")
+                                .replace("{prefix}", getPrefixMdEscaped(message))
+                                .replace("{guild.name}", guildOptional.get().getName())))
+                        .subscribe();
             }
             else
                 prefixeOutOfBounds.throwException(message, this, lg);

@@ -1,18 +1,23 @@
 package data;
 
+import discord4j.core.object.Embed;
+import discord4j.core.spec.EmbedCreateSpec;
 import enums.Language;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-import sx.blah.discord.api.internal.json.objects.EmbedObject;
-import sx.blah.discord.util.EmbedBuilder;
 import util.EmojiManager;
 import util.JSoupManager;
 import util.Translator;
 import util.URLManager;
 
+import java.awt.*;
 import java.io.IOException;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Random;
+import java.util.List;
+import java.util.ArrayList;
 
 /**
  * Created by steve on 14/07/2016.
@@ -56,76 +61,65 @@ public class Item implements Embedded {
     }
 
     @Override
-    public EmbedObject getEmbedObject(Language lg) {
-        EmbedBuilder builder = new EmbedBuilder();
-
-        builder.withTitle(name);
-        builder.withUrl(url);
-
-        builder.withColor(new Random().nextInt(16777216));
-        builder.withThumbnail(skinURL);
+    public void decorateEmbedObject(EmbedCreateSpec spec, Language lg) {
+        spec.setTitle(name)
+            .setUrl(url)
+            .setColor(Color.GRAY)
+            .setThumbnail(skinURL);
 
         if (level != null && ! level.isEmpty())
-            builder.appendField(Translator.getLabel(lg, "item.niveau"), level, true);
-        builder.appendField(Translator.getLabel(lg, "item.type"), type, true);
+            spec.addField(Translator.getLabel(lg, "item.niveau"), level, true);
+        spec.addField(Translator.getLabel(lg, "item.type"), type, true);
 
         if (effects != null && ! effects.isEmpty())
-        builder.appendField(Translator.getLabel(lg, "item.effets"), effects, true);
+        spec.addField(Translator.getLabel(lg, "item.effets"), effects, true);
 
         if (caracteristics != null && ! caracteristics.isEmpty())
-            builder.appendField(Translator.getLabel(lg, "item.caracteristiques"), caracteristics, true);
+            spec.addField(Translator.getLabel(lg, "item.caracteristiques"), caracteristics, true);
 
         if (conditions != null && ! conditions.isEmpty())
-            builder.appendField(Translator.getLabel(lg, "item.conditions"), conditions, true);
+            spec.addField(Translator.getLabel(lg, "item.conditions"), conditions, true);
 
         if (panoplie != null && panoplieURL != null)
-            builder.appendField(Translator.getLabel(lg, "item.panoplie"), "[" + panoplie + "](" + panoplieURL + ")", true);
-
-        if (error) builder.withFooterText(Translator.getLabel(lg, "resource.error"));
-
-        return builder.build();
+            spec.addField(Translator.getLabel(lg, "item.panoplie"), "[" + panoplie + "](" + panoplieURL + ")", true);
     }
 
     @Override
-    public EmbedObject getMoreEmbedObject(Language lg) {
-        EmbedBuilder builder = new EmbedBuilder();
+    public void decorateMoreEmbedObject(EmbedCreateSpec spec, Language lg) {
+        spec.setTitle(name)
+            .setUrl(url)
+            .setColor(Color.GRAY)
+            .setImage(skinURL);
 
-        builder.withTitle(name);
-        builder.withUrl(url);
         if (description != null && ! description.isEmpty())
-            builder.withDescription(description);
-
-        builder.withColor(new Random().nextInt(16777216));
-        builder.withImage(skinURL);
+            spec.setDescription(description);
 
         if (level != null && ! level.isEmpty())
-            builder.appendField(Translator.getLabel(lg, "item.niveau"), level, true);
-        builder.appendField(Translator.getLabel(lg, "item.type"), type, true);
+            spec.addField(Translator.getLabel(lg, "item.niveau"), level, true);
+        spec.addField(Translator.getLabel(lg, "item.type"), type, true);
 
         if (effects != null && ! effects.isEmpty())
-            builder.appendField(Translator.getLabel(lg, "item.effets"), effects, true);
+            spec.addField(Translator.getLabel(lg, "item.effets"), effects, true);
 
         if (caracteristics != null && ! caracteristics.isEmpty())
-            builder.appendField(Translator.getLabel(lg, "item.caracteristiques"), caracteristics, true);
+            spec.addField(Translator.getLabel(lg, "item.caracteristiques"), caracteristics, true);
 
         if (conditions != null && ! conditions.isEmpty())
-            builder.appendField(Translator.getLabel(lg, "item.conditions"), conditions, true);
+            spec.addField(Translator.getLabel(lg, "item.conditions"), conditions, true);
 
         if (panoplie != null && panoplieURL != null)
-            builder.appendField(Translator.getLabel(lg, "item.panoplie"), "[" + panoplie + "](" + panoplieURL + ")", true);
+            spec.addField(Translator.getLabel(lg, "item.panoplie"), "[" + panoplie + "](" + panoplieURL + ")", true);
 
         if (recipe != null)
-            builder.appendField(Translator.getLabel(lg, "item.recette"), recipe, true);
+            spec.addField(Translator.getLabel(lg, "item.recette"), recipe, true);
 
         if (! drops.isEmpty())
             for(int i = 0 ; i < drops.size(); i++)
-                builder.appendField(Translator.getLabel(lg, "resource.drops")
+                spec.addField(Translator.getLabel(lg, "resource.drops")
                                 + (drops.size() >1? " (" + (i + 1) + "/" + drops.size() + ")" : "") + " : ",
                         drops.get(i), true);
 
-        if (error) builder.withFooterText(Translator.getLabel(lg, "monster.error"));
-
-        return builder.build();
+        if (error) spec.setFooter(Translator.getLabel(lg, "monster.error"), "");
     }
 
     public static Item getItem(Language lg, String url) throws IOException {
@@ -243,7 +237,7 @@ public class Item implements Embedded {
 
                 tmp.append(line.getElementsByClass("ak-aside").first().text()).append("\n");
 
-                if (field.length() + tmp.length() > EmbedBuilder.FIELD_CONTENT_LIMIT) {
+                if (field.length() + tmp.length() > Embed.Field.MAX_VALUE_LENGTH) {
                     drops.add(field.toString());
                     field.setLength(0);
                 }

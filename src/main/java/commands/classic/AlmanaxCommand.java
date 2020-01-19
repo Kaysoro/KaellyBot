@@ -2,10 +2,9 @@ package commands.classic;
 
 import commands.model.AbstractCommand;
 import data.Almanax;
+import discord4j.core.object.entity.Message;
 import enums.Language;
-import util.Message;
 import exceptions.*;
-import sx.blah.discord.handle.obj.IMessage;
 import util.Translator;
 
 import java.io.IOException;
@@ -24,18 +23,26 @@ public class AlmanaxCommand extends AbstractCommand {
     }
 
     @Override
-    public void request(IMessage message, Matcher m, Language lg) {
+    public void request(Message message, Matcher m, Language lg) {
         try {
             Date date = new Date();
 
             if (m.group(1) != null && m.group(1).matches("\\s+\\+\\d")) {
                 int number = Integer.parseInt(m.group(1).replaceAll("\\s+\\+", ""));
-                Message.sendEmbed(message.getChannel(), Almanax.getGroupedObject(lg, date, number));
+                final Date DATE = date;
+                message.getChannel().flatMap(chan -> chan.createEmbed(spec -> {
+                    try {
+                        Almanax.decorateGroupedObject(spec, lg, DATE, number);
+                    } catch (IOException e) {
+                        ExceptionManager.manageIOException(e, message, this, lg, BasicDiscordException.ALMANAX);
+                    }
+                })).subscribe();
             } else {
                 if (m.group(1) != null && m.group(1).matches("\\s+\\d{2}/\\d{2}/\\d{4}"))
                     date = Almanax.discordToBot.parse(m.group(1));
                 Almanax almanax = Almanax.get(lg, date);
-                Message.sendEmbed(message.getChannel(), almanax.getMoreEmbedObject(lg));
+                message.getChannel().flatMap(chan -> chan.createEmbed(spec -> almanax.decorateMoreEmbedObject(spec, lg)))
+                        .subscribe();
             }
 
         } catch (ParseException e) {

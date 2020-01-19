@@ -1,6 +1,7 @@
 package commands.classic;
 
 import commands.model.AbstractCommand;
+import discord4j.core.object.entity.Message;
 import enums.Language;
 import exceptions.DiscordException;
 import exceptions.NotFoundDiscordException;
@@ -11,11 +12,10 @@ import exceptions.ExceptionManager;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-import sx.blah.discord.handle.obj.IMessage;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
+import java.net.*;
 import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.List;
@@ -37,7 +37,7 @@ public class TutorialCommand extends AbstractCommand {
     }
 
     @Override
-    public void request(IMessage message, Matcher m, Language lg) {
+    public void request(Message message, Matcher m, Language lg) {
         String normalName = Normalizer.normalize(m.group(1).trim(), Normalizer.Form.NFD)
                 .replaceAll("\\p{InCombiningDiacriticalMarks}+", "").toLowerCase();
         String editedName = removeUselessWords(normalName);
@@ -47,8 +47,10 @@ public class TutorialCommand extends AbstractCommand {
             matcher.evaluateAll(getListTutoFrom(getSearchURL(editedName), message));
 
             if (matcher.isUnique())// We have found it !
-                Message.sendText(message.getChannel(), Translator.getLabel(lg, "tutorial.request") + " " +
-                        Constants.papychaURL + matcher.getBest().getUrl());
+                message.getChannel().flatMap(chan -> chan
+                        .createMessage(Translator.getLabel(lg, "tutorial.request") + " " +
+                                matcher.getBest().getUrl()))
+                        .subscribe();
             else if (! matcher.isEmpty())  // Too much tutos
                 tooMuchTutos.throwException(message, this, lg, matcher.getBests());
             else // empty
@@ -60,16 +62,16 @@ public class TutorialCommand extends AbstractCommand {
 
     private String getSearchURL(String text) throws UnsupportedEncodingException {
         return Constants.papychaURL + "?"
-                + forName.toLowerCase() + URLEncoder.encode(text, "UTF-8");
+                + forName.toLowerCase() + URLEncoder.encode(text, "UTF-8").replace("%E2%80%99", "%27");
     }
 
-    private List<Requestable> getListTutoFrom(String url, IMessage message){
+    private List<Requestable> getListTutoFrom(String url, Message message){
         List<Requestable> result = new ArrayList<>();
-        Language lg = Translator.getLanguageFrom(message.getChannel());
+        Language lg = Translator.getLanguageFrom(message.getChannel().block());
 
         try {
             Document doc = JSoupManager.getDocument(url);
-            Elements elems = doc.getElementById("content").getElementsByTag("h2");
+            Elements elems = doc.getElementById("content").getElementsByTag("h2").select(".entry-title");
 
             for (Element element : elems)
                 result.add(new Requestable(element.child(0).text(),

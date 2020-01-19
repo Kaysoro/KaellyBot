@@ -4,7 +4,6 @@ import enums.Language;
 import listeners.TwitterListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import sx.blah.discord.handle.obj.IChannel;
 import twitter4j.FilterQuery;
 import util.ClientConfig;
 import util.Connexion;
@@ -23,9 +22,11 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class TwitterFinder{
     private final static Logger LOG = LoggerFactory.getLogger(TwitterFinder.class);
-    protected static Map<Long, TwitterFinder> twitterChannels;
+    private static boolean isReady = false;
+    private static Map<Long, TwitterFinder> twitterChannels;
     private long guildId;
     private long channelId;
+
 
     public TwitterFinder(long guidId, long channelId) {
         this.guildId = guidId;
@@ -46,13 +47,7 @@ public class TwitterFinder{
                 while (resultSet.next()){
                     long idChan = Long.parseLong(resultSet.getString("id_chan"));
                     long idGuild = Long.parseLong(resultSet.getString("id_guild"));
-                    IChannel chan = ClientConfig.DISCORD().getChannelByID(idChan);
-                    if (chan != null && ! chan.isDeleted())
-                        twitterChannels.put(chan.getLongID(), new TwitterFinder(idGuild, idChan));
-                    else {
-                        new TwitterFinder(idGuild, idChan).removeToDatabase();
-                        LOG.info("Chan deleted : " + idChan);
-                    }
+                    twitterChannels.put(idChan, new TwitterFinder(idGuild, idChan));
                 }
             } catch (SQLException e) {
                 Reporter.report(e);
@@ -76,9 +71,7 @@ public class TwitterFinder{
 
                 preparedStatement.executeUpdate();
             } catch (SQLException e) {
-                Reporter.report(e, ClientConfig.DISCORD().getGuildByID(getGuildId()),
-                        ClientConfig.DISCORD().getChannelByID(getChannelId()));
-                LOG.error("addToDabase", e);
+                LOG.error("addToDatabase", e);
             }
         }
     }
@@ -95,8 +88,6 @@ public class TwitterFinder{
             request.executeUpdate();
 
         } catch (SQLException e) {
-            Reporter.report(e, ClientConfig.DISCORD().getGuildByID(getGuildId()),
-                    ClientConfig.DISCORD().getChannelByID(getChannelId()));
             LOG.error("removeToDatabase", e);
         }
     }
@@ -109,8 +100,8 @@ public class TwitterFinder{
         return guildId;
     }
 
-    public static void start() {
-        if (ClientConfig.TWITTER() != null) {
+    public static synchronized void start() {
+        if (ClientConfig.TWITTER() != null && !isReady) {
             ClientConfig.TWITTER().addListener(new TwitterListener());
 
             long[] twitterIDs = new long[Language.values().length];
@@ -118,6 +109,7 @@ public class TwitterFinder{
             for(Language lg : Language.values())
                 twitterIDs[i++] = Long.parseLong(Translator.getLabel(lg, "twitter.id"));
             ClientConfig.TWITTER().filter(new FilterQuery(0, twitterIDs, new String[]{}));
+            isReady = true;
         }
     }
 }

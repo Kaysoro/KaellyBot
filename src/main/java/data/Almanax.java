@@ -1,21 +1,20 @@
 package data;
 
+import discord4j.core.spec.EmbedCreateSpec;
 import enums.Language;
 import org.apache.commons.lang3.time.DateUtils;
 import org.jsoup.nodes.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import sx.blah.discord.api.internal.json.objects.EmbedObject;
-import sx.blah.discord.util.EmbedBuilder;
 import util.JSoupManager;
 import util.Translator;
 
+import java.awt.*;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
-import java.util.Random;
 
 /**
  * Created by steve on 06/11/2016.
@@ -41,57 +40,42 @@ public class Almanax implements Embedded{
     }
 
     @Override
-    public EmbedObject getEmbedObject(Language lg) {
-        EmbedBuilder builder = new EmbedBuilder();
-
-        builder.withTitle(Translator.getLabel(lg, "almanax.embed.title.1") + " " + day);
-        builder.withUrl(Translator.getLabel(lg, "almanax.url") + day + "?game=dofustouch");
-
-        builder.withColor(new Random().nextInt(16777216));
-        builder.withThumbnail(ressourceURL);
-
-        builder.appendField(Translator.getLabel(lg, "almanax.embed.bonus"), bonus, true);
-        builder.appendField(Translator.getLabel(lg, "almanax.embed.offrande"), offrande, true);
-
-        return builder.build();
+    public void decorateEmbedObject(EmbedCreateSpec spec, Language lg) {
+        spec.setTitle(Translator.getLabel(lg, "almanax.embed.title.1") + " " + day)
+            .setUrl(Translator.getLabel(lg, "almanax.url") + day + "?game=dofustouch")
+            .setColor(Color.GRAY)
+            .setThumbnail(ressourceURL)
+            .addField(Translator.getLabel(lg, "almanax.embed.bonus"), bonus, true)
+            .addField(Translator.getLabel(lg, "almanax.embed.offrande"), offrande, true);
     }
 
     @Override
-    public EmbedObject getMoreEmbedObject(Language lg) {
-        EmbedBuilder builder = new EmbedBuilder();
-
-        builder.withTitle(Translator.getLabel(lg, "almanax.embed.title.1") + " " + day);
-        builder.withUrl(Translator.getLabel(lg, "almanax.url") + day + "?game=dofustouch");
-        builder.withDescription(quest);
-
-        builder.withColor(new Random().nextInt(16777216));
-        builder.withImage(ressourceURL);
-
-        builder.appendField(Translator.getLabel(lg, "almanax.embed.bonus"), bonus, true);
-        builder.appendField(Translator.getLabel(lg, "almanax.embed.offrande"), offrande, true);
-
-        return builder.build();
+    public void decorateMoreEmbedObject(EmbedCreateSpec spec, Language lg) {
+        spec.setTitle(Translator.getLabel(lg, "almanax.embed.title.1") + " " + day)
+            .setUrl(Translator.getLabel(lg, "almanax.url") + day + "?game=dofustouch")
+            .setDescription(quest)
+            .setColor(Color.GRAY)
+            .setImage(ressourceURL)
+            .addField(Translator.getLabel(lg, "almanax.embed.bonus"), bonus, true)
+            .addField(Translator.getLabel(lg, "almanax.embed.offrande"), offrande, true);
     }
 
-    public static EmbedObject getGroupedObject(Language lg, Date day, int occurrence) throws IOException {
+    public static void decorateGroupedObject(EmbedCreateSpec spec, Language lg, Date day, int occurrence) throws IOException {
         Date firstDate = DateUtils.addDays(day,1);
         Date lastDate = DateUtils.addDays(day, occurrence);
         String title = Translator.getLabel(lg, "almanax.embed.title.1") + " " + discordToBot.format(firstDate) +
                 (occurrence > 1 ? " " + Translator.getLabel(lg, "almanax.embed.title.2") + " " + discordToBot.format(lastDate) : "");
 
-        EmbedBuilder builder = new EmbedBuilder();
-        builder.withTitle(title);
-        builder.withColor(new Random().nextInt(16777216));
+        spec.setTitle(title)
+            .setColor(Color.GRAY);
 
         for (int i = 1; i <= occurrence; i++) {
             firstDate = DateUtils.addDays(new Date(), i);
             Almanax almanax = Almanax.get(lg, firstDate);
-            builder.appendField(discordToBot.format(firstDate), Translator.getLabel(lg, "almanax.embed.bonus")
-                    + " " + almanax.getBonus() +"\n" + Translator.getLabel(lg, "almanax.embed.offrande")
+            spec.addField(discordToBot.format(firstDate), Translator.getLabel(lg, "almanax.embed.bonus")
+                    + " " + almanax.getBonus() + "\n" + Translator.getLabel(lg, "almanax.embed.offrande")
                     + " " + almanax.getOffrande(), true);
         }
-
-        return builder.build();
     }
 
     public static Almanax get(Language lg, String date) throws IOException {

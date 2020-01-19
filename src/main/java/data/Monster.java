@@ -1,21 +1,20 @@
 package data;
 
+import discord4j.core.object.Embed;
+import discord4j.core.spec.EmbedCreateSpec;
 import enums.Language;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-import sx.blah.discord.api.internal.json.objects.EmbedObject;
-import sx.blah.discord.util.EmbedBuilder;
 import util.EmojiManager;
 import util.JSoupManager;
 import util.Translator;
 import util.URLManager;
 
+import java.awt.*;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
-
 /**
  * Created by steve on 14/07/2016.
  */
@@ -49,67 +48,59 @@ public class Monster implements Embedded {
     }
 
     @Override
-    public EmbedObject getEmbedObject(Language lg) {
-        EmbedBuilder builder = new EmbedBuilder();
-
-        builder.withTitle(name);
-        builder.withUrl(url);
-        builder.withColor(new Random().nextInt(16777216));
-        builder.withThumbnail(skinURL);
+    public void decorateEmbedObject(EmbedCreateSpec spec, Language lg) {
+        spec.setTitle(name)
+            .setUrl(url)
+            .setColor(Color.GRAY)
+            .setThumbnail(skinURL);
 
         if (level != null && ! level.isEmpty())
-            builder.appendField(Translator.getLabel(lg, "monster.level"), level, true);
-        builder.appendField(Translator.getLabel(lg, "monster.race"), family, true);
+            spec.addField(Translator.getLabel(lg, "monster.level"), level, true);
+        spec.addField(Translator.getLabel(lg, "monster.race"), family, true);
 
         if (caracteristics != null && ! caracteristics.isEmpty())
-            builder.appendField(Translator.getLabel(lg, "monster.caracteristic"), caracteristics, true);
+            spec.addField(Translator.getLabel(lg, "monster.caracteristic"), caracteristics, true);
 
         if (resistances != null && ! resistances.isEmpty())
-            builder.appendField(Translator.getLabel(lg, "monster.resistance"), resistances, true);
+            spec.addField(Translator.getLabel(lg, "monster.resistance"), resistances, true);
 
-        if (error) builder.withFooterText(Translator.getLabel(lg, "monster.error"));
-
-        return builder.build();
+        if (error) spec.setFooter(Translator.getLabel(lg, "monster.error"), null);
     }
 
     @Override
-    public EmbedObject getMoreEmbedObject(Language lg) {
-        EmbedBuilder builder = new EmbedBuilder();
-
-        builder.withTitle(name);
-        builder.withUrl(url);
-        builder.withColor(new Random().nextInt(16777216));
-        builder.withImage(skinURL);
+    public void decorateMoreEmbedObject(EmbedCreateSpec spec, Language lg) {
+        spec.setTitle(name)
+            .setUrl(url)
+            .setColor(Color.GRAY)
+            .setImage(skinURL);
 
         if (level != null && ! level.isEmpty())
-            builder.appendField(Translator.getLabel(lg, "monster.level"), level, true);
-        builder.appendField(Translator.getLabel(lg, "monster.race"), family, true);
+            spec.addField(Translator.getLabel(lg, "monster.level"), level, true);
+        spec.addField(Translator.getLabel(lg, "monster.race"), family, true);
 
         if (caracteristics != null && ! caracteristics.isEmpty())
-            builder.appendField(Translator.getLabel(lg, "monster.caracteristic"), caracteristics, true);
+            spec.addField(Translator.getLabel(lg, "monster.caracteristic"), caracteristics, true);
 
         if (resistances != null && ! resistances.isEmpty())
-            builder.appendField(Translator.getLabel(lg, "monster.resistance"), resistances, true);
+            spec.addField(Translator.getLabel(lg, "monster.resistance"), resistances, true);
 
         if (zones != null && ! zones.isEmpty())
-            builder.appendField(Translator.getLabel(lg, "monster.zones"), zones, true);
+            spec.addField(Translator.getLabel(lg, "monster.zones"), zones, true);
 
         if (! butins.isEmpty())
             for(int i = 0; i < butins.size(); i++)
-                builder.appendField(Translator.getLabel(lg, "monster.butins")
+                spec.addField(Translator.getLabel(lg, "monster.butins")
                                 + (butins.size() > 1? " (" + (i + 1) + "/" + butins.size() + ")" : "") + " : ",
                         butins.get(i), true);
 
         if (! butinsConditionne.isEmpty())
             for(int i = 0; i < butinsConditionne.size(); i++)
-                builder.appendField(Translator.getLabel(lg, "monster.butins_conditionnes")
+                spec.addField(Translator.getLabel(lg, "monster.butins_conditionnes")
                                 + (butinsConditionne.size() > 1? " (" + (i + 1) + "/"
                                 + butinsConditionne.size() + ")" : "") + " : ",
                         butinsConditionne.get(i), true);
 
-        if (error) builder.withFooterText(Translator.getLabel(lg, "monster.error"));
-
-        return builder.build();
+        if (error) spec.setFooter(Translator.getLabel(lg, "monster.error"), null);
     }
 
     public static Monster getMonster(Language lg, String url) throws IOException {
@@ -180,7 +171,7 @@ public class Monster implements Embedded {
 
                 tmp.append(line.getElementsByClass("ak-drop-percent").first().text()).append("\n");
 
-                if (field.length() + tmp.length() > EmbedBuilder.FIELD_CONTENT_LIMIT) {
+                if (field.length() + tmp.length() > Embed.Field.MAX_VALUE_LENGTH) {
                     butins.add(field.toString());
                     field.setLength(0);
                 }

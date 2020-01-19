@@ -3,12 +3,12 @@ package commands.classic;
 import commands.model.DofusEncyclopediaRequestCommand;
 import data.Embedded;
 import data.Item;
+import discord4j.core.object.entity.Message;
 import enums.Language;
 import enums.SuperTypeEquipment;
 import enums.TypeEquipment;
 import exceptions.*;
 import util.*;
-import sx.blah.discord.handle.obj.IMessage;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -39,7 +39,7 @@ public class ItemCommand extends DofusEncyclopediaRequestCommand {
     }
 
     @Override
-    public void request(IMessage message, Matcher m, Language lg) {
+    public void request(Message message, Matcher m, Language lg) {
         if (isChannelHasExternalEmojisPermission(message)) {
             String normalName = Normalizer.normalize(m.group(2).trim(), Normalizer.Form.NFD)
                     .replaceAll("\\p{InCombiningDiacriticalMarks}+", "").toLowerCase();
@@ -60,9 +60,13 @@ public class ItemCommand extends DofusEncyclopediaRequestCommand {
                     Embedded item = Item.getItem(lg, Translator.getLabel(lg, "game.url")
                             + matcher.getBest().getUrl());
                     if (m.group(1) != null)
-                        Message.sendEmbed(message.getChannel(), item.getMoreEmbedObject(lg));
+                        message.getChannel().flatMap(chan -> chan
+                                .createEmbed(spec -> item.decorateMoreEmbedObject(spec, lg)))
+                                .subscribe();
                     else
-                        Message.sendEmbed(message.getChannel(), item.getEmbedObject(lg));
+                        message.getChannel().flatMap(chan -> chan
+                                .createEmbed(spec -> item.decorateEmbedObject(spec, lg)))
+                                .subscribe();
                 } else if (!matcher.isEmpty()) // Too much items
                     tooMuchItems.throwException(message, this, lg, matcher.getBests());
                 else // empty

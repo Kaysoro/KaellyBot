@@ -1,17 +1,17 @@
 package listeners;
 
 import data.*;
-import util.Message;
-import finders.AlmanaxCalendar;
-import finders.RSSFinder;
-import finders.TwitterFinder;
+import discord4j.core.event.domain.guild.GuildDeleteEvent;
+import discord4j.core.object.entity.TextChannel;
+import discord4j.core.object.util.Snowflake;
+import reactor.core.publisher.Flux;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import sx.blah.discord.api.events.EventSubscriber;
-import sx.blah.discord.handle.impl.events.guild.GuildLeaveEvent;
-import sx.blah.discord.handle.obj.IChannel;
 import util.ClientConfig;
 import util.Reporter;
+
+import java.util.Optional;
+import java.util.OptionalInt;
 
 /**
  * Created by steve on 14/07/2016.
@@ -24,46 +24,29 @@ public class GuildLeaveListener {
         super();
     }
 
-    @EventSubscriber
-    public void onReady(GuildLeaveEvent event) {
+    public void onReady(GuildDeleteEvent event) {
         try {
-            Guild guild = Guild.getGuild(event.getGuild(), false);
-            if (guild != null) {
+
+            Optional<Guild> optionalGuild = event.getGuild().map(guildEvent -> Guild.getGuild(guildEvent, false));
+            if (optionalGuild.isPresent()) {
+                Guild guild = optionalGuild.get();
                 guild.removeToDatabase();
 
-                LOG.info("La guilde " + event.getGuild().getStringID() + " - " + event.getGuild().getName()
+                LOG.info("La guilde " + event.getGuildId().asString() + " - " + guild.getName()
                         + " a supprimé " + Constants.name);
 
-                for (RSSFinder finder : RSSFinder.getRSSFinders().values()) {
-                    IChannel chan = event.getGuild().getChannelByID(Long.parseLong(finder.getChan()));
-                    if (chan != null && chan.isDeleted()) {
-                        finder.removeToDatabase();
-                        LOG.info("RSS Chan \"" + chan.getName() + "\"");
-                    }
-                }
-
-                for (TwitterFinder finder : TwitterFinder.getTwitterChannels().values()) {
-                    IChannel chan = event.getGuild().getChannelByID(finder.getChannelId());
-                    if (chan != null && chan.isDeleted()) {
-                        finder.removeToDatabase();
-                        LOG.info("Twitter Chan \"" + chan.getName() + "\"");
-                    }
-                }
-
-                for (AlmanaxCalendar finder : AlmanaxCalendar.getAlmanaxCalendars().values()) {
-                    IChannel chan = event.getGuild().getChannelByID(Long.parseLong(finder.getChan()));
-                    if (chan != null && chan.isDeleted()) {
-                        finder.removeToDatabase();
-                        LOG.info("Almanax Chan \"" + chan.getName() + "\"");
-                    }
-                }
+                ClientConfig.DISCORD()
+                        .flatMap(cli -> cli.getChannelById(Snowflake.of(Constants.chanReportID)))
+                        .filter(chan -> chan instanceof TextChannel)
+                        .map(chan -> (TextChannel) chan)
+                        .distinct()
+                        .flatMap(chan -> chan.createMessage("[LOSE] **" + optionalGuild.get().getName() + "**, -"
+                                        + event.getGuild().map(discord4j.core.object.entity.Guild::getMemberCount)
+                                .orElse(OptionalInt.empty()).orElse(0) +  " utilisateurs"))
+                        .subscribe();
             }
-
-            Message.sendText(ClientConfig.DISCORD().getChannelByID(Constants.chanReportID),
-                    "[LOSE] **" + event.getGuild().getName() + "**, -" + event.getGuild().getUsers().size()
-                            + " utilisateurs");
-        } catch (Exception e) {
-            Reporter.report(e, event.getGuild());
+        } catch(Exception e){
+            Reporter.report(e, event.getGuild().orElse(null));
             LOG.error("onReady", e);
         }
     }

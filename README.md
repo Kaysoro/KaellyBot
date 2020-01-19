@@ -17,6 +17,7 @@ Cette commande renvoie l'annuaire des alignés.
 `!align > level server` : affiche les alignés ayant un niveau supérieur ou égal à celui précisé.  
 `!align @user server` : affiche les alignements de l'utilisateur précisé.  
 `!align city order level server` : enregistre l'alignement précisé en paramètre. Indiquer 0 pour le niveau supprime l'alignement.  
+
 ### Alliance
 Affiche la page d'une alliance.
 `!alliance nom` : donne la page d'alliance associée au nom. Celui-ci doit être exact.
@@ -50,12 +51,13 @@ Renvoie le transport le plus proche à vol d'oiseau.
 `!dist [POS, POS]` : renvoie le transport le plus proche de la position indiquée à vol d'oiseau.  
 
 ### Guild
-Affiche la page d'une guilde.
-`!guild name` : donne la page d'une guilde associée au nom. Celui-ci doit être exact.
-`!guild name -serv server` : est à utiliser lorsque le nom ne suffit pas pour déterminer la fiche d'une guilde.
+Affiche la page d'une guilde.  
+`!guild name` : donne la page d'une guilde associée au nom. Celui-ci doit être exact.  
+`!guild name -serv server` : est à utiliser lorsque le nom ne suffit pas pour déterminer la fiche d'une guilde.  
 
 ### Invite
 `!invite` donne le lien d'invitation pour le bot et pour le serveur de support.  
+
 ### Item
 Renvoie les statistiques d'un item du jeu Dofus.  
 `!item item` : renvoie les statistiques de l'item spécifié : son nom peut être approximatif s'il est suffisamment précis.  
@@ -75,12 +77,12 @@ Gère un annuaire d'artisans.
 Change la langue utilisée pour communiquer avec Kaelly parmi la liste suivante : FR, EN, SP.  
 `!lang` : renseigne la langue du serveur et du salon.    
 `!lang lang` : met à jour la langue du serveur.    
-`!lang -channel lang` : met à jour la langue du salon (prioritaire au serveur).
+`!lang -channel lang` : met à jour la langue du salon (prioritaire au serveur).  
 
 ### Monster
 Renvoie les statistiques d'un monstre du jeu Dofus.  
-`!monster monster` : renvoie les statistiques du monstre spécifié : son nom peut être approximatif s'il est suffisamment précis.
-`!monster -more monster` : renvoie les statistiques détaillés du monstre spécifié.
+`!monster monster` : renvoie les statistiques du monstre spécifié : son nom peut être approximatif s'il est suffisamment précis.    
+`!monster -more monster` : renvoie les statistiques détaillés du monstre spécifié.  
 
 ### Ping
 `!ping` mesure le temps de réponse.  
@@ -92,13 +94,13 @@ Change le préfixe utilisé pour invoquer une commande. Niveau modérateur minim
 ### Random
 Commande tirant des valeurs aléatoires.  
 `!rdm` : tire une valeur entre Vrai et Faux.  
-`!rdm number` : tire une valeur entre 0 et nombre.
-`!rdm value1 value2 ...` : tire une valeur parmi celles spécifiées en paramètre.
+`!rdm number` : tire une valeur entre 0 et nombre.  
+`!rdm value1 value2 ...` : tire une valeur parmi celles spécifiées en paramètre.  
 
 ### Resource
 Renvoie les statistiques d'une ressource du jeu Dofus.  
 `!resource resource` : renvoie les statistiques de la ressource spécifiée : son nom peut être approximatif s'il est suffisamment précis.    
-`!resource -more resource` : renvoie les statistiques détaillés de la ressource spécifiée.
+`!resource -more resource` : renvoie les statistiques détaillés de la ressource spécifiée.  
 
 ### RSS
 Autorise ou non Kaelly à poster du contenu RSS dans un salon.  
@@ -121,7 +123,7 @@ Renvoie les statistiques d'une panoplie du jeu Dofus.
 Joue des sons dans un salon vocal.  
 `!sound` : joue un son au hasard, parmi une liste prédéfinie.  
 `!sound sound` : joue le son spécifié.  
-`!sound -leave` : quitte le salon vocal.
+`!sound -leave` : quitte le salon vocal.  
 
 ### Tuto
 Renvoie le tutoriel correspondant à la recherche effectuée..  
@@ -134,15 +136,14 @@ Autorise ou non Kaelly à poster des tweets dans un salon.
 
 ### Whois
 Affiche la page personnelle d'un joueur.  
-`!whois pseudo` : donne la page personnelle associée au pseudo. Celui-ci doit être exact.
-`!whois pseudo server` : est à utiliser lorsque le pseudo ne suffit pas pour déterminer la fiche d'un personnage.
+`!whois pseudo` : donne la page personnelle associée au pseudo. Celui-ci doit être exact.  
+`!whois pseudo server` : est à utiliser lorsque le pseudo ne suffit pas pour déterminer la fiche d'un personnage.  
 `!whois -more pseudo server` : affiche les caractéristiques du personnage si elles sont disponibles.  
 
 
 # Participer au projet (Développeur uniquement)
 
 Section réservée aux développeurs. Si vous souhaitez ajouter Kaelly, il existe un lien d'invitation plus haut. Pour proposer des suggestions ou remonter des bugs, utiliser le serveur support. Le projet est ouvert au pulls request : https://github.com/Kaysoro/KaellyBot/pulls.
-
 
 ## Créer votre Bot
 
@@ -189,5 +190,5 @@ Kaelly peut être lancée depuis n'importe quelle distribution : elle est compat
 Ce projet est sous licence GPL(v3).
 
 ## Merci !
-Le développement et l'accessibilité de Kaelly 24/7 génèrent des frais en continu. N'hésitez pas à participer à son maintien par le biais des dons !
+Le développement et l'accessibilité de Kaelly 24/7 génèrent des frais en continu. N'hésitez pas à participer à son maintien par le biais des dons !   
 [![Donate](https://www.paypalobjects.com/fr_FR/FR/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=89WTL4LXRZK98)

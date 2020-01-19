@@ -1,20 +1,20 @@
 package data;
 
+import discord4j.core.object.Embed;
+import discord4j.core.spec.EmbedCreateSpec;
 import enums.Language;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-import sx.blah.discord.api.internal.json.objects.EmbedObject;
-import sx.blah.discord.util.EmbedBuilder;
 import util.EmojiManager;
 import util.JSoupManager;
 import util.Translator;
 import util.URLManager;
 
+import java.awt.*;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 /**
  * Created by steve on 14/07/2016.
@@ -43,61 +43,52 @@ public class SetDofus implements Embedded {
     }
 
     @Override
-    public EmbedObject getEmbedObject(Language lg) {
-        EmbedBuilder builder = new EmbedBuilder();
-
-        builder.withTitle(name);
-        builder.withUrl(url);
-        builder.withColor(new Random().nextInt(16777216));
-        builder.withThumbnail(skinURL);
+    public void decorateEmbedObject(EmbedCreateSpec spec, Language lg) {
+        spec.setTitle(name)
+            .setUrl(url)
+            .setColor(Color.GRAY)
+            .setThumbnail(skinURL);
 
         if (level != null && ! level.isEmpty())
-            builder.appendField(Translator.getLabel(lg, "set.level"), level, true);
+            spec.addField(Translator.getLabel(lg, "set.level"), level, true);
 
         if (composition != null && ! composition.isEmpty())
-            builder.appendField(Translator.getLabel(lg, "set.composition"), composition, true);
+            spec.addField(Translator.getLabel(lg, "set.composition"), composition, true);
 
         for(int i = 0; i < bonusPano.length; i++)
             if (bonusPano[i] != null)
-                builder.appendField(Translator.getLabel(lg, "set.bonus.1") + " " + (i + 2)
+                spec.addField(Translator.getLabel(lg, "set.bonus.1") + " " + (i + 2)
                         + " " + Translator.getLabel(lg, "set.bonus.2"), bonusPano[i], true);
-
-        return builder.build();
     }
 
     @Override
-    public EmbedObject getMoreEmbedObject(Language lg) {
-        EmbedBuilder builder = new EmbedBuilder();
-
-        builder.withTitle(name);
-        builder.withUrl(url);
-        builder.withColor(new Random().nextInt(16777216));
-        builder.withImage(skinURL);
+    public void decorateMoreEmbedObject(EmbedCreateSpec spec, Language lg) {
+        spec.setTitle(name)
+            .setUrl(url)
+            .setColor(Color.GRAY)
+            .setImage(skinURL);
 
         if (level != null && ! level.isEmpty())
-            builder.appendField(Translator.getLabel(lg, "set.level"), level, true);
+            spec.addField(Translator.getLabel(lg, "set.level"), level, true);
 
         if (composition != null && ! composition.isEmpty())
-            builder.appendField(Translator.getLabel(lg, "set.composition"), composition, true);
+            spec.addField(Translator.getLabel(lg, "set.composition"), composition, true);
 
         if (bonusTotal != null && ! bonusTotal.isEmpty())
             for(int i = 0; i < bonusTotal.size(); i++)
-                builder.appendField(Translator.getLabel(lg, "set.bonus.total") + (bonusTotal.size() > 1?
+                spec.addField(Translator.getLabel(lg, "set.bonus.total") + (bonusTotal.size() > 1?
                             " (" + (i + 1) + "/" + bonusTotal.size() + ")" : "") + " : ",
                     bonusTotal.get(i), true);
 
         if (! recipeTotal.isEmpty())
             for(int i = 0; i < recipeTotal.size(); i++)
-                builder.appendField(Translator.getLabel(lg, "set.recipe") + (recipeTotal.size() > 1?
+                spec.addField(Translator.getLabel(lg, "set.recipe") + (recipeTotal.size() > 1?
                                 " (" + (i + 1) + "/" + recipeTotal.size() + ")" : "") + " : ",
                         recipeTotal.get(i), true);
 
         for(int i = 0; i < bonusPano.length; i++)
-            builder.appendField(Translator.getLabel(lg, "set.bonus.1") + " " + (i + 2)
+            spec.addField(Translator.getLabel(lg, "set.bonus.1") + " " + (i + 2)
                     + " " + Translator.getLabel(lg, "set.bonus.2"), bonusPano[i], true);
-
-
-        return builder.build();
     }
 
     public static SetDofus getSet(Language lg, String url) throws IOException {
@@ -143,7 +134,7 @@ public class SetDofus implements Embedded {
                             .append(line.getElementsByClass("ak-title").first()
                                     .children().first().attr("abs:href")).append(")\n");
 
-                    if (field.length() + tmp.length() > EmbedBuilder.FIELD_CONTENT_LIMIT){
+                    if (field.length() + tmp.length() > Embed.Field.MAX_VALUE_LENGTH){
                         recipeTotal.add(field.toString());
                         field.setLength(0);
                     }
@@ -175,7 +166,7 @@ public class SetDofus implements Embedded {
         StringBuilder tmp = new StringBuilder();
         for (Element line : lines) {
             String value = EmojiManager.getEmojiForStat(lg, line.text()) + line.text() + "\n";
-            if (value.length() + tmp.length() > EmbedBuilder.FIELD_CONTENT_LIMIT){
+            if (value.length() + tmp.length() > Embed.Field.MAX_VALUE_LENGTH){
                 values.add(tmp.toString());
                 tmp.setLength(0);
             }

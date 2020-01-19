@@ -3,16 +3,15 @@ package commands.classic;
 import commands.model.AbstractCommand;
 import data.Character;
 import data.ServerDofus;
+import discord4j.core.object.entity.Message;
 import enums.Language;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import util.JSoupManager;
-import util.Message;
 import exceptions.*;
 import org.jsoup.Connection;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
-import sx.blah.discord.handle.obj.IMessage;
 import util.ServerUtils;
 import util.Translator;
 
@@ -44,7 +43,7 @@ public class WhoisCommand extends AbstractCommand {
     }
 
     @Override
-    public void request(IMessage message, Matcher m, Language lg) {
+    public void request(Message message, Matcher m, Language lg) {
         String pseudo = m.group(2).trim().toLowerCase();
         ServerDofus server = null;
         StringBuilder url;
@@ -89,19 +88,19 @@ public class WhoisCommand extends AbstractCommand {
                         .collect(Collectors.toList());
 
                 // Ankama bug workaround
-                if (server != null && result.size() > 1) {
+                if (server != null && result.size() > 1){
                     List<CharacterQuery> filteredResult = new ArrayList<>();
-                    for (CharacterQuery query : result)
+                    for(CharacterQuery query : result)
                         try {
                             JSoupManager.getResponse(Translator.getLabel(lg, "game.url") + query.getUrl());
                             filteredResult.add(query);
-                        } catch (IOException e) {
+                        } catch(IOException e) {
                             LOG.warn("Not distinct character for same server: " + query.getUrl());
                         }
 
                     result = filteredResult;
 
-                    if (result.isEmpty()) {
+                    if (result.isEmpty()){
                         BasicDiscordException.CHARACTERPAGE_INACCESSIBLE.throwException(message, this, lg);
                         return;
                     }
@@ -111,17 +110,30 @@ public class WhoisCommand extends AbstractCommand {
 
                     Connection.Response response = JSoupManager
                             .getResponse(Translator.getLabel(lg, "game.url") + result.get(0).getUrl());
-
+                    final List<CharacterQuery> RESULT = result;
                     if (!response.url().getPath().endsWith(Translator.getLabel(lg, "whois.request"))) {
                         if (m.group(1) == null)
-                            Message.sendEmbed(message.getChannel(), Character.getCharacter(
-                                    Translator.getLabel(lg, "game.url") + result.get(0).getUrl(), lg)
-                                    .getEmbedObject(lg));
+                            message.getChannel().flatMap(chan -> chan.createEmbed(spec -> {
+                                try {
+                                    Character.getCharacter(Translator.getLabel(lg, "game.url")
+                                            + RESULT.get(0).getUrl(), lg).decorateEmbedObject(spec, lg);
+                                } catch (IOException e) {
+                                    ExceptionManager.manageIOException(e, message, this, lg,
+                                            BasicDiscordException.CHARACTERPAGE_INACCESSIBLE);
+                                }
+                            })).subscribe();
                         else
-                            Message.sendEmbed(message.getChannel(), Character.getCharacterStuff(
-                                    Translator.getLabel(lg, "game.url") + result.get(0).getUrl()
-                                            + Translator.getLabel(lg, "character.stuff.url"), lg)
-                                    .getMoreEmbedObject(lg));
+                            message.getChannel().flatMap(chan -> chan.createEmbed(spec -> {
+                                try {
+                                    Character.getCharacter(Translator.getLabel(lg, "game.url")
+                                            + RESULT.get(0).getUrl() + Translator
+                                            .getLabel(lg, "character.stuff.url"), lg)
+                                            .decorateMoreEmbedObject(spec, lg);
+                                } catch (IOException e) {
+                                    ExceptionManager.manageIOException(e, message, this, lg,
+                                            BasicDiscordException.CHARACTERPAGE_INACCESSIBLE);
+                                }
+                            })).subscribe();
                     } else
                         BasicDiscordException.CHARACTER_TOO_OLD.throwException(message, this, lg);
                 }
@@ -153,24 +165,24 @@ public class WhoisCommand extends AbstractCommand {
                 + "\n`" + prefix + name + " -more `*`pseudo server`* : " + Translator.getLabel(lg, "whois.help.detailed.3") + "\n";
     }
 
-    private class CharacterQuery {
+    private static class CharacterQuery {
         private String url;
         private String server;
 
-        private String getUrl() {
+        private String getUrl(){
             return url;
         }
 
-        private String getServer() {
+        private String getServer(){
             return server;
         }
 
-        private CharacterQuery withUrl(String url) {
+        private CharacterQuery withUrl(String url){
             this.url = url;
             return this;
         }
 
-        private CharacterQuery withServer(String server) {
+        private CharacterQuery withServer(String server){
             this.server = server;
             return this;
         }

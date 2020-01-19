@@ -4,11 +4,10 @@ import commands.model.AbstractCommand;
 import data.Constants;
 import data.Guild;
 import data.ServerDofus;
+import discord4j.core.object.entity.Message;
 import enums.Game;
 import enums.Language;
 import exceptions.BasicDiscordException;
-import util.Message;
-import sx.blah.discord.handle.obj.IMessage;
 import util.ServerUtils;
 import util.Translator;
 
@@ -27,15 +26,15 @@ public class ServerCommand extends AbstractCommand {
     }
 
     @Override
-    public void request(IMessage message, Matcher m, Language lg) {
-        Guild guild = Guild.getGuild(message.getGuild());
+    public void request(Message message, Matcher m, Language lg) {
+        Guild guild = Guild.getGuild(message.getGuild().block());
 
-        if (m.group(1) != null) {
+        if (m.group(1) != null){
             String serverName = m.group(1).toLowerCase().trim();
 
             if (serverName.equals("-list")) {
                 String sb = Translator.getLabel(lg, "server.list") + "\n" + getServersList();
-                Message.sendText(message.getChannel(), sb);
+                message.getChannel().flatMap(chan -> chan.createMessage(sb)).subscribe();
                 return;
             }
 
@@ -45,31 +44,36 @@ public class ServerCommand extends AbstractCommand {
 
                     if (query.hasSucceed()) {
                         guild.setServer(query.getServer());
-                        Message.sendText(message.getChannel(), Translator.getLabel(lg, "server.request.1")
-                                .replace("{game}", Constants.game.getName())
-                                + " " + guild.getName() + " " + Translator.getLabel(lg, "server.request.2")
-                                + " " + query.getServer().getName() + ".");
+                        message.getChannel().flatMap(chan -> chan
+                                .createMessage(Translator.getLabel(lg, "server.request.1")
+                                        .replace("{game}", Constants.game.getName())
+                                        + " " + guild.getName() + " " + Translator.getLabel(lg, "server.request.2")
+                                        + " " + query.getServer().getName() + "."))
+                                .subscribe();
                     } else
                         query.getExceptions()
                                 .forEach(exception -> exception.throwException(message, this, lg, query.getServersFound()));
                 } else {
                     guild.setServer(null);
-                    Message.sendText(message.getChannel(), guild.getName()
-                            + " " + Translator.getLabel(lg, "server.request.3")
-                            .replace("{game}", Constants.game.getName()));
+                    message.getChannel().flatMap(chan -> chan.createMessage(guild.getName()
+                                    + " " + Translator.getLabel(lg, "server.request.3")
+                                    .replace("{game}", Constants.game.getName())))
+                            .subscribe();
                 }
             } else
                 BasicDiscordException.NO_ENOUGH_RIGHTS.throwException(message, this, lg);
         }
         else {
             if (guild.getServerDofus() != null)
-                Message.sendText(message.getChannel(), guild.getName() + " "
+                message.getChannel().flatMap(chan -> chan.createMessage(guild.getName() + " "
                         + Translator.getLabel(lg, "server.request.4") + " "
-                        + guild.getServerDofus().getName() + ".");
+                        + guild.getServerDofus().getName() + "."))
+                        .subscribe();
             else
-                Message.sendText(message.getChannel(), guild.getName()
+                message.getChannel().flatMap(chan -> chan.createMessage(guild.getName()
                         + " " + Translator.getLabel(lg, "server.request.5")
-                        .replace("{game}", Constants.game.getName()));
+                        .replace("{game}", Constants.game.getName())))
+                        .subscribe();
         }
     }
 
@@ -83,7 +87,7 @@ public class ServerCommand extends AbstractCommand {
     public String helpDetailed(Language lg, String prefix) {
         return help(lg, prefix)
                 + "\n`" + prefix + name + "` : " + Translator.getLabel(lg, "server.help.detailed.1")
-                .replace("{game}", Constants.game.getName())
+                    .replace("{game}", Constants.game.getName())
                 + "\n`" + prefix + name + " -list` : " + Translator.getLabel(lg, "server.help.detailed.2")
                 .replace("{game}", Constants.game.getName())
                 + "\n`" + prefix + name + " `*`server`* : " + Translator.getLabel(lg, "server.help.detailed.3")

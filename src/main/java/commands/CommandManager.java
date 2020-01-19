@@ -49,7 +49,6 @@ public class CommandManager {
         addCommand(new RSSCommand());
         addCommand(new ServerCommand());
         addCommand(new SetCommand());
-        addCommand(new SoundCommand());
         addCommand(new TutorialCommand());
         addCommand(new TwitterCommand());
         addCommand(new WhoisCommand());
@@ -58,13 +57,7 @@ public class CommandManager {
         addCommand(new SendNudeCommand());
 
         // Admin commands
-        addCommand(new AdminCommand());
-        addCommand(new AvailableCommand());
-        addCommand(new AnnounceCommand());
-        addCommand(new PurgeCommand());
         addCommand(new StatCommand());
-        addCommand(new TalkCommand());
-        addCommand(new VacuumCommand());
     }
 
     public static CommandManager getInstance(){

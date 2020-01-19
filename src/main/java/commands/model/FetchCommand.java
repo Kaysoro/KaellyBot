@@ -1,11 +1,11 @@
 package commands.model;
 
 import data.ServerDofus;
+import discord4j.core.object.entity.Message;
 import enums.Language;
 import exceptions.DiscordException;
 import exceptions.NotFoundDiscordException;
 import exceptions.TooMuchDiscordException;
-import sx.blah.discord.handle.obj.IMessage;
 import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.List;
@@ -51,7 +51,7 @@ public abstract class FetchCommand extends AbstractCommand {
      * @param <T> Type de la liste passé en paramètre; non utilisé
      * @return True si la liste contient un seul élément; jette une DiscordException et renvoie faux le cas échéant
      */
-    protected <T> boolean checkData(List<T> list, DiscordException tooMuch, DiscordException notFound, IMessage message, Language lg){
+    protected <T> boolean checkData(List<T> list, DiscordException tooMuch, DiscordException notFound, Message message, Language lg){
         if (list.size() > 1){
             tooMuch.throwException(message, this, lg);
             return true;
