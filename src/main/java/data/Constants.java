@@ -64,6 +64,16 @@ public class Constants {
     public final static String database = "bdd.sqlite";
 
     /**
+     * Path to the database (can be left empty)
+     */
+    public final static String database_path = "";
+
+    /**
+     * Path to the folder containing sounds (can be left empty)
+     */
+    public final static String sound_path = "";
+
+    /**
      * prefix used for command call.
      * WARN : it is injected into regex expression.
      * If you use special characters as '$', don't forget to prefix it with '\\' like this : "\\$"
@@ -71,6 +81,7 @@ public class Constants {
     public final static String prefixCommand = "!";
 
     public final static Language defaultLanguage = Language.FR;
+
     /**
      * Game desserved
      */

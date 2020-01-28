@@ -30,9 +30,13 @@ public class ClientConfig {
     private String KAELLY_PORTALS_URL;
 
     private ClientConfig(){
+        this(System.getProperty("user.dir"));
+    }
+
+    private ClientConfig(String path){
         super();
         Properties prop = new Properties();
-        String config = System.getProperty("user.dir") + File.separator + FILENAME;
+        String config = path + File.separator + FILENAME;
 
         try (FileInputStream file = new FileInputStream(URLDecoder.decode(config, "UTF-8"))){
             prop.load(file);
@@ -104,5 +108,19 @@ public class ClientConfig {
 
     public static String KAELLY_PORTALS_URL(){
         return getInstance().KAELLY_PORTALS_URL;
+    }
+
+    public static void loginDiscord(String path) {
+        DISCORD(path).flatMap(DiscordClient::login).blockLast();
+    }
+
+    private static Flux<DiscordClient> DISCORD(String path) {
+        return getInstance(path).DISCORD;
+    }
+
+    public static synchronized ClientConfig getInstance(String path){
+        if (instance == null)
+            instance = new ClientConfig(path);
+        return instance;
     }
 }
