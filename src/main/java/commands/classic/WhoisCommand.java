@@ -125,7 +125,7 @@ public class WhoisCommand extends AbstractCommand {
                         else
                             message.getChannel().flatMap(chan -> chan.createEmbed(spec -> {
                                 try {
-                                    Character.getCharacter(Translator.getLabel(lg, "game.url")
+                                    Character.getCharacterStuff(Translator.getLabel(lg, "game.url")
                                             + RESULT.get(0).getUrl() + Translator
                                             .getLabel(lg, "character.stuff.url"), lg)
                                             .decorateMoreEmbedObject(spec, lg);
