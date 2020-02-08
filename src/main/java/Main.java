@@ -10,9 +10,9 @@ public class Main {
     public static void main(String[] args) {
         LoggerFactory.getLogger(Main.class).info("=======================================================");
         LoggerFactory.getLogger(Main.class).info("               " + Constants.name + " v" + Constants.version
-                + " for " + Constants.game);
+                + " for " + Constants.game.getName());
         LoggerFactory.getLogger(Main.class).info("=======================================================");
 
-        ClientConfig.loginDiscord();
+        ClientConfig.loginDiscord(); // To launch as a service, specify the path/to/Kaelly/
     }
 }
