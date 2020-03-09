@@ -42,7 +42,7 @@ public final class PortalMapper {
                         portal.getNearestZaap().toString(), false);
 
             spec.setFooter(getDateInformation(portal, language),
-                    "http://image.noelshack.com/fichiers/2019/43/1/1571689446-zaap2.png");
+                    "https://i.imgur.com/u2PUyt5.png");
         }
         else
             spec.setDescription(Translator.getLabel(language, "portal.unknown"));
