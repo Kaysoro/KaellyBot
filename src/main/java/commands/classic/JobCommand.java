@@ -171,12 +171,12 @@ public class JobCommand extends AbstractCommand {
                 if (proposals.size() > 1) {
                     String potentialServer = proposals.get(proposals.size() - 1);
                     ServerUtils.ServerQuery query = ServerUtils.getServerDofusFromName(potentialServer);
-                    if (serverQuery.hasSucceed()){
-                        server = serverQuery.getServer();
+                    if (query.hasSucceed()){
+                        server = query.getServer();
                         proposals.remove(potentialServer);
                     }
                     else {
-                        serverQuery.getExceptions()
+                        query.getExceptions()
                                 .forEach(e -> e.throwException(message, this, lg, query.getServersFound()));
                         return;
                     }
