@@ -8,13 +8,10 @@ import discord4j.core.spec.MessageCreateSpec;
 import enums.Language;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
-import org.jfree.data.general.DefaultPieDataset;
 import org.jfree.data.time.Day;
 import org.jfree.data.time.TimeSeries;
 import org.jfree.data.time.TimeSeriesCollection;
 import org.slf4j.LoggerFactory;
-import reactor.core.publisher.Flux;
-import stats.CommandStatistics;
 import util.ClientConfig;
 import util.Reporter;
 import util.Translator;
@@ -24,10 +21,7 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
-import java.time.Duration;
 import java.time.Instant;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.stream.Collectors;
@@ -37,11 +31,7 @@ import java.util.stream.Collectors;
  */
 public class StatCommand extends AbstractCommand {
 
-    private final static DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd")
-                    .withLocale( Locale.FRANCE )
-                    .withZone(ZoneId.systemDefault());
     private final static int GULD_LIMIT = 10;
-    private final static int CMD_LIMIT = 1;
 
     public StatCommand(){
         super("stats","(\\s+-g(\\s+\\d+)?|\\s+-cmd(\\s+\\d+)?|\\s+-hist)?");
@@ -78,20 +68,6 @@ public class StatCommand extends AbstractCommand {
                         .append(guild.getMemberCount().orElse(0)).append(" users\n");
 
             message.getChannel().flatMap(chan -> chan.createMessage(st.toString())).subscribe();
-        }
-        else if (m.group(1).matches("\\s+-cmd(\\s+\\d+)?")){
-            int limit = CMD_LIMIT;
-            if (m.group(3) != null) limit = Integer.parseInt(m.group(3).trim());
-            final int LIMIT = limit;
-
-            message.getChannel().flatMap(chan ->
-                chan.createMessage(spec ->
-                        decorateImageMessage(spec, getNumberCmdCalledPerCmd(LIMIT)))
-                        .then(chan.createMessage(spec ->
-                                decorateImageMessage(spec, getNumberCmdCalled(LIMIT))))
-                        .then(chan.createMessage(spec ->
-                                decorateImageMessage(spec, getForbiddenCommandsChart())))
-            ).subscribe();
         }
         else if (m.group(1).matches("\\s+-hist"))
             message.getChannel().flatMap(chan -> chan.createMessage(spec ->
@@ -149,66 +125,6 @@ public class StatCommand extends AbstractCommand {
         return chart.createBufferedImage(1200, 700);
     }
 
-    /**
-     *
-     * @param limit nombre de jours d'appels de commande réparti par commandes à afficher
-     * @return Liste des appels de commandes de kaelly par jour et par commande
-     */
-    private BufferedImage getNumberCmdCalledPerCmd(int limit){
-        long period = Duration.ofDays(limit).toMillis();
-        List<CommandStatistics> stats = CommandStatistics.getStatisticsPerCommand(period);
-        DefaultPieDataset dataSet = new DefaultPieDataset();
-        for(CommandStatistics stat : stats)
-            dataSet.setValue(stat.getCommandName() + " (" + stat.getUse() + ")", stat.getUse());
-
-        JFreeChart chart = ChartFactory.createPieChart(
-                "Commands called since " + FORMATTER.format(Instant.ofEpochMilli(System.currentTimeMillis() - period)),
-                dataSet, false, false, false);
-
-        return chart.createBufferedImage(1200, 700);
-    }
-
-    /**
-     *
-     * @return Graphe à propos des commandes les plus bloquées
-     */
-    private BufferedImage getForbiddenCommandsChart(){
-        List<CommandStatistics> stats = CommandStatistics.getStatisticsPerCommandForbidden();
-        DefaultPieDataset dataSet = new DefaultPieDataset();
-        for(CommandStatistics stat : stats)
-            dataSet.setValue(stat.getCommandName() + " (" + stat.getUse() + ")", stat.getUse());
-
-        JFreeChart chart = ChartFactory.createPieChart(
-                "Commands forbidden",
-                dataSet, false, false, false);
-
-        return chart.createBufferedImage(1200, 700);
-    }
-
-    /**
-     *
-     * @param limit nombre de jours d'appels de commande à afficher
-     * @return Liste des appels de commandes de kaelly par jour
-     */
-    private BufferedImage getNumberCmdCalled(int limit){
-        long period = Duration.ofDays(limit).toMillis();
-        List<CommandStatistics> stats = CommandStatistics.getStatistics(period);
-        TimeSeriesCollection dataSet = new TimeSeriesCollection();
-        TimeSeries series = new TimeSeries("data");
-
-        for(CommandStatistics stat : stats)
-            series.addOrUpdate(new Day(stat.getDate()), stat.getUse());
-        dataSet.addSeries(series);
-
-        JFreeChart chart = ChartFactory.createTimeSeriesChart(
-                "Commands called since " + FORMATTER.format(Instant.ofEpochMilli(System.currentTimeMillis() - period)),
-                "Date",
-                "Command Calls",
-                dataSet, false, false, false);
-
-        return chart.createBufferedImage(1200, 700);
-    }
-
     @Override
     public String help(Language lg, String prefixe) {
         return "**" + prefixe + name + "** " + Translator.getLabel(lg, "stat.help");
@@ -219,7 +135,6 @@ public class StatCommand extends AbstractCommand {
         return help(lg, prefixe)
                 + "\n`" + prefixe + name + "` : " + Translator.getLabel(lg, "stat.help.detailed.1")
                 + "\n`" + prefixe + name + " -g `*`n`* : " + Translator.getLabel(lg, "stat.help.detailed.2")
-                + "\n`" + prefixe + name + " -cmd `*`n`* : " + Translator.getLabel(lg, "stat.help.detailed.3")
                 + "\n`" + prefixe + name + " -hist` : " + Translator.getLabel(lg, "stat.help.detailed.4") + "\n";
     }
 }

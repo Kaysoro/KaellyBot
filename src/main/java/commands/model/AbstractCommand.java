@@ -12,7 +12,6 @@ import exceptions.BasicDiscordException;
 import exceptions.DiscordException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import stats.CommandStatistics;
 import util.Reporter;
 import util.Translator;
 import java.util.regex.Matcher;
@@ -87,11 +86,8 @@ public abstract class AbstractCommand implements Command {
                 badUse.throwException(message, this, lg);
                 return;
             }
-            if (isFound) {
-                if (! isAdmin())
-                    CommandStatistics.addStatsToDatabase(this);
+            if (isFound)
                 request(message, m, lg);
-            }
         } catch(Exception e){
             BasicDiscordException.UNKNOWN_ERROR.throwException(message, this, lg);
             Reporter.report(e);
