@@ -129,10 +129,10 @@ public class AlignmentCommand extends FetchCommand {
 
                         if (m.group(4) != null) {
                             ServerUtils.ServerQuery query = ServerUtils.getServerDofusFromName(m.group(4));
-                            if (serverQuery.hasSucceed())
-                                server = serverQuery.getServer();
+                            if (query.hasSucceed())
+                                server = query.getServer();
                             else {
-                                serverQuery.getExceptions()
+                                query.getExceptions()
                                         .forEach(e -> e.throwException(message, this, lg, query.getServersFound()));
                                 return;
                             }
@@ -167,10 +167,10 @@ public class AlignmentCommand extends FetchCommand {
                 else if((m = Pattern.compile("(\\p{L}+)(\\s+\\p{L}+)?(\\s+[\\p{L}|\\W]+)?").matcher(content)).matches()){
                     if (m.group(3) != null) {
                         ServerUtils.ServerQuery query = ServerUtils.getServerDofusFromName(m.group(3));
-                        if (serverQuery.hasSucceed())
-                            server = serverQuery.getServer();
+                        if (query.hasSucceed())
+                            server = query.getServer();
                         else {
-                            serverQuery.getExceptions()
+                            query.getExceptions()
                                     .forEach(e -> e.throwException(message, this, lg, query.getServersFound()));
                             return;
                         }
@@ -181,12 +181,12 @@ public class AlignmentCommand extends FetchCommand {
                         boolean is2Server = false;
                         if (m.group(3) == null){
                             ServerUtils.ServerQuery query = ServerUtils.getServerDofusFromName(m.group(2));
-                            if (serverQuery.hasSucceed()) {
-                                server = serverQuery.getServer();
+                            if (query.hasSucceed()) {
+                                server = query.getServer();
                                 is2Server = true;
                             }
                             else {
-                                serverQuery.getExceptions()
+                                query.getExceptions()
                                         .forEach(e -> e.throwException(message, this, lg, query.getServersFound()));
                                 return;
                             }
