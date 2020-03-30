@@ -47,7 +47,7 @@ public class JobCommand extends AbstractCommand {
         Optional<Member> user = message.getAuthorAsMember().blockOptional();
 
         if (guild.isPresent() && user.isPresent()){
-            ServerDofus server = Guild.getGuild(guild.get()).getServerDofus();
+            ServerDofus server = ServerUtils.getDofusServerFrom(Guild.getGuild(guild.get()), message.getChannel().block());
 
             // Concerned user is the author?
             if(Pattern.compile("^<@[!|&]?\\d+>").matcher(content).find()){

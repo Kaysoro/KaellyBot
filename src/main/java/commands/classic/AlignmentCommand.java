@@ -58,7 +58,7 @@ public class AlignmentCommand extends FetchCommand {
         Order order = null;
 
         if (guild.isPresent() && user.isPresent()){
-            ServerDofus server = Guild.getGuild(guild.get()).getServerDofus();
+            ServerDofus server = ServerUtils.getDofusServerFrom(Guild.getGuild(guild.get()), message.getChannel().block());
 
             // Consultation filtré par niveau
             if ((m = Pattern.compile(">\\s+(\\d{1,3})(\\s+.+)?").matcher(content)).matches()){

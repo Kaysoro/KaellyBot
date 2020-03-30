@@ -11,6 +11,7 @@ import exceptions.TooMuchDiscordException;
 import finders.PortalFinder;
 import mapper.PortalMapper;
 import payloads.PortalDto;
+import util.ServerUtils;
 import util.Translator;
 
 import java.text.Normalizer;
@@ -41,7 +42,7 @@ public class PortalCommand extends AbstractCommand {
 
     @Override
     public void request(Message message, Matcher m, Language lg) {
-        ServerDofus server = Guild.getGuild(message.getGuild().block()).getServerDofus();
+        ServerDofus server = ServerUtils.getDofusServerFrom(Guild.getGuild(message.getGuild().block()), message.getChannel().block());
 
         if (server != null){
             if (m.group(1) == null) { // No dimension precised

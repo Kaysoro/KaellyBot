@@ -1,6 +1,9 @@
 package util;
 
+import data.ChannelServer;
+import data.Guild;
 import data.ServerDofus;
+import discord4j.core.object.entity.MessageChannel;
 import enums.Game;
 import exceptions.DiscordException;
 import exceptions.NotFoundDiscordException;
@@ -10,6 +13,7 @@ import exceptions.WrongBotUsedDiscordException;
 import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public final class ServerUtils {
@@ -17,6 +21,13 @@ public final class ServerUtils {
     private static final DiscordException TOO_MANY_SERVERS = new TooMuchDiscordException("server");
     private static final DiscordException NOT_FOUND_SERVER = new NotFoundDiscordException("server");
     private static final DiscordException WRONG_BOT_USED = new WrongBotUsedDiscordException();
+
+
+    public static ServerDofus getDofusServerFrom(Guild guild, MessageChannel channel){
+        return Optional.ofNullable(ChannelServer.getChannelServers().get(channel.getId().asLong()))
+                .map(ChannelServer::getServer)
+                .orElse(guild.getServerDofus());
+    }
 
     public static ServerQuery getServerDofusFromName(String proposedServer){
         ServerQuery result = new ServerQuery();
