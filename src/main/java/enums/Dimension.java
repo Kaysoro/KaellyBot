@@ -27,12 +27,12 @@ public enum Dimension {
         return Translator.getLabel(lang, getKey());
     }
 
-    public static Dimension valueOfCaseUnsensitive(String dimensionName){
+    public static Dimension valueOfCaseUnsensitive(String dimensionName, Language lang){
         final String DIMENSION_NAME = Normalizer.normalize(dimensionName, Normalizer.Form.NFD)
                 .replaceAll("\\p{InCombiningDiacriticalMarks}+", "").toLowerCase()
                 .replaceAll("\\W+", "");
         return Stream.of(Dimension.values())
-                .filter(dim -> Normalizer.normalize(dim.name(), Normalizer.Form.NFD)
+                .filter(dim -> Normalizer.normalize(dim.getLabel(lang), Normalizer.Form.NFD)
                         .replaceAll("\\p{InCombiningDiacriticalMarks}+", "").toLowerCase()
                         .replaceAll("\\W+", "").startsWith(DIMENSION_NAME))
                 .findFirst().orElseThrow(NullPointerException::new);

@@ -15,7 +15,7 @@ public final class PortalMapper {
     private PortalMapper(){}
 
     public static void decorateSpec(EmbedCreateSpec spec, PortalDto portal, Language language){
-        Dimension dimension = Dimension.valueOfCaseUnsensitive(portal.getDimension());
+        Dimension dimension = Dimension.valueOfCaseUnsensitive(portal.getDimension(), language);
 
         spec.setTitle(portal.getDimension())
                 .setThumbnail(dimension.getImage())
