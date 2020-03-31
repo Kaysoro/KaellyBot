@@ -9,6 +9,7 @@ import exceptions.DiscordException;
 import exceptions.NotFoundDiscordException;
 import exceptions.TooMuchDiscordException;
 import exceptions.WrongBotUsedDiscordException;
+import org.jetbrains.annotations.NotNull;
 
 import java.text.Normalizer;
 import java.util.ArrayList;
@@ -29,6 +30,7 @@ public final class ServerUtils {
                 .orElse(guild.getServerDofus());
     }
 
+    @NotNull
     public static ServerQuery getServerDofusFromName(String proposedServer){
         ServerQuery result = new ServerQuery();
         final String PROPOSED_SERVER = Normalizer.normalize(proposedServer, Normalizer.Form.NFD)
@@ -45,6 +47,17 @@ public final class ServerUtils {
         List<ServerDofus> serverDofusList = allServers.stream()
             .filter(server -> server.getGame() == Game.DOFUS)
             .collect(Collectors.toList());
+
+        // Check if the server name is exactly the good one
+        List<ServerDofus> exactMatchDofusServer = serverDofusList.stream()
+                .filter(server -> Normalizer.normalize(server.getName(), Normalizer.Form.NFD)
+                .replaceAll("\\p{InCombiningDiacriticalMarks}+", "")
+                .replaceAll("\\W+", "").toLowerCase().trim()
+                .equals(PROPOSED_SERVER))
+                .collect(Collectors.toList());
+
+        if (exactMatchDofusServer.size() == 1)
+            serverDofusList = exactMatchDofusServer;
 
         if (!serverDofusList.isEmpty()) {
             result.serversFound = serverDofusList;
