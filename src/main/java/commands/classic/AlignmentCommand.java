@@ -64,7 +64,7 @@ public class AlignmentCommand extends FetchCommand {
             if ((m = Pattern.compile(">\\s+(\\d{1,3})(\\s+.+)?").matcher(content)).matches()){
                 int level = Integer.parseInt(m.group(1));
                 if (m.group(2) != null) {
-                    ServerUtils.ServerQuery serverQuery = ServerUtils.getServerDofusFromName(m.group(2));
+                    ServerUtils.ServerQuery serverQuery = ServerUtils.getServerDofusFromName(m.group(2), lg);
                     if (serverQuery.hasSucceed())
                         server = serverQuery.getServer();
                     else {
@@ -95,7 +95,7 @@ public class AlignmentCommand extends FetchCommand {
                 }
 
                 //Consultation des données filtrés par utilisateur
-                ServerUtils.ServerQuery serverQuery = ServerUtils.getServerDofusFromName(content);
+                ServerUtils.ServerQuery serverQuery = ServerUtils.getServerDofusFromName(content, lg);
                 if (! serverQuery.getServersFound().isEmpty() && Pattern.compile("(.+)").matcher(content).matches()
                         || content.isEmpty()){
                     if (serverQuery.hasSucceed())
@@ -128,7 +128,7 @@ public class AlignmentCommand extends FetchCommand {
                         int level = Integer.parseInt(m.group(3));
 
                         if (m.group(4) != null) {
-                            ServerUtils.ServerQuery query = ServerUtils.getServerDofusFromName(m.group(4));
+                            ServerUtils.ServerQuery query = ServerUtils.getServerDofusFromName(m.group(4), lg);
                             if (query.hasSucceed())
                                 server = query.getServer();
                             else {
@@ -166,7 +166,7 @@ public class AlignmentCommand extends FetchCommand {
                 // Consultation filtré par cité et/ou par ordre
                 else if((m = Pattern.compile("(\\p{L}+)(\\s+\\p{L}+)?(\\s+[\\p{L}|\\W]+)?").matcher(content)).matches()){
                     if (m.group(3) != null) {
-                        ServerUtils.ServerQuery query = ServerUtils.getServerDofusFromName(m.group(3));
+                        ServerUtils.ServerQuery query = ServerUtils.getServerDofusFromName(m.group(3), lg);
                         if (query.hasSucceed())
                             server = query.getServer();
                         else {
@@ -180,7 +180,7 @@ public class AlignmentCommand extends FetchCommand {
                     if (m.group(2) != null) {
                         boolean is2Server = false;
                         if (m.group(3) == null){
-                            ServerUtils.ServerQuery query = ServerUtils.getServerDofusFromName(m.group(2));
+                            ServerUtils.ServerQuery query = ServerUtils.getServerDofusFromName(m.group(2), lg);
                             if (query.hasSucceed()) {
                                 server = query.getServer();
                                 is2Server = true;

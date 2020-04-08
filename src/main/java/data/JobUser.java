@@ -151,7 +151,7 @@ public class JobUser extends ObjectUser {
             }
             else
                 spec.setDescription(Translator.getLabel(lg, "job.empty"));
-            spec.setFooter(server.getName(), null);
+            spec.setFooter(server.getLabel(lg), null);
         });
 
         return embed;

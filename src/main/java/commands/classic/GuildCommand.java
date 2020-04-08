@@ -2,7 +2,6 @@ package commands.classic;
 
 import commands.model.AbstractCommand;
 import data.DofusGuild;
-import data.ServerDofus;
 import discord4j.core.object.entity.Message;
 import enums.Language;
 import exceptions.*;
@@ -10,6 +9,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import util.JSoupManager;
+import util.ServerUtils;
 import util.Translator;
 
 import java.io.IOException;
@@ -29,16 +29,12 @@ public class GuildCommand extends AbstractCommand {
     private final static String forServer = "guild_server_id[]=";
 
     private DiscordException tooMuchGuilds;
-    private DiscordException tooMuchServers;
-    private DiscordException notFoundServer;
     private DiscordException notFoundGuild;
 
     public GuildCommand(){
         super("guild","\\s+(.+)");
         tooMuchGuilds = new TooMuchDiscordException("guild");
         notFoundGuild = new NotFoundDiscordException("guild");
-        tooMuchServers = new TooMuchDiscordException("server");
-        notFoundServer = new NotFoundDiscordException("server");
     }
 
     @Override
@@ -64,19 +60,13 @@ public class GuildCommand extends AbstractCommand {
         }
 
         if (serverName != null){
-            List<ServerDofus> result = new ArrayList<>();
-
-            for(ServerDofus server : ServerDofus.getServersDofus())
-                if (server.getName().toLowerCase().startsWith(serverName))
-                    result.add(server);
-
-            if (result.size() == 1)
-                url.append("&").append(forServer).append(result.get(0).getId());
+            ServerUtils.ServerQuery serverQuery = ServerUtils.getServerDofusFromName(serverName, lg);
+            if (serverQuery.hasSucceed()){
+                url.append("&").append(forServer).append(serverQuery.getServer());
+            }
             else {
-                if (! result.isEmpty())
-                    tooMuchServers.throwException(message, this, lg);
-                else
-                    notFoundServer.throwException(message, this, lg);
+                serverQuery.getExceptions().stream()
+                        .forEach(e -> e.throwException(message, this, lg, serverQuery.getServersFound()));
                 return;
             }
         }

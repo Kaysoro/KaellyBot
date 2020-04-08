@@ -1,6 +1,7 @@
 package data;
 
 import enums.Game;
+import enums.Language;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import util.Connexion;
@@ -23,12 +24,14 @@ public class ServerDofus {
     private static boolean initialized = false;
     private String name;
     private String id;
+    private Map<Language, String> labels;
     private Game game;
 
     public ServerDofus(String name, String id, Game game) {
         this.name = name;
         this.id = id;
         this.game = game;
+        this.labels = new HashMap<>();
     }
 
     private synchronized static void initialize(){
@@ -50,6 +53,14 @@ public class ServerDofus {
                 servers.add(sd);
                 serversMap.put(sd.getName(), sd);
             }
+
+            query = connection.prepareStatement("SELECT server, language, label FROM Server_Label");
+            resultSet = query.executeQuery();
+            while (resultSet.next()) {
+                ServerDofus sd = serversMap.get(resultSet.getString("server"));
+                sd.labels.put(Language.valueOf(resultSet.getString("language")), resultSet.getString("label"));
+            }
+
         } catch (SQLException e) {
             Reporter.report(e);
             LOG.error("initialize", e);
@@ -66,6 +77,10 @@ public class ServerDofus {
         if (! initialized)
             initialize();
         return servers;
+    }
+
+    public String getLabel(Language lang){
+        return Optional.ofNullable(labels.get(lang)).orElse(getName());
     }
 
     public String getName() {

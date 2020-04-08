@@ -1,13 +1,10 @@
 package commands.model;
 
-import data.ServerDofus;
 import discord4j.core.object.entity.Message;
 import enums.Language;
 import exceptions.DiscordException;
 import exceptions.NotFoundDiscordException;
 import exceptions.TooMuchDiscordException;
-import java.text.Normalizer;
-import java.util.ArrayList;
 import java.util.List;
 
 public abstract class FetchCommand extends AbstractCommand {
@@ -19,26 +16,6 @@ public abstract class FetchCommand extends AbstractCommand {
         super(name, pattern);
         tooMuchServers = new TooMuchDiscordException("server", true);
         notFoundServer = new NotFoundDiscordException("server");
-    }
-
-    /**
-     * Retourne une liste de serveurs dont le nom commence par celui passé en paramètre; les caractèrs spéciaux et la
-     * casse sont ignorés.
-     * @param value Nom partielle ou complet d'un serveur dofus
-     * @return Liste de serveurs corrspondant à value
-     */
-    protected List<ServerDofus> findServer(String value){
-        List<ServerDofus> result = new ArrayList<>();
-        value = Normalizer.normalize(value, Normalizer.Form.NFD)
-                .replaceAll("\\p{InCombiningDiacriticalMarks}+", "")
-                .replaceAll("\\W+", "").toLowerCase().trim();
-        if (! value.isEmpty())
-            for(ServerDofus serverDofus : ServerDofus.getServersDofus())
-                if (Normalizer.normalize(serverDofus.getName(), Normalizer.Form.NFD)
-                        .replaceAll("\\p{InCombiningDiacriticalMarks}+", "")
-                        .replaceAll("\\W+", "").toLowerCase().trim().startsWith(value))
-                    result.add(serverDofus);
-        return result;
     }
 
     /**

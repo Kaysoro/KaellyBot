@@ -5,6 +5,7 @@ import data.Guild;
 import data.ServerDofus;
 import discord4j.core.object.entity.MessageChannel;
 import enums.Game;
+import enums.Language;
 import exceptions.DiscordException;
 import exceptions.NotFoundDiscordException;
 import exceptions.TooMuchDiscordException;
@@ -31,14 +32,14 @@ public final class ServerUtils {
     }
 
     @NotNull
-    public static ServerQuery getServerDofusFromName(String proposedServer){
+    public static ServerQuery getServerDofusFromName(String proposedServer, Language language){
         ServerQuery result = new ServerQuery();
         final String PROPOSED_SERVER = Normalizer.normalize(proposedServer, Normalizer.Form.NFD)
                 .replaceAll("\\p{InCombiningDiacriticalMarks}+", "")
                 .replaceAll("\\W+", "").toLowerCase().trim();
 
         List<ServerDofus> allServers = ServerDofus.getServersDofus().stream()
-                .filter(server -> Normalizer.normalize(server.getName(), Normalizer.Form.NFD)
+                .filter(server -> Normalizer.normalize(server.getLabel(language), Normalizer.Form.NFD)
                         .replaceAll("\\p{InCombiningDiacriticalMarks}+", "")
                         .replaceAll("\\W+", "").toLowerCase().trim()
                         .startsWith(PROPOSED_SERVER))
@@ -50,7 +51,7 @@ public final class ServerUtils {
 
         // Check if the server name is exactly the good one
         List<ServerDofus> exactMatchDofusServer = serverDofusList.stream()
-                .filter(server -> Normalizer.normalize(server.getName(), Normalizer.Form.NFD)
+                .filter(server -> Normalizer.normalize(server.getLabel(language), Normalizer.Form.NFD)
                 .replaceAll("\\p{InCombiningDiacriticalMarks}+", "")
                 .replaceAll("\\W+", "").toLowerCase().trim()
                 .equals(PROPOSED_SERVER))
@@ -88,6 +89,7 @@ public final class ServerUtils {
         public ServerDofus getServer(){
             return server;
         }
+
         public boolean hasSucceed(){
             return exceptions.isEmpty();
         }

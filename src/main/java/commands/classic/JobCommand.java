@@ -61,7 +61,7 @@ public class JobCommand extends AbstractCommand {
             }
 
             //user data consultation
-            ServerUtils.ServerQuery serverQuery = ServerUtils.getServerDofusFromName(content);
+            ServerUtils.ServerQuery serverQuery = ServerUtils.getServerDofusFromName(content, lg);
             if (! serverQuery.getServersFound().isEmpty() && Pattern.compile("(.+)").matcher(content).matches()
                     || content.isEmpty()){
                 if (serverQuery.hasSucceed())
@@ -124,7 +124,7 @@ public class JobCommand extends AbstractCommand {
                         int level = Integer.parseInt(m.group(2));
 
                         if (m.group(3) != null) {
-                            ServerUtils.ServerQuery query = ServerUtils.getServerDofusFromName(m.group(3));
+                            ServerUtils.ServerQuery query = ServerUtils.getServerDofusFromName(m.group(3), lg);
                             if (serverQuery.hasSucceed())
                                 server = serverQuery.getServer();
                             else
@@ -170,7 +170,7 @@ public class JobCommand extends AbstractCommand {
 
                 if (proposals.size() > 1) {
                     String potentialServer = proposals.get(proposals.size() - 1);
-                    ServerUtils.ServerQuery query = ServerUtils.getServerDofusFromName(potentialServer);
+                    ServerUtils.ServerQuery query = ServerUtils.getServerDofusFromName(potentialServer, lg);
                     if (query.hasSucceed()){
                         server = query.getServer();
                         proposals.remove(potentialServer);

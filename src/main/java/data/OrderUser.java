@@ -202,7 +202,7 @@ public class OrderUser extends ObjectUser {
             }
             else
                 spec.setDescription(Translator.getLabel(lg, "align.empty"));
-            spec.setFooter(server.getName(), null);
+            spec.setFooter(server.getLabel(lg), null);
         });
 
         return embed;

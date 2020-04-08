@@ -25,7 +25,7 @@ public class WrongBotUsedDiscordException implements DiscordException {
             .forEach((game, list) -> st.append(Translator.getLabel(lg, "exception.wrong_bot_used.loop")
                 .replaceAll("\\{game}", game.getName())
                 .replaceAll("\\{url}", game.getBotInvite())
-                .replaceAll("\\{servers}", list.stream().map(ServerDofus::getName)
+                .replaceAll("\\{servers}", list.stream().map(server -> server.getLabel(lg))
                         .reduce((server1, server2) -> server1 + ", " + server2)
                         .orElse("")))
                     .append("\n"));

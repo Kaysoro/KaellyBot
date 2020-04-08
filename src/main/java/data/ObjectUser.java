@@ -83,7 +83,7 @@ public abstract class ObjectUser {
                                         + texts.size() + ")" : "") + " : ",
                                 texts.get(j), true);
                     }
-                    spec.setFooter(server.getName(), null);
+                    spec.setFooter(server.getLabel(lg), null);
                 });
             }
         }
@@ -92,7 +92,7 @@ public abstract class ObjectUser {
                     .setThumbnail(guild.getIconUrl(Image.Format.PNG).orElse(null))
                     .setColor(Color.GRAY)
                     .setDescription(Translator.getLabel(lg, prefix + ".empty"))
-                    .setFooter(server.getName(), null));
+                    .setFooter(server.getLabel(lg), null));
 
         return embed;
     }
