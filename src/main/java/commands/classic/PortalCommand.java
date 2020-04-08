@@ -53,7 +53,7 @@ public class PortalCommand extends AbstractCommand {
                             .subscribe();
             }
             else {
-                final List<Dimension> DIMENSIONS = getDimensions(m.group(1));
+                final List<Dimension> DIMENSIONS = getDimensions(m.group(1), lg);
                 if (DIMENSIONS.size() == 1) {
                     Optional.ofNullable(portalFinder.getPosition(server, DIMENSIONS.get(0), lg))
                             .ifPresent(pos -> message.getChannel().flatMap(chan -> chan
@@ -70,14 +70,14 @@ public class PortalCommand extends AbstractCommand {
             notFoundServer.throwException(message, this, lg);
     }
 
-    private List<Dimension> getDimensions(String nameProposed){
+    private List<Dimension> getDimensions(String nameProposed, Language lg){
         nameProposed = Normalizer.normalize(nameProposed, Normalizer.Form.NFD)
                 .replaceAll("\\p{InCombiningDiacriticalMarks}+", "").toLowerCase();
         nameProposed = nameProposed.replaceAll("\\W+", "");
         List<Dimension> dimensions = new ArrayList<>();
 
         for(Dimension dimension : Dimension.values())
-            if (Normalizer.normalize(dimension.name(), Normalizer.Form.NFD)
+            if (Normalizer.normalize(dimension.getLabel(lg), Normalizer.Form.NFD)
                     .replaceAll("\\p{InCombiningDiacriticalMarks}+", "")
                     .toLowerCase().startsWith(nameProposed))
                 dimensions.add(dimension);
