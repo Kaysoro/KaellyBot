@@ -103,9 +103,9 @@ public class Constants {
     public final static String dofusPourLesNoobSearch = "/apps/search";
 
     /**
-     * Portal URL
+     * DofusRoom build URL
      */
-    public final static String sweetPortals = "https://dofus-portals.fr/portails/";
+    public final static String dofusRoomBuildUrl = "https://www.dofusroom.com/buildroom/build/show/";
 
     public final static String turnamentMapImg = "https://dofus-tournaments.fr/_default/src/img/maps/A{number}.jpg";
 

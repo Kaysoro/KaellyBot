@@ -9,6 +9,8 @@ import enums.Language;
 import exceptions.BasicDiscordException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import triggers.TriggerManager;
+import triggers.model.Trigger;
 import util.Reporter;
 import util.Translator;
 
@@ -49,8 +51,11 @@ public class MessageListener {
                                         .orElse(null), event.getMessage());
                                 LOG.error("onReady", e);
                             }
-
                         }
+
+                        TriggerManager.getTriggers().stream()
+                                .filter(trigger -> trigger.isTriggered(event.getMessage(), lg))
+                                .forEach(trigger -> trigger.execute(event.getMessage(), lg));
                     }
                 }).subscribe();
     }
