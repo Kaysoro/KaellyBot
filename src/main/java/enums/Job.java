@@ -25,7 +25,8 @@ public enum Job {
     SCULPTEMAGE("job.sculptemage"),
     SCULPTEUR("job.sculpteur"),
     TAILLEUR("job.tailleur"),
-    FACOMAGE("job.facomage");
+    FACOMAGE("job.facomage"),
+    PARCHOMAGE("job.parchomage");
 
     private static Map<String, Job> jobs;
     private String name;
