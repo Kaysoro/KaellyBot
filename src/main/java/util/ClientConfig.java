@@ -6,6 +6,7 @@ import discord4j.core.GatewayDiscordClient;
 import discord4j.core.event.domain.guild.GuildCreateEvent;
 import discord4j.core.event.domain.guild.GuildDeleteEvent;
 import discord4j.core.event.domain.guild.GuildUpdateEvent;
+import discord4j.core.event.domain.lifecycle.ReadyEvent;
 import discord4j.core.event.domain.message.MessageCreateEvent;
 import discord4j.core.object.presence.Activity;
 import discord4j.core.object.presence.Presence;
@@ -16,10 +17,7 @@ import finders.AlmanaxCalendar;
 import finders.RSSFinder;
 import finders.TwitterFinder;
 import io.sentry.Sentry;
-import listeners.GuildCreateListener;
-import listeners.GuildLeaveListener;
-import listeners.GuildUpdateListener;
-import listeners.MessageListener;
+import listeners.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import reactor.core.publisher.Mono;
@@ -107,16 +105,7 @@ public class ClientConfig {
         return getInstance().DISCORD;
     }
 
-    public static void loginDiscord(){
-        LOG.info("Ecoute des flux RSS du site Dofus...");
-        RSSFinder.start();
-
-        LOG.info("Lancement du calendrier Almanax...");
-        AlmanaxCalendar.start();
-
-        LOG.info("Connexion à l'API Twitter...");
-        TwitterFinder.start();
-
+    public void loginDiscord(){
         DISCORD().gateway()
                 .setEnabledIntents(IntentSet.of(
                         Intent.GUILDS,
@@ -131,8 +120,7 @@ public class ClientConfig {
                         guildUpdateListener(client),
                         guildDeleteListener(client),
                         commandListener(client)))
-                .subscribe();
-
+                .block();
     }
 
     public static String KAELLY_PORTALS_URL(){
@@ -145,31 +133,38 @@ public class ClientConfig {
         return instance;
     }
 
-    private static Mono<Void> commandListener(GatewayDiscordClient client){
+    private Mono<Void> commandListener(GatewayDiscordClient client){
         final MessageListener listener = new MessageListener();
         return client.getEventDispatcher().on(MessageCreateEvent.class)
                 .flatMap(listener::onReady)
                 .then();
     }
 
-    private static Mono<Void> guildCreateListener(GatewayDiscordClient client){
+    private Mono<Void> guildCreateListener(GatewayDiscordClient client){
         final GuildCreateListener listener = new GuildCreateListener();
         return client.getEventDispatcher().on(GuildCreateEvent.class)
                 .flatMap(listener::onReady)
                 .then();
     }
 
-    private static Mono<Void> guildUpdateListener(GatewayDiscordClient client){
+    private Mono<Void> guildUpdateListener(GatewayDiscordClient client){
         final GuildUpdateListener listener = new GuildUpdateListener();
         return client.getEventDispatcher().on(GuildUpdateEvent.class)
                 .flatMap(listener::onReady)
                 .then();
     }
 
-    private static Mono<Void> guildDeleteListener(GatewayDiscordClient client){
+    private Mono<Void> guildDeleteListener(GatewayDiscordClient client){
         final GuildLeaveListener listener = new GuildLeaveListener();
         return client.getEventDispatcher().on(GuildDeleteEvent.class)
                 .filter(event -> (! event.isUnavailable()))
+                .flatMap(listener::onReady)
+                .then();
+    }
+
+    private Mono<Void> readyListener(GatewayDiscordClient client){
+        final ReadyListener listener = new ReadyListener();
+        return client.getEventDispatcher().on(ReadyEvent.class)
                 .flatMap(listener::onReady)
                 .then();
     }

@@ -75,6 +75,16 @@ public class Translator {
         }
         return result;
     }
+    public static Language getLanguageFrom(RestChannel channel) {
+        Guild guild = Guild.getGuilds().get(channel.getData().block().guildId().get());
+        Language result = guild.getLanguage();
+
+        ChannelLanguage channelLanguage = ChannelLanguage.getChannelLanguages().get(Long.parseLong(channel.getData().block().id()));
+        if (channelLanguage != null)
+            result = channelLanguage.getLang();
+
+        return result;
+    }
 
     /**
      * Génère une liste de source formatée à partir d'un salon textuel

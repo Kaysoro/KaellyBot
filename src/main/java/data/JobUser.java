@@ -187,9 +187,7 @@ public class JobUser extends ObjectUser {
         Optional<Member> member = guild.getMemberById(Snowflake.of(idUser)).blockOptional();
 
         if (member.isPresent()) {
-            Status status = member.get().getPresence().blockOptional().map(Presence::getStatus).orElse(Status.OFFLINE);
-            return EmojiManager.getEmojiForPresence(status) + " "
-                    + job.getLabel(lg) + ", " + level + " : **"
+            return job.getLabel(lg) + ", " + level + " : **"
                     + member.get().getDisplayName() + "**\n";
         }
         return "";

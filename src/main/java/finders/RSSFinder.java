@@ -1,10 +1,10 @@
 package finders;
 
 import data.RSS;
-import discord4j.core.object.entity.TextChannel;
-import discord4j.core.object.util.Snowflake;
+import discord4j.common.util.Snowflake;
+import discord4j.rest.entity.RestChannel;
+import discord4j.rest.http.client.ClientException;
 import enums.Language;
-import reactor.core.publisher.Flux;
 import util.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -114,14 +114,7 @@ public class RSSFinder {
                     String idChan = resultSet.getString("id_chan");
                     String idGuild = resultSet.getString("id_guild");
                     long lastUpdate = resultSet.getLong("last_update");
-
-                    ClientConfig.DISCORD()
-                            .flatMap(client -> client.getChannelById(Snowflake.of(idChan)))
-                            .filter(channel -> channel instanceof TextChannel)
-                            .map(channel -> (TextChannel) channel)
-                            .collectList().blockOptional().orElse(Collections.emptyList())
-                            .forEach(chan -> rssFinders.put(chan.getId().asString(),
-                                    new RSSFinder(idGuild, chan.getId().asString(), lastUpdate)));
+                    rssFinders.put(idChan, new RSSFinder(idGuild, idChan, lastUpdate));
                 }
             } catch (SQLException e) {
                 Reporter.report(e);
@@ -143,26 +136,21 @@ public class RSSFinder {
 
                 for (RSSFinder finder : getRSSFinders().values())
                     try {
-                        List<TextChannel> chans = ClientConfig.DISCORD()
-                                .flatMap(client -> client.getChannelById(Snowflake.of(finder.chan))).distinct()
-                                .filter(channel -> channel instanceof TextChannel)
-                                .map(channel -> (TextChannel) channel)
-                                .collectList().blockOptional().orElse(Collections.emptyList());
+                        RestChannel chan = ClientConfig.DISCORD().getChannelById(Snowflake.of(finder.chan));
+                        Language lg = Translator.getLanguageFrom(chan);
+                        List<RSS> rssFeeds = allFeeds.get(Translator.getLanguageFrom(chan));
+                        long lastRSS = -1;
 
-                        for(TextChannel chan : chans) {
-                            Language lg = Translator.getLanguageFrom(chan);
-                            List<RSS> rssFeeds = allFeeds.get(Translator.getLanguageFrom(chan));
-                            long lastRSS = -1;
+                        for (RSS rss : rssFeeds)
+                            if (rss.getDate() > finder.getLastRSS()) {
+                                chan.createMessage(rss.decorateRestEmbedObject(lg)).subscribe();
+                                lastRSS = rss.getDate();
+                            }
 
-                            for (RSS rss : rssFeeds)
-                                if (rss.getDate() > finder.getLastRSS()) {
-                                    chan.createEmbed(spec -> rss.decorateEmbedObject(spec, lg)).subscribe();
-                                    lastRSS = rss.getDate();
-                                }
-
-                            if (lastRSS != -1)
-                                finder.setLastRSS(lastRSS);
-                        }
+                        if (lastRSS != -1)
+                            finder.setLastRSS(lastRSS);
+                    } catch(ClientException e){
+                        LOG.warn("RSSFinder: no access on " + finder.chan);
                     } catch(Exception e){
                         Reporter.report(e);
                         LOG.error("RSSFinder", e);

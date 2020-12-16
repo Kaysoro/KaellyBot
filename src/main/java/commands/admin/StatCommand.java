@@ -94,14 +94,14 @@ public class StatCommand extends AbstractCommand {
      */
     private BufferedImage getJoinTimeGuildsGraph(MessageCreateEvent event){
         List<GuildData> guilds = event.getClient().getGatewayResources().getStateView().getGuildStore().values()
-                .sort(Comparator.comparing(guild -> Instant.parse(guild.joinedAt())))
+                .sort(Comparator.comparing(guild -> Instant.parse(guild.joinedAt().substring(0, 26) + 'Z')))
                 .collectList().blockOptional().orElse(Collections.emptyList());
 
         TimeSeriesCollection dataSet = new TimeSeriesCollection();
         TimeSeries series = new TimeSeries("data");
         int guildNumber = 1;
         for(GuildData guild : guilds)
-            series.addOrUpdate(new Day(Date.from(Instant.parse(guild.joinedAt()))), guildNumber++);
+            series.addOrUpdate(new Day(Date.from(Instant.parse(guild.joinedAt().substring(0, 26) + 'Z'))), guildNumber++);
         dataSet.addSeries(series);
 
         JFreeChart chart = ChartFactory.createTimeSeriesChart(

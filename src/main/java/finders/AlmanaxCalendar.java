@@ -1,8 +1,8 @@
 package finders;
 
 import data.Almanax;
-import discord4j.core.object.entity.TextChannel;
-import discord4j.core.object.util.Snowflake;
+import discord4j.common.util.Snowflake;
+import discord4j.rest.entity.RestChannel;
 import enums.Language;
 import reactor.core.publisher.Flux;
 import util.*;
@@ -63,17 +63,10 @@ public class AlmanaxCalendar {
 
                     for(AlmanaxCalendar calendar : getAlmanaxCalendars().values())
                         try {
-                            List<TextChannel> chans = ClientConfig.DISCORD()
-                                    .flatMap(client -> client.getChannelById(Snowflake.of(calendar.chan)))
-                                    .distinct()
-                                    .filter(channel -> channel instanceof TextChannel)
-                                    .map(channel -> (TextChannel) channel)
-                                    .collectList().blockOptional().orElse(Collections.emptyList());
+                            RestChannel chan = ClientConfig.DISCORD().getChannelById(Snowflake.of(calendar.chan));
+                            Language lg = Translator.getLanguageFrom(chan);
+                            chan.createMessage(almanax.get(lg).decorateRestEmbedObject(lg)).subscribe();
 
-                            for(TextChannel chan : chans) {
-                                Language lg = Translator.getLanguageFrom(chan);
-                                chan.createEmbed(spec -> almanax.get(lg).decorateMoreEmbedObject(spec, lg)).subscribe();
-                            }
                         } catch(Exception e){
                             LOG.error("AlmanaxCalendar", e);
                         }

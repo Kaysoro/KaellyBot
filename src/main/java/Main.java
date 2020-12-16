@@ -13,6 +13,6 @@ public class Main {
                 + " for " + Constants.game.getName());
         LoggerFactory.getLogger(Main.class).info("=======================================================");
 
-        ClientConfig.loginDiscord(); // To launch as a service, specify the path/to/Kaelly/
+        ClientConfig.getInstance().loginDiscord(); // To launch as a service, specify the path/to/Kaelly/
     }
 }

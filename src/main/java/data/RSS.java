@@ -6,6 +6,7 @@ import com.rometools.rome.io.FeedException;
 import com.rometools.rome.io.SyndFeedInput;
 import com.rometools.rome.io.XmlReader;
 import discord4j.core.spec.EmbedCreateSpec;
+import discord4j.discordjson.json.*;
 import enums.Language;
 import exceptions.ExceptionManager;
 import org.slf4j.Logger;
@@ -104,6 +105,16 @@ public class RSS implements Comparable<RSS>, Embedded {
                 .setImage(imageUrl)
                 .setThumbnail(Constants.rssIcon)
                 .setFooter(dateFormat.format(new Date(getDate())), null);
+    }
+
+    public EmbedData decorateRestEmbedObject(Language lg) {
+        return EmbedData.builder()
+                .author(EmbedAuthorData.builder().name("Dofus.com").url(getUrl()).build())
+                .title(getTitle())
+                .image(EmbedImageData.builder().url(imageUrl).build())
+                .thumbnail(EmbedThumbnailData.builder().url(Constants.rssIcon).build())
+                .footer(EmbedFooterData.builder().text(dateFormat.format(new Date(getDate()))).build())
+                .build();
     }
 
     @Override

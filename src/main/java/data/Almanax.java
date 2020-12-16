@@ -1,6 +1,9 @@
 package data;
 
 import discord4j.core.spec.EmbedCreateSpec;
+import discord4j.discordjson.json.EmbedData;
+import discord4j.discordjson.json.EmbedFieldData;
+import discord4j.discordjson.json.EmbedImageData;
 import enums.Language;
 import org.apache.commons.lang3.time.DateUtils;
 import org.jsoup.nodes.Document;
@@ -56,6 +59,17 @@ public class Almanax implements Embedded{
             .setImage(ressourceURL)
             .addField(Translator.getLabel(lg, "almanax.embed.bonus"), bonus, true)
             .addField(Translator.getLabel(lg, "almanax.embed.offrande"), offrande, true);
+    }
+
+    public EmbedData decorateRestEmbedObject(Language lg){
+        return EmbedData.builder()
+                .title(Translator.getLabel(lg, "almanax.embed.title.1") + " " + day)
+                .url(Translator.getLabel(lg, "almanax.url") + day)
+                .description(quest)
+                .image(EmbedImageData.builder().url(ressourceURL).build())
+                .addField(EmbedFieldData.builder().name(Translator.getLabel(lg, "almanax.embed.bonus")).value(bonus).inline(true).build())
+                .addField(EmbedFieldData.builder().name(Translator.getLabel(lg, "almanax.embed.offrande")).value(offrande).inline(true).build())
+                .build();
     }
 
     public static void decorateGroupedObject(EmbedCreateSpec spec, Language lg, Date day, int occurrence) throws IOException {
