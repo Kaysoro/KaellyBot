@@ -1,9 +1,9 @@
 package data;
 
+import discord4j.common.util.Snowflake;
 import discord4j.core.object.entity.Member;
 import discord4j.core.object.presence.Presence;
 import discord4j.core.object.presence.Status;
-import discord4j.core.object.util.Snowflake;
 import discord4j.core.spec.EmbedCreateSpec;
 import enums.City;
 import enums.Language;
@@ -190,8 +190,7 @@ public class OrderUser extends ObjectUser {
 
         embed.add(spec -> {
             spec.setTitle(Translator.getLabel(lg, "align.user").replace("{user}", user.getDisplayName()))
-                    .setThumbnail(user.getAvatarUrl())
-                    .setColor(Color.GRAY);
+                    .setThumbnail(user.getAvatarUrl());
 
             if (! result.isEmpty()) {
                 StringBuilder st = new StringBuilder();

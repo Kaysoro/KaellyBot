@@ -46,7 +46,6 @@ public class SetDofus implements Embedded {
     public void decorateEmbedObject(EmbedCreateSpec spec, Language lg) {
         spec.setTitle(name)
             .setUrl(url)
-            .setColor(Color.GRAY)
             .setThumbnail(skinURL);
 
         if (level != null && ! level.isEmpty())
@@ -65,7 +64,6 @@ public class SetDofus implements Embedded {
     public void decorateMoreEmbedObject(EmbedCreateSpec spec, Language lg) {
         spec.setTitle(name)
             .setUrl(url)
-            .setColor(Color.GRAY)
             .setImage(skinURL);
 
         if (level != null && ! level.isEmpty())

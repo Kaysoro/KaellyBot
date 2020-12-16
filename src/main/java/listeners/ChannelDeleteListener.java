@@ -5,6 +5,7 @@ import finders.RSSFinder;
 import finders.TwitterFinder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import reactor.core.publisher.Mono;
 import util.Reporter;
 
 /**
@@ -18,7 +19,7 @@ public class ChannelDeleteListener {
         super();
     }
 
-    public void onReady(TextChannelDeleteEvent event) {
+    public Mono<Void> onReady(TextChannelDeleteEvent event) {
         try {
             if (RSSFinder.getRSSFinders().containsKey(event.getChannel().getId().asString()))
                 RSSFinder.getRSSFinders().get(event.getChannel().getId().asString()).removeToDatabase();
@@ -32,5 +33,6 @@ public class ChannelDeleteListener {
             Reporter.report(e, event.getChannel());
             LOG.error("onReady", e);
         }
+        return Mono.empty();
     }
 }

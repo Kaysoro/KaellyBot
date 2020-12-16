@@ -1,6 +1,7 @@
 package commands.model;
 
 import data.Guild;
+import discord4j.core.event.domain.message.MessageCreateEvent;
 import discord4j.core.object.entity.Message;
 import enums.Language;
 
@@ -13,7 +14,7 @@ public interface Command {
     String getName();
     String getPattern();
     Matcher getMatcher(Message message);
-    void request(Message message);
+    void request(MessageCreateEvent event, Message message);
 
     /**
      * Is the command usable in MP?

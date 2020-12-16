@@ -2,9 +2,12 @@ package commands.admin;
 
 import commands.model.AbstractCommand;
 import discord4j.core.DiscordClient;
+import discord4j.core.event.domain.message.MessageCreateEvent;
 import discord4j.core.object.entity.Guild;
 import discord4j.core.object.entity.Message;
 import discord4j.core.spec.MessageCreateSpec;
+import discord4j.discordjson.json.GuildData;
+import discord4j.discordjson.json.UserGuildData;
 import enums.Language;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
@@ -39,16 +42,11 @@ public class StatCommand extends AbstractCommand {
     }
 
     @Override
-    public void request(Message message, Matcher m, Language lg) {
+    public void request(MessageCreateEvent event, Message message, Matcher m, Language lg) {
         if (m.group(1) == null || m.group(1).replaceAll("^\\s+", "").isEmpty()){
-            long totalGuild = ClientConfig.DISCORD()
-                    .flatMap(DiscordClient::getGuilds).distinct()
-                    .count().blockOptional().orElse(0L);
-
-            int totalUser = ClientConfig.DISCORD()
-                    .flatMap(DiscordClient::getGuilds).distinct()
-                    .map(Guild::getMemberCount)
-                    .map(count -> count.orElse(0))
+            long totalGuild = event.getClient().getGatewayResources().getStateView().getGuildStore().count().block();
+            int totalUser = event.getClient().getGatewayResources().getStateView().getGuildStore().values()
+                    .map(GuildData::memberCount)
                     .collect(Collectors.summingInt(Integer::intValue))
                     .blockOptional().orElse(0);
 
@@ -61,17 +59,20 @@ public class StatCommand extends AbstractCommand {
             int limit = GULD_LIMIT;
             if (m.group(2) != null) limit = Integer.parseInt(m.group(2).trim());
             StringBuilder st = new StringBuilder();
-            List<discord4j.core.object.entity.Guild> guilds = getBiggestGuilds(limit);
+            List<GuildData> guilds = event.getClient().getGatewayResources().getStateView().getGuildStore().values()
+                    .sort((guild1, guild2) -> guild2.memberCount() - guild1.memberCount())
+                    .take(limit)
+                    .collectList().block();
             int ladder = 1;
-            for(discord4j.core.object.entity.Guild guild : guilds)
-                st.append(ladder++).append(" : **").append(guild.getName()).append("**, ")
-                        .append(guild.getMemberCount().orElse(0)).append(" users\n");
+            for(GuildData guild : guilds)
+                st.append(ladder++).append(" : **").append(guild.name()).append("**, ")
+                        .append(guild.memberCount()).append(" users\n");
 
             message.getChannel().flatMap(chan -> chan.createMessage(st.toString())).subscribe();
         }
         else if (m.group(1).matches("\\s+-hist"))
             message.getChannel().flatMap(chan -> chan.createMessage(spec ->
-                    decorateImageMessage(spec, getJoinTimeGuildsGraph())))
+                    decorateImageMessage(spec, getJoinTimeGuildsGraph(event))))
             .subscribe();
     }
 
@@ -89,31 +90,18 @@ public class StatCommand extends AbstractCommand {
 
     /**
      *
-     * @param limit nombre de guildes à afficher
-     * @return Liste des limit plus grandes guildes qui utilisent kaelly
-     */
-    private List<discord4j.core.object.entity.Guild> getBiggestGuilds(int limit){
-        return ClientConfig.DISCORD().flatMap(DiscordClient::getGuilds).distinct()
-                .sort((guild1, guild2) -> guild2.getMemberCount().orElse(0) - guild1.getMemberCount().orElse(0))
-                .take(limit)
-                .collectList().block();
-    }
-
-    /**
-     *
      * @return Graphique des arrivés des guildes utilisant kaelly
      */
-    private BufferedImage getJoinTimeGuildsGraph(){
-        List<discord4j.core.object.entity.Guild> guilds = ClientConfig.DISCORD()
-                .flatMap(DiscordClient::getGuilds).distinct()
-                .sort(Comparator.comparing(guild -> guild.getJoinTime().orElse(Instant.EPOCH)))
+    private BufferedImage getJoinTimeGuildsGraph(MessageCreateEvent event){
+        List<GuildData> guilds = event.getClient().getGatewayResources().getStateView().getGuildStore().values()
+                .sort(Comparator.comparing(guild -> Instant.parse(guild.joinedAt())))
                 .collectList().blockOptional().orElse(Collections.emptyList());
 
         TimeSeriesCollection dataSet = new TimeSeriesCollection();
         TimeSeries series = new TimeSeries("data");
         int guildNumber = 1;
-        for(discord4j.core.object.entity.Guild guild : guilds)
-            series.addOrUpdate(new Day(Date.from(guild.getJoinTime().orElse(Instant.EPOCH))), guildNumber++);
+        for(GuildData guild : guilds)
+            series.addOrUpdate(new Day(Date.from(Instant.parse(guild.joinedAt()))), guildNumber++);
         dataSet.addSeries(series);
 
         JFreeChart chart = ChartFactory.createTimeSeriesChart(

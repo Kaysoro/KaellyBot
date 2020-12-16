@@ -49,7 +49,6 @@ public class Resource implements Embedded {
     public void decorateEmbedObject(EmbedCreateSpec spec, Language lg) {
         spec.setTitle(name)
             .setUrl(url)
-            .setColor(Color.GRAY)
             .setThumbnail(skinURL);
 
         if (level != null && ! level.isEmpty())
@@ -73,8 +72,7 @@ public class Resource implements Embedded {
         if (description != null && ! description.isEmpty())
             spec.setDescription(description);
 
-        spec.setColor(Color.GRAY)
-            .setImage(skinURL);
+        spec.setImage(skinURL);
 
         if (level != null && ! level.isEmpty())
             spec.addField(Translator.getLabel(lg, "resource.niveau"), level, true);

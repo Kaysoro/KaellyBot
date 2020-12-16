@@ -1,9 +1,9 @@
 package data;
 
+import discord4j.common.util.Snowflake;
 import discord4j.core.object.entity.Member;
 import discord4j.core.object.presence.Presence;
 import discord4j.core.object.presence.Status;
-import discord4j.core.object.util.Snowflake;
 import discord4j.core.spec.EmbedCreateSpec;
 import enums.Job;
 import enums.Language;
@@ -140,8 +140,7 @@ public class JobUser extends ObjectUser {
 
         embed.add(spec -> {
             spec.setTitle(Translator.getLabel(lg, "job.user").replace("{user}", user.getDisplayName()))
-            .setThumbnail(user.getAvatarUrl())
-            .setColor(Color.GRAY);
+            .setThumbnail(user.getAvatarUrl());
 
             if (! result.isEmpty()) {
                 StringBuilder st = new StringBuilder();

@@ -31,11 +31,11 @@ public class NotFoundDiscordException implements DiscordException {
         else if (command instanceof AllianceCommand)
             bug = AnkamaBug.ALLY_NOT_FOUND;
         else if (command instanceof ItemCommand)
-            if (message.getContent().map(content -> content.contains("'")).orElse(false))
+            if (message.getContent().contains("'"))
                 bug = AnkamaBug.ITEM_NOT_FOUND_APOSTROPHE;
-            else if (message.getContent().orElse("").toLowerCase()
+            else if (message.getContent().toLowerCase()
                     .contains(Translator.getLabel(lg, "equip.muldo").toLowerCase())
-                    || message.getContent().orElse("").toLowerCase()
+                    || message.getContent().toLowerCase()
                     .contains(Translator.getLabel(lg, "equip.volkorne").toLowerCase()))
                 bug = AnkamaBug.ITEM_PAGE_MULDO_VOLKORNE_NOT_FOUND;
 

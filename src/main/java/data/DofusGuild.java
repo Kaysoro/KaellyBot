@@ -53,7 +53,6 @@ public class DofusGuild implements Embedded {
         spec.setTitle(name)
         .setUrl(url)
         .setDescription(Translator.getLabel(lg, "guild.desc"))
-        .setColor(Color.GRAY)
         .setThumbnail(littleSkinURL)
         .setImage(bigSkinURL)
         .addField(Translator.getLabel(lg, "guild.level"), level, true)

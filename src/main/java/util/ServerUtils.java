@@ -3,7 +3,7 @@ package util;
 import data.ChannelServer;
 import data.Guild;
 import data.ServerDofus;
-import discord4j.core.object.entity.MessageChannel;
+import discord4j.core.object.entity.channel.MessageChannel;
 import enums.Game;
 import enums.Language;
 import exceptions.DiscordException;

@@ -85,7 +85,6 @@ public class Character implements Embedded {
         spec.setTitle(pseudo)
             .setUrl(url)
             .setDescription(classe)
-            .setColor(Color.GRAY)
             .setThumbnail(littleSkinURL)
             .setImage(bigSkinURL)
             .setFooter(Translator.getLabel(lg, "whois.server") + " " + server, null);
@@ -117,7 +116,6 @@ public class Character implements Embedded {
         spec.setTitle(pseudo)
             .setUrl(url)
             .setDescription(classe + ", " + level)
-            .setColor(Color.GRAY)
             .setThumbnail(littleSkinURL)
             .setFooter(Translator.getLabel(lg, "whois.server") + " " + server, null);
 

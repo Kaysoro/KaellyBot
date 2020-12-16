@@ -43,7 +43,6 @@ public class Almanax implements Embedded{
     public void decorateEmbedObject(EmbedCreateSpec spec, Language lg) {
         spec.setTitle(Translator.getLabel(lg, "almanax.embed.title.1") + " " + day)
             .setUrl(Translator.getLabel(lg, "almanax.url") + day)
-            .setColor(Color.GRAY)
             .setThumbnail(ressourceURL)
             .addField(Translator.getLabel(lg, "almanax.embed.bonus"), bonus, true)
             .addField(Translator.getLabel(lg, "almanax.embed.offrande"), offrande, true);
@@ -54,7 +53,6 @@ public class Almanax implements Embedded{
         spec.setTitle(Translator.getLabel(lg, "almanax.embed.title.1") + " " + day)
             .setUrl(Translator.getLabel(lg, "almanax.url") + day)
             .setDescription(quest)
-            .setColor(Color.GRAY)
             .setImage(ressourceURL)
             .addField(Translator.getLabel(lg, "almanax.embed.bonus"), bonus, true)
             .addField(Translator.getLabel(lg, "almanax.embed.offrande"), offrande, true);
@@ -66,8 +64,7 @@ public class Almanax implements Embedded{
         String title = Translator.getLabel(lg, "almanax.embed.title.1") + " " + discordToBot.format(firstDate) +
                 (occurrence > 1 ? " " + Translator.getLabel(lg, "almanax.embed.title.2") + " " + discordToBot.format(lastDate) : "");
 
-        spec.setTitle(title)
-            .setColor(Color.GRAY);
+        spec.setTitle(title);
 
         for (int i = 1; i <= occurrence; i++) {
             firstDate = DateUtils.addDays(new Date(), i);

@@ -2,6 +2,7 @@ package commands.classic;
 
 import commands.model.AbstractCommand;
 import data.Almanax;
+import discord4j.core.event.domain.message.MessageCreateEvent;
 import discord4j.core.object.entity.Message;
 import enums.Language;
 import exceptions.*;
@@ -23,7 +24,7 @@ public class AlmanaxCommand extends AbstractCommand {
     }
 
     @Override
-    public void request(Message message, Matcher m, Language lg) {
+    public void request(MessageCreateEvent event, Message message, Matcher m, Language lg) {
         try {
             Date date = new Date();
 

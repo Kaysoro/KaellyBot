@@ -2,12 +2,13 @@ package listeners;
 
 import commands.classic.HelpCommand;
 import commands.config.*;
+import discord4j.common.util.Snowflake;
 import discord4j.core.DiscordClient;
 import discord4j.core.event.domain.guild.GuildCreateEvent;
 import discord4j.core.object.entity.Member;
-import discord4j.core.object.entity.TextChannel;
-import discord4j.core.object.util.Permission;
-import discord4j.core.object.util.Snowflake;
+import discord4j.core.object.entity.channel.TextChannel;
+import discord4j.discordjson.json.MessageData;
+import discord4j.rest.util.Permission;
 import enums.Language;
 import reactor.core.publisher.Flux;
 import util.ClientConfig;
@@ -25,11 +26,11 @@ public class GuildCreateListener {
 
     private final static Logger LOG = LoggerFactory.getLogger(GuildCreateListener.class);
 
-    public void onReady(DiscordClient client, GuildCreateEvent event) {
+    public Flux<MessageData> onReady(GuildCreateEvent event) {
         try {
             if (!Guild.getGuilds().containsKey(event.getGuild().getId().asString())) {
 
-                event.getGuild().getChannels()
+                return event.getGuild().getChannels()
                         .filter(chan -> chan instanceof TextChannel)
                         .map(chan -> (TextChannel) chan).take(1).flatMap(chan -> {
                     Guild guild = new Guild(event.getGuild().getId().asString(), event.getGuild().getName(),
@@ -53,26 +54,22 @@ public class GuildCreateListener {
                                 .replaceAll("\\{owner}", owner.getMention())
                                 .replaceAll("\\{guild}", event.getGuild().getName());
 
-                        return chan.getEffectivePermissions(client.getSelfId().orElse(null))
+                        return chan.getEffectivePermissions(event.getClient().getCoreResources().getSelfId())
                                 .flatMap(perm -> perm.contains(Permission.SEND_MESSAGES) ?
                                         chan.createMessage(customMessage) : event.getGuild().getOwner()
                                         .flatMap(Member::getPrivateChannel)
                                         .flatMap(ownerChan -> ownerChan.createMessage(customMessage)))
-                                .thenMany(ClientConfig.DISCORD()
-                                        .flatMap(cli -> cli.getChannelById(Snowflake.of(Constants.chanReportID)))
-                                        .filter(channel -> channel instanceof TextChannel)
-                                        .map(channel -> (TextChannel) channel)
-                                        .distinct()
-                                        .flatMap(channel -> channel.createMessage("[NEW] **" + event.getGuild().getName()
+                                .then(ClientConfig.DISCORD().getChannelById(Snowflake.of(Constants.chanReportID))
+                                        .createMessage("[NEW] **" + event.getGuild().getName()
                                                 + "** (" + guild.getLanguage().getAbrev() + "), +"
-                                                + event.getGuild().getMemberCount().orElse(0) +  " utilisateurs")))
-                                .collectList();
+                                                + event.getGuild().getMemberCount() +  " utilisateurs"));
                     });
-                }).subscribe();
+                });
             }
         } catch(Exception e){
             Reporter.report(e, event.getGuild());
             LOG.error("onReady", e);
         }
+        return Flux.empty();
     }
 }

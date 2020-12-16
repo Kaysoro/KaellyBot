@@ -2,6 +2,7 @@ package commands.classic;
 
 import commands.model.AbstractCommand;
 import data.*;
+import discord4j.core.event.domain.message.MessageCreateEvent;
 import discord4j.core.object.entity.Message;
 import enums.Dimension;
 import enums.Language;
@@ -41,7 +42,7 @@ public class PortalCommand extends AbstractCommand {
     }
 
     @Override
-    public void request(Message message, Matcher m, Language lg) {
+    public void request(MessageCreateEvent event, Message message, Matcher m, Language lg) {
         ServerDofus server = ServerUtils.getDofusServerFrom(Guild.getGuild(message.getGuild().block()), message.getChannel().block());
 
         if (server != null){

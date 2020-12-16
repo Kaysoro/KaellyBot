@@ -5,10 +5,12 @@ import commands.model.AbstractCommand;
 import commands.model.Command;
 import discord4j.core.event.domain.message.MessageCreateEvent;
 import discord4j.core.object.entity.User;
+import discord4j.core.object.entity.channel.MessageChannel;
 import enums.Language;
 import exceptions.BasicDiscordException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import reactor.core.publisher.Mono;
 import util.Reporter;
 import util.Translator;
 
@@ -22,8 +24,8 @@ public class MessageListener {
 
     private final static Logger LOG = LoggerFactory.getLogger(MessageListener.class);
 
-    public void onReady(MessageCreateEvent event) {
-        event.getMessage().getChannel()
+    public Mono<MessageChannel> onReady(MessageCreateEvent event) {
+         return event.getMessage().getChannel()
                 .doOnSuccess(channel -> {
                     Language lg = Translator.getLanguageFrom(channel);
                     String prefixe = AbstractCommand.getPrefix(event.getMessage());
@@ -33,8 +35,7 @@ public class MessageListener {
                         List<Command> commandsAvailable = new ArrayList<>();
 
                         for (Command command : CommandManager.getCommands())
-                            if (event.getMessage().getContent().map(content -> content
-                                    .startsWith(prefixe + command.getName())).orElse(false))
+                            if (event.getMessage().getContent().startsWith(prefixe + command.getName()))
                                 commandsAvailable.add(command);
 
                         if (!commandsAvailable.isEmpty()){
@@ -42,7 +43,7 @@ public class MessageListener {
                             Command command = commandsAvailable.get(0);
 
                             try {
-                                command.request(event.getMessage());
+                                command.request(event, event.getMessage());
                             } catch (Exception e) {
                                 BasicDiscordException.UNKNOWN_ERROR.throwException(event.getMessage(), command, lg);
                                 Reporter.report(e, null, channel, event.getMessage().getAuthor()
@@ -51,6 +52,6 @@ public class MessageListener {
                             }
                         }
                     }
-                }).subscribe();
+                });
     }
 }

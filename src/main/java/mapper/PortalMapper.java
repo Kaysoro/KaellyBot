@@ -18,8 +18,7 @@ public final class PortalMapper {
         Dimension dimension = Dimension.valueOfCaseUnsensitive(portal.getDimension(), language);
 
         spec.setTitle(portal.getDimension())
-                .setThumbnail(dimension.getImage())
-                .setColor(dimension.getColor());
+                .setThumbnail(dimension.getImage());
 
         if (Boolean.TRUE.equals(portal.getIsAvailable()) && portal.getNearestZaap() != null
                 && portal.getPosition() != null && portal.getUtilisation() > 0){

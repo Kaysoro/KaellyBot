@@ -3,9 +3,10 @@ package commands.config;
 import commands.model.AbstractCommand;
 import data.ChannelLanguage;
 import data.Guild;
-import discord4j.core.object.entity.GuildMessageChannel;
+import discord4j.core.event.domain.message.MessageCreateEvent;
 import discord4j.core.object.entity.Message;
-import discord4j.core.object.entity.MessageChannel;
+import discord4j.core.object.entity.channel.GuildMessageChannel;
+import discord4j.core.object.entity.channel.MessageChannel;
 import enums.Language;
 import exceptions.BasicDiscordException;
 import exceptions.DiscordException;
@@ -34,7 +35,7 @@ public class LanguageCommand extends AbstractCommand {
     }
 
     @Override
-    public void request(Message message, Matcher m, Language lg) {
+    public void request(MessageCreateEvent event, Message message, Matcher m, Language lg) {
         Optional<discord4j.core.object.entity.Guild> guild = message.getGuild().blockOptional();
         Optional<MessageChannel> channel = message.getChannel().blockOptional();
 

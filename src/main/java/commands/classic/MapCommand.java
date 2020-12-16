@@ -2,6 +2,7 @@ package commands.classic;
 
 import commands.model.AbstractCommand;
 import data.Constants;
+import discord4j.core.event.domain.message.MessageCreateEvent;
 import discord4j.core.object.entity.Message;
 import enums.Language;
 import util.Translator;
@@ -26,7 +27,7 @@ public class MapCommand extends AbstractCommand {
     }
 
     @Override
-    public void request(Message message, Matcher m, Language lg) {
+    public void request(MessageCreateEvent event, Message message, Matcher m, Language lg) {
         List<String> classicMaps = new ArrayList<>();
         for(int i = 1; i < 18; i++)
             classicMaps.add(String.valueOf(i));
@@ -65,8 +66,6 @@ public class MapCommand extends AbstractCommand {
         message.getChannel().flatMap(chan -> chan
                 .createEmbed(spec -> spec.setTitle(Translator.getLabel(lg, "map.embed.title") + " " + numberToRoman(number))
                         .setDescription(punchline)
-                        .setImage(url)
-                        .setColor(Color.GRAY)
                         .setImage(url)))
                 .subscribe();
     }

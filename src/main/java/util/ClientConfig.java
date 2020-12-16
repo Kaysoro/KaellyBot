@@ -1,14 +1,28 @@
 package util;
 
+import data.Constants;
 import discord4j.core.DiscordClient;
-import discord4j.core.DiscordClientBuilder;
-import discord4j.core.event.domain.lifecycle.ReadyEvent;
-import discord4j.core.shard.ShardingClientBuilder;
+import discord4j.core.GatewayDiscordClient;
+import discord4j.core.event.domain.guild.GuildCreateEvent;
+import discord4j.core.event.domain.guild.GuildDeleteEvent;
+import discord4j.core.event.domain.guild.GuildUpdateEvent;
+import discord4j.core.event.domain.message.MessageCreateEvent;
+import discord4j.core.object.presence.Activity;
+import discord4j.core.object.presence.Presence;
+import discord4j.core.shard.MemberRequestFilter;
+import discord4j.gateway.intent.Intent;
+import discord4j.gateway.intent.IntentSet;
+import finders.AlmanaxCalendar;
+import finders.RSSFinder;
+import finders.TwitterFinder;
 import io.sentry.Sentry;
-import listeners.ReadyListener;
+import listeners.GuildCreateListener;
+import listeners.GuildLeaveListener;
+import listeners.GuildUpdateListener;
+import listeners.MessageListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 import twitter4j.TwitterStream;
 import twitter4j.TwitterStreamFactory;
 import twitter4j.conf.ConfigurationBuilder;
@@ -25,7 +39,7 @@ public class ClientConfig {
     private static ClientConfig instance = null;
     private final static Logger LOG = LoggerFactory.getLogger(ClientConfig.class);
     private final static String FILENAME = "config.properties";
-    private Flux<DiscordClient> DISCORD;
+    private DiscordClient DISCORD;
     private TwitterStream TWITTER;
     private String KAELLY_PORTALS_URL;
 
@@ -44,16 +58,7 @@ public class ClientConfig {
             KAELLY_PORTALS_URL = prop.getProperty("kaelly.portals.url");
 
             try {
-                DISCORD = new ShardingClientBuilder(prop.getProperty("discord.token"))
-                        .build()
-                        .map(DiscordClientBuilder::build)
-                        .cache();
-
-                ReadyListener readyListener = new ReadyListener();
-
-                DISCORD.flatMap(client -> client.getEventDispatcher().on(ReadyEvent.class))
-                        .subscribe(event -> readyListener.onReady(event.getClient()));
-
+                DISCORD = DiscordClient.create(prop.getProperty("discord.token"));
             } catch(Throwable e){
                     LOG.error("Impossible de se connecter à Discord : verifiez votre token dans "
                             + FILENAME + " ainsi que votre connexion.");
@@ -98,29 +103,74 @@ public class ClientConfig {
     public static TwitterStream TWITTER() {
         return getInstance().TWITTER;
     }
-    public static Flux<DiscordClient> DISCORD() {
+    public static DiscordClient DISCORD() {
         return getInstance().DISCORD;
     }
 
     public static void loginDiscord(){
-        DISCORD().flatMap(DiscordClient::login).blockLast();
+        LOG.info("Ecoute des flux RSS du site Dofus...");
+        RSSFinder.start();
+
+        LOG.info("Lancement du calendrier Almanax...");
+        AlmanaxCalendar.start();
+
+        LOG.info("Connexion à l'API Twitter...");
+        TwitterFinder.start();
+
+        DISCORD().gateway()
+                .setEnabledIntents(IntentSet.of(
+                        Intent.GUILDS,
+                        Intent.GUILD_MEMBERS,
+                        Intent.GUILD_MESSAGES,
+                        Intent.GUILD_MESSAGE_REACTIONS,
+                        Intent.DIRECT_MESSAGES))
+                .setInitialStatus(ignored -> Presence.online(Activity.watching(Constants.discordInvite)))
+                .setMemberRequestFilter(MemberRequestFilter.none())
+                .withGateway(client -> Mono.when(
+                        guildCreateListener(client),
+                        guildUpdateListener(client),
+                        guildDeleteListener(client),
+                        commandListener(client)))
+                .subscribe();
+
     }
 
     public static String KAELLY_PORTALS_URL(){
         return getInstance().KAELLY_PORTALS_URL;
     }
 
-    public static void loginDiscord(String path) {
-        DISCORD(path).flatMap(DiscordClient::login).blockLast();
-    }
-
-    private static Flux<DiscordClient> DISCORD(String path) {
-        return getInstance(path).DISCORD;
-    }
-
     public static synchronized ClientConfig getInstance(String path){
         if (instance == null)
             instance = new ClientConfig(path);
         return instance;
+    }
+
+    private static Mono<Void> commandListener(GatewayDiscordClient client){
+        final MessageListener listener = new MessageListener();
+        return client.getEventDispatcher().on(MessageCreateEvent.class)
+                .flatMap(listener::onReady)
+                .then();
+    }
+
+    private static Mono<Void> guildCreateListener(GatewayDiscordClient client){
+        final GuildCreateListener listener = new GuildCreateListener();
+        return client.getEventDispatcher().on(GuildCreateEvent.class)
+                .flatMap(listener::onReady)
+                .then();
+    }
+
+    private static Mono<Void> guildUpdateListener(GatewayDiscordClient client){
+        final GuildUpdateListener listener = new GuildUpdateListener();
+        return client.getEventDispatcher().on(GuildUpdateEvent.class)
+                .flatMap(listener::onReady)
+                .then();
+    }
+
+    private static Mono<Void> guildDeleteListener(GatewayDiscordClient client){
+        final GuildLeaveListener listener = new GuildLeaveListener();
+        return client.getEventDispatcher().on(GuildDeleteEvent.class)
+                .filter(event -> (! event.isUnavailable()))
+                .flatMap(listener::onReady)
+                .then();
     }
 }

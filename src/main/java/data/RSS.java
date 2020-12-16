@@ -101,7 +101,6 @@ public class RSS implements Comparable<RSS>, Embedded {
     public void decorateEmbedObject(EmbedCreateSpec spec, Language lg) {
         spec.setAuthor("Dofus.com", getUrl(), null)
                 .setTitle(getTitle())
-                .setColor(Color.ORANGE)
                 .setImage(imageUrl)
                 .setThumbnail(Constants.rssIcon)
                 .setFooter(dateFormat.format(new Date(getDate())), null);

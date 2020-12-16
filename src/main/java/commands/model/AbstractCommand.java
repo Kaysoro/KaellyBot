@@ -2,10 +2,15 @@ package commands.model;
 
 import data.Constants;
 import data.Guild;
+import discord4j.common.util.Snowflake;
+import discord4j.core.event.domain.message.MessageCreateEvent;
 import discord4j.core.object.entity.*;
-import discord4j.core.object.util.Permission;
-import discord4j.core.object.util.PermissionSet;
-import discord4j.core.object.util.Snowflake;
+import discord4j.core.object.entity.channel.GuildMessageChannel;
+import discord4j.core.object.entity.channel.MessageChannel;
+import discord4j.core.object.entity.channel.PrivateChannel;
+import discord4j.core.object.entity.channel.TextChannel;
+import discord4j.rest.util.Permission;
+import discord4j.rest.util.PermissionSet;
 import enums.Language;
 import exceptions.BadUseCommandDiscordException;
 import exceptions.BasicDiscordException;
@@ -45,7 +50,7 @@ public abstract class AbstractCommand implements Command {
     }
 
     @Override
-    public final void request(Message message) {
+    public final void request(MessageCreateEvent event, Message message) {
         Language lg = Translator.getLanguageFrom(message.getChannel().block());
         try {
             Matcher m = getMatcher(message);
@@ -57,8 +62,7 @@ public abstract class AbstractCommand implements Command {
                 return;
 
             // S'il s'agit d'une demande d'aide...
-            if (message.getContent().map(content -> content
-                    .matches(Pattern.quote(getPrefix(message)) + getName() + "\\s+help")).orElse(false)){
+            if (message.getContent().matches(Pattern.quote(getPrefix(message)) + getName() + "\\s+help")){
                 message.getChannel().flatMap(chan -> chan
                         .createMessage(helpDetailed(lg, getPrefix(message)))).subscribe();
                 return;
@@ -81,13 +85,12 @@ public abstract class AbstractCommand implements Command {
                 }
             }
             // Mais est mal utilisée
-            else if (message.getContent().map(content -> content
-                    .startsWith(getPrefix(message) + getName())).orElse(false)) {
+            else if (message.getContent().startsWith(getPrefix(message) + getName())) {
                 badUse.throwException(message, this, lg);
                 return;
             }
             if (isFound)
-                request(message, m, lg);
+                request(event, message, m, lg);
         } catch(Exception e){
             BasicDiscordException.UNKNOWN_ERROR.throwException(message, this, lg);
             Reporter.report(e);
@@ -100,7 +103,7 @@ public abstract class AbstractCommand implements Command {
      * @param m Matcher that permit to fetch data
      * @param lg Language of the channel (FR, EN, ES..)
      */
-    protected abstract void request(Message message, Matcher m, Language lg);
+    protected abstract void request(MessageCreateEvent event, Message message, Matcher m, Language lg);
 
     @Override
     public boolean isForbidden(Guild g){
@@ -111,7 +114,7 @@ public abstract class AbstractCommand implements Command {
     public Matcher getMatcher(Message message){
         String prefixe = getPrefix(message);
         return Pattern.compile("^" + Pattern.quote(prefixe) + name + pattern + "$")
-                .matcher(message.getContent().orElse(""));
+                .matcher(message.getContent());
     }
 
     public static String getPrefix(Message message){
@@ -137,8 +140,8 @@ public abstract class AbstractCommand implements Command {
      */
     protected boolean isChannelHasExternalEmojisPermission(Message message){
         return message.getChannel().blockOptional().filter(messageChannel -> messageChannel instanceof PrivateChannel ||
-                ((TextChannel) messageChannel).getEffectivePermissions(message.getClient().getSelfId()
-                        .orElse(Snowflake.of(0L))).blockOptional().orElse(PermissionSet.none())
+                ((TextChannel) messageChannel).getEffectivePermissions(message.getClient().getSelfId())
+                        .blockOptional().orElse(PermissionSet.none())
                         .contains(Permission.USE_EXTERNAL_EMOJIS)).isPresent();
     }
 

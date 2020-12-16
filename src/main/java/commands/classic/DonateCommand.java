@@ -2,10 +2,11 @@ package commands.classic;
 
 import commands.model.AbstractCommand;
 import data.Constants;
+import discord4j.core.event.domain.message.MessageCreateEvent;
 import discord4j.core.object.entity.ApplicationInfo;
 import discord4j.core.object.entity.Message;
 import discord4j.core.object.entity.User;
-import discord4j.core.object.util.Image;
+import discord4j.rest.util.Image;
 import enums.Donator;
 import enums.Language;
 import util.Translator;
@@ -28,7 +29,7 @@ public class DonateCommand extends AbstractCommand {
     }
 
     @Override
-    public void request(Message message, Matcher m, Language lg) {
+    public void request(MessageCreateEvent event, Message message, Matcher m, Language lg) {
         Optional<ApplicationInfo> appInfo = message.getClient().getApplicationInfo().blockOptional();
 
         if (appInfo.isPresent()) {
@@ -41,8 +42,7 @@ public class DonateCommand extends AbstractCommand {
                                 .replace("{version}", Constants.version))
                                 .setDescription(Translator.getLabel(lg, "about.free.desc")
                                         .replace("{paypal}", Constants.paypal))
-                                .setColor(Color.GRAY)
-                                .setThumbnail(appInfo.get().getIcon(Image.Format.PNG).orElse(null))
+                                .setThumbnail(appInfo.get().getIconUrl(Image.Format.PNG).orElse(null))
                                 .setAuthor(author.map(User::getUsername).orElse(authorName), null,
                                         author.map(User::getAvatarUrl).orElse(authorAvatar));
 

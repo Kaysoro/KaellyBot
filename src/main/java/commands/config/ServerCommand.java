@@ -2,9 +2,10 @@ package commands.config;
 
 import commands.model.AbstractCommand;
 import data.*;
-import discord4j.core.object.entity.GuildMessageChannel;
+import discord4j.core.event.domain.message.MessageCreateEvent;
 import discord4j.core.object.entity.Message;
-import discord4j.core.object.entity.MessageChannel;
+import discord4j.core.object.entity.channel.GuildMessageChannel;
+import discord4j.core.object.entity.channel.MessageChannel;
 import enums.Game;
 import enums.Language;
 import exceptions.BasicDiscordException;
@@ -26,7 +27,7 @@ public class ServerCommand extends AbstractCommand {
     }
 
     @Override
-    public void request(Message message, Matcher m, Language lg) {
+    public void request(MessageCreateEvent event, Message message, Matcher m, Language lg) {
         Guild guild = Guild.getGuild(message.getGuild().block());
         MessageChannel channel = message.getChannel().block();
 

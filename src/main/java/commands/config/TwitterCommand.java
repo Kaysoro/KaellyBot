@@ -1,10 +1,11 @@
 package commands.config;
 
 import commands.model.AbstractCommand;
+import discord4j.common.util.Snowflake;
+import discord4j.core.event.domain.message.MessageCreateEvent;
 import discord4j.core.object.entity.Guild;
 import discord4j.core.object.entity.Message;
-import discord4j.core.object.entity.MessageChannel;
-import discord4j.core.object.util.Snowflake;
+import discord4j.core.object.entity.channel.MessageChannel;
 import enums.Language;
 import finders.TwitterFinder;
 import exceptions.*;
@@ -28,7 +29,7 @@ public class TwitterCommand extends AbstractCommand {
     }
 
     @Override
-    public void request(Message message, Matcher m, Language lg) {
+    public void request(MessageCreateEvent event, Message message, Matcher m, Language lg) {
         //On check si la personne a bien les droits pour exécuter cette commande
         if (isUserHasEnoughRights(message)) {
             String value = m.group(1);

@@ -4,9 +4,10 @@ import commands.model.FetchCommand;
 import data.Guild;
 import data.OrderUser;
 import data.ServerDofus;
+import discord4j.common.util.Snowflake;
+import discord4j.core.event.domain.message.MessageCreateEvent;
 import discord4j.core.object.entity.Member;
 import discord4j.core.object.entity.Message;
-import discord4j.core.object.util.Snowflake;
 import discord4j.core.spec.EmbedCreateSpec;
 import enums.City;
 import enums.Language;
@@ -48,7 +49,7 @@ public class AlignmentCommand extends FetchCommand {
     }
 
     @Override
-    public void request(Message message, Matcher m, Language lg) {
+    public void request(MessageCreateEvent event, Message message, Matcher m, Language lg) {
         String content = m.group(1).trim();
         Optional<discord4j.core.object.entity.Guild> guild = message.getGuild().blockOptional();
         Optional<Member> user = message.getAuthorAsMember().blockOptional();

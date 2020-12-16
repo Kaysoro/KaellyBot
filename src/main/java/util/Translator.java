@@ -11,11 +11,13 @@ import com.optimaize.langdetect.text.TextObject;
 import data.ChannelLanguage;
 import data.Constants;
 import data.Guild;
-import discord4j.core.object.entity.GuildMessageChannel;
+import discord4j.common.util.Snowflake;
 import discord4j.core.object.entity.Message;
-import discord4j.core.object.entity.MessageChannel;
-import discord4j.core.object.entity.TextChannel;
-import discord4j.core.object.util.Snowflake;
+import discord4j.core.object.entity.channel.GuildMessageChannel;
+import discord4j.core.object.entity.channel.MessageChannel;
+import discord4j.core.object.entity.channel.TextChannel;
+import discord4j.discordjson.json.MessageData;
+import discord4j.rest.entity.RestChannel;
 import enums.Language;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -87,13 +89,31 @@ public class Translator {
                 List<Message> messages = channel.getMessagesBefore(Snowflake.of(Instant.now()))
                         .take(MAX_MESSAGES_READ).collectList().blockOptional().orElse(Collections.emptyList());
                 for (Message message : messages) {
-                    String content = message.getContent()
-                            .map(s -> s.replaceAll(":\\w+:", "").trim()).orElse("");
+                    String content = message.getContent().replaceAll(":\\w+:", "").trim();
                     if (content.length() > MAX_CHARACTER_ACCEPTANCE)
                         result.add(content);
                 }
             } catch (Exception e){
                 LOG.warn("Impossible to gather data from " + channel.getId().asString());
+            }
+        }
+        return result;
+    }
+
+    private static List<String> getReformatedMessages(RestChannel channel){
+        List<String> result = new ArrayList<>();
+
+        if (channel != null) {
+            try {
+                List<MessageData> messages = channel.getMessagesBefore(Snowflake.of(Instant.now()))
+                        .take(MAX_MESSAGES_READ).collectList().blockOptional().orElse(Collections.emptyList());
+                for (MessageData message : messages) {
+                    String content = message.content().replaceAll(":\\w+:", "").trim();
+                    if (content.length() > MAX_CHARACTER_ACCEPTANCE)
+                        result.add(content);
+                }
+            } catch (Exception e){
+                LOG.warn("Impossible to gather data from rest channel");
             }
         }
         return result;
@@ -121,6 +141,35 @@ public class Translator {
      * @return Langue majoritaire (ou Constants.defaultLanguage si non trouvée)
      */
     public static Language detectLanguage(TextChannel channel){
+        Language result = Constants.defaultLanguage;
+        Map<Language, LanguageOccurrence> languages = new HashMap<>();
+        for(Language lang : Language.values())
+            languages.put(lang, LanguageOccurrence.of(lang));
+
+        List<String> sources = getReformatedMessages(channel);
+        for (String source : sources)
+            languages.get(getLanguageFrom(source)).increment();
+
+        int longest = languages.entrySet().stream()
+                .map(Map.Entry::getValue)
+                .mapToInt(LanguageOccurrence::getOccurrence)
+                .max()
+                .orElse(-1);
+
+        if (longest > 0){
+            List<Language> languagesSelected = languages.entrySet().stream()
+                    .map(Map.Entry::getValue)
+                    .filter(lo -> lo.getOccurrence() == longest)
+                    .map(lo -> lo.getLanguage())
+                    .collect(Collectors.toList());
+            if (! languagesSelected.contains(result))
+                return languagesSelected.get(0);
+        }
+
+        return result;
+    }
+
+    public static Language detectLanguage(RestChannel channel){
         Language result = Constants.defaultLanguage;
         Map<Language, LanguageOccurrence> languages = new HashMap<>();
         for(Language lang : Language.values())
