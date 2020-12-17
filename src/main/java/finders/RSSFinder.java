@@ -143,14 +143,23 @@ public class RSSFinder {
 
                         for (RSS rss : rssFeeds)
                             if (rss.getDate() > finder.getLastRSS()) {
-                                chan.createMessage(rss.decorateRestEmbedObject(lg)).subscribe();
+                                chan.createMessage(rss.decorateRestEmbedObject(lg))
+                                        .doOnError(error -> {
+                                            if (error instanceof ClientException){
+                                                LOG.warn("RSSFinder: no access on " + finder.getChan());
+                                                finder.removeToDatabase();
+                                            }
+                                            else LOG.error("RSSFinder", error);
+                                        })
+                                        .subscribe();
                                 lastRSS = rss.getDate();
                             }
 
                         if (lastRSS != -1)
                             finder.setLastRSS(lastRSS);
                     } catch(ClientException e){
-                        LOG.warn("RSSFinder: no access on " + finder.chan);
+                        LOG.warn("RSSFinder: no access on " + finder.getChan());
+                        finder.removeToDatabase();
                     } catch(Exception e){
                         Reporter.report(e);
                         LOG.error("RSSFinder", e);

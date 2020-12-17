@@ -7,9 +7,11 @@ import discord4j.discordjson.json.EmbedData;
 import discord4j.discordjson.json.EmbedImageData;
 import discord4j.discordjson.json.EmbedThumbnailData;
 import discord4j.rest.entity.RestChannel;
+import discord4j.rest.http.client.ClientException;
 import enums.Language;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import reactor.core.publisher.Mono;
 import util.ClientConfig;
 import data.Constants;
 import finders.TwitterFinder;
@@ -42,10 +44,20 @@ public class TwitterListener extends StatusAdapter {
             for (TwitterFinder twitterFinder : TwitterFinder.getTwitterChannels().values())
                 try {
                     RestChannel channel = ClientConfig.DISCORD().getChannelById(Snowflake.of(twitterFinder.getChannelId()));
-                    if (channel != null && Translator.detectLanguage(channel).equals(language)){
-                        channel.createMessage(createEmbedFor(status)).subscribe();
+                    if (Translator.detectLanguage(channel).equals(language)){
+                        channel.createMessage(createEmbedFor(status))
+                                .doOnError(error -> {
+                                    if (error instanceof ClientException){
+                                        LOG.warn("TwitterFinder: no access on " + twitterFinder.getChannelId());
+                                        twitterFinder.removeToDatabase();
+                                    }
+                                    else LOG.error("onStatus", error);
+                                })
+                                .subscribe();
                     }
-
+                } catch(ClientException e){
+                    LOG.warn("TwitterFinder: no access on " + twitterFinder.getChannelId());
+                    twitterFinder.removeToDatabase();
                 } catch(Exception e){
                     LOG.error("onStatus", e);
                 }
@@ -59,7 +71,7 @@ public class TwitterListener extends StatusAdapter {
                         .iconUrl(status.getUser().getMiniProfileImageURL()).build())
                 .title("Tweet")
                 .url("https://twitter.com/" + status.getUser().getScreenName() + "/status/" + status.getId())
-                .image(status.getMediaEntities().length > 0 ? EmbedImageData.builder().url(status.getMediaEntities()[0].getMediaURL()).build() : null)
+                .image(status.getMediaEntities().length > 0 ? EmbedImageData.builder().url(status.getMediaEntities()[0].getMediaURL()).build() : EmbedImageData.builder().build())
                 .description(status.getText())
                 .thumbnail(EmbedThumbnailData.builder().url(Constants.twitterIcon).build())
                 .build();
