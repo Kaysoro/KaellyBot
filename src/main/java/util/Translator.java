@@ -179,35 +179,6 @@ public class Translator {
         return result;
     }
 
-    public static Language detectLanguage(RestChannel channel){
-        Language result = Constants.defaultLanguage;
-        Map<Language, LanguageOccurrence> languages = new HashMap<>();
-        for(Language lang : Language.values())
-            languages.put(lang, LanguageOccurrence.of(lang));
-
-        List<String> sources = getReformatedMessages(channel);
-        for (String source : sources)
-            languages.get(getLanguageFrom(source)).increment();
-
-        int longest = languages.entrySet().stream()
-                .map(Map.Entry::getValue)
-                .mapToInt(LanguageOccurrence::getOccurrence)
-                .max()
-                .orElse(-1);
-
-        if (longest > 0){
-            List<Language> languagesSelected = languages.entrySet().stream()
-                    .map(Map.Entry::getValue)
-                    .filter(lo -> lo.getOccurrence() == longest)
-                    .map(lo -> lo.getLanguage())
-                    .collect(Collectors.toList());
-            if (! languagesSelected.contains(result))
-                return languagesSelected.get(0);
-        }
-
-        return result;
-    }
-
     /**
      * Fournit un libellé dans la langue choisi, pour un code donné
      * @param lang Language du libellé

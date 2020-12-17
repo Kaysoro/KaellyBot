@@ -44,7 +44,7 @@ public class TwitterListener extends StatusAdapter {
             for (TwitterFinder twitterFinder : TwitterFinder.getTwitterChannels().values())
                 try {
                     RestChannel channel = ClientConfig.DISCORD().getChannelById(Snowflake.of(twitterFinder.getChannelId()));
-                    if (Translator.detectLanguage(channel).equals(language)){
+                    if (Translator.getLanguageFrom(channel).equals(language)){
                         channel.createMessage(createEmbedFor(status))
                                 .doOnError(error -> {
                                     if (error instanceof ClientException){
