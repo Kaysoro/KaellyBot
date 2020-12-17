@@ -116,6 +116,7 @@ public class ClientConfig {
                 .setInitialStatus(ignored -> Presence.online(Activity.watching(Constants.discordInvite)))
                 .setMemberRequestFilter(MemberRequestFilter.none())
                 .withGateway(client -> Mono.when(
+                        readyListener(client),
                         guildCreateListener(client),
                         guildUpdateListener(client),
                         guildDeleteListener(client),
