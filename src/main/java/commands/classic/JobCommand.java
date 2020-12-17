@@ -4,9 +4,10 @@ import commands.model.AbstractCommand;
 import data.Guild;
 import data.JobUser;
 import data.ServerDofus;
+import discord4j.common.util.Snowflake;
+import discord4j.core.event.domain.message.MessageCreateEvent;
 import discord4j.core.object.entity.Member;
 import discord4j.core.object.entity.Message;
-import discord4j.core.object.util.Snowflake;
 import discord4j.core.spec.EmbedCreateSpec;
 import enums.Job;
 import enums.Language;
@@ -39,7 +40,7 @@ public class JobCommand extends AbstractCommand {
     }
 
     @Override
-    protected void request(Message message, Matcher m, Language lg) {
+    protected void request(MessageCreateEvent event, Message message, Matcher m, Language lg) {
         String content = m.group(1).trim().replaceAll(",", "");
 
         // Filter Initialisation

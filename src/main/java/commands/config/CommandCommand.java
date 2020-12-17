@@ -5,6 +5,7 @@ import commands.model.AbstractCommand;
 import commands.model.Command;
 import data.CommandForbidden;
 import data.Guild;
+import discord4j.core.event.domain.message.MessageCreateEvent;
 import discord4j.core.object.entity.Message;
 import enums.Language;
 import exceptions.*;
@@ -30,7 +31,7 @@ public class CommandCommand extends AbstractCommand {
     }
 
     @Override
-    public void request(Message message, Matcher m, Language lg) {
+    public void request(MessageCreateEvent event, Message message, Matcher m, Language lg) {
         if (isUserHasEnoughRights(message)) {
             Guild guild = Guild.getGuild(message.getGuild().block());
             List<Command> potentialCmds = new ArrayList<>();

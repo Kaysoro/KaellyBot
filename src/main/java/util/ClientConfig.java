@@ -1,14 +1,24 @@
 package util;
 
+import data.Constants;
 import discord4j.core.DiscordClient;
 import discord4j.core.DiscordClientBuilder;
+import discord4j.core.GatewayDiscordClient;
+import discord4j.core.event.domain.guild.GuildCreateEvent;
+import discord4j.core.event.domain.guild.GuildDeleteEvent;
+import discord4j.core.event.domain.guild.GuildUpdateEvent;
 import discord4j.core.event.domain.lifecycle.ReadyEvent;
-import discord4j.core.shard.ShardingClientBuilder;
+import discord4j.core.event.domain.message.MessageCreateEvent;
+import discord4j.core.object.presence.Activity;
+import discord4j.core.object.presence.Presence;
+import discord4j.core.shard.MemberRequestFilter;
+import discord4j.gateway.intent.Intent;
+import discord4j.gateway.intent.IntentSet;
 import io.sentry.Sentry;
-import listeners.ReadyListener;
+import listeners.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 import twitter4j.TwitterStream;
 import twitter4j.TwitterStreamFactory;
 import twitter4j.conf.ConfigurationBuilder;
@@ -25,7 +35,7 @@ public class ClientConfig {
     private static ClientConfig instance = null;
     private final static Logger LOG = LoggerFactory.getLogger(ClientConfig.class);
     private final static String FILENAME = "config.properties";
-    private Flux<DiscordClient> DISCORD;
+    private DiscordClient DISCORD;
     private TwitterStream TWITTER;
 
     private ClientConfig(){
@@ -41,19 +51,10 @@ public class ClientConfig {
             prop.load(file);
 
             try {
-                DISCORD = new ShardingClientBuilder(prop.getProperty("discord.token"))
-                        .build()
-                        .map(DiscordClientBuilder::build)
-                        .cache();
-
-                ReadyListener readyListener = new ReadyListener();
-
-                DISCORD.flatMap(client -> client.getEventDispatcher().on(ReadyEvent.class))
-                        .subscribe(event -> readyListener.onReady(event.getClient()));
-
+                DISCORD = DiscordClient.create(prop.getProperty("discord.token"));
             } catch(Throwable e){
-                    LOG.error("Impossible de se connecter à Discord : verifiez votre token dans "
-                            + FILENAME + " ainsi que votre connexion.");
+                LOG.error("Impossible de se connecter à Discord : verifiez votre token dans "
+                        + FILENAME + " ainsi que votre connexion.");
             }
 
             if (! prop.get("sentry.dsn").equals(""))
@@ -102,19 +103,62 @@ public class ClientConfig {
         return getInstance().TWITTER;
     }
 
-    public static Flux<DiscordClient> DISCORD(String path) {
-        return getInstance(path).DISCORD;
-    }
-
-    public static Flux<DiscordClient> DISCORD() {
+    public static DiscordClient DISCORD() {
         return getInstance().DISCORD;
     }
 
-    public static void loginDiscord(){
-        DISCORD().flatMap(DiscordClient::login).blockLast();
+    public void loginDiscord(){
+        DISCORD().gateway()
+                .setEnabledIntents(IntentSet.of(
+                        Intent.GUILDS,
+                        Intent.GUILD_MEMBERS,
+                        Intent.GUILD_MESSAGES,
+                        Intent.GUILD_MESSAGE_REACTIONS,
+                        Intent.DIRECT_MESSAGES))
+                .setInitialStatus(ignored -> Presence.online(Activity.watching(Constants.discordInvite)))
+                .setMemberRequestFilter(MemberRequestFilter.none())
+                .withGateway(client -> Mono.when(
+                        readyListener(client),
+                        guildCreateListener(client),
+                        guildUpdateListener(client),
+                        guildDeleteListener(client),
+                        commandListener(client)))
+                .block();
     }
 
-    public static void loginDiscord(String path){
-        DISCORD(path).flatMap(DiscordClient::login).blockLast();
+    private Mono<Void> commandListener(GatewayDiscordClient client){
+        final MessageListener listener = new MessageListener();
+        return client.getEventDispatcher().on(MessageCreateEvent.class)
+                .flatMap(listener::onReady)
+                .then();
+    }
+
+    private Mono<Void> guildCreateListener(GatewayDiscordClient client){
+        final GuildCreateListener listener = new GuildCreateListener();
+        return client.getEventDispatcher().on(GuildCreateEvent.class)
+                .flatMap(listener::onReady)
+                .then();
+    }
+
+    private Mono<Void> guildUpdateListener(GatewayDiscordClient client){
+        final GuildUpdateListener listener = new GuildUpdateListener();
+        return client.getEventDispatcher().on(GuildUpdateEvent.class)
+                .flatMap(listener::onReady)
+                .then();
+    }
+
+    private Mono<Void> guildDeleteListener(GatewayDiscordClient client){
+        final GuildLeaveListener listener = new GuildLeaveListener();
+        return client.getEventDispatcher().on(GuildDeleteEvent.class)
+                .filter(event -> (! event.isUnavailable()))
+                .flatMap(listener::onReady)
+                .then();
+    }
+
+    private Mono<Void> readyListener(GatewayDiscordClient client){
+        final ReadyListener listener = new ReadyListener();
+        return client.getEventDispatcher().on(ReadyEvent.class)
+                .flatMap(listener::onReady)
+                .then();
     }
 }

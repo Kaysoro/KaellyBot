@@ -312,8 +312,6 @@ class CommandPatternTest {
         assertTrue(pattern.matcher(Constants.prefixCommand + "stats").find());
         assertTrue(pattern.matcher(Constants.prefixCommand + "stats -g").find());
         assertTrue(pattern.matcher(Constants.prefixCommand + "stats -g 200").find());
-        assertTrue(pattern.matcher(Constants.prefixCommand + "stats -cmd").find());
-        assertTrue(pattern.matcher(Constants.prefixCommand + "stats -cmd 200").find());
         assertTrue(pattern.matcher(Constants.prefixCommand + "stats -hist").find());
     }
 }

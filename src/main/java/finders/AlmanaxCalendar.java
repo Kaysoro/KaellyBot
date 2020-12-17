@@ -1,8 +1,10 @@
 package finders;
 
 import data.Almanax;
-import discord4j.core.object.entity.TextChannel;
-import discord4j.core.object.util.Snowflake;
+import discord4j.common.util.Snowflake;
+import discord4j.discordjson.json.EmbedData;
+import discord4j.rest.entity.RestChannel;
+import discord4j.rest.http.client.ClientException;
 import enums.Language;
 import reactor.core.publisher.Flux;
 import util.*;
@@ -19,6 +21,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -45,13 +48,13 @@ public class AlmanaxCalendar {
 
             scheduler.scheduleAtFixedRate(() -> {
                 boolean success = false;
-                Map<Language, Almanax> almanax = new HashMap<>();
+                Map<Language, EmbedData> almanax = new HashMap<>();
 
                 while(!success)
                     try {
                         almanax.clear();
                         for(Language lg : Language.values())
-                            almanax.put(lg, Almanax.get(lg, new Date()));
+                            almanax.put(lg, Almanax.get(lg, new Date()).decorateRestEmbedObject(lg));
                         success = true;
                     } catch (IOException e) {
                         ExceptionManager.manageSilentlyIOException(e);
@@ -61,22 +64,25 @@ public class AlmanaxCalendar {
                         }
                     }
 
-                    for(AlmanaxCalendar calendar : getAlmanaxCalendars().values())
-                        try {
-                            List<TextChannel> chans = ClientConfig.DISCORD()
-                                    .flatMap(client -> client.getChannelById(Snowflake.of(calendar.chan)))
-                                    .distinct()
-                                    .filter(channel -> channel instanceof TextChannel)
-                                    .map(channel -> (TextChannel) channel)
-                                    .collectList().blockOptional().orElse(Collections.emptyList());
-
-                            for(TextChannel chan : chans) {
-                                Language lg = Translator.getLanguageFrom(chan);
-                                chan.createEmbed(spec -> almanax.get(lg).decorateMoreEmbedObject(spec, lg)).subscribe();
-                            }
-                        } catch(Exception e){
-                            LOG.error("AlmanaxCalendar", e);
-                        }
+                for(AlmanaxCalendar calendar : getAlmanaxCalendars().values()) {
+                    try {
+                        RestChannel chan = ClientConfig.DISCORD().getChannelById(Snowflake.of(calendar.chan));
+                        Language lg = Translator.getLanguageFrom(chan);
+                        chan.createMessage(almanax.get(lg))
+                                .doOnError(error -> {
+                                    if (error instanceof ClientException) {
+                                        LOG.warn("AlmanaxCalendar: no access on " + calendar.getChan());
+                                        calendar.removeToDatabase();
+                                    } else LOG.error("AlmanaxCalendar", error);
+                                })
+                                .subscribe();
+                    } catch (ClientException e) {
+                        LOG.warn("AlmanaxCalendar: no access on " + calendar.getChan());
+                        calendar.removeToDatabase();
+                    } catch (Exception e) {
+                        LOG.error("AlmanaxCalendar", e);
+                    }
+                }
 
             }, firstDelay, period, TimeUnit.MINUTES);
         }
@@ -119,7 +125,7 @@ public class AlmanaxCalendar {
 
     public synchronized static Map<String, AlmanaxCalendar> getAlmanaxCalendars(){
         if (almanaxCalendar == null){
-            almanaxCalendar = new HashMap<>();
+            almanaxCalendar = new ConcurrentHashMap<>();
 
             Connexion connexion = Connexion.getInstance();
             Connection connection = connexion.getConnection();

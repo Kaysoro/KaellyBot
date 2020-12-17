@@ -1,6 +1,9 @@
 package data;
 
 import discord4j.core.spec.EmbedCreateSpec;
+import discord4j.discordjson.json.EmbedData;
+import discord4j.discordjson.json.EmbedFieldData;
+import discord4j.discordjson.json.EmbedImageData;
 import enums.Language;
 import org.apache.commons.lang3.time.DateUtils;
 import org.jsoup.nodes.Document;
@@ -43,7 +46,6 @@ public class Almanax implements Embedded{
     public void decorateEmbedObject(EmbedCreateSpec spec, Language lg) {
         spec.setTitle(Translator.getLabel(lg, "almanax.embed.title.1") + " " + day)
             .setUrl(Translator.getLabel(lg, "almanax.url") + day + "?game=dofustouch")
-            .setColor(Color.GRAY)
             .setThumbnail(ressourceURL)
             .addField(Translator.getLabel(lg, "almanax.embed.bonus"), bonus, true)
             .addField(Translator.getLabel(lg, "almanax.embed.offrande"), offrande, true);
@@ -54,10 +56,20 @@ public class Almanax implements Embedded{
         spec.setTitle(Translator.getLabel(lg, "almanax.embed.title.1") + " " + day)
             .setUrl(Translator.getLabel(lg, "almanax.url") + day + "?game=dofustouch")
             .setDescription(quest)
-            .setColor(Color.GRAY)
             .setImage(ressourceURL)
             .addField(Translator.getLabel(lg, "almanax.embed.bonus"), bonus, true)
             .addField(Translator.getLabel(lg, "almanax.embed.offrande"), offrande, true);
+    }
+
+    public EmbedData decorateRestEmbedObject(Language lg){
+        return EmbedData.builder()
+                .title(Translator.getLabel(lg, "almanax.embed.title.1") + " " + day)
+                .url(Translator.getLabel(lg, "almanax.url") + day)
+                .description(quest)
+                .image(EmbedImageData.builder().url(ressourceURL).build())
+                .addField(EmbedFieldData.builder().name(Translator.getLabel(lg, "almanax.embed.bonus")).value(bonus).inline(true).build())
+                .addField(EmbedFieldData.builder().name(Translator.getLabel(lg, "almanax.embed.offrande")).value(offrande).inline(true).build())
+                .build();
     }
 
     public static void decorateGroupedObject(EmbedCreateSpec spec, Language lg, Date day, int occurrence) throws IOException {
@@ -66,8 +78,7 @@ public class Almanax implements Embedded{
         String title = Translator.getLabel(lg, "almanax.embed.title.1") + " " + discordToBot.format(firstDate) +
                 (occurrence > 1 ? " " + Translator.getLabel(lg, "almanax.embed.title.2") + " " + discordToBot.format(lastDate) : "");
 
-        spec.setTitle(title)
-            .setColor(Color.GRAY);
+        spec.setTitle(title);
 
         for (int i = 1; i <= occurrence; i++) {
             firstDate = DateUtils.addDays(new Date(), i);

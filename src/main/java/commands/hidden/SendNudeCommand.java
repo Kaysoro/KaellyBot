@@ -1,9 +1,10 @@
 package commands.hidden;
 
 import commands.model.AbstractCommand;
+import discord4j.core.event.domain.message.MessageCreateEvent;
 import discord4j.core.object.entity.Message;
-import discord4j.core.object.entity.PrivateChannel;
-import discord4j.core.object.entity.TextChannel;
+import discord4j.core.object.entity.channel.PrivateChannel;
+import discord4j.core.object.entity.channel.TextChannel;
 import enums.Language;
 import enums.Nude;
 import exceptions.BasicDiscordException;
@@ -25,12 +26,11 @@ public class SendNudeCommand extends AbstractCommand {
     }
 
     @Override
-    public void request(Message message, Matcher m, Language lg) {
+    public void request(MessageCreateEvent event, Message message, Matcher m, Language lg) {
         if (message.getChannel().blockOptional().map(chan -> chan instanceof PrivateChannel).orElse(false)
                 || message.getChannel().blockOptional().map(chan -> ((TextChannel) chan).isNsfw()).orElse(false)){
             message.getChannel().flatMap(chan -> chan.createEmbed(spec -> {
                 spec.setTitle(Translator.getLabel(lg, "sendnude.title"))
-                        .setColor(PINK_COLOR)
                         .setFooter(Translator.getLabel(lg, "sendnude.author")
                                 .replace("{author}", Nude.MOAM.getAuthor())
                                 .replace("{position}", "1")

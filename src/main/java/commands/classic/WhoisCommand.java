@@ -3,6 +3,7 @@ package commands.classic;
 import commands.model.AbstractCommand;
 import data.Character;
 import data.ServerDofus;
+import discord4j.core.event.domain.message.MessageCreateEvent;
 import discord4j.core.object.entity.Message;
 import enums.Language;
 import org.slf4j.Logger;
@@ -43,7 +44,7 @@ public class WhoisCommand extends AbstractCommand {
     }
 
     @Override
-    public void request(Message message, Matcher m, Language lg) {
+    public void request(MessageCreateEvent event, Message message, Matcher m, Language lg) {
         String pseudo = m.group(2).trim().toLowerCase();
         ServerDofus server = null;
         StringBuilder url;

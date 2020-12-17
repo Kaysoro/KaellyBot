@@ -5,8 +5,9 @@ import commands.model.AbstractCommand;
 import commands.model.Command;
 import data.Constants;
 import data.Guild;
+import discord4j.core.event.domain.message.MessageCreateEvent;
 import discord4j.core.object.entity.Message;
-import discord4j.core.object.entity.PrivateChannel;
+import discord4j.core.object.entity.channel.PrivateChannel;
 import enums.Language;
 import exceptions.DiscordException;
 import exceptions.NotFoundDiscordException;
@@ -31,7 +32,7 @@ public class HelpCommand extends AbstractCommand {
     }
 
     @Override
-    public void request(Message message, Matcher m, Language lg) {
+    public void request(MessageCreateEvent event, Message message, Matcher m, Language lg) {
         String prefix = getPrefixMdEscaped(message);
         StringBuilder st = new StringBuilder();
         List<String> messages = new ArrayList<>();

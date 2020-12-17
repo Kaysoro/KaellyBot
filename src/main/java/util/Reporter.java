@@ -1,8 +1,8 @@
 package util;
 
-import discord4j.core.object.entity.Channel;
 import discord4j.core.object.entity.Guild;
 import discord4j.core.object.entity.User;
+import discord4j.core.object.entity.channel.Channel;
 import io.sentry.Sentry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -107,7 +107,7 @@ public class Reporter {
             if (user != null)
                 Sentry.getContext().addTag(USER, user.getId().asString() + " - " + user.getUsername());
             if (message != null)
-                Sentry.getContext().addTag(MESSAGE, message.getContent().orElse(""));
+                Sentry.getContext().addTag(MESSAGE, message.getContent());
 
             Sentry.capture(exception);
 

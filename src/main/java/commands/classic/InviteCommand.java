@@ -2,14 +2,14 @@ package commands.classic;
 
 import commands.model.AbstractCommand;
 import data.Constants;
+import discord4j.core.event.domain.message.MessageCreateEvent;
 import discord4j.core.object.entity.ApplicationInfo;
 import discord4j.core.object.entity.Message;
 import discord4j.core.object.entity.User;
-import discord4j.core.object.util.Image;
+import discord4j.rest.util.Image;
 import enums.Language;
 import util.Translator;
 
-import java.awt.*;
 import java.util.Optional;
 import java.util.regex.Matcher;
 
@@ -26,7 +26,7 @@ public class InviteCommand extends AbstractCommand {
     }
 
     @Override
-    public void request(Message message, Matcher m, Language lg) {
+    public void request(MessageCreateEvent event, Message message, Matcher m, Language lg) {
         Optional<ApplicationInfo> appInfo = message.getClient().getApplicationInfo().blockOptional();
 
         if (appInfo.isPresent()) {
@@ -36,8 +36,7 @@ public class InviteCommand extends AbstractCommand {
                     .createEmbed(spec -> spec.setTitle(Translator.getLabel(lg, "about.title")
                             .replace("{name}", Constants.name)
                             .replace("{version}", Constants.version))
-                            .setColor(Color.GRAY)
-                            .setThumbnail(appInfo.get().getIcon(Image.Format.PNG).orElse(null))
+                            .setThumbnail(appInfo.get().getIconUrl(Image.Format.PNG).orElse(null))
                             .setAuthor(author.map(User::getUsername).orElse(authorName), null,
                                     author.map(User::getAvatarUrl).orElse(authorAvatar))
                             .addField(Translator.getLabel(lg, "about.invite.title"),

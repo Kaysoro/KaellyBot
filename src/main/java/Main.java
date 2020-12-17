@@ -13,6 +13,6 @@ public class Main {
                 + " for " + Constants.game.getName());
         LoggerFactory.getLogger(Main.class).info("=======================================================");
 
-        ClientConfig.loginDiscord();
+        ClientConfig.getInstance().loginDiscord();
     }
 }

@@ -1,6 +1,7 @@
 package commands.classic;
 
 import commands.model.AbstractCommand;
+import discord4j.core.event.domain.message.MessageCreateEvent;
 import discord4j.core.object.entity.Message;
 import enums.Dungeon;
 import enums.Language;
@@ -28,7 +29,7 @@ public class RandomCommand extends AbstractCommand {
     }
 
     @Override
-    public void request(Message message, Matcher m, Language lg) {
+    public void request(MessageCreateEvent event, Message message, Matcher m, Language lg) {
         Random r = new Random();
         Matcher tmp;
 

@@ -39,7 +39,6 @@ public enum AnkamaBug {
                 .setDescription(Translator.getLabel(lg, "ankama.bug.description") + "```" + getLabel(lg)
                         + "```\n" + Translator.getLabel(lg, "ankama.bug.duration")
                         .replace("{days}", String.valueOf(getDuration())))
-                .setColor(Color.RED)
                 .setImage("https://s.ankama.com/www/static.ankama.com/dofus/ng/modules/mmorpg/encyclopedia/no-result.png")
                 .setFooter(bible[new Random().nextInt(bible.length)], null);
     }

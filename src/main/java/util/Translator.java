@@ -11,11 +11,12 @@ import com.optimaize.langdetect.text.TextObject;
 import data.ChannelLanguage;
 import data.Constants;
 import data.Guild;
-import discord4j.core.object.entity.GuildMessageChannel;
+import discord4j.common.util.Snowflake;
 import discord4j.core.object.entity.Message;
-import discord4j.core.object.entity.MessageChannel;
-import discord4j.core.object.entity.TextChannel;
-import discord4j.core.object.util.Snowflake;
+import discord4j.core.object.entity.channel.GuildMessageChannel;
+import discord4j.core.object.entity.channel.MessageChannel;
+import discord4j.core.object.entity.channel.TextChannel;
+import discord4j.rest.entity.RestChannel;
 import enums.Language;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -74,6 +75,17 @@ public class Translator {
         return result;
     }
 
+    public static Language getLanguageFrom(RestChannel channel) {
+        Guild guild = Guild.getGuilds().get(channel.getData().block().guildId().get());
+        Language result = guild.getLanguage();
+
+        ChannelLanguage channelLanguage = ChannelLanguage.getChannelLanguages().get(Long.parseLong(channel.getData().block().id()));
+        if (channelLanguage != null)
+            result = channelLanguage.getLang();
+
+        return result;
+    }
+
     /**
      * Génère une liste de source formatée à partir d'un salon textuel
      * @param channel Salon d'origine
@@ -87,8 +99,7 @@ public class Translator {
                 List<Message> messages = channel.getMessagesBefore(Snowflake.of(Instant.now()))
                         .take(MAX_MESSAGES_READ).collectList().blockOptional().orElse(Collections.emptyList());
                 for (Message message : messages) {
-                    String content = message.getContent()
-                            .map(s -> s.replaceAll(":\\w+:", "").trim()).orElse("");
+                    String content = message.getContent().replaceAll(":\\w+:", "").trim();
                     if (content.length() > MAX_CHARACTER_ACCEPTANCE)
                         result.add(content);
                 }

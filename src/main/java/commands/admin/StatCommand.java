@@ -2,9 +2,11 @@ package commands.admin;
 
 import commands.model.AbstractCommand;
 import discord4j.core.DiscordClient;
+import discord4j.core.event.domain.message.MessageCreateEvent;
 import discord4j.core.object.entity.Guild;
 import discord4j.core.object.entity.Message;
 import discord4j.core.spec.MessageCreateSpec;
+import discord4j.discordjson.json.GuildData;
 import enums.Language;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
@@ -41,24 +43,18 @@ public class StatCommand extends AbstractCommand {
                     .withLocale( Locale.FRANCE )
                     .withZone(ZoneId.systemDefault());
     private final static int GULD_LIMIT = 10;
-    private final static int CMD_LIMIT = 1;
 
     public StatCommand(){
-        super("stats","(\\s+-g(\\s+\\d+)?|\\s+-cmd(\\s+\\d+)?|\\s+-hist)?");
+        super("stats","(\\s+-g(\\s+\\d+)?|\\s+-hist)?");
         setAdmin(true);
     }
 
     @Override
-    public void request(Message message, Matcher m, Language lg) {
+    public void request(MessageCreateEvent event, Message message, Matcher m, Language lg) {
         if (m.group(1) == null || m.group(1).replaceAll("^\\s+", "").isEmpty()){
-            long totalGuild = ClientConfig.DISCORD()
-                    .flatMap(DiscordClient::getGuilds).distinct()
-                    .count().blockOptional().orElse(0L);
-
-            int totalUser = ClientConfig.DISCORD()
-                    .flatMap(DiscordClient::getGuilds).distinct()
-                    .map(Guild::getMemberCount)
-                    .map(count -> count.orElse(0))
+            long totalGuild = event.getClient().getGatewayResources().getStateView().getGuildStore().count().block();
+            int totalUser = event.getClient().getGatewayResources().getStateView().getGuildStore().values()
+                    .map(GuildData::memberCount)
                     .collect(Collectors.summingInt(Integer::intValue))
                     .blockOptional().orElse(0);
 
@@ -71,32 +67,21 @@ public class StatCommand extends AbstractCommand {
             int limit = GULD_LIMIT;
             if (m.group(2) != null) limit = Integer.parseInt(m.group(2).trim());
             StringBuilder st = new StringBuilder();
-            List<discord4j.core.object.entity.Guild> guilds = getBiggestGuilds(limit);
+            List<GuildData> guilds = event.getClient().getGatewayResources().getStateView().getGuildStore().values()
+                    .sort((guild1, guild2) -> guild2.memberCount() - guild1.memberCount())
+                    .take(limit)
+                    .collectList().block();
             int ladder = 1;
-            for(discord4j.core.object.entity.Guild guild : guilds)
-                st.append(ladder++).append(" : **").append(guild.getName()).append("**, ")
-                        .append(guild.getMemberCount().orElse(0)).append(" users\n");
+            for(GuildData guild : guilds)
+                st.append(ladder++).append(" : **").append(guild.name()).append("**, ")
+                        .append(guild.memberCount()).append(" users\n");
 
             message.getChannel().flatMap(chan -> chan.createMessage(st.toString())).subscribe();
         }
-        else if (m.group(1).matches("\\s+-cmd(\\s+\\d+)?")){
-            int limit = CMD_LIMIT;
-            if (m.group(3) != null) limit = Integer.parseInt(m.group(3).trim());
-            final int LIMIT = limit;
-
-            message.getChannel().flatMap(chan ->
-                chan.createMessage(spec ->
-                        decorateImageMessage(spec, getNumberCmdCalledPerCmd(LIMIT)))
-                        .then(chan.createMessage(spec ->
-                                decorateImageMessage(spec, getNumberCmdCalled(LIMIT))))
-                        .then(chan.createMessage(spec ->
-                                decorateImageMessage(spec, getForbiddenCommandsChart())))
-            ).subscribe();
-        }
         else if (m.group(1).matches("\\s+-hist"))
             message.getChannel().flatMap(chan -> chan.createMessage(spec ->
-                    decorateImageMessage(spec, getJoinTimeGuildsGraph())))
-            .subscribe();
+                    decorateImageMessage(spec, getJoinTimeGuildsGraph(event))))
+                    .subscribe();
     }
 
     private void decorateImageMessage(MessageCreateSpec spec, BufferedImage image){
@@ -113,31 +98,18 @@ public class StatCommand extends AbstractCommand {
 
     /**
      *
-     * @param limit nombre de guildes à afficher
-     * @return Liste des limit plus grandes guildes qui utilisent kaelly
-     */
-    private List<discord4j.core.object.entity.Guild> getBiggestGuilds(int limit){
-        return ClientConfig.DISCORD().flatMap(DiscordClient::getGuilds).distinct()
-                .sort((guild1, guild2) -> guild2.getMemberCount().orElse(0) - guild1.getMemberCount().orElse(0))
-                .take(limit)
-                .collectList().block();
-    }
-
-    /**
-     *
      * @return Graphique des arrivés des guildes utilisant kaelly
      */
-    private BufferedImage getJoinTimeGuildsGraph(){
-        List<discord4j.core.object.entity.Guild> guilds = ClientConfig.DISCORD()
-                .flatMap(DiscordClient::getGuilds).distinct()
-                .sort(Comparator.comparing(guild -> guild.getJoinTime().orElse(Instant.EPOCH)))
+    private BufferedImage getJoinTimeGuildsGraph(MessageCreateEvent event){
+        List<GuildData> guilds = event.getClient().getGatewayResources().getStateView().getGuildStore().values()
+                .sort(Comparator.comparing(guild -> DateTimeFormatter.ISO_OFFSET_DATE_TIME.parse(guild.joinedAt(), Instant::from)))
                 .collectList().blockOptional().orElse(Collections.emptyList());
 
         TimeSeriesCollection dataSet = new TimeSeriesCollection();
         TimeSeries series = new TimeSeries("data");
         int guildNumber = 1;
-        for(discord4j.core.object.entity.Guild guild : guilds)
-            series.addOrUpdate(new Day(Date.from(guild.getJoinTime().orElse(Instant.EPOCH))), guildNumber++);
+        for(GuildData guild : guilds)
+            series.addOrUpdate(new Day(Date.from(DateTimeFormatter.ISO_OFFSET_DATE_TIME.parse(guild.joinedAt(), Instant::from))), guildNumber++);
         dataSet.addSeries(series);
 
         JFreeChart chart = ChartFactory.createTimeSeriesChart(
@@ -163,47 +135,6 @@ public class StatCommand extends AbstractCommand {
 
         JFreeChart chart = ChartFactory.createPieChart(
                 "Commands called since " + FORMATTER.format(Instant.ofEpochMilli(System.currentTimeMillis() - period)),
-                dataSet, false, false, false);
-
-        return chart.createBufferedImage(1200, 700);
-    }
-
-    /**
-     *
-     * @return Graphe à propos des commandes les plus bloquées
-     */
-    private BufferedImage getForbiddenCommandsChart(){
-        List<CommandStatistics> stats = CommandStatistics.getStatisticsPerCommandForbidden();
-        DefaultPieDataset dataSet = new DefaultPieDataset();
-        for(CommandStatistics stat : stats)
-            dataSet.setValue(stat.getCommandName() + " (" + stat.getUse() + ")", stat.getUse());
-
-        JFreeChart chart = ChartFactory.createPieChart(
-                "Commands forbidden",
-                dataSet, false, false, false);
-
-        return chart.createBufferedImage(1200, 700);
-    }
-
-    /**
-     *
-     * @param limit nombre de jours d'appels de commande à afficher
-     * @return Liste des appels de commandes de kaelly par jour
-     */
-    private BufferedImage getNumberCmdCalled(int limit){
-        long period = Duration.ofDays(limit).toMillis();
-        List<CommandStatistics> stats = CommandStatistics.getStatistics(period);
-        TimeSeriesCollection dataSet = new TimeSeriesCollection();
-        TimeSeries series = new TimeSeries("data");
-
-        for(CommandStatistics stat : stats)
-            series.addOrUpdate(new Day(stat.getDate()), stat.getUse());
-        dataSet.addSeries(series);
-
-        JFreeChart chart = ChartFactory.createTimeSeriesChart(
-                "Commands called since " + FORMATTER.format(Instant.ofEpochMilli(System.currentTimeMillis() - period)),
-                "Date",
-                "Command Calls",
                 dataSet, false, false, false);
 
         return chart.createBufferedImage(1200, 700);

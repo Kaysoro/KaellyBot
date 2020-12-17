@@ -4,6 +4,7 @@ import commands.model.AbstractCommand;
 import data.Constants;
 import data.Guild;
 import data.ServerDofus;
+import discord4j.core.event.domain.message.MessageCreateEvent;
 import discord4j.core.object.entity.Message;
 import enums.Game;
 import enums.Language;
@@ -26,7 +27,7 @@ public class ServerCommand extends AbstractCommand {
     }
 
     @Override
-    public void request(Message message, Matcher m, Language lg) {
+    public void request(MessageCreateEvent event, Message message, Matcher m, Language lg) {
         Guild guild = Guild.getGuild(message.getGuild().block());
 
         if (m.group(1) != null){

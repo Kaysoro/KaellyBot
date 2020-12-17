@@ -2,6 +2,7 @@ package commands.classic;
 
 import commands.model.AbstractCommand;
 import data.Position;
+import discord4j.core.event.domain.message.MessageCreateEvent;
 import discord4j.core.object.entity.Message;
 import enums.Transport;
 import enums.Language;
@@ -19,7 +20,7 @@ public class DistanceCommand extends AbstractCommand {
     }
 
     @Override
-    public void request(Message message, Matcher m, Language lg) {
+    public void request(MessageCreateEvent event, Message message, Matcher m, Language lg) {
         Position position = new Position(Integer.parseInt(m.group(1)), Integer.parseInt(m.group(2)));
         StringBuilder st = new StringBuilder();
         Transport zaap = null;

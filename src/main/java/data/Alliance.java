@@ -51,8 +51,6 @@ public class Alliance implements Embedded {
         spec.setTitle(name)
             .setUrl(url)
             .setDescription(Translator.getLabel(lg, "alliance.desc"))
-
-            .setColor(Color.GRAY)
             .setThumbnail(littleSkinURL)
             .setImage(bigSkinURL)
 

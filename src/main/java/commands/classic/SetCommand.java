@@ -1,6 +1,7 @@
 package commands.classic;
 
 import commands.model.DofusRequestCommand;
+import discord4j.core.event.domain.message.MessageCreateEvent;
 import discord4j.core.object.entity.Message;
 import enums.Language;
 import exceptions.*;
@@ -29,7 +30,7 @@ public class SetCommand extends DofusRequestCommand {
     }
 
     @Override
-    public void request(Message message, Matcher m, Language lg) {
+    public void request(MessageCreateEvent event, Message message, Matcher m, Language lg) {
         if (isChannelHasExternalEmojisPermission(message)) {
             String normalName = Normalizer.normalize(m.group(2).trim(), Normalizer.Form.NFD)
                     .replaceAll("\\p{InCombiningDiacriticalMarks}+", "").toLowerCase();

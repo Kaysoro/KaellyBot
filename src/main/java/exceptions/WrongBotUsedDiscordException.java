@@ -33,7 +33,6 @@ public class WrongBotUsedDiscordException implements DiscordException {
                 channel.createEmbed(spec ->
                         spec.setTitle(Translator.getLabel(lg, "exception.wrong_bot_used"))
                                 .setDescription(st.toString())
-                                .setColor(Color.RED)
                                 .setImage(Constants.officialLogo)))
                 .subscribe();
 
