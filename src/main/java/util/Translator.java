@@ -131,7 +131,7 @@ public class Translator {
      * @param channel Salon textuel à étudier
      * @return Langue majoritaire (ou Constants.defaultLanguage si non trouvée)
      */
-    public static Language detectLanguage(TextChannel channel){
+    public static Language detectLanguage(GuildMessageChannel channel){
         Language result = Constants.defaultLanguage;
         Map<Language, LanguageOccurrence> languages = new HashMap<>();
         for(Language lang : Language.values())
@@ -141,17 +141,15 @@ public class Translator {
         for (String source : sources)
             languages.get(getLanguageFrom(source)).increment();
 
-        int longest = languages.entrySet().stream()
-                .map(Map.Entry::getValue)
+        int longest = languages.values().stream()
                 .mapToInt(LanguageOccurrence::getOccurrence)
                 .max()
                 .orElse(-1);
 
         if (longest > 0){
-            List<Language> languagesSelected = languages.entrySet().stream()
-                    .map(Map.Entry::getValue)
+            List<Language> languagesSelected = languages.values().stream()
                     .filter(lo -> lo.getOccurrence() == longest)
-                    .map(lo -> lo.getLanguage())
+                    .map(LanguageOccurrence::getLanguage)
                     .collect(Collectors.toList());
             if (! languagesSelected.contains(result))
                 return languagesSelected.get(0);

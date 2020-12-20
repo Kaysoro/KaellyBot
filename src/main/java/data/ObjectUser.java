@@ -4,6 +4,7 @@ import discord4j.core.object.Embed;
 import discord4j.core.spec.EmbedCreateSpec;
 import discord4j.rest.util.Image;
 import enums.Language;
+import org.apache.commons.lang3.StringUtils;
 import util.Translator;
 
 import java.util.ArrayList;
@@ -72,7 +73,7 @@ public abstract class ObjectUser {
                     spec.setTitle(Translator.getLabel(lg, prefix + ".list")
                             + (fieldsPerEmbed.size() > 1 ? " (" + (I + 1) + "/"
                             + fieldsPerEmbed.size() + ")" : ""))
-                            .setThumbnail(guild.getIconUrl(Image.Format.PNG).orElse(null));
+                            .setThumbnail(guild.getIconUrl(Image.Format.PNG).orElse(StringUtils.EMPTY));
 
                     List<String> texts = fieldsPerEmbed.get(I);
                     for (int j = 0; j < texts.size(); j++) {
@@ -87,7 +88,7 @@ public abstract class ObjectUser {
         }
         else
             embed.add(spec -> spec
-                    .setThumbnail(guild.getIconUrl(Image.Format.PNG).orElse(null))
+                    .setThumbnail(guild.getIconUrl(Image.Format.PNG).orElse(StringUtils.EMPTY))
                     .setDescription(Translator.getLabel(lg, prefix + ".empty"))
                     .setFooter(server.getName(), null));
 
