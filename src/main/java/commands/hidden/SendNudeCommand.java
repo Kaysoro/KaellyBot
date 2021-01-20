@@ -11,6 +11,7 @@ import exceptions.BasicDiscordException;
 import util.Translator;
 
 import java.awt.*;
+import java.util.Random;
 import java.util.regex.Matcher;
 
 /**
@@ -18,7 +19,7 @@ import java.util.regex.Matcher;
  */
 public class SendNudeCommand extends AbstractCommand {
 
-    private final static Color PINK_COLOR = new Color(255, 32, 128);
+    private static final Random RANDOM = new Random();
 
     public SendNudeCommand() {
         super("sendnude", "");
@@ -29,14 +30,18 @@ public class SendNudeCommand extends AbstractCommand {
     public void request(MessageCreateEvent event, Message message, Matcher m, Language lg) {
         if (message.getChannel().blockOptional().map(chan -> chan instanceof PrivateChannel).orElse(false)
                 || message.getChannel().blockOptional().map(chan -> ((TextChannel) chan).isNsfw()).orElse(false)){
-            message.getChannel().flatMap(chan -> chan.createEmbed(spec -> {
-                spec.setTitle(Translator.getLabel(lg, "sendnude.title"))
-                        .setFooter(Translator.getLabel(lg, "sendnude.author")
-                                .replace("{author}", Nude.MOAM.getAuthor())
-                                .replace("{position}", "1")
-                                .replace("{number}", "1"), null)
-                        .setImage(Nude.MOAM.getImage());
-            })).subscribe();
+            int position = RANDOM.nextInt(Nude.values().length);
+            Nude nude = Nude.values()[position];
+
+            message.getChannel().flatMap(chan -> chan.createEmbed(spec -> spec.setTitle(Translator.getLabel(lg, "sendnude.title"))
+                    .setDescription(Translator.getLabel(lg, "sendnude.author")
+                            .replace("{author}", nude.getAuthor())
+                            .replace("{url}", nude.getUrl()))
+                    .setColor(discord4j.rest.util.Color.PINK)
+                    .setFooter(Translator.getLabel(lg, "sendnude.footer")
+                            .replace("{position}", String.valueOf(position + 1))
+                            .replace("{number}", String.valueOf(Nude.values().length)), null)
+                    .setImage(nude.getImage()))).subscribe();
         }
         else // Exception NSFW
             BasicDiscordException.NO_NSFW_CHANNEL.throwException(message, this, lg);
