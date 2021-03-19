@@ -6,13 +6,15 @@ import lombok.Builder;
 import lombok.Value;
 
 @Value
-@JsonDeserialize(builder = AuthorDto.AuthorDtoBuilder.class)
-@Builder(builderClassName = "AuthorDtoBuilder", toBuilder = true)
-public class AuthorDto {
+@JsonDeserialize(builder = ServerDto.ServerDtoBuilder.class)
+@Builder(builderClassName = "ServerDtoBuilder", toBuilder = true)
+public class ServerDto {
 
+    String id;
     String name;
-    String platform;
+    String image;
+    Game game;
 
     @JsonPOJOBuilder(withPrefix = "")
-    public static class AuthorDtoBuilder {}
+    public static class ServerDtoBuilder {}
 }

@@ -11,16 +11,18 @@ import java.time.Instant;
 @JsonDeserialize(builder = PortalDto.PortalDtoBuilder.class)
 @Builder(builderClassName = "PortalDtoBuilder", toBuilder = true)
 public class PortalDto {
-    private String dimension;
-    private PositionDto position;
-    private Boolean isAvailable;
-    private Integer utilisation;
-    private Instant creationDate;
-    private AuthorDto creationAuthor;
-    private Instant lastUpdateDate;
-    private AuthorDto lastAuthorUpdate;
-    private TransportDto nearestZaap;
-    private TransportDto nearestTransportLimited;
+
+    ServerDto server;
+    DimensionDto dimension;
+    PositionDto position;
+    Boolean isAvailable;
+    Integer utilisation;
+    Instant creationDate;
+    AuthorDto creationAuthor;
+    Instant lastUpdateDate;
+    AuthorDto lastAuthorUpdate;
+    TransportDto nearestZaap;
+    TransportDto nearestTransportLimited;
 
     @JsonPOJOBuilder(withPrefix = "")
     public static class PortalDtoBuilder {}

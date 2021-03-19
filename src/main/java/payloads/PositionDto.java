@@ -11,14 +11,9 @@ import javax.validation.constraints.NotNull;
 @JsonDeserialize(builder = PositionDto.PositionDtoBuilder.class)
 @Builder(builderClassName = "PositionDtoBuilder", toBuilder = true)
 public class PositionDto {
-    private @NotNull Integer x;
-    private @NotNull Integer y;
+    @NotNull Integer x;
+    @NotNull Integer y;
 
     @JsonPOJOBuilder(withPrefix = "")
     public static class PositionDtoBuilder {}
-
-    @Override
-    public String toString(){
-        return "[" + x + ", " + y + "]";
-    }
 }

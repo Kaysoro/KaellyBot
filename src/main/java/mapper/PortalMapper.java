@@ -1,7 +1,7 @@
 package mapper;
 
 import discord4j.core.spec.EmbedCreateSpec;
-import enums.Dimension;
+import discord4j.rest.util.Color;
 import enums.Language;
 import org.apache.commons.lang3.time.DateUtils;
 import payloads.PortalDto;
@@ -15,10 +15,10 @@ public final class PortalMapper {
     private PortalMapper(){}
 
     public static void decorateSpec(EmbedCreateSpec spec, PortalDto portal, Language language){
-        Dimension dimension = Dimension.valueOfCaseUnsensitive(portal.getDimension(), language);
 
-        spec.setTitle(portal.getDimension())
-                .setThumbnail(dimension.getImage());
+        spec.setTitle(portal.getDimension().getName())
+                .setColor(Color.of(portal.getDimension().getColor()))
+                .setThumbnail(portal.getDimension().getImage());
 
         if (Boolean.TRUE.equals(portal.getIsAvailable()) && portal.getNearestZaap() != null
                 && portal.getPosition() != null && portal.getUtilisation() > 0){

@@ -4,11 +4,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider;
-import data.Constants;
 import data.ServerDofus;
 import enums.Dimension;
 import enums.Language;
 import payloads.PortalDto;
+import util.Authenticator;
 import util.ClientConfig;
 
 import javax.ws.rs.client.Client;
@@ -22,17 +22,21 @@ import static com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider.DEFAULT_A
 public class PortalFinder {
 
     private static final String API_BASE_URL = "/api/";
-    private Client client;
+    private static final String SERVER_DOMAIN = "servers/";
+    private static final String PORTAL_DOMAIN = "/portals/";
+    private final Client client;
 
     public PortalFinder() {
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.registerModule(new JavaTimeModule());
         objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
-        client = ClientBuilder.newClient().register(new JacksonJaxbJsonProvider(objectMapper, DEFAULT_ANNOTATIONS));
+        client = ClientBuilder.newClient().register(new JacksonJaxbJsonProvider(objectMapper, DEFAULT_ANNOTATIONS))
+                .register(new Authenticator(ClientConfig.KAELLY_PORTALS_LOGIN(), ClientConfig.KAELLY_PORTALS_PASSWORD()));
     }
 
     public List<PortalDto> getPositions(ServerDofus server, Language lg) {
-        return client.target(ClientConfig.KAELLY_PORTALS_URL() + API_BASE_URL + server.getName().replace("-","_") + "/portals")
+        return client.target(ClientConfig.KAELLY_PORTALS_URL() + API_BASE_URL + SERVER_DOMAIN
+                + server.getName().replace("-","_").toUpperCase() + PORTAL_DOMAIN)
                 .request(MediaType.APPLICATION_JSON)
                 .acceptLanguage(lg.getAbrev())
                 .get()
@@ -40,8 +44,8 @@ public class PortalFinder {
     }
 
     public PortalDto getPosition(ServerDofus server, Dimension dimension, Language lg) {
-        return client.target(ClientConfig.KAELLY_PORTALS_URL() + API_BASE_URL
-                + server.getName().replace("-","_") + "/portals?dimension=" + dimension.name())
+        return client.target(ClientConfig.KAELLY_PORTALS_URL() + API_BASE_URL+ SERVER_DOMAIN
+                + server.getName().replace("-","_").toUpperCase() + PORTAL_DOMAIN + dimension.name().toUpperCase())
                 .request(MediaType.APPLICATION_JSON)
                 .acceptLanguage(lg.getAbrev())
                 .get(PortalDto.class);
