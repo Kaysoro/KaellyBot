@@ -11,9 +11,9 @@ import enums.Donator;
 import enums.Language;
 import util.Translator;
 
-import java.awt.*;
 import java.util.Optional;
 import java.util.regex.Matcher;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static data.Constants.authorAvatar;
@@ -45,10 +45,11 @@ public class DonateCommand extends AbstractCommand {
                                 .setThumbnail(appInfo.get().getIconUrl(Image.Format.PNG).orElse(null))
                                 .setAuthor(author.map(User::getUsername).orElse(authorName), null,
                                         author.map(User::getAvatarUrl).orElse(authorAvatar));
-
-                        Stream.of(Donator.values()).forEach(donator -> spec.addField(donator.getName(),
-                                        Translator.getLabel(lg, "donator."
-                                                + donator.name().toLowerCase() + ".desc"), false));
+                        spec.addField(Translator.getLabel(lg, "donate.thanks"),
+                                Stream.of(Donator.values())
+                                        .map(Donator::getName)
+                                        .collect(Collectors.joining("**\n- **", "- **", "**")),
+                                false);
                     })).subscribe();
         }
     }

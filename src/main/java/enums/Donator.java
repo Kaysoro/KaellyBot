@@ -6,7 +6,8 @@ public enum Donator {
     ELDER_MASTER("Elder-Master#7684"),
     DARKRAI("Darkrai#8780"),
     DREAMSVOID("DreamsVoid#8802"),
-    SIID("! ༺ -Siid- ༻ !#0001");
+    SIID("! ༺ -Siid- ༻ !#0001"),
+    TYNAGMO("Tynagmo");
 
     private String name;
 
