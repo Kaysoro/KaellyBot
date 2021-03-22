@@ -5,6 +5,8 @@ import discord4j.rest.util.Color;
 import enums.Language;
 import org.apache.commons.lang3.time.DateUtils;
 import payloads.PortalDto;
+import payloads.PositionDto;
+import payloads.TransportDto;
 import util.Translator;
 
 import java.time.Duration;
@@ -23,7 +25,7 @@ public final class PortalMapper {
         if (Boolean.TRUE.equals(portal.getIsAvailable()) && portal.getNearestZaap() != null
                 && portal.getPosition() != null && portal.getUtilisation() > 0){
             spec.addField(Translator.getLabel(language, "portal.position"),
-                    "**" + portal.getPosition() + "**", true);
+                    "**" + getPosition(portal.getPosition()) + "**", true);
 
             // Utilisation
             spec.addField(Translator.getLabel(language, "portal.utilisation.title"),
@@ -35,16 +37,25 @@ public final class PortalMapper {
             if (portal.getNearestTransportLimited() != null)
                 spec.addField(Translator.getLabel(language, "portal.private_zaap")
                                 .replace("{transport}", portal.getNearestTransportLimited().getType()),
-                        portal.getNearestTransportLimited().toString(), false);
+                        getTransport(portal.getNearestTransportLimited()), false);
 
                 spec.addField(Translator.getLabel(language, "portal.zaap"),
-                        portal.getNearestZaap().toString(), false);
+                        getTransport(portal.getNearestZaap()), false);
 
             spec.setFooter(getDateInformation(portal, language),
                     "https://i.imgur.com/u2PUyt5.png");
         }
         else
             spec.setDescription(Translator.getLabel(language, "portal.unknown"));
+    }
+
+    private static String getPosition(PositionDto position){
+        return "[" + position.getX() + ", " + position.getY() + "]";
+    }
+
+    private static String getTransport(TransportDto transport){
+        return transport.getArea() + " (" + transport.getSubArea()
+                + ") **[" + transport.getPosition().getX() + ", " + transport.getPosition().getY() + "]**";
     }
 
     private static String getDateInformation(PortalDto portal, Language language){

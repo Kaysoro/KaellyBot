@@ -13,7 +13,7 @@ public class TransportDto {
     String area;
     String subArea;
     PositionDto position;
-    boolean isAvailableUnderConditions;
+    boolean availableUnderConditions;
 
     @JsonPOJOBuilder(withPrefix = "")
     public static class TransportDtoBuilder {}
