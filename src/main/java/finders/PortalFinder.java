@@ -36,7 +36,7 @@ public class PortalFinder {
 
     public List<PortalDto> getPositions(ServerDofus server, Language lg) {
         return client.target(ClientConfig.KAELLY_PORTALS_URL() + API_BASE_URL + SERVER_DOMAIN
-                + server.getName().replace("-","_").toUpperCase() + PORTAL_DOMAIN)
+                + server.getName().replaceAll("-","_").replaceAll("\\s+","_").toUpperCase() + PORTAL_DOMAIN)
                 .request(MediaType.APPLICATION_JSON)
                 .acceptLanguage(lg.getAbrev())
                 .get()
@@ -45,7 +45,7 @@ public class PortalFinder {
 
     public PortalDto getPosition(ServerDofus server, Dimension dimension, Language lg) {
         return client.target(ClientConfig.KAELLY_PORTALS_URL() + API_BASE_URL+ SERVER_DOMAIN
-                + server.getName().replace("-","_").toUpperCase() + PORTAL_DOMAIN + dimension.name().toUpperCase())
+                + server.getName().replaceAll("-","_").replaceAll("\\s+","_").toUpperCase() + PORTAL_DOMAIN + dimension.name().toUpperCase())
                 .request(MediaType.APPLICATION_JSON)
                 .acceptLanguage(lg.getAbrev())
                 .get(PortalDto.class);
