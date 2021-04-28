@@ -79,7 +79,7 @@ public class Translator {
         Guild guild = Guild.getGuilds().get(channel.getData().block().guildId().get());
         Language result = guild.getLanguage();
 
-        ChannelLanguage channelLanguage = ChannelLanguage.getChannelLanguages().get(Long.parseLong(channel.getData().block().id()));
+        ChannelLanguage channelLanguage = ChannelLanguage.getChannelLanguages().get(Long.parseLong(String.valueOf(channel.getData().block().id())));
         if (channelLanguage != null)
             result = channelLanguage.getLang();
 

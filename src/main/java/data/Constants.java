@@ -145,6 +145,11 @@ public class Constants {
     public final static long newsChan = 330475075381886976L;
 
     /**
+     * Almanax API URL
+     */
+    public final static String almanaxURL = "https://alm.dofusdu.de/{game}/{language}/{date}";
+
+    /**
      * Discord invite link
      */
     public final static String discordInvite = "https://discord.gg/VsrbrYC";
