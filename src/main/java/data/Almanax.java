@@ -8,8 +8,6 @@ import discord4j.discordjson.json.EmbedFieldData;
 import discord4j.discordjson.json.EmbedImageData;
 import enums.Language;
 import org.apache.commons.lang3.time.DateUtils;
-import org.apache.http.Header;
-import org.apache.http.HttpEntity;
 import org.apache.http.HttpHeaders;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -28,7 +26,6 @@ import util.Translator;
 
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.UriBuilder;
-import java.awt.*;
 import java.io.IOException;
 import java.net.URI;
 import java.text.DateFormat;
