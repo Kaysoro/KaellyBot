@@ -150,6 +150,11 @@ public class Constants {
     public final static String almanaxURL = "https://alm.dofusdu.de/{game}/{language}/{date}";
 
     /**
+     * Almanax Redis cache time to live for each cached day
+     */
+    public final static int almanaxCacheDaysTTL = 9;
+
+    /**
      * Discord invite link
      */
     public final static String discordInvite = "https://discord.gg/VsrbrYC";
