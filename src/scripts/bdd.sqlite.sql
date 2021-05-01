@@ -128,6 +128,7 @@ INSERT INTO "Server" ("name","id_dofus","id_sweet","game") VALUES ('Temporis VII
 INSERT INTO "Server" ("name","id_dofus","id_sweet","game") VALUES ('Temporis VIII','1','1','DOFUS');
 INSERT INTO "Server" ("name","id_dofus","id_sweet","game") VALUES ('Temporis IX','1','1','DOFUS');
 INSERT INTO "Server" ("name","id_dofus","id_sweet","game") VALUES ('Temporis X','1','1','DOFUS');
+INSERT INTO "Server" ("name","id_dofus","id_sweet","game") VALUES ('Temporis XI','1','1','DOFUS');
 INSERT INTO "Portal" ("name","url","color") VALUES ('Enutrosor','https://i.imgur.com/ssMAcx3.png',16777064);
 INSERT INTO "Portal" ("name","url","color") VALUES ('Srambad','https://i.imgur.com/jzpizTm.png',3097192);
 INSERT INTO "Portal" ("name","url","color") VALUES ('Xélorium','https://i.imgur.com/vfQhS5D.png',7229801);
