@@ -2,5 +2,6 @@ version: "3.9"
 services:
   redis:
     image: "redis:alpine"
+    command: redis-server --requirepass YOUR_PASSWORD
     ports:
     - 6379:6379

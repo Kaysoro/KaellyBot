@@ -18,9 +18,11 @@ import org.apache.http.util.EntityUtils;
 import org.jsoup.nodes.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import redis.clients.jedis.HostAndPort;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.Pipeline;
 import redis.clients.jedis.Response;
+import util.ClientConfig;
 import util.JSoupManager;
 import util.Translator;
 
@@ -156,7 +158,8 @@ public class Almanax implements Embedded{
     }
 
     private static Almanax gatheringData(Language lg, String date) throws IOException {
-        Jedis jedis = new Jedis();
+        Jedis jedis = new Jedis(HostAndPort.from(ClientConfig.KAELLY_CACHE_URL()));
+        jedis.auth(ClientConfig.KAELLY_CACHE_PASSWORD());
 
         Optional<Almanax> cached = getFromCache(lg, date, jedis);
         if (cached.isPresent()) {

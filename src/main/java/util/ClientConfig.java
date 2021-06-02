@@ -42,6 +42,8 @@ public class ClientConfig {
     private String KAELLY_PORTALS_URL;
     private String KAELLY_PORTALS_LOGIN;
     private String KAELLY_PORTALS_PASSWORD;
+    private String KAELLY_CACHE_URL;
+    private String KAELLY_CACHE_PASSWORD;
 
     private ClientConfig(){
         this(System.getProperty("user.dir"));
@@ -58,6 +60,8 @@ public class ClientConfig {
             KAELLY_PORTALS_URL = prop.getProperty("kaelly.portals.url");
             KAELLY_PORTALS_LOGIN = prop.getProperty("kaelly.portals.login");
             KAELLY_PORTALS_PASSWORD = prop.getProperty("kaelly.portals.password");
+            KAELLY_CACHE_URL = prop.getProperty("kaelly.cache.url");
+            KAELLY_CACHE_PASSWORD = prop.getProperty("kaelly.cache.password");
 
             try {
                 DISCORD = DiscordClient.create(prop.getProperty("discord.token"));
@@ -138,6 +142,14 @@ public class ClientConfig {
 
     public static String KAELLY_PORTALS_PASSWORD(){
         return getInstance().KAELLY_PORTALS_PASSWORD;
+    }
+
+    public static String KAELLY_CACHE_URL() {
+        return getInstance().KAELLY_CACHE_URL;
+    }
+
+    public static String KAELLY_CACHE_PASSWORD() {
+        return getInstance().KAELLY_CACHE_PASSWORD;
     }
 
     public static synchronized ClientConfig getInstance(String path){
