@@ -6,7 +6,7 @@
 
     <groupId>com.github.kaysoro</groupId>
     <artifactId>Kaelly</artifactId>
-    <version>1.5.2</version>
+    <version>1.6.3</version>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
