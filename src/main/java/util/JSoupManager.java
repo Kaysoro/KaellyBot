@@ -21,7 +21,7 @@ public class JSoupManager {
 
     public static Document getDocument(String url) throws IOException {
         return Jsoup.connect(url)
-                .userAgent("Mozilla/5.0 (Windows NT 10.0; WOW64; rv:54.0) Gecko/20100101 Firefox/54.0")
+                .userAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:90.0) Gecko/20100101 Firefox/90.0")
                 .referrer("http://www.google.com")
                 .timeout(10000)
                 .sslSocketFactory(socketFactory())
