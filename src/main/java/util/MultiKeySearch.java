@@ -83,7 +83,7 @@ public class MultiKeySearch<V> implements Serializable {
             throw new IllegalArgumentException("Le nombre de clefs n'est pas identique à celui déclaré : " + keysNumber);
         for(Object arg : args)
             if (arg == null)
-                throw new IllegalArgumentException("Clef à null interdit.");
+                throw new IllegalArgumentException("Clef à null interdit : " + Arrays.toString(args));
         register.put(Arrays.asList(args), value);
     }
 

@@ -32,8 +32,6 @@ public class AboutCommand extends AbstractCommand {
         Optional<ApplicationInfo> appInfo = message.getClient().getApplicationInfo().blockOptional();
 
         if (appInfo.isPresent()) {
-            Optional<User> author = appInfo.get().getOwner().blockOptional();
-
             message.getChannel().flatMap(chan -> chan.createEmbed(spec -> {
 
                 spec.setTitle(Translator.getLabel(lg, "about.title")
