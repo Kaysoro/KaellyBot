@@ -10,11 +10,17 @@
 KaellyBOT aims to provide useful commands for DOFUS community (FR/EN/ES)! If you have questions, suggestions or just want to say hello, feel free to join the [discord support server](https://discord.gg/CyJCFDk) :)
 
 ## Invite KaellyBOT to your server
-There is a running official instance used by 8000+ discord servers and 380.000+ users.  
+There is a running official instance used by 10.000+ discord servers and 540.000+ users.  
 Just [click here](https://discordapp.com/oauth2/authorize?&client_id=202916641414184960&scope=bot), follow the discord instructions and that's it!
 
 ## Commands
 ![KaellyBOT commands](https://i.imgur.com/37Ifk6o.png "KaellyBOT commands")
+
+## Data privacy
+Only Discord user IDs are stored in database to make it run.  
+This data is registered when a user register himself in a book like the job book; users can be easily unregistered as described in each *book command* help.
+
+**Collected informations are and will never be used for commercial purposes.**
 
 ## Developer section
 This section is dedicated for developers. If you're not, please use the official instance described above.  
@@ -77,3 +83,4 @@ The development and the availability of KaellyBot 24/7 generate ongoing cost. Do
 - Darkrai#8780
 - DreamsVoid#8802
 - ! Siid !#0001
+- Tynagmo
