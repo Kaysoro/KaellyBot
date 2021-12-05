@@ -93,7 +93,7 @@ public class AllianceCommand extends AbstractCommand {
                     Alliance alliancePage = Alliance.getAlliance(Translator.getLabel(lg, "game.url")
                             + result.get(0), lg);
                     message.getChannel().flatMap(chan -> chan
-                            .createEmbed(spec -> alliancePage.decorateEmbedObject(spec, lg)))
+                            .createEmbed(alliancePage.decorateEmbedObject(lg)))
                             .subscribe();
                 }
                 else if (result.size() > 1)

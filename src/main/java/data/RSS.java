@@ -99,12 +99,14 @@ public class RSS implements Comparable<RSS>, Embedded {
     }
 
     @Override
-    public void decorateEmbedObject(EmbedCreateSpec spec, Language lg) {
-        spec.setAuthor("Dofus.com", getUrl(), null)
-                .setTitle(getTitle())
-                .setImage(imageUrl)
-                .setThumbnail(Constants.rssIcon)
-                .setFooter(dateFormat.format(new Date(getDate())), null);
+    public EmbedCreateSpec decorateEmbedObject(Language lg) {
+        return EmbedCreateSpec.builder()
+                .author("Dofus.com", getUrl(), null)
+                .title(getTitle())
+                .image(imageUrl)
+                .thumbnail(Constants.rssIcon)
+                .footer(dateFormat.format(new Date(getDate())), null)
+                .build();
     }
 
     public EmbedData decorateRestEmbedObject(Language lg) {
@@ -118,7 +120,7 @@ public class RSS implements Comparable<RSS>, Embedded {
     }
 
     @Override
-    public void decorateMoreEmbedObject(EmbedCreateSpec spec, Language lg) {
-        decorateEmbedObject(spec, lg);
+    public EmbedCreateSpec decorateMoreEmbedObject(Language lg) {
+        return decorateEmbedObject(lg);
     }
 }

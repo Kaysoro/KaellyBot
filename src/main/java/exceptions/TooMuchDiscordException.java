@@ -79,7 +79,7 @@ public class TooMuchDiscordException implements DiscordException {
         if (bug != null){
             final AnkamaBug BUG = bug;
             message.getChannel().flatMap(channel -> channel
-                    .createEmbed(spec -> BUG.decorateEmbed(spec, st.toString(), lg)))
+                    .createEmbed(BUG.decorateEmbed(st.toString(), lg)))
                     .subscribe();
         }
         else

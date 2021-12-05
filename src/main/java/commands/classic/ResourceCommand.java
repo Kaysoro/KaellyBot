@@ -63,11 +63,11 @@ public class ResourceCommand extends DofusEncyclopediaRequestCommand {
                             + matcher.getBest().getUrl());
                     if (m.group(1) != null)
                         message.getChannel().flatMap(chan -> chan
-                                .createEmbed(spec -> resource.decorateMoreEmbedObject(spec, lg)))
+                                .createEmbed(resource.decorateMoreEmbedObject(lg)))
                                 .subscribe();
                     else
                         message.getChannel().flatMap(chan -> chan
-                                .createEmbed(spec -> resource.decorateEmbedObject(spec, lg)))
+                                .createEmbed(resource.decorateEmbedObject(lg)))
                                 .subscribe();
                 } else if (!matcher.isEmpty()) // Too much items
                     tooMuchRsrcs.throwException(message, this, lg, matcher.getBests());

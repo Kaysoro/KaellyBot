@@ -5,6 +5,7 @@ import data.Character;
 import data.ServerDofus;
 import discord4j.core.event.domain.message.MessageCreateEvent;
 import discord4j.core.object.entity.Message;
+import discord4j.core.spec.EmbedCreateSpec;
 import enums.Language;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -113,28 +114,30 @@ public class WhoisCommand extends AbstractCommand {
                             .getResponse(Translator.getLabel(lg, "game.url") + result.get(0).getUrl());
                     final List<CharacterQuery> RESULT = result;
                     if (!response.url().getPath().endsWith(Translator.getLabel(lg, "whois.request"))) {
-                        if (m.group(1) == null)
-                            message.getChannel().flatMap(chan -> chan.createEmbed(spec -> {
-                                try {
-                                    Character.getCharacter(Translator.getLabel(lg, "game.url")
-                                            + RESULT.get(0).getUrl(), lg).decorateEmbedObject(spec, lg);
-                                } catch (IOException e) {
-                                    ExceptionManager.manageIOException(e, message, this, lg,
-                                            BasicDiscordException.CHARACTERPAGE_INACCESSIBLE);
-                                }
-                            })).subscribe();
-                        else
-                            message.getChannel().flatMap(chan -> chan.createEmbed(spec -> {
-                                try {
-                                    Character.getCharacterStuff(Translator.getLabel(lg, "game.url")
-                                            + RESULT.get(0).getUrl() + Translator
-                                            .getLabel(lg, "character.stuff.url"), lg)
-                                            .decorateMoreEmbedObject(spec, lg);
-                                } catch (IOException e) {
-                                    ExceptionManager.manageIOException(e, message, this, lg,
-                                            BasicDiscordException.CHARACTERPAGE_INACCESSIBLE);
-                                }
-                            })).subscribe();
+                        if (m.group(1) == null) {
+                            try {
+                                EmbedCreateSpec embed = Character
+                                        .getCharacter(Translator.getLabel(lg, "game.url") + RESULT.get(0).getUrl(), lg)
+                                        .decorateEmbedObject(lg);
+                                message.getChannel().flatMap(chan -> chan.createEmbed(embed)).subscribe();
+                            } catch (IOException e) {
+                                ExceptionManager.manageIOException(e, message, this, lg,
+                                        BasicDiscordException.CHARACTERPAGE_INACCESSIBLE);
+                            }
+                        }
+                        else {
+                            try {
+                                EmbedCreateSpec embed = Character.getCharacterStuff(Translator.getLabel(lg, "game.url")
+                                                + RESULT.get(0).getUrl() + Translator
+                                                .getLabel(lg, "character.stuff.url"), lg)
+                                        .decorateMoreEmbedObject(lg);
+                                message.getChannel().flatMap(chan -> chan.createEmbed(embed)).subscribe();
+                            } catch (IOException e) {
+                                ExceptionManager.manageIOException(e, message, this, lg,
+                                        BasicDiscordException.CHARACTERPAGE_INACCESSIBLE);
+                            }
+
+                        }
                     } else
                         BasicDiscordException.CHARACTER_TOO_OLD.throwException(message, this, lg);
                 }

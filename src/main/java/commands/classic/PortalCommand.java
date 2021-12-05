@@ -50,7 +50,7 @@ public class PortalCommand extends AbstractCommand {
                 List<PortalDto> portals = Optional.ofNullable(portalFinder.getPositions(server, lg)).orElse(Collections.emptyList());
                 for(PortalDto pos : portals)
                     message.getChannel().flatMap(chan -> chan
-                            .createEmbed(spec -> PortalMapper.decorateSpec(spec, pos, lg)))
+                            .createEmbed(PortalMapper.decorateSpec(pos, lg)))
                             .subscribe();
             }
             else {
@@ -58,7 +58,7 @@ public class PortalCommand extends AbstractCommand {
                 if (DIMENSIONS.size() == 1) {
                     Optional.ofNullable(portalFinder.getPosition(server, DIMENSIONS.get(0), lg))
                             .ifPresent(pos -> message.getChannel().flatMap(chan -> chan
-                                    .createEmbed(spec -> PortalMapper.decorateSpec(spec, pos, lg)))
+                                    .createEmbed(PortalMapper.decorateSpec(pos, lg)))
                                     .subscribe());
                 }
                 else if (DIMENSIONS.isEmpty())

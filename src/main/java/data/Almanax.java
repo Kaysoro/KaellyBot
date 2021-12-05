@@ -60,22 +60,26 @@ public class Almanax implements Embedded{
     }
 
     @Override
-    public void decorateEmbedObject(EmbedCreateSpec spec, Language lg) {
-        spec.setTitle(Translator.getLabel(lg, "almanax.embed.title.1") + " " + day)
-            .setUrl(Translator.getLabel(lg, "almanax.url") + day)
-            .setThumbnail(ressourceURL)
-            .addField(Translator.getLabel(lg, "almanax.embed.bonus"), bonus, true)
-            .addField(Translator.getLabel(lg, "almanax.embed.offrande"), offrande, true);
+    public EmbedCreateSpec decorateEmbedObject(Language lg) {
+        return EmbedCreateSpec.builder()
+                .title(Translator.getLabel(lg, "almanax.embed.title.1") + " " + day)
+                .url(Translator.getLabel(lg, "almanax.url") + day)
+                .thumbnail(ressourceURL)
+                .addField(Translator.getLabel(lg, "almanax.embed.bonus"), bonus, true)
+                .addField(Translator.getLabel(lg, "almanax.embed.offrande"), offrande, true)
+                .build();
     }
 
     @Override
-    public void decorateMoreEmbedObject(EmbedCreateSpec spec, Language lg) {
-        spec.setTitle(Translator.getLabel(lg, "almanax.embed.title.1") + " " + day)
-            .setUrl(Translator.getLabel(lg, "almanax.url") + day)
-            .setDescription(quest)
-            .setImage(ressourceURL)
-            .addField(Translator.getLabel(lg, "almanax.embed.bonus"), bonus, true)
-            .addField(Translator.getLabel(lg, "almanax.embed.offrande"), offrande, true);
+    public EmbedCreateSpec decorateMoreEmbedObject(Language lg) {
+        return EmbedCreateSpec.builder()
+                .title(Translator.getLabel(lg, "almanax.embed.title.1") + " " + day)
+                .url(Translator.getLabel(lg, "almanax.url") + day)
+                .description(quest)
+                .image(ressourceURL)
+                .addField(Translator.getLabel(lg, "almanax.embed.bonus"), bonus, true)
+                .addField(Translator.getLabel(lg, "almanax.embed.offrande"), offrande, true)
+                .build();
     }
 
     public EmbedData decorateRestEmbedObject(Language lg){
@@ -89,21 +93,23 @@ public class Almanax implements Embedded{
                 .build();
     }
 
-    public static void decorateGroupedObject(EmbedCreateSpec spec, Language lg, Date day, int occurrence) throws IOException {
+    public static EmbedCreateSpec decorateGroupedObject(Language lg, Date day, int occurrence) throws IOException {
         Date firstDate = DateUtils.addDays(day,1);
         Date lastDate = DateUtils.addDays(day, occurrence);
         String title = Translator.getLabel(lg, "almanax.embed.title.1") + " " + discordToBot.format(firstDate) +
                 (occurrence > 1 ? " " + Translator.getLabel(lg, "almanax.embed.title.2") + " " + discordToBot.format(lastDate) : "");
 
-        spec.setTitle(title);
+        EmbedCreateSpec.Builder builder = EmbedCreateSpec.builder()
+                .title(title);
 
         for (int i = 1; i <= occurrence; i++) {
             firstDate = DateUtils.addDays(new Date(), i);
             Almanax almanax = Almanax.get(lg, firstDate);
-            spec.addField(discordToBot.format(firstDate), Translator.getLabel(lg, "almanax.embed.bonus")
+            builder.addField(discordToBot.format(firstDate), Translator.getLabel(lg, "almanax.embed.bonus")
                     + " " + almanax.getBonus() + "\n" + Translator.getLabel(lg, "almanax.embed.offrande")
                     + " " + almanax.getOffrande(), true);
         }
+        return builder.build();
     }
 
     public static Almanax get(Language lg, String date) throws IOException {

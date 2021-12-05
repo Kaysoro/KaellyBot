@@ -45,11 +45,11 @@ public class SetCommand extends DofusRequestCommand {
                             + matcher.getBest().getUrl());
                     if (m.group(1) != null)
                         message.getChannel().flatMap(chan -> chan
-                                .createEmbed(spec -> set.decorateMoreEmbedObject(spec, lg)))
+                                .createEmbed(set.decorateMoreEmbedObject(lg)))
                                 .subscribe();
                     else
                         message.getChannel().flatMap(chan -> chan
-                                .createEmbed(spec -> set.decorateEmbedObject(spec, lg)))
+                                .createEmbed(set.decorateEmbedObject(lg)))
                                 .subscribe();
                 } else if (!matcher.isEmpty())  // Too much sets
                     tooMuchSets.throwException(message, this, lg, matcher.getBests());

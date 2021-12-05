@@ -1,10 +1,12 @@
 package commands.admin;
 
 import commands.model.AbstractCommand;
+import discord4j.common.store.action.read.ReadActions;
 import discord4j.core.DiscordClient;
 import discord4j.core.event.domain.message.MessageCreateEvent;
 import discord4j.core.object.entity.Guild;
 import discord4j.core.object.entity.Message;
+import discord4j.core.spec.MessageCreateFields;
 import discord4j.core.spec.MessageCreateSpec;
 import discord4j.discordjson.json.GuildData;
 import discord4j.discordjson.json.UserGuildData;
@@ -15,6 +17,8 @@ import org.jfree.data.time.Day;
 import org.jfree.data.time.TimeSeries;
 import org.jfree.data.time.TimeSeriesCollection;
 import org.slf4j.LoggerFactory;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 import util.ClientConfig;
 import util.Reporter;
 import util.Translator;
@@ -45,22 +49,25 @@ public class StatCommand extends AbstractCommand {
     @Override
     public void request(MessageCreateEvent event, Message message, Matcher m, Language lg) {
         if (m.group(1) == null || m.group(1).replaceAll("^\\s+", "").isEmpty()){
-            long totalGuild = event.getClient().getGatewayResources().getStateView().getGuildStore().count().block();
-            int totalUser = event.getClient().getGatewayResources().getStateView().getGuildStore().values()
-                    .map(GuildData::memberCount)
-                    .collect(Collectors.summingInt(Integer::intValue))
-                    .blockOptional().orElse(0);
+            long totalGuild = Mono.from(event.getClient().getGatewayResources().getStore()
+                    .execute(ReadActions.countGuilds())).block();
+            long totalMembers = Mono.from(event.getClient().getGatewayResources().getStore()
+                    .execute(ReadActions.countMembers())).block();
+            long totalUsers = Mono.from(event.getClient().getGatewayResources().getStore()
+                    .execute(ReadActions.countUsers())).block();
 
             String answer = Translator.getLabel(lg, "stat.request")
                     .replace("{guilds.size}", String.valueOf(totalGuild))
-                    .replace("{users_max.size}", String.valueOf(totalUser));
+                    .replace("{members_max.size}", String.valueOf(totalMembers))
+                    .replace("{users_max.size}", String.valueOf(totalUsers));
             message.getChannel().flatMap(chan -> chan.createMessage(answer)).subscribe();
         }
         else if (m.group(1).matches("\\s+-g(\\s+\\d+)?")){
             int limit = GULD_LIMIT;
             if (m.group(2) != null) limit = Integer.parseInt(m.group(2).trim());
             StringBuilder st = new StringBuilder();
-            List<GuildData> guilds = event.getClient().getGatewayResources().getStateView().getGuildStore().values()
+
+            List<GuildData> guilds = Flux.from(event.getClient().getGatewayResources().getStore().execute(ReadActions.getGuilds()))
                     .sort((guild1, guild2) -> guild2.memberCount() - guild1.memberCount())
                     .take(limit)
                     .collectList().block();
@@ -72,21 +79,23 @@ public class StatCommand extends AbstractCommand {
             message.getChannel().flatMap(chan -> chan.createMessage(st.toString())).subscribe();
         }
         else if (m.group(1).matches("\\s+-hist"))
-            message.getChannel().flatMap(chan -> chan.createMessage(spec ->
-                    decorateImageMessage(spec, getJoinTimeGuildsGraph(event))))
+            message.getChannel().flatMap(chan -> chan.createMessage(decorateImageMessage(getJoinTimeGuildsGraph(event))))
             .subscribe();
     }
 
-    private void decorateImageMessage(MessageCreateSpec spec, BufferedImage image){
+    private MessageCreateSpec decorateImageMessage(BufferedImage image) {
         ByteArrayOutputStream os = new ByteArrayOutputStream();
         try {
             ImageIO.write(image, "png", os);
             InputStream is = new ByteArrayInputStream(os.toByteArray());
-            spec.addFile(Instant.now().toString() + ".png", is);
+            return MessageCreateSpec.builder()
+                    .addFile(MessageCreateFields.File.of(Instant.now().toString() + ".png", is))
+                    .build();
         } catch(Exception e){
             Reporter.report(e);
             LoggerFactory.getLogger(StatCommand.class).error("decorateImageMessage", e);
         }
+        return MessageCreateSpec.builder().content("Problem during image process").build();
     }
 
     /**
@@ -94,7 +103,8 @@ public class StatCommand extends AbstractCommand {
      * @return Graphique des arrivés des guildes utilisant kaelly
      */
     private BufferedImage getJoinTimeGuildsGraph(MessageCreateEvent event){
-        List<GuildData> guilds = event.getClient().getGatewayResources().getStateView().getGuildStore().values()
+
+        List<GuildData> guilds = Flux.from(event.getClient().getGatewayResources().getStore().execute(ReadActions.getGuilds()))
                 .sort(Comparator.comparing(guild -> DateTimeFormatter.ISO_OFFSET_DATE_TIME.parse(guild.joinedAt(), Instant::from)))
                 .collectList().blockOptional().orElse(Collections.emptyList());
 

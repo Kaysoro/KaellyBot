@@ -78,9 +78,9 @@ public class AlignmentCommand extends FetchCommand {
                     return;
                 }
 
-                List<Consumer<EmbedCreateSpec>> embeds = OrderUser.getOrdersFromLevel(guild.get().getMembers()
+                List<EmbedCreateSpec> embeds = OrderUser.getOrdersFromLevel(guild.get().getMembers()
                         .collectList().blockOptional().orElse(Collections.emptyList()), server, level, guild.get(), lg);
-                for (Consumer<EmbedCreateSpec> embed : embeds)
+                for (EmbedCreateSpec embed : embeds)
                     message.getChannel().flatMap(chan -> chan.createEmbed(embed)).subscribe();
             }
             else {
@@ -111,8 +111,8 @@ public class AlignmentCommand extends FetchCommand {
                     }
 
                     if (user.isPresent()) {
-                        List<Consumer<EmbedCreateSpec>> embeds = OrderUser.getOrdersFromUser(user.get(), server, lg);
-                        for (Consumer<EmbedCreateSpec> embed : embeds)
+                        List<EmbedCreateSpec> embeds = OrderUser.getOrdersFromUser(user.get(), server, lg);
+                        for (EmbedCreateSpec embed : embeds)
                             message.getChannel().flatMap(chan -> chan.createEmbed(embed)).subscribe();
                     }
                 }
@@ -239,10 +239,10 @@ public class AlignmentCommand extends FetchCommand {
                         return;
                     }
 
-                    List<Consumer<EmbedCreateSpec>> embeds = OrderUser.getOrdersFromCityOrOrder(guild.get().getMembers()
+                    List<EmbedCreateSpec> embeds = OrderUser.getOrdersFromCityOrOrder(guild.get().getMembers()
                                     .collectList().blockOptional().orElse(Collections.emptyList()),
                             server, city, order, guild.get(), lg);
-                    for (Consumer<EmbedCreateSpec> embed : embeds)
+                    for (EmbedCreateSpec embed : embeds)
                         message.getChannel().flatMap(chan -> chan.createEmbed(embed)).subscribe();
                 }
                 else

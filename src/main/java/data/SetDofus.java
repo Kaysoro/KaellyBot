@@ -43,50 +43,53 @@ public class SetDofus implements Embedded {
     }
 
     @Override
-    public void decorateEmbedObject(EmbedCreateSpec spec, Language lg) {
-        spec.setTitle(name)
-            .setUrl(url)
-            .setThumbnail(skinURL);
+    public EmbedCreateSpec decorateEmbedObject(Language lg) {
+        EmbedCreateSpec.Builder builder = EmbedCreateSpec.builder()
+                .title(name)
+                .url(url)
+                .thumbnail(skinURL);
 
         if (level != null && ! level.isEmpty())
-            spec.addField(Translator.getLabel(lg, "set.level"), level, true);
+            builder.addField(Translator.getLabel(lg, "set.level"), level, true);
 
         if (composition != null && ! composition.isEmpty())
-            spec.addField(Translator.getLabel(lg, "set.composition"), composition, true);
+            builder.addField(Translator.getLabel(lg, "set.composition"), composition, true);
 
         for(int i = 0; i < bonusPano.length; i++)
             if (bonusPano[i] != null)
-                spec.addField(Translator.getLabel(lg, "set.bonus.1") + " " + (i + 2)
+                builder.addField(Translator.getLabel(lg, "set.bonus.1") + " " + (i + 2)
                         + " " + Translator.getLabel(lg, "set.bonus.2"), bonusPano[i], true);
+        return builder.build();
     }
 
     @Override
-    public void decorateMoreEmbedObject(EmbedCreateSpec spec, Language lg) {
-        spec.setTitle(name)
-            .setUrl(url)
-            .setImage(skinURL);
-
+    public EmbedCreateSpec decorateMoreEmbedObject(Language lg) {
+        EmbedCreateSpec.Builder builder = EmbedCreateSpec.builder()
+                .title(name)
+                .url(url)
+                .image(skinURL);
         if (level != null && ! level.isEmpty())
-            spec.addField(Translator.getLabel(lg, "set.level"), level, true);
+            builder.addField(Translator.getLabel(lg, "set.level"), level, true);
 
         if (composition != null && ! composition.isEmpty())
-            spec.addField(Translator.getLabel(lg, "set.composition"), composition, true);
+            builder.addField(Translator.getLabel(lg, "set.composition"), composition, true);
 
         if (bonusTotal != null && ! bonusTotal.isEmpty())
             for(int i = 0; i < bonusTotal.size(); i++)
-                spec.addField(Translator.getLabel(lg, "set.bonus.total") + (bonusTotal.size() > 1?
+                builder.addField(Translator.getLabel(lg, "set.bonus.total") + (bonusTotal.size() > 1?
                             " (" + (i + 1) + "/" + bonusTotal.size() + ")" : "") + " : ",
                     bonusTotal.get(i), true);
 
         if (! recipeTotal.isEmpty())
             for(int i = 0; i < recipeTotal.size(); i++)
-                spec.addField(Translator.getLabel(lg, "set.recipe") + (recipeTotal.size() > 1?
+                builder.addField(Translator.getLabel(lg, "set.recipe") + (recipeTotal.size() > 1?
                                 " (" + (i + 1) + "/" + recipeTotal.size() + ")" : "") + " : ",
                         recipeTotal.get(i), true);
 
         for(int i = 0; i < bonusPano.length; i++)
-            spec.addField(Translator.getLabel(lg, "set.bonus.1") + " " + (i + 2)
+            builder.addField(Translator.getLabel(lg, "set.bonus.1") + " " + (i + 2)
                     + " " + Translator.getLabel(lg, "set.bonus.2"), bonusPano[i], true);
+        return builder.build();
     }
 
     public static SetDofus getSet(Language lg, String url) throws IOException {

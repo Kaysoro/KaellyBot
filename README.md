@@ -27,7 +27,7 @@ This section is dedicated for developers. If you're not, please use the official
 *Note: this repository is considered as deprecated: you can find some explanations just below.*
 
 ### Current structure
-- Java 8 project based on Discord4J V3.0.15
+- Java 8 project based on Discord4J V3.2.1
 - Built with Maven 
 - Commands detection with regex
 - Store data into SQLite database

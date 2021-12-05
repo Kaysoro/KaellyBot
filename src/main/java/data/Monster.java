@@ -48,57 +48,61 @@ public class Monster implements Embedded {
     }
 
     @Override
-    public void decorateEmbedObject(EmbedCreateSpec spec, Language lg) {
-        spec.setTitle(name)
-            .setUrl(url)
-            .setThumbnail(skinURL);
+    public EmbedCreateSpec decorateEmbedObject(Language lg) {
+        EmbedCreateSpec.Builder builder = EmbedCreateSpec.builder()
+                .title(name)
+                .url(url)
+                .thumbnail(skinURL);
 
         if (level != null && ! level.isEmpty())
-            spec.addField(Translator.getLabel(lg, "monster.level"), level, true);
-        spec.addField(Translator.getLabel(lg, "monster.race"), family, true);
+            builder.addField(Translator.getLabel(lg, "monster.level"), level, true);
+        builder.addField(Translator.getLabel(lg, "monster.race"), family, true);
 
         if (caracteristics != null && ! caracteristics.isEmpty())
-            spec.addField(Translator.getLabel(lg, "monster.caracteristic"), caracteristics, true);
+            builder.addField(Translator.getLabel(lg, "monster.caracteristic"), caracteristics, true);
 
         if (resistances != null && ! resistances.isEmpty())
-            spec.addField(Translator.getLabel(lg, "monster.resistance"), resistances, true);
+            builder.addField(Translator.getLabel(lg, "monster.resistance"), resistances, true);
 
-        if (error) spec.setFooter(Translator.getLabel(lg, "monster.error"), null);
+        if (error) builder.footer(Translator.getLabel(lg, "monster.error"), null);
+        return builder.build();
     }
 
     @Override
-    public void decorateMoreEmbedObject(EmbedCreateSpec spec, Language lg) {
-        spec.setTitle(name)
-            .setUrl(url)
-            .setImage(skinURL);
+    public EmbedCreateSpec decorateMoreEmbedObject(Language lg) {
+        EmbedCreateSpec.Builder builder = EmbedCreateSpec.builder()
+                .title(name)
+                .url(url)
+                .image(skinURL);
 
         if (level != null && ! level.isEmpty())
-            spec.addField(Translator.getLabel(lg, "monster.level"), level, true);
-        spec.addField(Translator.getLabel(lg, "monster.race"), family, true);
+            builder.addField(Translator.getLabel(lg, "monster.level"), level, true);
+        builder.addField(Translator.getLabel(lg, "monster.race"), family, true);
 
         if (caracteristics != null && ! caracteristics.isEmpty())
-            spec.addField(Translator.getLabel(lg, "monster.caracteristic"), caracteristics, true);
+            builder.addField(Translator.getLabel(lg, "monster.caracteristic"), caracteristics, true);
 
         if (resistances != null && ! resistances.isEmpty())
-            spec.addField(Translator.getLabel(lg, "monster.resistance"), resistances, true);
+            builder.addField(Translator.getLabel(lg, "monster.resistance"), resistances, true);
 
         if (zones != null && ! zones.isEmpty())
-            spec.addField(Translator.getLabel(lg, "monster.zones"), zones, true);
+            builder.addField(Translator.getLabel(lg, "monster.zones"), zones, true);
 
         if (! butins.isEmpty())
             for(int i = 0; i < butins.size(); i++)
-                spec.addField(Translator.getLabel(lg, "monster.butins")
+                builder.addField(Translator.getLabel(lg, "monster.butins")
                                 + (butins.size() > 1? " (" + (i + 1) + "/" + butins.size() + ")" : "") + " : ",
                         butins.get(i), true);
 
         if (! butinsConditionne.isEmpty())
             for(int i = 0; i < butinsConditionne.size(); i++)
-                spec.addField(Translator.getLabel(lg, "monster.butins_conditionnes")
+                builder.addField(Translator.getLabel(lg, "monster.butins_conditionnes")
                                 + (butinsConditionne.size() > 1? " (" + (i + 1) + "/"
                                 + butinsConditionne.size() + ")" : "") + " : ",
                         butinsConditionne.get(i), true);
 
-        if (error) spec.setFooter(Translator.getLabel(lg, "monster.error"), null);
+        if (error) builder.footer(Translator.getLabel(lg, "monster.error"), null);
+        return builder.build();
     }
 
     public static Monster getMonster(Language lg, String url) throws IOException {

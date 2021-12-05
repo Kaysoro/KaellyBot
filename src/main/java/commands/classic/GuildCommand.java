@@ -93,7 +93,7 @@ public class GuildCommand extends AbstractCommand {
                     DofusGuild guildPage = DofusGuild.getDofusGuild(Translator.getLabel(lg, "game.url")
                             + result.get(0), lg);
                     message.getChannel().flatMap(chan -> chan
-                            .createEmbed(spec -> guildPage.decorateEmbedObject(spec, lg)))
+                            .createEmbed(guildPage.decorateEmbedObject(lg)))
                             .subscribe();
                 }
                 else if (result.size() > 1)

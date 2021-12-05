@@ -16,37 +16,38 @@ public final class PortalMapper {
 
     private PortalMapper(){}
 
-    public static void decorateSpec(EmbedCreateSpec spec, PortalDto portal, Language language){
-
-        spec.setTitle(portal.getDimension().getName())
-                .setColor(Color.of(portal.getDimension().getColor()))
-                .setThumbnail(portal.getDimension().getImage());
+    public static EmbedCreateSpec decorateSpec(PortalDto portal, Language language){
+        EmbedCreateSpec.Builder builder = EmbedCreateSpec.builder()
+                .title(portal.getDimension().getName())
+                .color(Color.of(portal.getDimension().getColor()))
+                .thumbnail(portal.getDimension().getImage());
 
         if (Boolean.TRUE.equals(portal.getIsAvailable()) && portal.getNearestZaap() != null
                 && portal.getPosition() != null && portal.getUtilisation() > 0){
-            spec.addField(Translator.getLabel(language, "portal.position"),
+            builder.addField(Translator.getLabel(language, "portal.position"),
                     "**" + getPosition(portal.getPosition()) + "**", true);
 
             // Utilisation
-            spec.addField(Translator.getLabel(language, "portal.utilisation.title"),
+            builder.addField(Translator.getLabel(language, "portal.utilisation.title"),
                     portal.getUtilisation() + " "
                             + Translator.getLabel(language, "portal.utilisation.desc")
                             + (portal.getUtilisation() > 1 ? "s" : ""), true);
 
             // Transports
             if (portal.getNearestTransportLimited() != null)
-                spec.addField(Translator.getLabel(language, "portal.private_zaap")
+                builder.addField(Translator.getLabel(language, "portal.private_zaap")
                                 .replace("{transport}", portal.getNearestTransportLimited().getType()),
                         getTransport(portal.getNearestTransportLimited()), false);
 
-                spec.addField(Translator.getLabel(language, "portal.zaap"),
+            builder.addField(Translator.getLabel(language, "portal.zaap"),
                         getTransport(portal.getNearestZaap()), false);
 
-            spec.setFooter(getDateInformation(portal, language),
+            builder.footer(getDateInformation(portal, language),
                     "https://i.imgur.com/u2PUyt5.png");
         }
         else
-            spec.setDescription(Translator.getLabel(language, "portal.unknown"));
+            builder.description(Translator.getLabel(language, "portal.unknown"));
+        return builder.build();
     }
 
     private static String getPosition(PositionDto position){

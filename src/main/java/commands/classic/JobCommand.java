@@ -77,8 +77,8 @@ public class JobCommand extends AbstractCommand {
                 }
 
                 if (user.isPresent()) {
-                    List<Consumer<EmbedCreateSpec>> embeds = JobUser.getJobsFromUser(user.get(), server, lg);
-                    for (Consumer<EmbedCreateSpec> embed : embeds)
+                    List<EmbedCreateSpec> embeds = JobUser.getJobsFromUser(user.get(), server, lg);
+                    for (EmbedCreateSpec embed : embeds)
                         message.getChannel().flatMap(chan -> chan.createEmbed(embed)).subscribe();
                 }
             }
@@ -207,11 +207,11 @@ public class JobCommand extends AbstractCommand {
                 int level = -1;
                 if (m.group(1) != null) level = Integer.parseInt(m.group(1));
 
-                List<Consumer<EmbedCreateSpec>> embeds = JobUser.getJobsFromFilters(guild.get().getMembers()
+                List<EmbedCreateSpec> embeds = JobUser.getJobsFromFilters(guild.get().getMembers()
                                 .collectList().blockOptional().orElse(Collections.emptyList()),
                         server, jobs, level, guild.get(), lg);
 
-                for (Consumer<EmbedCreateSpec> embed : embeds)
+                for (EmbedCreateSpec embed : embeds)
                     message.getChannel().flatMap(chan -> chan.createEmbed(embed)).subscribe();
             }
             else

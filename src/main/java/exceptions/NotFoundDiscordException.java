@@ -47,7 +47,7 @@ public class NotFoundDiscordException implements DiscordException {
         if (bug != null){
             final AnkamaBug BUG = bug;
             message.getChannel().flatMap(channel -> channel
-                    .createEmbed(spec -> BUG.decorateEmbed(spec, text, lg)))
+                    .createEmbed(BUG.decorateEmbed(text, lg)))
                     .subscribe();
         }
         else
