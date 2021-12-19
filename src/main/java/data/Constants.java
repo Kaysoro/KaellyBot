@@ -147,12 +147,12 @@ public class Constants {
     /**
      * Almanax API URL
      */
-    public final static String almanaxURL = "https://alm.dofusdu.de/{game}/{language}/{date}";
+    public final static String almanaxURL = "https://alm.dofusdu.de/{game}/v1/{language}/{date}";
 
     /**
      * Almanax Redis cache time to live for each cached day
      */
-    public final static int almanaxCacheDaysTTL = 9;
+    public final static int almanaxCacheHoursTTL = 3;
 
     /**
      * Discord invite link
