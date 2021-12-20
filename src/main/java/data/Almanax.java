@@ -129,7 +129,7 @@ public class Almanax implements Embedded{
         pipeline.hset(key, "quest", almanax.quest);
         pipeline.hset(key, "resourceURL", almanax.ressourceURL);
         pipeline.sync();
-        jedis.expire(key, 3600 * 24 * Constants.almanaxCacheDaysTTL); // hours -> days
+        jedis.expire(key, 3600 * Constants.almanaxCacheHoursTTL);
 
         return almanax;
     }
@@ -200,10 +200,28 @@ public class Almanax implements Embedded{
             }
 
             JsonNode dataNode = rootNode.get("data");
-            String offrande = "["+dataNode.get("item").get("name").asText()+"]("+dataNode.get("item").get("ankama_url").asText()+") x" + dataNode.get("item_quantity").asText();
-            String bonus = "~ **" + dataNode.get("bonus").get("bonus").asText() + "** ~\n" + dataNode.get("bonus").get("description").asText();
-            String quest = ""; // quest is ignored in the API since it does not include relevant information
-            String resourceURL = dataNode.get("item").get("image_url").asText();
+            String offrande, bonus, quest, resourceURL;
+            JsonNode bonusNode = dataNode.get("bonus");
+            if (bonusNode == null) {
+                return cacheAndReturn(lg, date, gatheringWebsiteData(lg, date), jedis);
+            }
+
+            if (dataNode.get("enc_mapped").asBoolean()) { // could not be linked to encyclopedia, will only provide basic info
+                JsonNode itemNode = dataNode.get("item");
+                if (itemNode == null) {
+                    return cacheAndReturn(lg, date, gatheringWebsiteData(lg, date), jedis);
+                }
+
+                offrande = "[" + itemNode.get("name").asText() + "](" + itemNode.get("ankama_url").asText() + ") x" + dataNode.get("item_quantity").asText();
+                bonus = "~ **" + bonusNode.get("bonus").asText() + "** ~\n" + bonusNode.get("description").asText();
+                quest = ""; // quest is ignored in the API since it does not include relevant information
+                resourceURL = itemNode.get("image_url").asText();
+            } else {
+                offrande = dataNode.get("item_name").asText() + " x" + dataNode.get("item_quantity").asText();
+                bonus = "~ **" + bonusNode.get("bonus").asText() + "** ~\n" + bonusNode.get("description").asText();
+                quest = "";
+                resourceURL = ""; // items without a link to the encyclopedia are not guaranteed to have an image (example 2021-12-16)
+            }
 
             return cacheAndReturn(lg, date, new Almanax(bonus, offrande, date, quest, resourceURL), jedis);
         } catch (Throwable e) {
