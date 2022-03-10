@@ -18,7 +18,6 @@ import util.Translator;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.lang.Exception;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
@@ -30,9 +29,9 @@ import java.util.stream.Collectors;
  */
 public class WhoisCommand extends AbstractCommand {
 
-    private final static Logger LOG = LoggerFactory.getLogger(WhoisCommand.class);
-    private final static String forPseudo = "text=";
-    private final static String forServer = "character_homeserv[]=";
+    private static final Logger LOG = LoggerFactory.getLogger(WhoisCommand.class);
+    private static final String forPseudo = "text=";
+    private static final String forServer = "character_homeserv[]=";
 
     private DiscordException tooMuchCharacters;
     private DiscordException notFoundCharacter;
@@ -126,7 +125,7 @@ public class WhoisCommand extends AbstractCommand {
                         else
                             message.getChannel().flatMap(chan -> chan.createEmbed(spec -> {
                                 try {
-                                    Character.getCharacter(Translator.getLabel(lg, "game.url")
+                                    Character.getCharacterStuff(Translator.getLabel(lg, "game.url")
                                             + RESULT.get(0).getUrl() + Translator
                                             .getLabel(lg, "character.stuff.url"), lg)
                                             .decorateMoreEmbedObject(spec, lg);
