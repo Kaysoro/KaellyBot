@@ -20,8 +20,8 @@ public class Constants {
 
     /**
      * Changelog
-     */ // ToDo : New changelog
-    public final static String changelog = "https://i.imgur.com/jAZP5vp.png";
+     */
+    public final static String changelog = "https://raw.githubusercontent.com/KaellyBot/Kaelly-dashboard/master/public/img/kaellyFull.png";
 
     /**
      * Author id
