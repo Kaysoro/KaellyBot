@@ -33,13 +33,15 @@ public enum AnkamaBug {
         return Translator.getLabel(lg, bug);
     }
 
-    public void decorateEmbed(EmbedCreateSpec spec, String title, Language lg){
+    public EmbedCreateSpec decorateEmbed(String title, Language lg){
         String[] bible = Translator.getLabel(lg, "ankama.bug.bible").split(";");
-        spec.setTitle(title)
-                .setDescription(Translator.getLabel(lg, "ankama.bug.description") + "```" + getLabel(lg)
+        return EmbedCreateSpec.builder()
+                .title(title)
+                .description(Translator.getLabel(lg, "ankama.bug.description") + "```" + getLabel(lg)
                         + "```\n" + Translator.getLabel(lg, "ankama.bug.duration")
                         .replace("{days}", String.valueOf(getDuration())))
-                .setImage("https://s.ankama.com/www/static.ankama.com/dofus/ng/modules/mmorpg/encyclopedia/no-result.png")
-                .setFooter(bible[new Random().nextInt(bible.length)], null);
+                .image("https://s.ankama.com/www/static.ankama.com/dofus/ng/modules/mmorpg/encyclopedia/no-result.png")
+                .footer(bible[new Random().nextInt(bible.length)], null)
+                .build();
     }
 }

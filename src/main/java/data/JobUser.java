@@ -133,27 +133,25 @@ public class JobUser extends ObjectUser {
      * @param server Serveur dofus
      * @return Liste des résultats de la recherche
      */
-    public static List<Consumer<EmbedCreateSpec>> getJobsFromUser(Member user, ServerDofus server, Language lg){
+    public static List<EmbedCreateSpec> getJobsFromUser(Member user, ServerDofus server, Language lg){
         List<JobUser> result = getJobs().get(user.getId().asLong(), server, null);
         result.sort(JobUser::compare);
-        List<Consumer<EmbedCreateSpec>> embed = new ArrayList<>();
 
-        embed.add(spec -> {
-            spec.setTitle(Translator.getLabel(lg, "job.user").replace("{user}", user.getDisplayName()))
-            .setThumbnail(user.getAvatarUrl());
+        EmbedCreateSpec.Builder builder = EmbedCreateSpec.builder()
+                .title(Translator.getLabel(lg, "job.user").replace("{user}", user.getDisplayName()))
+                .thumbnail(user.getAvatarUrl());
 
-            if (! result.isEmpty()) {
-                StringBuilder st = new StringBuilder();
-                for (JobUser jobUser : result)
-                    st.append(jobUser.job.getLabel(lg)).append(" : ").append(jobUser.level).append("\n");
-                spec.addField(Translator.getLabel(lg, "job.jobs"), st.toString(), true);
-            }
-            else
-                spec.setDescription(Translator.getLabel(lg, "job.empty"));
-            spec.setFooter(server.getName(), null);
-        });
+        if (! result.isEmpty()) {
+            StringBuilder st = new StringBuilder();
+            for (JobUser jobUser : result)
+                st.append(jobUser.job.getLabel(lg)).append(" : ").append(jobUser.level).append("\n");
+            builder.addField(Translator.getLabel(lg, "job.jobs"), st.toString(), true);
+        }
+        else
+            builder.description(Translator.getLabel(lg, "job.empty"));
+        builder.footer(server.getName(), null);
 
-        return embed;
+        return Arrays.asList(builder.build());
     }
 
     /**
@@ -163,8 +161,8 @@ public class JobUser extends ObjectUser {
      * @param level Niveau; si ingérieur à 0, filtre ignoré
      * @return Liste des résultats de la recherche
      */
-    public static List<Consumer<EmbedCreateSpec>> getJobsFromFilters(List<Member> users, ServerDofus server, Set<Job> jobs,
-                                                             int level, discord4j.core.object.entity.Guild guild, Language lg){
+    public static List<EmbedCreateSpec> getJobsFromFilters(List<Member> users, ServerDofus server, Set<Job> jobs,
+                                                           int level, discord4j.core.object.entity.Guild guild, Language lg){
         List<JobUser> result = new ArrayList<>();
         for(Member user : users)
             if (! user.isBot()){

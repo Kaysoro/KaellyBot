@@ -181,28 +181,26 @@ public class OrderUser extends ObjectUser {
      * @param server Serveur dofus
      * @return Liste des résultats de la recherche
      */
-    public static List<Consumer<EmbedCreateSpec>> getOrdersFromUser(Member user, ServerDofus server, Language lg){
+    public static List<EmbedCreateSpec> getOrdersFromUser(Member user, ServerDofus server, Language lg){
         List<OrderUser> result = getOrders().get(user.getId().asLong(), server, null, null);
         result.sort(OrderUser::compare);
-        List<Consumer<EmbedCreateSpec>> embed = new ArrayList<>();
 
-        embed.add(spec -> {
-            spec.setTitle(Translator.getLabel(lg, "align.user").replace("{user}", user.getDisplayName()))
-                    .setThumbnail(user.getAvatarUrl());
+        EmbedCreateSpec.Builder builder = EmbedCreateSpec.builder()
+                .title(Translator.getLabel(lg, "align.user").replace("{user}", user.getDisplayName()))
+                .thumbnail(user.getAvatarUrl());
 
-            if (! result.isEmpty()) {
-                StringBuilder st = new StringBuilder();
-                for (OrderUser orderUser : result)
-                    st.append(orderUser.city.getLogo()).append(orderUser.order.getLabel(lg)).append(" : ")
-                            .append(orderUser.level).append("\n");
-                spec.addField(Translator.getLabel(lg, "align.aligns"), st.toString(), true);
-            }
-            else
-                spec.setDescription(Translator.getLabel(lg, "align.empty"));
-            spec.setFooter(server.getName(), null);
-        });
+        if (! result.isEmpty()) {
+            StringBuilder st = new StringBuilder();
+            for (OrderUser orderUser : result)
+                st.append(orderUser.city.getLogo()).append(orderUser.order.getLabel(lg)).append(" : ")
+                        .append(orderUser.level).append("\n");
+            builder.addField(Translator.getLabel(lg, "align.aligns"), st.toString(), true);
+        }
+        else
+            builder.description(Translator.getLabel(lg, "align.empty"));
+        builder.footer(server.getName(), null);
 
-        return embed;
+        return Arrays.asList(builder.build());
     }
 
     /**
@@ -211,7 +209,7 @@ public class OrderUser extends ObjectUser {
      * @param level Niveau pallier
      * @return Liste des résultats de la recherche
      */
-    public static List<Consumer<EmbedCreateSpec>> getOrdersFromLevel(List<Member> users, ServerDofus server, int level,
+    public static List<EmbedCreateSpec> getOrdersFromLevel(List<Member> users, ServerDofus server, int level,
                                                                      discord4j.core.object.entity.Guild guild, Language lg){
         List<OrderUser> result = new ArrayList<>();
         for(Member user : users)
@@ -232,7 +230,7 @@ public class OrderUser extends ObjectUser {
      * @param order Ordre (coeur, oeil, esprit)
      * @return Liste des résultats de la recherche
      */
-    public static List<Consumer<EmbedCreateSpec>> getOrdersFromCityOrOrder(List<Member> users, ServerDofus server, City city,
+    public static List<EmbedCreateSpec> getOrdersFromCityOrOrder(List<Member> users, ServerDofus server, City city,
                                                              Order order, discord4j.core.object.entity.Guild guild, Language lg){
         List<OrderUser> result = new ArrayList<>();
         for(Member user : users)

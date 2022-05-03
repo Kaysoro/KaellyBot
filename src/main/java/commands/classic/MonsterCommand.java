@@ -47,11 +47,11 @@ public class MonsterCommand extends DofusRequestCommand {
                             + matcher.getBest().getUrl());
                     if (m.group(1) != null)
                         message.getChannel().flatMap(chan -> chan
-                                .createEmbed(spec -> monster.decorateMoreEmbedObject(spec, lg)))
+                                        .createEmbed(monster.decorateMoreEmbedObject(lg)))
                                 .subscribe();
                     else
                         message.getChannel().flatMap(chan -> chan
-                                .createEmbed(spec -> monster.decorateEmbedObject(spec, lg)))
+                                        .createEmbed(monster.decorateEmbedObject(lg)))
                                 .subscribe();
                 } else if (!matcher.isEmpty())  // Too much monsters
                     tooMuchMonsters.throwException(message, this, lg, matcher.getBests());

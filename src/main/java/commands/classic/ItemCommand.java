@@ -62,11 +62,11 @@ public class ItemCommand extends DofusEncyclopediaRequestCommand {
                             + matcher.getBest().getUrl());
                     if (m.group(1) != null)
                         message.getChannel().flatMap(chan -> chan
-                                .createEmbed(spec -> item.decorateMoreEmbedObject(spec, lg)))
+                                        .createEmbed(item.decorateMoreEmbedObject(lg)))
                                 .subscribe();
                     else
                         message.getChannel().flatMap(chan -> chan
-                                .createEmbed(spec -> item.decorateEmbedObject(spec, lg)))
+                                        .createEmbed(item.decorateEmbedObject(lg)))
                                 .subscribe();
                 } else if (!matcher.isEmpty()) // Too much items
                     tooMuchItems.throwException(message, this, lg, matcher.getBests());

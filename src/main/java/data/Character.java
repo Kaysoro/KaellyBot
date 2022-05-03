@@ -81,56 +81,62 @@ public class Character implements Embedded {
     }
 
     @Override
-    public void decorateEmbedObject(EmbedCreateSpec spec, Language lg){
-        spec.setTitle(pseudo)
-            .setUrl(url)
-            .setDescription(classe)
-            .setThumbnail(littleSkinURL)
-            .setImage(bigSkinURL)
-            .setFooter(Translator.getLabel(lg, "whois.server") + " " + server, null);
+    public EmbedCreateSpec decorateEmbedObject(Language lg){
+        EmbedCreateSpec.Builder builder = EmbedCreateSpec.builder()
+                .title(pseudo)
+                .url(url)
+                .description(classe)
+                .thumbnail(littleSkinURL)
+                .image(bigSkinURL)
+                .footer(Translator.getLabel(lg, "whois.server") + " " + server, null);
 
         if (ladderXP != null && ! ladderXP.isEmpty())
-            spec.addField(Translator.getLabel(lg, "whois.level") + " " + level, ladderXP, true);
+            builder.addField(Translator.getLabel(lg, "whois.level") + " " + level, ladderXP, true);
         else
-            spec.addField(Translator.getLabel(lg, "whois.level") + " " + level,
+            builder.addField(Translator.getLabel(lg, "whois.level") + " " + level,
                     Translator.getLabel(lg, "whois.ladder.none"), true);
 
         if (ladderSuccess != null && ! ladderSuccess.isEmpty())
-            spec.addField(Translator.getLabel(lg, "whois.success") + " " + score,
+            builder.addField(Translator.getLabel(lg, "whois.success") + " " + score,
                     ladderSuccess, true);
         else
-            spec.addField(Translator.getLabel(lg, "whois.success") + " " + score,
+            builder.addField(Translator.getLabel(lg, "whois.success") + " " + score,
                     Translator.getLabel(lg, "whois.ladder.none"), true);
 
         if (ladderKoli != null && ! ladderKoli.isEmpty())
-            spec.addField(Translator.getLabel(lg, "whois.ladder_koli"), ladderKoli, true);
+            builder.addField(Translator.getLabel(lg, "whois.ladder_koli"), ladderKoli, true);
 
         if (guildName != null)
-            spec.addField(Translator.getLabel(lg, "whois.guild"), "[" + guildName + "](" + guildUrl + ")", true);
+            builder.addField(Translator.getLabel(lg, "whois.guild"), "[" + guildName + "](" + guildUrl + ")", true);
         if (alliName != null)
-            spec.addField(Translator.getLabel(lg, "whois.ally"), "[" + alliName + "](" + alliUrl + ")", true);
+            builder.addField(Translator.getLabel(lg, "whois.ally"), "[" + alliName + "](" + alliUrl + ")", true);
+        return builder.build();
     }
 
     @Override
-    public void decorateMoreEmbedObject(EmbedCreateSpec spec, Language lg) {
-        spec.setTitle(pseudo)
-            .setUrl(url)
-            .setDescription(classe + ", " + level)
-            .setThumbnail(littleSkinURL)
-            .setFooter(Translator.getLabel(lg, "whois.server") + " " + server, null);
+    public EmbedCreateSpec decorateMoreEmbedObject(Language lg) {
+        EmbedCreateSpec.Builder builder = EmbedCreateSpec.builder()
+                .title(pseudo)
+                .url(url)
+                .description(classe + ", " + level)
+                .thumbnail(littleSkinURL)
+                .image(bigSkinURL)
+                .footer(Translator.getLabel(lg, "whois.server") + " " + server, null);
 
         if (stuffAvailable){
-            spec.setImage(bigSkinURL)
-                .addField(Translator.getLabel(lg, "whois.stuff.primary"), primaire, true)
-                .addField(Translator.getLabel(lg, "whois.stuff.secondary"), secondaire, true)
-                .addField(Translator.getLabel(lg, "whois.stuff.damages"), dommage, true)
-                .addField(Translator.getLabel(lg, "whois.stuff.resistances"), resistance, true);
+            builder
+                    .addField(Translator.getLabel(lg, "whois.stuff.primary"), primaire, true)
+                    .addField(Translator.getLabel(lg, "whois.stuff.secondary"), secondaire, true)
+                    .addField(Translator.getLabel(lg, "whois.stuff.damages"), dommage, true)
+                    .addField(Translator.getLabel(lg, "whois.stuff.resistances"), resistance, true);
         }
         else {
             String[] punchlines = Translator.getLabel(lg, "whois.stuff.none.punchlines").split(";");
             String punchline = punchlines[new Random().nextInt(punchlines.length)];
-            spec.addField(Translator.getLabel(lg, "whois.stuff.none.title"), punchline, true);
+            builder.addField(Translator.getLabel(lg, "whois.stuff.none.title"), punchline, true);
         }
+
+        return builder.build();
     }
 
     public static Character getCharacter(String url, Language lg) throws IOException {

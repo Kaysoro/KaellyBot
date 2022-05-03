@@ -46,55 +46,59 @@ public class Resource implements Embedded {
     }
 
     @Override
-    public void decorateEmbedObject(EmbedCreateSpec spec, Language lg) {
-        spec.setTitle(name)
-            .setUrl(url)
-            .setThumbnail(skinURL);
+    public EmbedCreateSpec decorateEmbedObject(Language lg) {
+        EmbedCreateSpec.Builder builder = EmbedCreateSpec.builder()
+                .title(name)
+                .url(url)
+                .thumbnail(skinURL);
 
         if (level != null && ! level.isEmpty())
-            spec.addField(Translator.getLabel(lg, "resource.niveau"), level, true);
-        spec.addField(Translator.getLabel(lg, "resource.type"), type, true);
+            builder.addField(Translator.getLabel(lg, "resource.niveau"), level, true);
+        builder.addField(Translator.getLabel(lg, "resource.type"), type, true);
 
         if (effects != null && ! effects.isEmpty())
-            spec.addField(Translator.getLabel(lg, "resource.effets"), effects, true);
+            builder.addField(Translator.getLabel(lg, "resource.effets"), effects, true);
 
         if (bonus != null && ! bonus.isEmpty())
-            spec.addField(Translator.getLabel(lg, "resource.bonus"), bonus, true);
+            builder.addField(Translator.getLabel(lg, "resource.bonus"), bonus, true);
 
         if (sorts != null && ! sorts.isEmpty())
-            spec.addField(Translator.getLabel(lg, "resource.sorts"),sorts, true);
+            builder.addField(Translator.getLabel(lg, "resource.sorts"),sorts, true);
+        return builder.build();
     }
 
     @Override
-    public void decorateMoreEmbedObject(EmbedCreateSpec spec, Language lg) {
-        spec.setTitle(name)
-            .setUrl(url);
-        if (description != null && ! description.isEmpty())
-            spec.setDescription(description);
+    public EmbedCreateSpec decorateMoreEmbedObject(Language lg) {
+        EmbedCreateSpec.Builder builder = EmbedCreateSpec.builder()
+                .title(name)
+                .url(url)
+                .image(skinURL);
 
-        spec.setImage(skinURL);
+        if (description != null && ! description.isEmpty())
+            builder.description(description);
 
         if (level != null && ! level.isEmpty())
-            spec.addField(Translator.getLabel(lg, "resource.niveau"), level, true);
-        spec.addField(Translator.getLabel(lg, "resource.type"), type, true);
+            builder.addField(Translator.getLabel(lg, "resource.niveau"), level, true);
+        builder.addField(Translator.getLabel(lg, "resource.type"), type, true);
 
         if (effects != null && ! effects.isEmpty())
-            spec.addField(Translator.getLabel(lg, "resource.effets"), effects, true);
+            builder.addField(Translator.getLabel(lg, "resource.effets"), effects, true);
 
         if (bonus != null && ! bonus.isEmpty())
-            spec.addField(Translator.getLabel(lg, "resource.bonus"), bonus, true);
+            builder.addField(Translator.getLabel(lg, "resource.bonus"), bonus, true);
 
         if (sorts != null && ! sorts.isEmpty())
-            spec.addField(Translator.getLabel(lg, "resource.sorts"),sorts, true);
+            builder.addField(Translator.getLabel(lg, "resource.sorts"),sorts, true);
 
         if (recipe != null)
-            spec.addField(Translator.getLabel(lg, "resource.recette"), recipe, true);
+            builder.addField(Translator.getLabel(lg, "resource.recette"), recipe, true);
 
         if (! monsterDrop.isEmpty())
             for(int i = 0; i < monsterDrop.size(); i++)
-                spec.addField(Translator.getLabel(lg, "resource.monster")
+                builder.addField(Translator.getLabel(lg, "resource.monster")
                                 + (monsterDrop.size() > 1? " (" + (i + 1) + "/" + monsterDrop.size() + ")" : "") + " : ",
                         monsterDrop.get(i), true);
+        return builder.build();
     }
 
     public static Resource getResource(Language lg, String url) throws IOException {

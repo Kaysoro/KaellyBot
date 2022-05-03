@@ -47,29 +47,30 @@ public class Alliance implements Embedded {
     }
 
     @Override
-    public void decorateEmbedObject(EmbedCreateSpec spec, Language lg){
-        spec.setTitle(name)
-            .setUrl(url)
-            .setDescription(Translator.getLabel(lg, "alliance.desc"))
-            .setThumbnail(littleSkinURL)
-            .setImage(bigSkinURL)
-
-            .addField(Translator.getLabel(lg, "alliance.server"), server, true)
-            .addField(Translator.getLabel(lg, "alliance.creation_date"), creationDate, true)
-            .addField(Translator.getLabel(lg, "alliance.guilds_size"), guildsSize, true)
-            .addField(Translator.getLabel(lg, "alliance.members_size"), membersSize, true);
+    public EmbedCreateSpec decorateEmbedObject(Language lg){
+        EmbedCreateSpec.Builder builder = EmbedCreateSpec.builder()
+                .title(name)
+                .url(url)
+                .description(Translator.getLabel(lg, "alliance.desc"))
+                .thumbnail(littleSkinURL)
+                .image(bigSkinURL)
+                .addField(Translator.getLabel(lg, "alliance.server"), server, true)
+                .addField(Translator.getLabel(lg, "alliance.creation_date"), creationDate, true)
+                .addField(Translator.getLabel(lg, "alliance.guilds_size"), guildsSize, true)
+                .addField(Translator.getLabel(lg, "alliance.members_size"), membersSize, true);
 
         if (! few_members.isEmpty())
             for(int i = 0; i < few_members.size(); i++)
-                spec.addField(Translator.getLabel(lg, "alliance.few_members")
+                builder.addField(Translator.getLabel(lg, "alliance.few_members")
                                 + (few_members.size() > 1? " (" + (i + 1) + "/"
                                 + few_members.size() + ")" : "") + " : ",
                         few_members.get(i), true);
+        return builder.build();
     }
 
     @Override
-    public void decorateMoreEmbedObject(EmbedCreateSpec spec, Language lg) {
-        decorateEmbedObject(spec, lg);
+    public EmbedCreateSpec decorateMoreEmbedObject(Language lg) {
+        return decorateEmbedObject(lg);
     }
 
     public static Alliance getAlliance(String url, Language lg) throws IOException {

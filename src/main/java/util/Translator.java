@@ -76,10 +76,10 @@ public class Translator {
     }
 
     public static Language getLanguageFrom(RestChannel channel) {
-        Guild guild = Guild.getGuilds().get(channel.getData().block().guildId().get());
+        Guild guild = Guild.getGuilds().get(channel.getData().block().guildId().get().asString());
         Language result = guild.getLanguage();
 
-        ChannelLanguage channelLanguage = ChannelLanguage.getChannelLanguages().get(Long.parseLong(channel.getData().block().id()));
+        ChannelLanguage channelLanguage = ChannelLanguage.getChannelLanguages().get(channel.getData().block().id().asLong());
         if (channelLanguage != null)
             result = channelLanguage.getLang();
 

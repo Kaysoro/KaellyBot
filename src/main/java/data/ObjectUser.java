@@ -1,6 +1,7 @@
 package data;
 
 import discord4j.core.object.Embed;
+import discord4j.core.object.entity.Message;
 import discord4j.core.spec.EmbedCreateSpec;
 import discord4j.rest.util.Image;
 import enums.Language;
@@ -31,10 +32,9 @@ public abstract class ObjectUser {
 
     protected abstract String displayLine(discord4j.core.object.entity.Guild guild, Language lg);
 
-    protected static<T extends ObjectUser> List<Consumer<EmbedCreateSpec>> getPlayersList(List<T> objUsers, discord4j.core.object.entity.Guild guild,
-                                                                                          ServerDofus server, Language lg,
-                                                                                          String prefix){
-        List<Consumer<EmbedCreateSpec>> embed = new ArrayList<>();
+    protected static<T extends ObjectUser> List<EmbedCreateSpec> getPlayersList(List<T> objUsers, discord4j.core.object.entity.Guild guild,
+                                                                                 ServerDofus server, Language lg, String prefix) {
+        List<EmbedCreateSpec> embed = new ArrayList<>();
 
         // On s'occupe d'abord de générer chaque ligne de field
         if (!objUsers.isEmpty()){
@@ -47,13 +47,13 @@ public abstract class ObjectUser {
                 String line = objUser.displayLine(guild, lg);
 
                 // Est-ce qu'on dépasse l'embed ? Si oui, on change de collection
-                if (fieldsSize + line.length() > Embed.MAX_CHARACTER_LENGTH){
+                if (fieldsSize + line.length() > Message.MAX_TOTAL_EMBEDS_CHARACTER_LENGTH) {
                     fieldsPerEmbed.add(fields);
                     fields = new ArrayList<>();
                     fieldsSize = 0;
                 }
                 // Est-ce qu'on dépasse le field ? Si oui, on change de field
-                else if (field.length() + line.length() > Embed.Field.MAX_VALUE_LENGTH){
+                else if (field.length() + line.length() > Embed.Field.MAX_VALUE_LENGTH) {
                     fields.add(field.toString());
                     fieldsSize += field.length();
                     field.setLength(0);
@@ -67,30 +67,29 @@ public abstract class ObjectUser {
                 fieldsPerEmbed.add(fields);
 
             // Il ne reste plus qu'à les parcourir et à créer autant d'embed que nécessaire
-            for(int i = 0; i < fieldsPerEmbed.size(); i++) {
-                final int I = i;
-                embed.add(spec -> {
-                    spec.setTitle(Translator.getLabel(lg, prefix + ".list")
-                            + (fieldsPerEmbed.size() > 1 ? " (" + (I + 1) + "/"
-                            + fieldsPerEmbed.size() + ")" : ""))
-                            .setThumbnail(guild.getIconUrl(Image.Format.PNG).orElse(StringUtils.EMPTY));
+            for (int i = 0; i < fieldsPerEmbed.size(); i++) {
+                EmbedCreateSpec.Builder builder = EmbedCreateSpec.builder()
+                        .title(Translator.getLabel(lg, prefix + ".list")
+                                + (fieldsPerEmbed.size() > 1 ? " (" + (i + 1) + "/"
+                                + fieldsPerEmbed.size() + ")" : ""))
+                        .thumbnail(guild.getIconUrl(Image.Format.PNG).orElse(StringUtils.EMPTY))
+                        .footer(server.getName(), null);
+                List<String> texts = fieldsPerEmbed.get(i);
+                for (int j = 0; j < texts.size(); j++) {
+                    builder.addField(Translator.getLabel(lg, prefix + "." + prefix + "s")
+                                    + (texts.size() > 1 ? " (" + (j + 1) + "/"
+                                    + texts.size() + ")" : "") + " : ",
+                            texts.get(j), true);
+                }
 
-                    List<String> texts = fieldsPerEmbed.get(I);
-                    for (int j = 0; j < texts.size(); j++) {
-                        spec.addField(Translator.getLabel(lg, prefix + "." + prefix + "s")
-                                        + (texts.size() > 1 ? " (" + (j + 1) + "/"
-                                        + texts.size() + ")" : "") + " : ",
-                                texts.get(j), true);
-                    }
-                    spec.setFooter(server.getName(), null);
-                });
+                embed.add(builder.build());
             }
-        }
-        else
-            embed.add(spec -> spec
-                    .setThumbnail(guild.getIconUrl(Image.Format.PNG).orElse(StringUtils.EMPTY))
-                    .setDescription(Translator.getLabel(lg, prefix + ".empty"))
-                    .setFooter(server.getName(), null));
+        } else
+            embed.add(EmbedCreateSpec.builder()
+                    .thumbnail(guild.getIconUrl(Image.Format.PNG).orElse(StringUtils.EMPTY))
+                    .description(Translator.getLabel(lg, prefix + ".empty"))
+                    .footer(server.getName(), null)
+                    .build());
 
         return embed;
     }

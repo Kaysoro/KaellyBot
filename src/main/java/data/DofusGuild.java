@@ -49,31 +49,33 @@ public class DofusGuild implements Embedded {
     }
 
     @Override
-    public void decorateEmbedObject(EmbedCreateSpec spec, Language lg){
-        spec.setTitle(name)
-        .setUrl(url)
-        .setDescription(Translator.getLabel(lg, "guild.desc"))
-        .setThumbnail(littleSkinURL)
-        .setImage(bigSkinURL)
-        .addField(Translator.getLabel(lg, "guild.level"), level, true)
-        .addField(Translator.getLabel(lg, "guild.server"), server, true)
-        .addField(Translator.getLabel(lg, "guild.creation_date"), creationDate, true)
-        .addField(Translator.getLabel(lg, "guild.members_size"), membersSize, true);
+    public EmbedCreateSpec decorateEmbedObject(Language lg){
+        EmbedCreateSpec.Builder builder = EmbedCreateSpec.builder()
+                .title(name)
+                .url(url)
+                .description(Translator.getLabel(lg, "guild.desc"))
+                .thumbnail(littleSkinURL)
+                .image(bigSkinURL)
+                .addField(Translator.getLabel(lg, "guild.level"), level, true)
+                .addField(Translator.getLabel(lg, "guild.server"), server, true)
+                .addField(Translator.getLabel(lg, "guild.creation_date"), creationDate, true)
+                .addField(Translator.getLabel(lg, "guild.members_size"), membersSize, true);
 
         if (alliName != null)
-            spec.addField(Translator.getLabel(lg, "guild.ally"), "[" + alliName + "](" + alliUrl + ")", true);
+            builder.addField(Translator.getLabel(lg, "guild.ally"), "[" + alliName + "](" + alliUrl + ")", true);
 
         if (! mainMembers.isEmpty())
             for(int i = 0; i < mainMembers.size(); i++)
-                spec.addField(Translator.getLabel(lg, "guild.main_members")
+                builder.addField(Translator.getLabel(lg, "guild.main_members")
                                 + (mainMembers.size() > 1? " (" + (i + 1) + "/"
                                 + mainMembers.size() + ")" : "") + " : ",
                         mainMembers.get(i), true);
+        return builder.build();
     }
 
     @Override
-    public void decorateMoreEmbedObject(EmbedCreateSpec spec, Language lg) {
-        decorateEmbedObject(spec, lg);
+    public EmbedCreateSpec decorateMoreEmbedObject(Language lg) {
+        return decorateEmbedObject(lg);
     }
 
     public static DofusGuild getDofusGuild(String url, Language lg) throws IOException {

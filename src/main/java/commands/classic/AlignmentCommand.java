@@ -81,9 +81,9 @@ public class AlignmentCommand extends FetchCommand {
         // Consultation filtré par niveau
         if ((m = Pattern.compile(">\\s*(\\d{1,3})").matcher(content)).matches()){
             int level = Integer.parseInt(m.group(1));
-            List<Consumer<EmbedCreateSpec>> embeds = OrderUser.getOrdersFromLevel(guild.get().getMembers()
+            List<EmbedCreateSpec> embeds = OrderUser.getOrdersFromLevel(guild.get().getMembers()
                     .collectList().blockOptional().orElse(Collections.emptyList()), server, level, guild.get(), lg);
-            for (Consumer<EmbedCreateSpec> embed : embeds)
+            for (EmbedCreateSpec embed : embeds)
                 message.getChannel().flatMap(chan -> chan.createEmbed(embed)).subscribe();
         }
         else {
@@ -100,8 +100,8 @@ public class AlignmentCommand extends FetchCommand {
 
             //Consultation des données filtrés par utilisateur
             if (content.isEmpty()){
-                List<Consumer<EmbedCreateSpec>> embeds = OrderUser.getOrdersFromUser(user.get(), server, lg);
-                for (Consumer<EmbedCreateSpec> embed : embeds)
+                List<EmbedCreateSpec> embeds = OrderUser.getOrdersFromUser(user.get(), server, lg);
+                for (EmbedCreateSpec embed : embeds)
                     message.getChannel().flatMap(chan -> chan.createEmbed(embed)).subscribe();
             }
             // Enregistrement des données
@@ -167,10 +167,10 @@ public class AlignmentCommand extends FetchCommand {
                     if (orders.size() == 1) order = orders.get(0);
                 }
 
-                List<Consumer<EmbedCreateSpec>> embeds = OrderUser.getOrdersFromCityOrOrder(guild.get().getMembers()
+                List<EmbedCreateSpec> embeds = OrderUser.getOrdersFromCityOrOrder(guild.get().getMembers()
                                 .collectList().blockOptional().orElse(Collections.emptyList()),
                         server, city, order, guild.get(), lg);
-                for (Consumer<EmbedCreateSpec> embed : embeds)
+                for (EmbedCreateSpec embed : embeds)
                     message.getChannel().flatMap(chan -> chan.createEmbed(embed)).subscribe();
             }
             else

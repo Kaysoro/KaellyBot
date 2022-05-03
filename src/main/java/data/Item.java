@@ -61,63 +61,59 @@ public class Item implements Embedded {
     }
 
     @Override
-    public void decorateEmbedObject(EmbedCreateSpec spec, Language lg) {
-        spec.setTitle(name)
-            .setUrl(url)
-            .setThumbnail(skinURL);
+    public EmbedCreateSpec decorateEmbedObject(Language lg) {
+        EmbedCreateSpec.Builder builder = EmbedCreateSpec.builder()
+                .title(name)
+                .url(url)
+                .thumbnail(skinURL);
 
         if (level != null && ! level.isEmpty())
-            spec.addField(Translator.getLabel(lg, "item.niveau"), level, true);
-        spec.addField(Translator.getLabel(lg, "item.type"), type, true);
+            builder.addField(Translator.getLabel(lg, "item.niveau"), level, true);
+        builder.addField(Translator.getLabel(lg, "item.type"), type, true);
 
         if (effects != null && ! effects.isEmpty())
-        spec.addField(Translator.getLabel(lg, "item.effets"), effects, true);
+            builder.addField(Translator.getLabel(lg, "item.effets"), effects, true);
 
         if (caracteristics != null && ! caracteristics.isEmpty())
-            spec.addField(Translator.getLabel(lg, "item.caracteristiques"), caracteristics, true);
+            builder.addField(Translator.getLabel(lg, "item.caracteristiques"), caracteristics, true);
 
         if (conditions != null && ! conditions.isEmpty())
-            spec.addField(Translator.getLabel(lg, "item.conditions"), conditions, true);
+            builder.addField(Translator.getLabel(lg, "item.conditions"), conditions, true);
 
         if (panoplie != null && panoplieURL != null)
-            spec.addField(Translator.getLabel(lg, "item.panoplie"), "[" + panoplie + "](" + panoplieURL + ")", true);
+            builder.addField(Translator.getLabel(lg, "item.panoplie"), "[" + panoplie + "](" + panoplieURL + ")", true);
+        return builder.build();
     }
 
     @Override
-    public void decorateMoreEmbedObject(EmbedCreateSpec spec, Language lg) {
-        spec.setTitle(name)
-            .setUrl(url)
-            .setImage(skinURL);
+    public EmbedCreateSpec decorateMoreEmbedObject(Language lg) {
+        EmbedCreateSpec.Builder builder = EmbedCreateSpec.builder()
+                .title(name)
+                .url(url)
+                .thumbnail(skinURL);
 
         if (description != null && ! description.isEmpty())
-            spec.setDescription(description);
+            builder.description(description);
 
         if (level != null && ! level.isEmpty())
-            spec.addField(Translator.getLabel(lg, "item.niveau"), level, true);
-        spec.addField(Translator.getLabel(lg, "item.type"), type, true);
+            builder.addField(Translator.getLabel(lg, "item.niveau"), level, true);
+        builder.addField(Translator.getLabel(lg, "item.type"), type, true);
 
         if (effects != null && ! effects.isEmpty())
-            spec.addField(Translator.getLabel(lg, "item.effets"), effects, true);
+            builder.addField(Translator.getLabel(lg, "item.effets"), effects, true);
 
         if (caracteristics != null && ! caracteristics.isEmpty())
-            spec.addField(Translator.getLabel(lg, "item.caracteristiques"), caracteristics, true);
+            builder.addField(Translator.getLabel(lg, "item.caracteristiques"), caracteristics, true);
 
         if (conditions != null && ! conditions.isEmpty())
-            spec.addField(Translator.getLabel(lg, "item.conditions"), conditions, true);
+            builder.addField(Translator.getLabel(lg, "item.conditions"), conditions, true);
 
         if (panoplie != null && panoplieURL != null)
-            spec.addField(Translator.getLabel(lg, "item.panoplie"), "[" + panoplie + "](" + panoplieURL + ")", true);
+            builder.addField(Translator.getLabel(lg, "item.panoplie"), "[" + panoplie + "](" + panoplieURL + ")", true);
 
         if (recipe != null)
-            spec.addField(Translator.getLabel(lg, "item.recette"), recipe, true);
-
-        if (! drops.isEmpty())
-            for(int i = 0 ; i < drops.size(); i++)
-                spec.addField(Translator.getLabel(lg, "resource.drops")
-                                + (drops.size() >1? " (" + (i + 1) + "/" + drops.size() + ")" : "") + " : ",
-                        drops.get(i), true);
-
-        if (error) spec.setFooter(Translator.getLabel(lg, "monster.error"), "");
+            builder.addField(Translator.getLabel(lg, "item.recette"), recipe, true);
+        return builder.build();
     }
 
     public static Item getItem(Language lg, String url) throws IOException {

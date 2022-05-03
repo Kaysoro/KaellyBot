@@ -10,6 +10,8 @@ import discord4j.core.event.domain.guild.GuildUpdateEvent;
 import discord4j.core.event.domain.lifecycle.ReadyEvent;
 import discord4j.core.event.domain.message.MessageCreateEvent;
 import discord4j.core.object.presence.Activity;
+import discord4j.core.object.presence.ClientActivity;
+import discord4j.core.object.presence.ClientPresence;
 import discord4j.core.object.presence.Presence;
 import discord4j.core.shard.MemberRequestFilter;
 import discord4j.gateway.intent.Intent;
@@ -115,7 +117,7 @@ public class ClientConfig {
                         Intent.GUILD_MESSAGES,
                         Intent.GUILD_MESSAGE_REACTIONS,
                         Intent.DIRECT_MESSAGES))
-                .setInitialStatus(ignored -> Presence.online(Activity.watching(Constants.discordInvite)))
+                .setInitialPresence(ignored -> ClientPresence.online(ClientActivity.watching(Constants.discordInvite)))
                 .setMemberRequestFilter(MemberRequestFilter.none())
                 .withGateway(client -> Mono.when(
                         readyListener(client),
