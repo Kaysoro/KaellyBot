@@ -175,7 +175,7 @@ public class Almanax implements Embedded{
 
         final CloseableHttpClient httpClient = HttpClients.createDefault();
         URI requestUri = UriBuilder.fromPath(Constants.almanaxURL
-                        .replace("{game}", "dofus")
+                        .replace("{game}", "dofus2")
                         .replace("{language}", lg.getAbrev().toLowerCase(Locale.ROOT))
                         .replace("{date}", date)
         ).build();
@@ -195,35 +195,30 @@ public class Almanax implements Embedded{
             // parse data from successful API response
             ObjectMapper objectMapper = new ObjectMapper();
             JsonNode rootNode = objectMapper.readTree(EntityUtils.toString(response.getEntity()));
-            if (rootNode == null || rootNode.get("error") != null) {
-                return cacheAndReturn(lg, date, gatheringWebsiteData(lg, date), jedis);
-            }
 
-            JsonNode dataNode = rootNode.get("data");
-            String offrande, bonus, quest, resourceURL;
-            JsonNode bonusNode = dataNode.get("bonus");
-            if (bonusNode == null) {
-                return cacheAndReturn(lg, date, gatheringWebsiteData(lg, date), jedis);
-            }
+            JsonNode bonusNode = rootNode.get("bonus");
+            JsonNode bonusTypeNode = bonusNode.get("type");
 
-            if (dataNode.get("enc_mapped").asBoolean()) { // could not be linked to encyclopedia, will only provide basic info
-                JsonNode itemNode = dataNode.get("item");
-                if (itemNode == null) {
-                    return cacheAndReturn(lg, date, gatheringWebsiteData(lg, date), jedis);
-                }
+            String bonusDescription = bonusNode.get("description").asText();
+            String bonusType = bonusTypeNode.get("name").asText();
 
-                offrande = "[" + itemNode.get("name").asText() + "](" + itemNode.get("ankama_url").asText() + ") x" + dataNode.get("item_quantity").asText();
-                bonus = "~ **" + bonusNode.get("bonus").asText() + "** ~\n" + bonusNode.get("description").asText();
-                quest = ""; // quest is ignored in the API since it does not include relevant information
-                resourceURL = itemNode.get("image_url").asText();
-            } else {
-                offrande = dataNode.get("item_name").asText() + " x" + dataNode.get("item_quantity").asText();
-                bonus = "~ **" + bonusNode.get("bonus").asText() + "** ~\n" + bonusNode.get("description").asText();
-                quest = "";
-                resourceURL = ""; // items without a link to the encyclopedia are not guaranteed to have an image (example 2021-12-16)
-            }
+            JsonNode tributeNode = rootNode.get("tribute");
+            JsonNode itemNode = tributeNode.get("item");
 
-            return cacheAndReturn(lg, date, new Almanax(bonus, offrande, date, quest, resourceURL), jedis);
+            String itemQuantity = tributeNode.get("quantity").asText();
+            String itemName = itemNode.get("name").asText();
+
+            JsonNode itemImagesNode = itemNode.get("image_urls");
+            JsonNode itemImageSd = itemImagesNode.get("sd");
+            JsonNode itemImageIcon = itemImagesNode.get("icon");
+
+            String itemImage = itemImageSd == null ? itemImageIcon.asText() : itemImageSd.asText();
+
+            String offrande = itemName + " x" + itemQuantity;
+            String bonus = "~ **" + bonusType + "** ~\n" + bonusDescription;
+            String quest = ""; // quest is ignored in the API since it does not include relevant information
+
+            return cacheAndReturn(lg, date, new Almanax(bonus, offrande, date, quest, itemImage), jedis);
         } catch (Throwable e) {
             return cacheAndReturn(lg, date, gatheringWebsiteData(lg, date), jedis);
         }
