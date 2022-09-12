@@ -1,3 +1,4 @@
+
 package data;
 
 import enums.Game;
@@ -147,7 +148,7 @@ public class Constants {
     /**
      * Almanax API URL
      */
-    public final static String almanaxURL = "https://alm.dofusdu.de/{game}/v1/{language}/{date}";
+    public final static String almanaxURL = "https://api.dofusdu.de/{game}/{language}/almanax/{date}";
 
     /**
      * Almanax Redis cache time to live for each cached day
