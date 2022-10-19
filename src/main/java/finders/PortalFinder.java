@@ -7,14 +7,14 @@ import com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider;
 import data.ServerDofus;
 import enums.Dimension;
 import enums.Language;
+import jakarta.ws.rs.client.Client;
+import jakarta.ws.rs.client.ClientBuilder;
+import jakarta.ws.rs.core.GenericType;
+import jakarta.ws.rs.core.MediaType;
 import payloads.PortalDto;
 import util.Authenticator;
 import util.ClientConfig;
 
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
-import javax.ws.rs.core.GenericType;
-import javax.ws.rs.core.MediaType;
 import java.util.List;
 
 import static com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider.DEFAULT_ANNOTATIONS;
