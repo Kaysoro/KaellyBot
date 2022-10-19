@@ -4,6 +4,7 @@ import discord4j.core.spec.EmbedCreateSpec;
 import discord4j.rest.util.Color;
 import enums.Language;
 import org.apache.commons.lang3.time.DateUtils;
+import payloads.DimensionDto;
 import payloads.PortalDto;
 import payloads.PositionDto;
 import payloads.TransportDto;
@@ -18,32 +19,34 @@ public final class PortalMapper {
 
     public static EmbedCreateSpec decorateSpec(PortalDto portal, Language language){
         EmbedCreateSpec.Builder builder = EmbedCreateSpec.builder()
-                .title(portal.getDimension().getName())
-                .color(Color.of(portal.getDimension().getColor()))
-                .thumbnail(portal.getDimension().getImage());
+                .title(Translator.getLabel(language, "dimension." + portal.getDimension()))
+                .color(Color.of(DimensionDto.of(portal.getDimension()).getColor()))
+                .thumbnail(DimensionDto.of(portal.getDimension()).getImage());
 
-        if (Boolean.TRUE.equals(portal.getIsAvailable()) && portal.getNearestZaap() != null
-                && portal.getPosition() != null && portal.getUtilisation() > 0){
+        if (portal.getPosition() != null && portal.getRemainingUses() > 0){
             builder.addField(Translator.getLabel(language, "portal.position"),
                     "**" + getPosition(portal.getPosition()) + "**", true);
 
             // Utilisation
             builder.addField(Translator.getLabel(language, "portal.utilisation.title"),
-                    portal.getUtilisation() + " "
+                    portal.getRemainingUses() + " "
                             + Translator.getLabel(language, "portal.utilisation.desc")
-                            + (portal.getUtilisation() > 1 ? "s" : ""), true);
+                            + (portal.getRemainingUses() > 1 ? "s" : ""), true);
 
             // Transports
-            if (portal.getNearestTransportLimited() != null)
+            if (portal.getPosition().getConditionalTransport() != null) {
+                String transportType = Translator.getLabel(language, "dp.transport."
+                        + portal.getPosition().getConditionalTransport().getType());
                 builder.addField(Translator.getLabel(language, "portal.private_zaap")
-                                .replace("{transport}", portal.getNearestTransportLimited().getType()),
-                        getTransport(portal.getNearestTransportLimited()), false);
+                                .replace("{transport}", transportType),
+                        getTransport(portal.getPosition().getConditionalTransport(), language), false);
+            }
 
             builder.addField(Translator.getLabel(language, "portal.zaap"),
-                        getTransport(portal.getNearestZaap()), false);
+                        getTransport(portal.getPosition().getTransport(), language), false);
 
             builder.footer(getDateInformation(portal, language),
-                    "https://i.imgur.com/u2PUyt5.png");
+                    "https://i.imgur.com/j8p3M2D.png");
         }
         else
             builder.description(Translator.getLabel(language, "portal.unknown"));
@@ -54,22 +57,23 @@ public final class PortalMapper {
         return "[" + position.getX() + ", " + position.getY() + "]";
     }
 
-    private static String getTransport(TransportDto transport){
-        return transport.getArea() + " (" + transport.getSubArea()
-                + ") **[" + transport.getPosition().getX() + ", " + transport.getPosition().getY() + "]**";
+    private static String getTransport(TransportDto transport, Language language){
+        return Translator.getLabel(language, "dp.area." + transport.getArea()) + " ("
+                + Translator.getLabel(language, "dp.sub_area." + transport.getSubArea())
+                + ") **[" + transport.getX() + ", " + transport.getY() + "]**";
     }
 
     private static String getDateInformation(PortalDto portal, Language language){
         StringBuilder st = new StringBuilder(Translator.getLabel(language, "portal.date.added")).append(" ")
-                .append(getLabelTimeAgo(portal.getCreationDate(), language)).append(" ")
+                .append(getLabelTimeAgo(portal.getCreatedAt(), language)).append(" ")
                 .append(Translator.getLabel(language, "portal.date.by")).append(" ")
-                .append(portal.getCreationAuthor().getName());
+                .append(portal.getCreatedBy().getName());
 
-        if (portal.getLastUpdateDate() != null){
+        if (portal.getUpdatedAt() != null){
             st.append(" - ").append(Translator.getLabel(language, "portal.date.edited")).append(" ")
-                    .append(getLabelTimeAgo(portal.getLastUpdateDate(), language)).append(" ")
+                    .append(getLabelTimeAgo(portal.getUpdatedAt(), language)).append(" ")
                     .append(Translator.getLabel(language, "portal.date.by")).append(" ")
-                    .append(portal.getLastAuthorUpdate().getName());
+                    .append(portal.getUpdatedBy().getName());
         }
 
         return st.append(" ").append(Translator.getLabel(language, "portal.date.via"))

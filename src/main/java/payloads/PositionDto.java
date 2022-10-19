@@ -13,6 +13,9 @@ import javax.validation.constraints.NotNull;
 public class PositionDto {
     @NotNull Integer x;
     @NotNull Integer y;
+    boolean isInCanopy;
+    TransportDto transport;
+    TransportDto conditionalTransport;
 
     @JsonPOJOBuilder(withPrefix = "")
     public static class PositionDtoBuilder {}

@@ -41,9 +41,8 @@ public class ClientConfig {
     private final static String FILENAME = "config.properties";
     private DiscordClient DISCORD;
     private TwitterStream TWITTER;
-    private String KAELLY_PORTALS_URL;
-    private String KAELLY_PORTALS_LOGIN;
-    private String KAELLY_PORTALS_PASSWORD;
+    private String DOFUS_PORTALS_URL;
+    private String DOFUS_PORTALS_TOKEN;
     private String KAELLY_CACHE_URL;
     private String KAELLY_CACHE_PASSWORD;
 
@@ -59,9 +58,8 @@ public class ClientConfig {
         try (FileInputStream file = new FileInputStream(URLDecoder.decode(config, "UTF-8"))){
             prop.load(file);
 
-            KAELLY_PORTALS_URL = prop.getProperty("kaelly.portals.url");
-            KAELLY_PORTALS_LOGIN = prop.getProperty("kaelly.portals.login");
-            KAELLY_PORTALS_PASSWORD = prop.getProperty("kaelly.portals.password");
+            DOFUS_PORTALS_URL = prop.getProperty("dofus_portals.url");
+            DOFUS_PORTALS_TOKEN = prop.getProperty("dofus_portals.token");
             KAELLY_CACHE_URL = prop.getProperty("kaelly.cache.url");
             KAELLY_CACHE_PASSWORD = prop.getProperty("kaelly.cache.password");
 
@@ -134,16 +132,12 @@ public class ClientConfig {
                 .block();
     }
 
-    public static String KAELLY_PORTALS_URL(){
-        return getInstance().KAELLY_PORTALS_URL;
+    public static String DOFUS_PORTALS_URL(){
+        return getInstance().DOFUS_PORTALS_URL;
     }
 
-    public static String KAELLY_PORTALS_LOGIN(){
-        return getInstance().KAELLY_PORTALS_LOGIN;
-    }
-
-    public static String KAELLY_PORTALS_PASSWORD(){
-        return getInstance().KAELLY_PORTALS_PASSWORD;
+    public static String DOFUS_PORTALS_TOKEN(){
+        return getInstance().DOFUS_PORTALS_TOKEN;
     }
 
     public static String KAELLY_CACHE_URL() {

@@ -12,17 +12,14 @@ import java.time.Instant;
 @Builder(builderClassName = "PortalDtoBuilder", toBuilder = true)
 public class PortalDto {
 
-    ServerDto server;
-    DimensionDto dimension;
+    String server;
+    String dimension;
+    int remainingUses;
     PositionDto position;
-    Boolean isAvailable;
-    Integer utilisation;
-    Instant creationDate;
-    AuthorDto creationAuthor;
-    Instant lastUpdateDate;
-    AuthorDto lastAuthorUpdate;
-    TransportDto nearestZaap;
-    TransportDto nearestTransportLimited;
+    UserDto createdBy;
+    Instant createdAt;
+    UserDto updatedBy;
+    Instant updatedAt;
 
     @JsonPOJOBuilder(withPrefix = "")
     public static class PortalDtoBuilder {}

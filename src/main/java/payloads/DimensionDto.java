@@ -1,20 +1,25 @@
 package payloads;
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import lombok.Builder;
-import lombok.Value;
+import lombok.Getter;
 
-@Value
-@JsonDeserialize(builder = DimensionDto.DimensionDtoBuilder.class)
-@Builder(builderClassName = "DimensionDtoBuilder", toBuilder = true)
+import java.util.Map;
+
+@Getter
+@Builder
 public class DimensionDto {
 
-    String id;
-    String name;
-    String image;
-    int color;
+    private static Map<String, DimensionDto> dimensions = Map.of(
+            "ecaflipus",  DimensionDto.builder().color(13490334).image("https://i.imgur.com/sLK4FmQ.png").build(),
+            "enutrosor", DimensionDto.builder().color(16777064).image("https://i.imgur.com/ssMAcx3.png").build(),
+            "srambad", DimensionDto.builder().color(3097192).image("https://i.imgur.com/jzpizTm.png").build(),
+            "xelorium", DimensionDto.builder().color(7229801).image("https://i.imgur.com/vfQhS5D.png").build()
+    );
 
-    @JsonPOJOBuilder(withPrefix = "")
-    public static class DimensionDtoBuilder {}
+    private int color;
+    private String image;
+
+    public static DimensionDto of(String dimension){
+        return dimensions.get(dimension);
+    }
 }
