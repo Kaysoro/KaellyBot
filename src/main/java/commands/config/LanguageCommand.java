@@ -1,6 +1,6 @@
 package commands.config;
 
-import commands.model.AbstractCommand;
+import commands.model.AbstractLegacyCommand;
 import data.ChannelLanguage;
 import data.Guild;
 import discord4j.core.event.domain.message.MessageCreateEvent;
@@ -22,7 +22,7 @@ import java.util.regex.Matcher;
 /**
  * Created by steve on 14/07/2016.
  */
-public class LanguageCommand extends AbstractCommand {
+public class LanguageCommand extends AbstractLegacyCommand {
 
     private DiscordException tooMuchLangs;
     private DiscordException notFoundLang;

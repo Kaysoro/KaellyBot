@@ -1,6 +1,6 @@
 package exceptions;
 
-import commands.model.Command;
+import commands.model.LegacyCommand;
 import discord4j.core.object.entity.Message;
 import enums.Language;
 import org.slf4j.Logger;
@@ -39,7 +39,7 @@ public class BasicDiscordException implements DiscordException {
         this.messageKey = message;
     }
     @Override
-    public void throwException(Message message, Command command, Language lg, Object... arguments) {
+    public void throwException(Message message, LegacyCommand command, Language lg, Object... arguments) {
         message.getChannel().flatMap(chan -> chan.createMessage(Translator.getLabel(lg, messageKey))).subscribe();
     }
 }

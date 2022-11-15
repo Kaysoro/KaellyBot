@@ -1,8 +1,8 @@
 package listeners;
 
 import commands.*;
-import commands.model.AbstractCommand;
-import commands.model.Command;
+import commands.model.AbstractLegacyCommand;
+import commands.model.LegacyCommand;
 import discord4j.core.event.domain.message.MessageCreateEvent;
 import discord4j.core.object.entity.User;
 import discord4j.core.object.entity.channel.MessageChannel;
@@ -28,19 +28,19 @@ public class MessageListener {
          return event.getMessage().getChannel()
                 .doOnSuccess(channel -> {
                     Language lg = Translator.getLanguageFrom(channel);
-                    String prefixe = AbstractCommand.getPrefix(event.getMessage());
+                    String prefixe = AbstractLegacyCommand.getPrefix(event.getMessage());
 
                     // If the authorId is a bot, message get ignored
                     if (! event.getMessage().getAuthor().map(User::isBot).orElse(true)) {
-                        List<Command> commandsAvailable = new ArrayList<>();
+                        List<LegacyCommand> commandsAvailable = new ArrayList<>();
 
-                        for (Command command : CommandManager.getCommands())
+                        for (LegacyCommand command : CommandManager.getCommands())
                             if (event.getMessage().getContent().startsWith(prefixe + command.getName()))
                                 commandsAvailable.add(command);
 
                         if (!commandsAvailable.isEmpty()){
                             commandsAvailable.sort((cmd1, cmd2) -> cmd2.getName().length() - cmd1.getName().length());
-                            Command command = commandsAvailable.get(0);
+                            LegacyCommand command = commandsAvailable.get(0);
 
                             try {
                                 command.request(event, event.getMessage());

@@ -1,13 +1,12 @@
 package exceptions;
 
-import commands.model.Command;
+import commands.model.LegacyCommand;
 import data.Constants;
 import data.ServerDofus;
 import discord4j.core.object.entity.Message;
 import enums.Language;
 import util.Translator;
 
-import java.awt.*;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -17,7 +16,7 @@ import java.util.stream.Collectors;
 public class WrongBotUsedDiscordException implements DiscordException {
 
     @Override
-    public void throwException(Message message, Command command, Language lg, Object... arguments) {
+    public void throwException(Message message, LegacyCommand command, Language lg, Object... arguments) {
         StringBuilder st = new StringBuilder();
         List<ServerDofus> servers = (List<ServerDofus>) arguments[0];
         servers.stream()

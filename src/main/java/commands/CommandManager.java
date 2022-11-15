@@ -4,12 +4,15 @@ import commands.admin.*;
 import commands.classic.*;
 import commands.config.*;
 import commands.hidden.SendNudeCommand;
-import commands.model.Command;
+import commands.model.LegacyCommand;
+import commands.model.SlashCommand;
+import discord4j.discordjson.json.ApplicationCommandRequest;
 
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.stream.Collectors;
 
 /**
  * Created by steve on 20/05/2017.
@@ -18,13 +21,15 @@ public class CommandManager {
 
     private static CommandManager instance;
 
-    private List<Command> commands;
-    private Map<String, Command> mapCommands;
+    private final List<SlashCommand> slashCommands;
+    private final List<LegacyCommand> commands;
+    private final Map<String, LegacyCommand> mapCommands;
 
     private CommandManager(){
         super();
         mapCommands = new ConcurrentHashMap<>();
         commands = new CopyOnWriteArrayList<>();
+        slashCommands = new CopyOnWriteArrayList<>();
 
         // Basics commands
         addCommand(new AboutCommand());
@@ -68,16 +73,30 @@ public class CommandManager {
         return instance;
     }
 
-    public static List<Command> getCommands(){
+    public static List<SlashCommand> getSlashCommands(){
+        return getInstance().slashCommands;
+    }
+
+    public static List<ApplicationCommandRequest> getSlashCommandRequests(){
+        return getInstance().slashCommands.stream()
+                .map(SlashCommand::getCommandRequest)
+                .collect(Collectors.toList());
+    }
+
+    public static List<LegacyCommand> getCommands(){
         return getInstance().commands;
     }
 
-    public static Command getCommand(String name){
+    public static LegacyCommand getCommand(String name){
         return getInstance().mapCommands.get(name);
     }
 
-    private void addCommand(Command command){
+    private void addCommand(LegacyCommand command){
         commands.add(command);
         mapCommands.put(command.getName(), command);
+
+        if (command instanceof SlashCommand) {
+            slashCommands.add((SlashCommand) command);
+        }
     }
 }

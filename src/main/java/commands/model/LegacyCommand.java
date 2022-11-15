@@ -10,7 +10,7 @@ import java.util.regex.Matcher;
 /**
  * Created by steve on 14/07/2016.
  */
-public interface Command {
+public interface LegacyCommand {
     String getName();
     String getPattern();
     Matcher getMatcher(Message message);

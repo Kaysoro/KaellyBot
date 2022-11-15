@@ -1,6 +1,6 @@
 package commands.classic;
 
-import commands.model.AbstractCommand;
+import commands.model.AbstractLegacyCommand;
 import discord4j.core.event.domain.message.MessageCreateEvent;
 import discord4j.core.object.entity.Message;
 import enums.Language;
@@ -25,7 +25,7 @@ import java.util.regex.Matcher;
 /**
  * Created by steve on 14/07/2016.
  */
-public class TutorialCommand extends AbstractCommand {
+public class TutorialCommand extends AbstractLegacyCommand {
 
     private final static String forName = "q=";
     private final static String filtered = "filter=page";

@@ -15,7 +15,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class DofusRequestCommand extends AbstractCommand {
+public abstract class DofusRequestCommand extends AbstractLegacyCommand {
 
     protected DofusRequestCommand(String name, String pattern) {
         super(name, pattern);

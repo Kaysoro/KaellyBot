@@ -1,8 +1,8 @@
 package commands.classic;
 
 import commands.CommandManager;
-import commands.model.AbstractCommand;
-import commands.model.Command;
+import commands.model.AbstractLegacyCommand;
+import commands.model.LegacyCommand;
 import data.Constants;
 import data.Guild;
 import discord4j.core.event.domain.message.MessageCreateEvent;
@@ -20,7 +20,7 @@ import java.util.regex.Matcher;
 /**
  * Created by steve on 14/07/2016.
  */
-public class HelpCommand extends AbstractCommand {
+public class HelpCommand extends AbstractLegacyCommand {
 
     public final static String NAME = "help";
 
@@ -38,7 +38,7 @@ public class HelpCommand extends AbstractCommand {
         List<String> messages = new ArrayList<>();
 
         boolean argumentFound = m.group(1) != null && m.group(1).replaceAll("^\\s+", "").length() > 0;
-        for(Command command : CommandManager.getCommands())
+        for(LegacyCommand command : CommandManager.getCommands())
             if (command.isPublic() && ! command.isAdmin() && (!command.isHidden() || argumentFound)
                     && (message.getChannel().block() instanceof PrivateChannel
                     || ! command.isForbidden(Guild.getGuild(message.getGuild().block())))){

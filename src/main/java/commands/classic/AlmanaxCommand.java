@@ -1,6 +1,6 @@
 package commands.classic;
 
-import commands.model.AbstractCommand;
+import commands.model.AbstractLegacyCommand;
 import data.Almanax;
 import discord4j.core.event.domain.message.MessageCreateEvent;
 import discord4j.core.object.entity.Message;
@@ -18,7 +18,7 @@ import java.util.regex.Matcher;
 /**
  * Created by steve on 14/07/2016.
  */
-public class AlmanaxCommand extends AbstractCommand {
+public class AlmanaxCommand extends AbstractLegacyCommand {
 
     public AlmanaxCommand(){
         super("almanax", "(\\s+\\d{2}/\\d{2}/\\d{4}|\\s+\\+\\d)?");

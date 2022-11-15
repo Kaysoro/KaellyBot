@@ -1,6 +1,6 @@
 package commands.config;
 
-import commands.model.AbstractCommand;
+import commands.model.AbstractLegacyCommand;
 import data.Constants;
 import discord4j.common.util.Snowflake;
 import discord4j.core.event.domain.message.MessageCreateEvent;
@@ -17,7 +17,7 @@ import java.util.regex.Matcher;
 /**
  * Created by steve on 14/07/2016.
  */
-public class RSSCommand extends AbstractCommand {
+public class RSSCommand extends AbstractLegacyCommand {
 
     private DiscordException rssFound;
     private DiscordException rssNotFound;

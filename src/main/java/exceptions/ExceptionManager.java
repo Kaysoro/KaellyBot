@@ -1,6 +1,6 @@
 package exceptions;
 
-import commands.model.Command;
+import commands.model.LegacyCommand;
 import discord4j.core.object.entity.Message;
 import enums.Language;
 import org.jsoup.HttpStatusException;
@@ -26,7 +26,7 @@ public abstract class ExceptionManager {
     private static DiscordException gameWebsite503 = new AdvancedDiscordException("exception.advanced.game_website_503",
             new String[]{"game.url"}, new Boolean[]{true});
 
-    public static void manageIOException(Exception e, Message message, Command command, Language lg, DiscordException notFound){
+    public static void manageIOException(Exception e, Message message, LegacyCommand command, Language lg, DiscordException notFound){
         // First we try parsing the exception message to see if it contains the response code
         Matcher exMsgStatusCodeMatcher = Pattern.compile("^Server returned HTTP response code: (\\d+)")
                 .matcher(e.getMessage());
@@ -75,7 +75,7 @@ public abstract class ExceptionManager {
 
     }
 
-    public static void manageException(Exception e, Message message, Command command, Language lg){
+    public static void manageException(Exception e, Message message, LegacyCommand command, Language lg){
         LOG.error("manageException", e);
         BasicDiscordException.UNKNOWN_ERROR.throwException(message, command, lg);
     }

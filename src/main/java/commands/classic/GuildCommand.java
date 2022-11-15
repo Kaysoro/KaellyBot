@@ -1,6 +1,6 @@
 package commands.classic;
 
-import commands.model.AbstractCommand;
+import commands.model.AbstractLegacyCommand;
 import data.DofusGuild;
 import discord4j.core.event.domain.message.MessageCreateEvent;
 import discord4j.core.object.entity.Message;
@@ -24,7 +24,7 @@ import java.util.regex.Pattern;
 /**
  * Created by steve on 30/03/2018.
  */
-public class GuildCommand extends AbstractCommand {
+public class GuildCommand extends AbstractLegacyCommand {
 
     private final static String forPseudo = "text=";
     private final static String forServer = "guild_server_id[]=";

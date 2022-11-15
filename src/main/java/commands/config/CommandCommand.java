@@ -1,8 +1,8 @@
 package commands.config;
 
 import commands.CommandManager;
-import commands.model.AbstractCommand;
-import commands.model.Command;
+import commands.model.AbstractLegacyCommand;
+import commands.model.LegacyCommand;
 import data.CommandForbidden;
 import data.Guild;
 import discord4j.core.event.domain.message.MessageCreateEvent;
@@ -18,7 +18,7 @@ import java.util.regex.Matcher;
 /**
  * Created by steve on 14/07/2016.
  */
-public class CommandCommand extends AbstractCommand {
+public class CommandCommand extends AbstractLegacyCommand {
 
     private DiscordException tooMuchCmds;
     private DiscordException notFoundCmd;
@@ -34,14 +34,14 @@ public class CommandCommand extends AbstractCommand {
     public void request(MessageCreateEvent event, Message message, Matcher m, Language lg) {
         if (isUserHasEnoughRights(message)) {
             Guild guild = Guild.getGuild(message.getGuild().block());
-            List<Command> potentialCmds = new ArrayList<>();
+            List<LegacyCommand> potentialCmds = new ArrayList<>();
             String commandName = m.group(1).trim();
-            for (Command command : CommandManager.getCommands())
+            for (LegacyCommand command : CommandManager.getCommands())
                 if (command.isPublic() && !command.isAdmin() && command.getName().contains(commandName))
                     potentialCmds.add(command);
 
             if (potentialCmds.size() == 1){
-                Command command = potentialCmds.get(0);
+                LegacyCommand command = potentialCmds.get(0);
                 String value = m.group(2);
 
                 if (command instanceof CommandCommand){

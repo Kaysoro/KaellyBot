@@ -7,7 +7,7 @@ import exceptions.NotFoundDiscordException;
 import exceptions.TooMuchDiscordException;
 import java.util.List;
 
-public abstract class FetchCommand extends AbstractCommand {
+public abstract class FetchCommand extends AbstractLegacyCommand {
 
     protected DiscordException tooMuchServers;
     protected DiscordException notFoundServer;

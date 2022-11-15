@@ -1,6 +1,6 @@
 package commands.classic;
 
-import commands.model.AbstractCommand;
+import commands.model.AbstractLegacyCommand;
 import discord4j.core.event.domain.message.MessageCreateEvent;
 import discord4j.core.object.entity.Message;
 import enums.Language;
@@ -13,7 +13,7 @@ import java.util.regex.Matcher;
 /**
  * Created by Kaysoro on 24/05/2019.
  */
-public class PingCommand extends AbstractCommand {
+public class PingCommand extends AbstractLegacyCommand {
 
     public PingCommand() {
         super("ping", "");

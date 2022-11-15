@@ -1,23 +1,21 @@
 package util;
 
+import commands.CommandManager;
 import data.Constants;
 import discord4j.core.DiscordClient;
 import discord4j.core.GatewayDiscordClient;
 import discord4j.core.event.domain.guild.GuildCreateEvent;
 import discord4j.core.event.domain.guild.GuildDeleteEvent;
 import discord4j.core.event.domain.guild.GuildUpdateEvent;
+import discord4j.core.event.domain.interaction.ChatInputInteractionEvent;
 import discord4j.core.event.domain.lifecycle.ReadyEvent;
 import discord4j.core.event.domain.message.MessageCreateEvent;
-import discord4j.core.object.presence.Activity;
 import discord4j.core.object.presence.ClientActivity;
 import discord4j.core.object.presence.ClientPresence;
-import discord4j.core.object.presence.Presence;
 import discord4j.core.shard.MemberRequestFilter;
 import discord4j.gateway.intent.Intent;
 import discord4j.gateway.intent.IntentSet;
-import finders.AlmanaxCalendar;
-import finders.RSSFinder;
-import finders.TwitterFinder;
+import discord4j.rest.RestClient;
 import io.sentry.Sentry;
 import listeners.*;
 import org.slf4j.Logger;
@@ -29,6 +27,7 @@ import twitter4j.conf.ConfigurationBuilder;
 
 import java.io.*;
 import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Properties;
 
 /**
@@ -55,7 +54,7 @@ public class ClientConfig {
         Properties prop = new Properties();
         String config = path + File.separator + FILENAME;
 
-        try (FileInputStream file = new FileInputStream(URLDecoder.decode(config, "UTF-8"))){
+        try (FileInputStream file = new FileInputStream(URLDecoder.decode(config, StandardCharsets.UTF_8))){
             prop.load(file);
 
             DOFUS_PORTALS_URL = prop.getProperty("dofus_portals.url");
@@ -114,6 +113,8 @@ public class ClientConfig {
     }
 
     public void loginDiscord(){
+        registerSlashCommands(DISCORD()).block();
+
         DISCORD().gateway()
                 .setEnabledIntents(IntentSet.of(
                         Intent.GUILDS,
@@ -121,14 +122,15 @@ public class ClientConfig {
                         Intent.GUILD_MESSAGES,
                         Intent.GUILD_MESSAGE_REACTIONS,
                         Intent.DIRECT_MESSAGES))
-                .setInitialPresence(ignored -> ClientPresence.online(ClientActivity.watching(Constants.discordInvite)))
+                .setInitialPresence($ -> ClientPresence.online(ClientActivity.watching(Constants.discordInvite)))
                 .setMemberRequestFilter(MemberRequestFilter.none())
                 .withGateway(client -> Mono.when(
                         readyListener(client),
                         guildCreateListener(client),
                         guildUpdateListener(client),
                         guildDeleteListener(client),
-                        commandListener(client)))
+                        legacyCommandListener(client),
+                        slashCommandListener(client)))
                 .block();
     }
 
@@ -154,9 +156,26 @@ public class ClientConfig {
         return instance;
     }
 
-    private Mono<Void> commandListener(GatewayDiscordClient client){
+    private Mono<Void> registerSlashCommands(RestClient client){
+        return client.getApplicationId()
+                .flatMap(id -> client.getApplicationService()
+                        .bulkOverwriteGlobalApplicationCommand(id, CommandManager.getSlashCommandRequests())
+                        .doOnNext(cmd -> LOG.info("Successfully registered Global Command " + cmd.name()))
+                        .collectList()
+                        .then()
+                        .doOnError(e -> LOG.error("Failed to register global commands", e)));
+    }
+
+    private Mono<Void> legacyCommandListener(GatewayDiscordClient client){
         final MessageListener listener = new MessageListener();
         return client.getEventDispatcher().on(MessageCreateEvent.class)
+                .flatMap(listener::onReady)
+                .then();
+    }
+
+    private Mono<Void> slashCommandListener(GatewayDiscordClient client){
+        final SlashCommandListener listener = new SlashCommandListener();
+        return client.getEventDispatcher().on(ChatInputInteractionEvent.class)
                 .flatMap(listener::onReady)
                 .then();
     }

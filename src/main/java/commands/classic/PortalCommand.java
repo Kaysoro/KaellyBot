@@ -1,6 +1,6 @@
 package commands.classic;
 
-import commands.model.AbstractCommand;
+import commands.model.AbstractLegacyCommand;
 import data.*;
 import discord4j.core.event.domain.message.MessageCreateEvent;
 import discord4j.core.object.entity.Message;
@@ -25,7 +25,7 @@ import java.util.regex.Matcher;
 /**
  * Created by steve on 14/07/2016.
  */
-public class PortalCommand extends AbstractCommand {
+public class PortalCommand extends AbstractLegacyCommand {
 
     private PortalFinder portalFinder;
     private DiscordException tooMuchPortals;

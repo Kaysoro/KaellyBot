@@ -1,6 +1,6 @@
 package commands.classic;
 
-import commands.model.AbstractCommand;
+import commands.model.AbstractLegacyCommand;
 import data.Alliance;
 import discord4j.core.event.domain.message.MessageCreateEvent;
 import discord4j.core.object.entity.Message;
@@ -24,7 +24,7 @@ import java.util.regex.Pattern;
 /**
  * Created by steve on 04/04/2018.
  */
-public class AllianceCommand extends AbstractCommand {
+public class AllianceCommand extends AbstractLegacyCommand {
 
     private final static String forPseudo = "text=";
     private final static String forServer = "alliance_server_id[]=";

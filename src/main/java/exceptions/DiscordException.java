@@ -1,6 +1,6 @@
 package exceptions;
 
-import commands.model.Command;
+import commands.model.LegacyCommand;
 import discord4j.core.object.entity.Message;
 import enums.Language;
 
@@ -9,5 +9,5 @@ import enums.Language;
  */
 public interface DiscordException {
 
-    void throwException(Message message, Command command, Language lg, Object... arguments);
+    void throwException(Message message, LegacyCommand command, Language lg, Object... arguments);
 }

@@ -1,6 +1,6 @@
 package commands.admin;
 
-import commands.model.AbstractCommand;
+import commands.model.AbstractLegacyCommand;
 import discord4j.common.store.action.read.ReadActions;
 import discord4j.core.event.domain.message.MessageCreateEvent;
 import discord4j.core.object.entity.Guild;
@@ -36,7 +36,7 @@ import java.util.stream.Collectors;
  * Created by steve on 23/12/2017.
  */
 @Slf4j
-public class StatCommand extends AbstractCommand {
+public class StatCommand extends AbstractLegacyCommand {
 
     private static final int GULD_LIMIT = 10;
 

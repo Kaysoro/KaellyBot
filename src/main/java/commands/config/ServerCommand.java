@@ -1,6 +1,6 @@
 package commands.config;
 
-import commands.model.AbstractCommand;
+import commands.model.AbstractLegacyCommand;
 import data.*;
 import discord4j.core.event.domain.message.MessageCreateEvent;
 import discord4j.core.object.entity.Message;
@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 /**
  * Created by steve on 14/07/2016.
  */
-public class ServerCommand extends AbstractCommand {
+public class ServerCommand extends AbstractLegacyCommand {
 
     public ServerCommand(){
         super("server","(\\s+.+)?");

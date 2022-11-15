@@ -4,7 +4,7 @@ import commands.classic.AllianceCommand;
 import commands.classic.GuildCommand;
 import commands.classic.ItemCommand;
 import commands.classic.WhoisCommand;
-import commands.model.Command;
+import commands.model.LegacyCommand;
 import discord4j.core.object.entity.Message;
 import enums.AnkamaBug;
 import enums.Language;
@@ -22,7 +22,7 @@ public class NotFoundDiscordException implements DiscordException {
     }
 
     @Override
-    public void throwException(Message message, Command command, Language lg, Object... arguments) {
+    public void throwException(Message message, LegacyCommand command, Language lg, Object... arguments) {
         AnkamaBug bug = null;
         if (command instanceof WhoisCommand)
             bug = AnkamaBug.CHARACTER_NOT_FOUND;

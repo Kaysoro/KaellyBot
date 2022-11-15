@@ -1,6 +1,6 @@
 package data;
 
-import commands.model.Command;
+import commands.model.LegacyCommand;
 import commands.CommandManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,15 +20,15 @@ public class CommandForbidden {
 
     private final static Logger LOG = LoggerFactory.getLogger(CommandForbidden.class);
 
-    private Command command;
+    private LegacyCommand command;
     private Guild guild;
     private boolean isSaved;
 
-    public CommandForbidden(Command command, Guild guild) {
+    public CommandForbidden(LegacyCommand command, Guild guild) {
         this(command, guild, false);
     }
 
-    public CommandForbidden(Command command, Guild guild, boolean isSaved) {
+    public CommandForbidden(LegacyCommand command, Guild guild, boolean isSaved) {
         this.command = command;
         this.guild = guild;
         this.isSaved = isSaved;
@@ -102,7 +102,7 @@ public class CommandForbidden {
         }
     }
 
-    public Command getCommand(){
+    public LegacyCommand getCommand(){
         return command;
     }
 

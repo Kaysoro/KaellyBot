@@ -15,7 +15,6 @@ import discord4j.common.util.Snowflake;
 import discord4j.core.object.entity.Message;
 import discord4j.core.object.entity.channel.GuildMessageChannel;
 import discord4j.core.object.entity.channel.MessageChannel;
-import discord4j.core.object.entity.channel.TextChannel;
 import discord4j.discordjson.json.MessageData;
 import discord4j.rest.entity.RestChannel;
 import enums.Language;
@@ -28,6 +27,7 @@ import java.time.Instant;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Created by steve on 06/06/2017.
@@ -84,6 +84,13 @@ public class Translator {
             result = channelLanguage.getLang();
 
         return result;
+    }
+
+    public static Language mapLocale(String locale){
+        return Stream.of(Language.values())
+                .filter(lg -> lg.getLocales().contains(locale))
+                .findFirst()
+                .orElse(Constants.defaultLanguage);
     }
 
     /**

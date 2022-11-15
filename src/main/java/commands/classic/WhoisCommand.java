@@ -1,6 +1,6 @@
 package commands.classic;
 
-import commands.model.AbstractCommand;
+import commands.model.AbstractLegacyCommand;
 import data.Character;
 import data.ServerDofus;
 import discord4j.core.event.domain.message.MessageCreateEvent;
@@ -29,7 +29,7 @@ import java.util.stream.Collectors;
 /**
  * Created by steve on 14/07/2016.
  */
-public class WhoisCommand extends AbstractCommand {
+public class WhoisCommand extends AbstractLegacyCommand {
 
     private final static Logger LOG = LoggerFactory.getLogger(WhoisCommand.class);
     private final static String forPseudo = "text=";

@@ -1,6 +1,6 @@
 package commands.classic;
 
-import commands.model.AbstractCommand;
+import commands.model.AbstractLegacyCommand;
 import discord4j.core.event.domain.message.MessageCreateEvent;
 import discord4j.core.object.entity.Message;
 import enums.Dungeon;
@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 /**
  * Created by steve on 14/07/2016.
  */
-public class RandomCommand extends AbstractCommand {
+public class RandomCommand extends AbstractLegacyCommand {
 
     private final static int DEFAULT_TOLERANCE = 0;
     private final static int MIN_LEVEL = 10;

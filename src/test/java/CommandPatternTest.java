@@ -1,7 +1,7 @@
 import commands.admin.*;
 import commands.classic.*;
 import commands.config.*;
-import commands.model.Command;
+import commands.model.LegacyCommand;
 import data.Constants;
 import org.junit.jupiter.api.Test;
 
@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
     @Test
      void testAlmanaxCommand(){
-        Command cmd = new AlmanaxCommand();
+        LegacyCommand cmd = new AlmanaxCommand();
         Pattern pattern = Pattern.compile("^" + Constants.prefixCommand + cmd.getName() + cmd.getPattern() + "$");
 
         assertTrue(pattern.matcher(Constants.prefixCommand + "almanax").find());
@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
     @Test
      void testAlmanaxAutoCommand(){
-        Command cmd = new AlmanaxAutoCommand();
+        LegacyCommand cmd = new AlmanaxAutoCommand();
         Pattern pattern = Pattern.compile("^" + Constants.prefixCommand + cmd.getName() + cmd.getPattern() + "$");
 
         assertTrue(pattern.matcher(Constants.prefixCommand + "almanax-auto true").find());
@@ -42,7 +42,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
     @Test
      void testAlignmentCommand(){
-        Command cmd = new AlignmentCommand();
+        LegacyCommand cmd = new AlignmentCommand();
         Pattern pattern = Pattern.compile("^" + Constants.prefixCommand + cmd.getName() + cmd.getPattern() + "$");
 
         assertTrue(pattern.matcher(Constants.prefixCommand + "align").find());
@@ -57,7 +57,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
     @Test
      void testAllianceCommand(){
-        Command cmd = new AllianceCommand();
+        LegacyCommand cmd = new AllianceCommand();
         Pattern pattern = Pattern.compile("^" + Constants.prefixCommand + cmd.getName() + cmd.getPattern() + "$");
 
         assertTrue(pattern.matcher(Constants.prefixCommand + "alliance La Fratrie des Oublies").find());
@@ -69,7 +69,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
     @Test
      void testAboutCommand(){
-        Command cmd = new AboutCommand();
+        LegacyCommand cmd = new AboutCommand();
         Pattern pattern = Pattern.compile("^" + Constants.prefixCommand + cmd.getName() + cmd.getPattern() + "$");
 
         assertTrue(pattern.matcher(Constants.prefixCommand + "about").find());
@@ -77,7 +77,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
     @Test
      void testCommandCommand(){
-        Command cmd = new CommandCommand();
+        LegacyCommand cmd = new CommandCommand();
         Pattern pattern = Pattern.compile("^" + Constants.prefixCommand + cmd.getName() + cmd.getPattern() + "$");
 
         assertTrue(pattern.matcher(Constants.prefixCommand + "cmd CommandForbidden true").find());
@@ -93,7 +93,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
     @Test
      void testDonateCommand(){
-        Command cmd = new DonateCommand();
+        LegacyCommand cmd = new DonateCommand();
         Pattern pattern = Pattern.compile("^" + Constants.prefixCommand + cmd.getName() + cmd.getPattern() + "$");
 
         assertTrue(pattern.matcher(Constants.prefixCommand + "donate").find());
@@ -101,7 +101,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
     @Test
      void testDistCommand(){
-        Command cmd = new DistanceCommand();
+        LegacyCommand cmd = new DistanceCommand();
         Pattern pattern = Pattern.compile("^" + Constants.prefixCommand + cmd.getName() + cmd.getPattern() + "$");
 
         assertTrue(pattern.matcher(Constants.prefixCommand + "dist [20,20]").find());
@@ -113,7 +113,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
     @Test
      void testGuildCommand(){
-        Command cmd = new GuildCommand();
+        LegacyCommand cmd = new GuildCommand();
         Pattern pattern = Pattern.compile("^" + Constants.prefixCommand + cmd.getName() + cmd.getPattern() + "$");
 
         assertTrue(pattern.matcher(Constants.prefixCommand + "guild La Feuille Verte").find());
@@ -125,7 +125,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
     @Test
      void testHelpCommand(){
-        Command cmd = new HelpCommand();
+        LegacyCommand cmd = new HelpCommand();
         Pattern pattern = Pattern.compile("^" + Constants.prefixCommand + cmd.getName() + cmd.getPattern() + "$");
 
         assertTrue(pattern.matcher(Constants.prefixCommand + "help").find());
@@ -137,7 +137,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
     @Test
      void testInviteCommand(){
-        Command cmd = new InviteCommand();
+        LegacyCommand cmd = new InviteCommand();
         Pattern pattern = Pattern.compile("^" + Constants.prefixCommand + cmd.getName() + cmd.getPattern() + "$");
 
         assertTrue(pattern.matcher(Constants.prefixCommand + "invite").find());
@@ -145,7 +145,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
     @Test
      void testItemCommand(){
-        Command cmd = new ItemCommand();
+        LegacyCommand cmd = new ItemCommand();
         Pattern pattern = Pattern.compile("^" + Constants.prefixCommand + cmd.getName() + cmd.getPattern() + "$");
 
         assertTrue(pattern.matcher(Constants.prefixCommand + "item test").find());
@@ -156,7 +156,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
     @Test
      void testJobCommand(){
-        Command cmd = new JobCommand();
+        LegacyCommand cmd = new JobCommand();
         Pattern pattern = Pattern.compile("^" + Constants.prefixCommand + cmd.getName() + cmd.getPattern() + "$");
 
         assertTrue(pattern.matcher(Constants.prefixCommand + "job").find());
@@ -169,7 +169,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
     @Test
      void testLangCommand(){
-        Command cmd = new LanguageCommand();
+        LegacyCommand cmd = new LanguageCommand();
         Pattern pattern = Pattern.compile("^" + Constants.prefixCommand + cmd.getName() + cmd.getPattern() + "$");
 
         assertTrue(pattern.matcher(Constants.prefixCommand + "lang FR").find());
@@ -179,7 +179,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
     @Test
      void testMapCommand(){
-        Command cmd = new MapCommand();
+        LegacyCommand cmd = new MapCommand();
         Pattern pattern = Pattern.compile("^" + Constants.prefixCommand + cmd.getName() + cmd.getPattern() + "$");
 
         assertTrue(pattern.matcher(Constants.prefixCommand + "map").find());
@@ -192,7 +192,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
     @Test
      void testMonsterCommand(){
-        Command cmd = new MonsterCommand();
+        LegacyCommand cmd = new MonsterCommand();
         Pattern pattern = Pattern.compile("^" + Constants.prefixCommand + cmd.getName() + cmd.getPattern() + "$");
 
         assertTrue(pattern.matcher(Constants.prefixCommand + "monster test").find());
@@ -203,7 +203,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
     @Test
      void testPortalCommand(){
-        Command cmd = new PortalCommand();
+        LegacyCommand cmd = new PortalCommand();
         Pattern pattern = Pattern.compile("^" + Constants.prefixCommand + cmd.getName() + cmd.getPattern() + "$");
 
         assertTrue(pattern.matcher(Constants.prefixCommand + "pos").find());
@@ -213,7 +213,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
     @Test
      void testTutorialCommand(){
-        Command cmd = new TutorialCommand();
+        LegacyCommand cmd = new TutorialCommand();
         Pattern pattern = Pattern.compile("^" + Constants.prefixCommand + cmd.getName() + cmd.getPattern() + "$");
 
         assertTrue(pattern.matcher(Constants.prefixCommand + "tuto test").find());
@@ -223,7 +223,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
     @Test
      void testTwitterCommand(){
-        Command cmd = new TwitterCommand();
+        LegacyCommand cmd = new TwitterCommand();
         Pattern pattern = Pattern.compile("^" + Constants.prefixCommand + cmd.getName() + cmd.getPattern() + "$");
 
         assertTrue(pattern.matcher(Constants.prefixCommand + "twitter true").find());
@@ -237,7 +237,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
     @Test
      void testRSSCommand(){
-        Command cmd = new RSSCommand();
+        LegacyCommand cmd = new RSSCommand();
         Pattern pattern = Pattern.compile("^" + Constants.prefixCommand + cmd.getName() + cmd.getPattern() + "$");
 
         assertTrue(pattern.matcher(Constants.prefixCommand + "rss true").find());
@@ -251,7 +251,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
     @Test
      void testSetCommand(){
-        Command cmd = new SetCommand();
+        LegacyCommand cmd = new SetCommand();
         Pattern pattern = Pattern.compile("^" + Constants.prefixCommand + cmd.getName() + cmd.getPattern() + "$");
 
         assertTrue(pattern.matcher(Constants.prefixCommand + "set test").find());
@@ -262,7 +262,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
     @Test
      void testServerCommand(){
-        Command cmd = new ServerCommand();
+        LegacyCommand cmd = new ServerCommand();
         Pattern pattern = Pattern.compile("^" + Constants.prefixCommand + cmd.getName() + cmd.getPattern() + "$");
 
         assertTrue(pattern.matcher(Constants.prefixCommand + "server").find());
@@ -275,7 +275,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
     @Test
      void testResourceCommand(){
-        Command cmd = new ResourceCommand();
+        LegacyCommand cmd = new ResourceCommand();
         Pattern pattern = Pattern.compile("^" + Constants.prefixCommand + cmd.getName() + cmd.getPattern() + "$");
 
         assertTrue(pattern.matcher(Constants.prefixCommand + "resource test").find());
@@ -286,7 +286,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
     @Test
      void testRandomCommand(){
-        Command cmd = new RandomCommand();
+        LegacyCommand cmd = new RandomCommand();
         Pattern pattern = Pattern.compile("^" + Constants.prefixCommand + cmd.getName() + cmd.getPattern() + "$");
 
         assertTrue(pattern.matcher(Constants.prefixCommand + "rdm").find());
@@ -298,7 +298,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
     @Test
      void testWhoisCommand(){
-        Command cmd = new WhoisCommand();
+        LegacyCommand cmd = new WhoisCommand();
         Pattern pattern = Pattern.compile("^" + Constants.prefixCommand + cmd.getName() + cmd.getPattern() + "$");
 
         assertTrue(pattern.matcher(Constants.prefixCommand + "whois test").find());
@@ -311,7 +311,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
     @Test
      void testPingCommand(){
-        Command cmd = new PingCommand();
+        LegacyCommand cmd = new PingCommand();
         Pattern pattern = Pattern.compile("^" + Constants.prefixCommand + cmd.getName() + cmd.getPattern() + "$");
 
         assertTrue(pattern.matcher(Constants.prefixCommand + "ping").find());
@@ -319,7 +319,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
     @Test
      void testPrefixeCommand(){
-        Command cmd = new PrefixCommand();
+        LegacyCommand cmd = new PrefixCommand();
         Pattern pattern = Pattern.compile("^" + Constants.prefixCommand + cmd.getName() + cmd.getPattern() + "$");
 
         assertFalse(pattern.matcher(Constants.prefixCommand + "prefix").find());
@@ -329,7 +329,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
     @Test
      void testStatCommand(){
-        Command cmd = new StatCommand();
+        LegacyCommand cmd = new StatCommand();
         Pattern pattern = Pattern.compile("^" + Constants.prefixCommand + cmd.getName() + cmd.getPattern() + "$");
 
         assertTrue(pattern.matcher(Constants.prefixCommand + "stats").find());

@@ -1,6 +1,6 @@
 package commands.classic;
 
-import commands.model.AbstractCommand;
+import commands.model.AbstractLegacyCommand;
 import data.Guild;
 import data.JobUser;
 import data.ServerDofus;
@@ -19,7 +19,6 @@ import util.Translator;
 
 import java.text.Normalizer;
 import java.util.*;
-import java.util.function.Consumer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -27,7 +26,7 @@ import java.util.stream.Collectors;
 /**
  * Created by steve on 14/07/2016.
  */
-public class JobCommand extends AbstractCommand {
+public class JobCommand extends AbstractLegacyCommand {
 
     private final static int MAX_JOB_DISPLAY = 3;
 

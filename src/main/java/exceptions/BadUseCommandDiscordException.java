@@ -1,7 +1,7 @@
 package exceptions;
 
-import commands.model.AbstractCommand;
-import commands.model.Command;
+import commands.model.AbstractLegacyCommand;
+import commands.model.LegacyCommand;
 import commands.classic.HelpCommand;
 import discord4j.core.object.entity.Message;
 import enums.Language;
@@ -15,11 +15,11 @@ import java.util.regex.Matcher;
 public class BadUseCommandDiscordException implements DiscordException {
 
     @Override
-    public void throwException(Message message, Command command, Language lg, Object... arguments) {
+    public void throwException(Message message, LegacyCommand command, Language lg, Object... arguments) {
         message.getAuthor().ifPresent(author -> message.getChannel().flatMap(chan -> chan
                 .createMessage(Translator.getLabel(lg, "exception.bad_use_command")
                         .replace("{author}", Matcher.quoteReplacement(author.getMention()))
-                        .replaceAll("\\{prefix}", Matcher.quoteReplacement(AbstractCommand.getPrefix(message)))
+                        .replaceAll("\\{prefix}", Matcher.quoteReplacement(AbstractLegacyCommand.getPrefix(message)))
                         .replaceAll("\\{cmd.name}", command.getName())
                         .replace("{HelpCmd.name}", HelpCommand.NAME)))
                 .subscribe());

@@ -1,6 +1,6 @@
 package commands.classic;
 
-import commands.model.AbstractCommand;
+import commands.model.AbstractLegacyCommand;
 import data.Constants;
 import discord4j.core.event.domain.message.MessageCreateEvent;
 import discord4j.core.object.entity.ApplicationInfo;
@@ -19,7 +19,7 @@ import static data.Constants.authorName;
 /**
  * Created by Kaysoro on 20/05/2019.
  */
-public class InviteCommand extends AbstractCommand {
+public class InviteCommand extends AbstractLegacyCommand {
 
     public InviteCommand() {
         super("invite", "");

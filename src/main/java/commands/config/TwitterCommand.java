@@ -1,6 +1,6 @@
 package commands.config;
 
-import commands.model.AbstractCommand;
+import commands.model.AbstractLegacyCommand;
 import discord4j.common.util.Snowflake;
 import discord4j.core.event.domain.message.MessageCreateEvent;
 import discord4j.core.object.entity.Guild;
@@ -16,7 +16,7 @@ import java.util.regex.Matcher;
 /**
  * Created by steve on 14/07/2016.
  */
-public class TwitterCommand extends AbstractCommand {
+public class TwitterCommand extends AbstractLegacyCommand {
 
     private DiscordException twitterFound;
     private DiscordException twitterNotFound;

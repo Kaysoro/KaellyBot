@@ -1,6 +1,6 @@
 package commands.config;
 
-import commands.model.AbstractCommand;
+import commands.model.AbstractLegacyCommand;
 import discord4j.common.util.Snowflake;
 import discord4j.core.event.domain.message.MessageCreateEvent;
 import discord4j.core.object.entity.Guild;
@@ -15,7 +15,7 @@ import java.util.regex.Matcher;
 /**
  * Created by steve on 14/07/2016.
  */
-public class AlmanaxAutoCommand extends AbstractCommand {
+public class AlmanaxAutoCommand extends AbstractLegacyCommand {
 
     public AlmanaxAutoCommand(){
         super("almanax-auto", "(\\s+true|\\s+false|\\s+0|\\s+1|\\s+on|\\s+off)");

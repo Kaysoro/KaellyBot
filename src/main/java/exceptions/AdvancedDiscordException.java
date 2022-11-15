@@ -1,6 +1,6 @@
 package exceptions;
 
-import commands.model.Command;
+import commands.model.LegacyCommand;
 import discord4j.core.object.entity.Message;
 import enums.Language;
 import org.slf4j.Logger;
@@ -31,7 +31,7 @@ public class AdvancedDiscordException implements DiscordException {
     }
 
     @Override
-    public void throwException(Message message, Command command, Language lg, Object... arguments) {
+    public void throwException(Message message, LegacyCommand command, Language lg, Object... arguments) {
         String content = Translator.getLabel(lg, messageKey);
         for(int i = 0; i < parameters.length; i++)
             if (translatable.length > i && translatable[i])

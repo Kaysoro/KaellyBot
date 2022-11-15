@@ -25,9 +25,9 @@ import java.util.regex.Pattern;
 /**
  * Created by steve on 14/07/2016.
  */
-public abstract class AbstractCommand implements Command {
+public abstract class AbstractLegacyCommand implements LegacyCommand {
 
-    private final static Logger LOG = LoggerFactory.getLogger(AbstractCommand.class);
+    private final static Logger LOG = LoggerFactory.getLogger(AbstractLegacyCommand.class);
 
     protected String name;
     protected String pattern;
@@ -38,7 +38,7 @@ public abstract class AbstractCommand implements Command {
     private boolean isHidden;
 
 
-    protected AbstractCommand(String name, String pattern){
+    protected AbstractLegacyCommand(String name, String pattern){
         super();
         this.name = name;
         this.pattern = pattern;

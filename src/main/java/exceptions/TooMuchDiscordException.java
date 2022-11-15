@@ -3,7 +3,7 @@ package exceptions;
 import commands.classic.AllianceCommand;
 import commands.classic.GuildCommand;
 import commands.classic.WhoisCommand;
-import commands.model.Command;
+import commands.model.LegacyCommand;
 import discord4j.core.object.entity.Message;
 import enums.AnkamaBug;
 import enums.Language;
@@ -31,7 +31,7 @@ public class TooMuchDiscordException implements DiscordException {
     }
 
     @Override
-    public void throwException(Message message, Command command, Language lg, Object... arguments) {
+    public void throwException(Message message, LegacyCommand command, Language lg, Object... arguments) {
         AnkamaBug bug = null;
 
         String gender = Translator.getLabel(lg, "exception.object." + objectKey + ".gender");

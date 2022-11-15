@@ -1,6 +1,6 @@
 package commands.hidden;
 
-import commands.model.AbstractCommand;
+import commands.model.AbstractLegacyCommand;
 import discord4j.core.event.domain.message.MessageCreateEvent;
 import discord4j.core.object.entity.Message;
 import discord4j.core.object.entity.channel.PrivateChannel;
@@ -10,14 +10,13 @@ import enums.Nude;
 import exceptions.BasicDiscordException;
 import util.Translator;
 
-import java.awt.*;
 import java.util.Random;
 import java.util.regex.Matcher;
 
 /**
  * Created by Kaysoro on 07/01/2019.
  */
-public class SendNudeCommand extends AbstractCommand {
+public class SendNudeCommand extends AbstractLegacyCommand {
 
     private static final Random RANDOM = new Random();
 
