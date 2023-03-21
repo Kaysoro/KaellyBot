@@ -41,6 +41,7 @@ public class AlmanaxCalendar {
 
     public static void start(){
         if (!isStarted){
+            LOG.info("Lancement du calendrier Almanax...");
             isStarted = true;
             ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
             long firstDelay = LocalDateTime.now().until(LocalDate.now().plusDays(1).atStartOfDay().plusMinutes(1), ChronoUnit.MINUTES);

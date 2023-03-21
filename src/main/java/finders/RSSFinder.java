@@ -127,6 +127,7 @@ public class RSSFinder {
 
     public static void start(){
         if (!isStarted) {
+            LOG.info("Ecoute des flux RSS du site Dofus...");
             isStarted = true;
             ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
             scheduler.scheduleAtFixedRate(() -> {

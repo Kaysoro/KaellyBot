@@ -27,13 +27,8 @@ public class ReadyListener {
     public Mono<Void> onReady(ReadyEvent event) {
 
         if (!isReadyOnce.containsKey(event.getClient().rest())) {
-            LOG.info("Ecoute des flux RSS du site Dofus...");
             RSSFinder.start();
-
-            LOG.info("Lancement du calendrier Almanax...");
             AlmanaxCalendar.start();
-
-            LOG.info("Connexion à l'API Twitter...");
             TwitterFinder.start();
         }
         return Mono.empty();

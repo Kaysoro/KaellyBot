@@ -6,7 +6,7 @@
 
     <groupId>com.github.kaysoro</groupId>
     <artifactId>Kaelly</artifactId>
-    <version>1.7.0</version>
+    <version>1.9.0</version>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -139,11 +139,6 @@
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
             <version>1.2.3</version>
-        </dependency>
-        <dependency>
-            <groupId>org.twitter4j</groupId>
-            <artifactId>twitter4j-stream</artifactId>
-            <version>4.0.7</version>
         </dependency>
         <dependency>
             <groupId>com.optimaize.languagedetector</groupId>
