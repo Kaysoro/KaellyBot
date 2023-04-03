@@ -62,37 +62,19 @@ public class ClientConfig {
             if (! prop.get("sentry.dsn").equals(""))
                 Sentry.init(prop.getProperty("sentry.dsn"));
 
-            if (! prop.get("twitter.consumer_key").equals("") && ! prop.get("twitter.consumer_secret").equals("")
-            && ! prop.get("twitter.access_token").equals("") && ! prop.get("twitter.access_token_secret").equals("")) {
-                ConfigurationBuilder cb = new ConfigurationBuilder();
-                cb.setDebugEnabled(false)
-                        .setOAuthConsumerKey(prop.getProperty("twitter.consumer_key"))
-                        .setOAuthConsumerSecret(prop.getProperty("twitter.consumer_secret"))
-                        .setOAuthAccessToken(prop.getProperty("twitter.access_token"))
-                        .setOAuthAccessTokenSecret(prop.getProperty("twitter.access_token_secret"));
-
-                TWITTER = new TwitterStreamFactory(cb.build()).getInstance();
-            }
-            else {
-                LOG.warn("Un ou plusieurs tokens associés à Twitter sont manquants. TwitterFinder est par conséquent désactivé");
-                TWITTER = null;
-            }
-
-            } catch(FileNotFoundException e){
-                LOG.error("Fichier de configuration non trouvé.");
-                TWITTER = null;
-            } catch (UnsupportedEncodingException e) {
-                LOG.error(e.getMessage());
-            } catch (IOException e) {
-                LOG.error("IOException rencontré : " + e.getMessage());
-                TWITTER = null;
-            }
-    }
-
-    public static synchronized ClientConfig getInstance(String path){
-        if (instance == null)
-            instance = new ClientConfig(path);
-        return instance;
+        Optional.ofNullable(prop.get("twitter.bearer_token"))
+                .map(Object::toString)
+                .filter(StringUtils::isNotBlank)
+                .ifPresentOrElse(bearerToken -> {
+                    try {
+                        TwitterListener listener = new TwitterListener();
+                        TWITTER = new TwitterStream(bearerToken);
+                        TWITTER.addListener(listener);
+                    } catch (Exception e) {
+                        LOG.error("Cannot instantiate twitter client", e);
+                        TWITTER = null;
+                    }
+                }, () -> LOG.error("Twitter bearer token missing, Twitter Finder disabled"));
     }
 
     public static synchronized ClientConfig getInstance(){

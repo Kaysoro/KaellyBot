@@ -18,6 +18,10 @@ import twitter4j.MediaEntity;
 import twitter4j.Status;
 import twitter4j.StatusAdapter;
 import util.Translator;
+import util.twitter.Tweet;
+import util.twitter.TwitterResponse;
+import util.twitter.TwitterStreamListener;
+import util.twitter.User;
 
 import java.awt.*;
 import java.util.HashMap;
@@ -36,43 +40,46 @@ public class TwitterListener extends StatusAdapter {
     }
 
     @Override
-    public void onStatus(Status status) {
-        Language language = twitterIDs.get(status.getUser().getId());
-        if (twitterIDs.containsKey(status.getUser().getId()) && (status.getInReplyToScreenName() == null
-                || twitterIDs.containsKey(status.getInReplyToUserId())))
-            for (TwitterFinder twitterFinder : TwitterFinder.getTwitterChannels().values())
-                try {
-                    RestChannel channel = ClientConfig.DISCORD().getChannelById(Snowflake.of(twitterFinder.getChannelId()));
-                    if (Translator.getLanguageFrom(channel).equals(language)){
-                        channel.createMessage(createEmbedFor(status))
+    public void onStatus(TwitterResponse status) {
+        Language language = twitterIDs.get(Long.parseLong(status.getAuthor().getId()));
+        for (TwitterFinder twitterFinder : TwitterFinder.getTwitterChannels().values()) {
+            try {
+                RestChannel channel = ClientConfig.DISCORD().getChannelById(Snowflake.of(twitterFinder.getChannelId()));
+                if (Translator.getLanguageFrom(channel).equals(language)) {
+                    status.getTweets().forEach(tweet -> {
+                        channel.createMessage(createEmbedFor(tweet, status.getAuthor()))
                                 .doOnError(error -> {
-                                    if (error instanceof ClientException){
+                                    if (error instanceof ClientException) {
                                         LOG.warn("TwitterFinder: no access on " + twitterFinder.getChannelId());
                                         twitterFinder.removeToDatabase();
-                                    }
-                                    else LOG.error("onStatus", error);
+                                    } else LOG.error("onStatus", error);
                                 })
                                 .subscribe();
-                    }
-                } catch(ClientException e){
-                    LOG.warn("TwitterFinder: no access on " + twitterFinder.getChannelId());
-                    twitterFinder.removeToDatabase();
-                } catch(Exception e){
-                    LOG.error("onStatus", e);
+                    });
                 }
+            } catch (ClientException e) {
+                LOG.warn("TwitterFinder: no access on " + twitterFinder.getChannelId());
+                twitterFinder.removeToDatabase();
+            } catch (Exception e) {
+                LOG.error("onStatus", e);
+            }
+        }
     }
 
-    private EmbedData createEmbedFor(Status status){
+    private EmbedData createEmbedFor(Tweet tweet, User author){
         return EmbedData.builder()
                 .author(EmbedAuthorData.builder()
-                        .name("@" + status.getUser().getScreenName())
-                        .url("https://twitter.com/")
-                        .iconUrl(status.getUser().getMiniProfileImageURL()).build())
-                .title("Tweet")
-                .url("https://twitter.com/" + status.getUser().getScreenName() + "/status/" + status.getId())
-                .image(status.getMediaEntities().length > 0 ? EmbedImageData.builder().url(status.getMediaEntities()[0].getMediaURL()).build() : EmbedImageData.builder().build())
-                .description(status.getText())
-                .thumbnail(EmbedThumbnailData.builder().url(Constants.twitterIcon).build())
+                        .name(author.getName() + " (@" + author.getScreenName() + ")")
+                        .url(author.getUrl())
+                        .iconUrl(author.getIconUrl())
+                        .build())
+                .color(1941746) // TODO fix media url
+                .image(tweet.getMediaUrl() != null ? EmbedImageData.builder().url(tweet.getMediaUrl()).build() : EmbedImageData.builder().build())
+                .description(tweet.getText())
+                .footer(EmbedFooterData.builder()
+                        .text("Twitter • " + tweet.getCreatedAt()) // TODO format date
+                        .iconUrl(Constants.twitterIcon)
+                        .build())
                 .build();
     }
-}
+ }

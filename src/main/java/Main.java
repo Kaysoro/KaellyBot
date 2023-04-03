@@ -1,6 +1,6 @@
 import data.Constants;
-import util.ClientConfig;
 import org.slf4j.LoggerFactory;
+import util.ClientConfig;
 
 /**
  * Created by steve on 14/07/2016.
