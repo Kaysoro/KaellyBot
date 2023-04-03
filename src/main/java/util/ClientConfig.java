@@ -85,7 +85,7 @@ public class ClientConfig {
                 .ifPresentOrElse(bearerToken -> {
                     try {
                         TwitterListener listener = new TwitterListener();
-                        TWITTER = new TwitterStream(bearerToken, listener.getRules());
+                        TWITTER = new TwitterStream(bearerToken);
                         TWITTER.addListener(listener);
                     } catch (Exception e) {
                         LOG.error("Cannot instantiate twitter client", e);
