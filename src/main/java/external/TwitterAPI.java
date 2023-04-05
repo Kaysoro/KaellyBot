@@ -27,10 +27,7 @@ import java.net.URI;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -154,7 +151,7 @@ public class TwitterAPI {
                     .filter(instruction -> instruction.path("type").textValue().equals("TimelineAddEntries"))
                     .flatMap(instruction -> StreamUtils.toStream(instruction.path("entries").elements()))
                     .map(entry -> entry.path("content").path("itemContent").path("tweet_results").path("result"))
-                    .filter(result -> TWITTER_ENTRY_TYPE_TWEET.equals(result.path("__typename").textValue()))
+                    .filter(this::isEntryOriginalTweet)
                     .collect(Collectors.toList());
 
             if (! results.isEmpty()){
@@ -166,11 +163,11 @@ public class TwitterAPI {
                         .build();
 
                 List<TwitterResponse.Tweet> tweets = results.stream()
-                        .map(result -> result.path("legacy"))
                         .map(tweetData -> TwitterResponse.Tweet.builder()
-                                    .url(TWITTER_URL + "/" + author.getScreenName() + "/status/" + tweetData.path("conversation_id_str").textValue())
-                                    .createdAt(Instant.from(FORMATTER.parse(tweetData.path("created_at").textValue())))
+                                    .url(TWITTER_URL + "/" + author.getScreenName() + "/status/" + tweetData.path("rest_id").textValue())
+                                    .createdAt(Instant.from(FORMATTER.parse(tweetData.path("legacy").path("created_at").textValue())))
                                     .build())
+                        .sorted(Comparator.comparing(TwitterResponse.Tweet::getCreatedAt))
                         .collect(Collectors.toList());
                 return Optional.of(TwitterResponse.builder().author(author).tweets(tweets).build());
             }
@@ -178,5 +175,10 @@ public class TwitterAPI {
             LOG.error("Cannot cast tweet response", e);
         }
         return Optional.empty();
+    }
+
+    private boolean isEntryOriginalTweet(JsonNode result){
+        return TWITTER_ENTRY_TYPE_TWEET.equals(result.path("__typename").textValue())
+                && ! result.path("legacy").has("retweeted_status_result");
     }
 }
