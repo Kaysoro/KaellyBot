@@ -23,7 +23,6 @@ import util.twitter.TwitterResponse;
 import util.twitter.TwitterStreamListener;
 import util.twitter.User;
 
-import java.awt.*;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -46,16 +45,14 @@ public class TwitterListener extends StatusAdapter {
             try {
                 RestChannel channel = ClientConfig.DISCORD().getChannelById(Snowflake.of(twitterFinder.getChannelId()));
                 if (Translator.getLanguageFrom(channel).equals(language)) {
-                    status.getTweets().forEach(tweet -> {
-                        channel.createMessage(createEmbedFor(tweet, status.getAuthor()))
-                                .doOnError(error -> {
-                                    if (error instanceof ClientException) {
-                                        LOG.warn("TwitterFinder: no access on " + twitterFinder.getChannelId());
-                                        twitterFinder.removeToDatabase();
-                                    } else LOG.error("onStatus", error);
-                                })
-                                .subscribe();
-                    });
+                    channel.createMessage(status.getTweets().get(0).getUrl())
+                            .doOnError(error -> {
+                                if (error instanceof ClientException) {
+                                    LOG.warn("TwitterFinder: no access on " + twitterFinder.getChannelId());
+                                    twitterFinder.removeToDatabase();
+                                } else LOG.error("onStatus", error);
+                            })
+                            .subscribe();
                 }
             } catch (ClientException e) {
                 LOG.warn("TwitterFinder: no access on " + twitterFinder.getChannelId());
@@ -64,22 +61,5 @@ public class TwitterListener extends StatusAdapter {
                 LOG.error("onStatus", e);
             }
         }
-    }
-
-    private EmbedData createEmbedFor(Tweet tweet, User author){
-        return EmbedData.builder()
-                .author(EmbedAuthorData.builder()
-                        .name(author.getName() + " (@" + author.getScreenName() + ")")
-                        .url(author.getUrl())
-                        .iconUrl(author.getIconUrl())
-                        .build())
-                .color(1941746) // TODO fix media url
-                .image(tweet.getMediaUrl() != null ? EmbedImageData.builder().url(tweet.getMediaUrl()).build() : EmbedImageData.builder().build())
-                .description(tweet.getText())
-                .footer(EmbedFooterData.builder()
-                        .text("Twitter • " + tweet.getCreatedAt()) // TODO format date
-                        .iconUrl(Constants.twitterIcon)
-                        .build())
-                .build();
     }
  }

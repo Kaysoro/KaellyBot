@@ -8,7 +8,6 @@ import twitter4j.FilterQuery;
 import util.ClientConfig;
 import util.Connexion;
 import util.Reporter;
-import util.Translator;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -100,16 +99,12 @@ public class TwitterFinder{
         return guildId;
     }
 
-    public static synchronized void start() {
-        if (ClientConfig.TWITTER() != null && !isReady) {
-            ClientConfig.TWITTER().addListener(new TwitterListener());
-
-            long[] twitterIDs = new long[Language.values().length];
-            int i = 0;
-            for(Language lg : Language.values())
-                twitterIDs[i++] = Long.parseLong(Translator.getLabel(lg, "twitter.id"));
-            ClientConfig.TWITTER().filter(new FilterQuery(0, twitterIDs, new String[]{}));
+    public static void start(){
+        if (ClientConfig.TWITTER() != null && !isReady){
             isReady = true;
+
+            LOG.info("Connection to Twitter API...");
+            ClientConfig.TWITTER().startStream();
         }
     }
 }

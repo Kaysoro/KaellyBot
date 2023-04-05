@@ -9,8 +9,6 @@ import java.time.Instant;
 @Builder
 public class Tweet {
 
-    private String text;
     private String url;
-    private String mediaUrl;
     private Instant createdAt;
 }

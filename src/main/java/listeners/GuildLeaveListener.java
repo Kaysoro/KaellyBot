@@ -28,18 +28,20 @@ public class GuildLeaveListener {
 
     public Mono<MessageData> onReady(GuildDeleteEvent event) {
         try {
-            Optional<Guild> optionalGuild = event.getGuild().map(guildEvent -> Guild.getGuild(guildEvent, false));
-            if (optionalGuild.isPresent()) {
-                Guild guild = optionalGuild.get();
-                guild.removeToDatabase();
+            if (! event.isUnavailable()) {
+                Optional<Guild> optionalGuild = event.getGuild().map(guildEvent -> Guild.getGuild(guildEvent, false));
+                if (optionalGuild.isPresent()) {
+                    Guild guild = optionalGuild.get();
+                    guild.removeToDatabase();
 
-                LOG.info("La guilde " + event.getGuildId().asString() + " - " + guild.getName()
-                        + " a supprimé " + Constants.name);
+                    LOG.info("La guilde " + event.getGuildId().asString() + " - " + guild.getName()
+                            + " a supprimé " + Constants.name);
 
-                RestChannel channel = ClientConfig.DISCORD().getChannelById(Snowflake.of(Constants.chanReportID));
-                return channel.createMessage("[LOSE] **" + optionalGuild.get().getName() + "**, -"
-                        + event.getGuild().map(discord4j.core.object.entity.Guild::getMemberCount)
-                        .orElse(0) +  " utilisateurs");
+                    RestChannel channel = ClientConfig.DISCORD().getChannelById(Snowflake.of(Constants.chanReportID));
+                    return channel.createMessage("[LOSE] **" + optionalGuild.get().getName() + "**, -"
+                            + event.getGuild().map(discord4j.core.object.entity.Guild::getMemberCount)
+                            .orElse(0) + " utilisateurs");
+                }
             }
         } catch(Exception e){
             Reporter.report(e, event.getGuild().orElse(null));
