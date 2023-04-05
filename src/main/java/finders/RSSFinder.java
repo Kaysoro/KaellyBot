@@ -13,7 +13,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,8 +30,8 @@ public class RSSFinder {
     private static boolean isStarted = false;
 
     private static Map<String, RSSFinder> rssFinders = null;
-    private String idGuild;
-    private String chan;
+    private final String idGuild;
+    private final String chan;
     private long lastRSS;
 
     public RSSFinder(String idGuild, String chan) {
