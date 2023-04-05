@@ -23,6 +23,7 @@ import javax.ws.rs.core.Response;
 import java.io.IOException;
 import java.net.URI;
 import java.time.Instant;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Locale;
@@ -36,20 +37,22 @@ import java.util.stream.Stream;
 
 public class TwitterStream {
 
-    private final static Logger LOG = LoggerFactory.getLogger(TwitterStream.class);
+    private static final Logger LOG = LoggerFactory.getLogger(TwitterStream.class);
+    private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("EEE MMM dd HH:mm:ss Z yyyy")
+            .withLocale(Locale.ENGLISH)
+            .withZone(ZoneId.of("UTC"));
+    private static final long DELTA = 10; // 10min
+    private static final String TWITTER_URL = "https://twitter.com";
+    private static final String TWITTER_API_URL = "https://twitter.com/i/api/graphql/BeHK76TOCY3P8nO-FWocjA/UserTweets";
+    private static final String COOKIE_GUEST_TOKEN = "gt";
+    private static final String COOKIE_SEPARATOR = ";";
+    private static final String COOKIE_VALUE_SEPARATOR = "=";
 
-    private final static DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("EEE MMM dd HH:mm:ss Z yyyy", Locale.ENGLISH);
-    private final static long DELTA = 10; // 10min
-    private final static String TWITTER_URL = "https://twitter.com";
-    private final static String TWITTER_API_URL = "https://twitter.com/i/api/graphql/BeHK76TOCY3P8nO-FWocjA/UserTweets";
-    private final static String COOKIE_GUEST_TOKEN = "gt";
-    private final static String COOKIE_SEPARATOR = ";";
-    private final static String COOKIE_VALUE_SEPARATOR = "=";
-
-    private final static String HEADER_GUEST_TOKEN = "x-guest-token";
-    private final static String VARIABLES = "variables";
-    private final static String FEATURES = "features";
-    private final static int TWEET_COUNT = 40;
+    private static final String HEADER_GUEST_TOKEN = "x-guest-token";
+    private static final String VARIABLES = "variables";
+    private static final String FEATURES = "features";
+    private static final int TWEET_COUNT = 40;
+    public static final String TWITTER_ENTRY_TYPE_TWEET = "Tweet";
 
     private final String bearerToken;
     private final List<TwitterStreamListener> listeners;
@@ -170,6 +173,7 @@ public class TwitterStream {
                     .filter(instruction -> instruction.path("type").textValue().equals("TimelineAddEntries"))
                     .flatMap(instruction -> StreamUtils.toStream(instruction.path("entries").elements()))
                     .map(entry -> entry.path("content").path("itemContent").path("tweet_results").path("result"))
+                    .filter(result -> TWITTER_ENTRY_TYPE_TWEET.equals(result.path("__typename").textValue()))
                     .collect(Collectors.toList());
 
             if (! results.isEmpty()){
@@ -177,23 +181,14 @@ public class TwitterStream {
                         .path("result");
                 User author = User.builder()
                         .id(userData.path("rest_id").textValue())
-                        .name(userData.path("legacy").path("name").textValue())
                         .screenName(userData.path("legacy").path("screen_name").textValue())
-                        .iconUrl(userData.path("legacy").path("profile_image_url_https").textValue())
-                        .url(TWITTER_URL + "/" + userData.path("legacy").path("screen_name").textValue())
                         .build();
 
                 List<Tweet> tweets = results.stream()
                         .map(result -> result.path("legacy"))
                         .map(tweetData -> Tweet.builder()
-                                    .text(tweetData.path("full_text").textValue())
                                     .url(TWITTER_URL + "/" + author.getScreenName() + "/status/" + tweetData.path("conversation_id_str").textValue())
-                                    .mediaUrl(StreamUtils
-                                            .toStream(tweetData.path("entities").path("media").elements())
-                                            .findFirst()
-                                            .map(media -> media.path("expanded_url").textValue()).orElse(null))
-                                   // .createdAt(Instant.from(FORMATTER.parse(tweetData.path("created_at").textValue())))
-                                // TODO fixme
+                                    .createdAt(Instant.from(FORMATTER.parse(tweetData.path("created_at").textValue())))
                                     .build())
                         .collect(Collectors.toList());
                 return Optional.of(TwitterResponse.builder().author(author).tweets(tweets).build());

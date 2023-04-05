@@ -5,14 +5,12 @@ import org.slf4j.LoggerFactory;
 import util.ClientConfig;
 import util.Connexion;
 import util.Reporter;
-import util.twitter.TwitterStream;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Map;
-import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -98,8 +96,10 @@ public class TwitterFinder{
     }
 
     public static void start(){
-        if (ClientConfig.TWITTER() != null){
-            LOG.info("Connexion à l'API Twitter...");
+        if (ClientConfig.TWITTER() != null && !isReady){
+            isReady = true;
+
+            LOG.info("Connection to Twitter API...");
             ClientConfig.TWITTER().startStream();
         }
     }

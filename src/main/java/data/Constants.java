@@ -113,7 +113,7 @@ public class Constants {
     /**
      * Twitter Icon from Wikipedia
      */
-    public final static String twitterIcon = "https://upload.wikimedia.org/wikipedia/fr/thumb/c/c8/Twitter_Bird.svg/langfr-20px-Twitter_Bird.svg.png";
+    public final static String twitterIcon = "https://abs.twimg.com/favicons/twitter.2.ico";
 
     /**
      * RSS Icon from Wikipedia
