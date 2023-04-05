@@ -1,4 +1,4 @@
-package finders;
+package external;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -6,7 +6,6 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider;
 import data.ServerDofus;
 import enums.Dimension;
-import enums.Language;
 import payloads.PortalDto;
 import util.Authenticator;
 import util.ClientConfig;
@@ -19,14 +18,14 @@ import java.util.List;
 
 import static com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider.DEFAULT_ANNOTATIONS;
 
-public class PortalFinder {
+public class DofusPortalsAPI {
 
     private static final String API_BASE_URL = "/external/v1/";
     private static final String SERVER_DOMAIN = "servers/";
     private static final String PORTAL_DOMAIN = "/portals/";
     private final Client client;
 
-    public PortalFinder() {
+    public DofusPortalsAPI() {
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.registerModule(new JavaTimeModule());
         objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
@@ -34,7 +33,7 @@ public class PortalFinder {
                 .register(new Authenticator(ClientConfig.DOFUS_PORTALS_TOKEN()));
     }
 
-    public List<PortalDto> getPositions(ServerDofus server, Language lg) {
+    public List<PortalDto> getPositions(ServerDofus server) {
         return client.target(ClientConfig.DOFUS_PORTALS_URL() + API_BASE_URL + SERVER_DOMAIN
                 + server.getName().replaceAll("-","_").replaceAll("\\s+","_").toLowerCase() + PORTAL_DOMAIN)
                 .request(MediaType.APPLICATION_JSON)
@@ -42,7 +41,7 @@ public class PortalFinder {
                 .readEntity(new GenericType<>() {});
     }
 
-    public PortalDto getPosition(ServerDofus server, Dimension dimension, Language lg) {
+    public PortalDto getPosition(ServerDofus server, Dimension dimension) {
         return client.target(ClientConfig.DOFUS_PORTALS_URL() + API_BASE_URL+ SERVER_DOMAIN
                 + server.getName().replaceAll("-","_").replaceAll("\\s+","_").toLowerCase() + PORTAL_DOMAIN + dimension.name().toLowerCase())
                 .request(MediaType.APPLICATION_JSON)

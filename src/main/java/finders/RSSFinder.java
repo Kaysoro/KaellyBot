@@ -5,6 +5,9 @@ import discord4j.common.util.Snowflake;
 import discord4j.rest.entity.RestChannel;
 import discord4j.rest.http.client.ClientException;
 import enums.Language;
+import external.RSSAPI;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import util.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,28 +27,24 @@ import java.util.concurrent.TimeUnit;
 /**
  * Created by steve on 12/01/2017.
  */
+@Getter
+@AllArgsConstructor
 public class RSSFinder {
     private final static Logger LOG = LoggerFactory.getLogger(RSSFinder.class);
     private final static long DELTA = 10; // 10min
     private static boolean isStarted = false;
 
     private static Map<String, RSSFinder> rssFinders = null;
-    private final String idGuild;
+    private final String guildId;
     private final String chan;
-    private long lastRSS;
+    private long lastUpdate;
 
     public RSSFinder(String idGuild, String chan) {
         this(idGuild, chan, System.currentTimeMillis());
     }
 
-    private RSSFinder(String idGuild, String chan, long lastRSS) {
-        this.idGuild = idGuild;
-        this.chan = chan;
-        this.lastRSS = lastRSS;
-    }
-
-    public synchronized void setLastRSS(long lastRSS) {
-        this.lastRSS = lastRSS;
+    public synchronized void setLastUpdate(long lastUpdate) {
+        this.lastUpdate = lastUpdate;
 
         Connexion connexion = Connexion.getInstance();
         Connection connection = connexion.getConnection();
@@ -53,7 +52,7 @@ public class RSSFinder {
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(
                     "UPDATE RSS_Finder SET last_update = ? WHERE id_chan = ?;");
-            preparedStatement.setLong(1, lastRSS);
+            preparedStatement.setLong(1, lastUpdate);
             preparedStatement.setString(2, getChan());
 
             preparedStatement.executeUpdate();
@@ -73,7 +72,7 @@ public class RSSFinder {
                         "INSERT INTO RSS_Finder(id_guild, id_chan, last_update) VALUES(?, ?, ?);");
                 preparedStatement.setString(1, getGuildId());
                 preparedStatement.setString(2, getChan());
-                preparedStatement.setLong(3, getLastRSS());
+                preparedStatement.setLong(3, getLastUpdate());
 
                 preparedStatement.executeUpdate();
             } catch (SQLException e) {
@@ -126,13 +125,14 @@ public class RSSFinder {
 
     public static void start(){
         if (!isStarted) {
-            LOG.info("Ecoute des flux RSS du site Dofus...");
+            LOG.info("Scheduling RSS Feeds polling from Dofus website...");
             isStarted = true;
             ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
             scheduler.scheduleAtFixedRate(() -> {
+                LOG.info("Dispatching the most recent RSS feeds from Dofus website...");
                 Map<Language, List<RSS>> allFeeds = new HashMap<>();
                 for(Language lg : Language.values())
-                    allFeeds.put(lg, RSS.getRSSFeeds(lg));
+                    allFeeds.put(lg, RSSAPI.getRSSFeeds(lg));
 
                 for (RSSFinder finder : getRSSFinders().values())
                     try {
@@ -142,13 +142,11 @@ public class RSSFinder {
                         long lastRSS = -1;
 
                         for (RSS rss : rssFeeds)
-                            if (rss.getDate() > finder.getLastRSS()) {
+                            if (rss.getDate() > finder.getLastUpdate()) {
                                 chan.createMessage(rss.decorateRestEmbedObject(lg))
                                         .doOnError(error -> {
-                                            if (error instanceof ClientException){
+                                            if (error instanceof ClientException)
                                                 LOG.warn("RSSFinder: no access on " + finder.getChan());
-                                                finder.removeToDatabase();
-                                            }
                                             else LOG.error("RSSFinder", error);
                                         })
                                         .subscribe();
@@ -156,27 +154,14 @@ public class RSSFinder {
                             }
 
                         if (lastRSS != -1)
-                            finder.setLastRSS(lastRSS);
+                            finder.setLastUpdate(lastRSS);
                     } catch(ClientException e){
                         LOG.warn("RSSFinder: no access on " + finder.getChan());
-                        finder.removeToDatabase();
                     } catch(Exception e){
                         Reporter.report(e);
                         LOG.error("RSSFinder", e);
                     }
             }, 0, DELTA, TimeUnit.MINUTES);
         }
-    }
-
-    public String getChan() {
-        return chan;
-    }
-
-    public String getGuildId() {
-        return idGuild;
-    }
-
-    public long getLastRSS() {
-        return lastRSS;
     }
 }

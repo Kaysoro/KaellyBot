@@ -22,7 +22,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import reactor.core.publisher.Mono;
-import util.twitter.TwitterStream;
+import external.TwitterAPI;
 
 import java.io.*;
 import java.net.URLDecoder;
@@ -39,7 +39,7 @@ public class ClientConfig {
     private final static Logger LOG = LoggerFactory.getLogger(ClientConfig.class);
     private final static String FILENAME = "config.properties";
     private DiscordClient DISCORD;
-    private TwitterStream TWITTER;
+    private TwitterAPI TWITTER;
     private final String DOFUS_PORTALS_URL;
     private final String DOFUS_PORTALS_TOKEN;
     private final String KAELLY_CACHE_URL;
@@ -82,16 +82,8 @@ public class ClientConfig {
         Optional.ofNullable(prop.get("twitter.bearer_token"))
                 .map(Object::toString)
                 .filter(StringUtils::isNotBlank)
-                .ifPresentOrElse(bearerToken -> {
-                    try {
-                        TwitterListener listener = new TwitterListener();
-                        TWITTER = new TwitterStream(bearerToken);
-                        TWITTER.addListener(listener);
-                    } catch (Exception e) {
-                        LOG.error("Cannot instantiate twitter client", e);
-                        TWITTER = null;
-                    }
-                }, () -> LOG.error("Twitter bearer token missing, Twitter Finder disabled"));
+                .ifPresentOrElse(bearerToken -> TWITTER = new TwitterAPI(bearerToken),
+                        () -> LOG.error("Twitter bearer token missing, Twitter Finder disabled"));
     }
 
     public static synchronized ClientConfig getInstance(){
@@ -100,7 +92,7 @@ public class ClientConfig {
         return instance;
     }
 
-    public static TwitterStream TWITTER() {
+    public static TwitterAPI TWITTER() {
         return getInstance().TWITTER;
     }
     public static DiscordClient DISCORD() {

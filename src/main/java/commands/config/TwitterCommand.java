@@ -9,6 +9,7 @@ import discord4j.core.object.entity.channel.MessageChannel;
 import enums.Language;
 import finders.TwitterFinder;
 import exceptions.*;
+import org.apache.commons.lang3.StringUtils;
 import util.Translator;
 
 import java.util.regex.Matcher;
@@ -18,8 +19,8 @@ import java.util.regex.Matcher;
  */
 public class TwitterCommand extends AbstractLegacyCommand {
 
-    private DiscordException twitterFound;
-    private DiscordException twitterNotFound;
+    private final DiscordException twitterFound;
+    private final DiscordException twitterNotFound;
 
     public TwitterCommand(){
         super("twitter", "(\\s+true|\\s+false|\\s+0|\\s+1|\\s+on|\\s+off)");
@@ -34,13 +35,13 @@ public class TwitterCommand extends AbstractLegacyCommand {
         if (isUserHasEnoughRights(message)) {
             String value = m.group(1);
 
-            Long guildId = message.getGuild().blockOptional()
-                    .map(Guild::getId).map(Snowflake::asLong).orElse(0L);
-            Long channelId = message.getChannel().blockOptional()
-                    .map(MessageChannel::getId).map(Snowflake::asLong).orElse(0L);
+            String guildId = message.getGuild().blockOptional()
+                    .map(Guild::getId).map(Snowflake::asString).orElse(StringUtils.EMPTY);
+            String channelId = message.getChannel().blockOptional()
+                    .map(MessageChannel::getId).map(Snowflake::asString).orElse(StringUtils.EMPTY);
 
             if (value.matches("\\s+true") || value.matches("\\s+0") || value.matches("\\s+on")){
-                if (! TwitterFinder.getTwitterChannels().containsKey(channelId)) {
+                if (! TwitterFinder.getTwitterFinders().containsKey(channelId)) {
                     new TwitterFinder(guildId, channelId).addToDatabase();
                     message.getChannel().flatMap(chan -> chan
                             .createMessage(Translator.getLabel(lg, "twitter.request.1")
@@ -51,8 +52,8 @@ public class TwitterCommand extends AbstractLegacyCommand {
                     twitterFound.throwException(message, this, lg);
             }
             else if (value.matches("\\s+false") || value.matches("\\s+1") || value.matches("\\s+off")){
-                if (TwitterFinder.getTwitterChannels().containsKey(channelId)) {
-                    TwitterFinder.getTwitterChannels().get(channelId).removeToDatabase();
+                if (TwitterFinder.getTwitterFinders().containsKey(channelId)) {
+                    TwitterFinder.getTwitterFinders().get(channelId).removeToDatabase();
                     message.getChannel().flatMap(chan -> chan
                             .createMessage(Translator.getLabel(lg, "twitter.request.2")
                                     .replace("{twitter.name}", Translator.getLabel(lg, "twitter.name"))))

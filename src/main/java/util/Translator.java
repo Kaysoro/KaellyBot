@@ -15,7 +15,10 @@ import discord4j.common.util.Snowflake;
 import discord4j.core.object.entity.Message;
 import discord4j.core.object.entity.channel.GuildMessageChannel;
 import discord4j.core.object.entity.channel.MessageChannel;
+import discord4j.discordjson.Id;
+import discord4j.discordjson.json.ChannelData;
 import discord4j.discordjson.json.MessageData;
+import discord4j.discordjson.possible.Possible;
 import discord4j.rest.entity.RestChannel;
 import enums.Language;
 import org.slf4j.Logger;
@@ -76,14 +79,22 @@ public class Translator {
         return result;
     }
     public static Language getLanguageFrom(RestChannel channel) {
-        Guild guild = Guild.getGuilds().get(channel.getData().block().guildId().get().asString());
-        Language result = guild.getLanguage();
-
-        ChannelLanguage channelLanguage = ChannelLanguage.getChannelLanguages().get(channel.getData().block().id().asLong());
-        if (channelLanguage != null)
-            result = channelLanguage.getLang();
-
-        return result;
+        return channel.getData()
+                .blockOptional()
+                .map(ChannelData::id)
+                .map(Snowflake::asLong)
+                .map(ChannelLanguage.getChannelLanguages()::get)
+                .map(ChannelLanguage::getLang)
+                // If channel not found, search for guild config
+                .orElse(channel.getData()
+                        .blockOptional()
+                        .map(ChannelData::guildId)
+                        .flatMap(Possible::toOptional)
+                        .map(Id::asString)
+                        .map(Guild.getGuilds()::get)
+                        .map(Guild::getLanguage)
+                        // If not found, fallback on default locale
+                        .orElse(Constants.defaultLanguage));
     }
 
     public static Language mapLocale(String locale){

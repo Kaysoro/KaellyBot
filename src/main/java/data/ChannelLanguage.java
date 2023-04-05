@@ -45,7 +45,7 @@ public class ChannelLanguage {
                 }
             } catch (SQLException e) {
                 Reporter.report(e);
-                LOG.error("getChannlLanguages", e);
+                LOG.error("getChannelLanguages", e);
             }
         }
         return channelLanguages;

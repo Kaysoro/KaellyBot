@@ -9,7 +9,7 @@ import enums.Language;
 import exceptions.DiscordException;
 import exceptions.NotFoundDiscordException;
 import exceptions.TooMuchDiscordException;
-import finders.PortalFinder;
+import external.DofusPortalsAPI;
 import mapper.PortalMapper;
 import payloads.PortalDto;
 import util.ServerUtils;
@@ -27,7 +27,7 @@ import java.util.regex.Matcher;
  */
 public class PortalCommand extends AbstractLegacyCommand {
 
-    private PortalFinder portalFinder;
+    private DofusPortalsAPI dofusPortalsAPI;
     private DiscordException tooMuchPortals;
     private DiscordException notFoundPortal;
     private DiscordException notFoundServer;
@@ -35,7 +35,7 @@ public class PortalCommand extends AbstractLegacyCommand {
     public PortalCommand(){
         super("pos", "(\\s+\\p{L}+)?");
         setUsableInMP(false);
-        portalFinder = new PortalFinder();
+        dofusPortalsAPI = new DofusPortalsAPI();
         tooMuchPortals = new TooMuchDiscordException("portal");
         notFoundPortal = new NotFoundDiscordException("portal");
         notFoundServer = new NotFoundDiscordException("server");
@@ -47,7 +47,7 @@ public class PortalCommand extends AbstractLegacyCommand {
 
         if (server != null){
             if (m.group(1) == null) { // No dimension precised
-                List<PortalDto> portals = Optional.ofNullable(portalFinder.getPositions(server, lg)).orElse(Collections.emptyList());
+                List<PortalDto> portals = Optional.ofNullable(dofusPortalsAPI.getPositions(server)).orElse(Collections.emptyList());
                 for(PortalDto pos : portals)
                     message.getChannel().flatMap(chan -> chan
                             .createEmbed(PortalMapper.decorateSpec(pos, lg)))
@@ -56,7 +56,7 @@ public class PortalCommand extends AbstractLegacyCommand {
             else {
                 final List<Dimension> DIMENSIONS = getDimensions(m.group(1), lg);
                 if (DIMENSIONS.size() == 1) {
-                    Optional.ofNullable(portalFinder.getPosition(server, DIMENSIONS.get(0), lg))
+                    Optional.ofNullable(dofusPortalsAPI.getPosition(server, DIMENSIONS.get(0)))
                             .ifPresent(pos -> message.getChannel().flatMap(chan -> chan
                                     .createEmbed(PortalMapper.decorateSpec(pos, lg)))
                                     .subscribe());
