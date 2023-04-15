@@ -147,7 +147,6 @@ public class RSSFinder {
                                         .doOnError(error -> {
                                             if (error instanceof ClientException){
                                                 LOG.warn("RSSFinder: no access on " + finder.getChan());
-                                                finder.removeToDatabase();
                                             }
                                             else LOG.error("RSSFinder", error);
                                         })
@@ -159,7 +158,6 @@ public class RSSFinder {
                             finder.setLastRSS(lastRSS);
                     } catch(ClientException e){
                         LOG.warn("RSSFinder: no access on " + finder.getChan());
-                        finder.removeToDatabase();
                     } catch(Exception e){
                         Reporter.report(e);
                         LOG.error("RSSFinder", e);

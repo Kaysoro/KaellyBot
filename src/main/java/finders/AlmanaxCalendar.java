@@ -72,13 +72,11 @@ public class AlmanaxCalendar {
                                 .doOnError(error -> {
                                     if (error instanceof ClientException) {
                                         LOG.warn("AlmanaxCalendar: no access on " + calendar.getChan());
-                                        calendar.removeToDatabase();
                                     } else LOG.error("AlmanaxCalendar", error);
                                 })
                                 .subscribe();
                     } catch (ClientException e) {
                         LOG.warn("AlmanaxCalendar: no access on " + calendar.getChan());
-                        calendar.removeToDatabase();
                     } catch (Exception e) {
                         LOG.error("AlmanaxCalendar", e);
                     }
