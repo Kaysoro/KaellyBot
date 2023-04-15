@@ -60,7 +60,7 @@ public class WhoisCommand extends AbstractCommand {
 
         if (m.group(3) != null){
             String serverName = m.group(3).trim().toLowerCase();
-            ServerUtils.ServerQuery serverQuery = ServerUtils.getServerDofusFromName(serverName);
+            ServerUtils.ServerQuery serverQuery = ServerUtils.getServerDofusFromName(serverName, lg);
 
             if (serverQuery.hasSucceed()) {
                 url.append("&").append(forServer).append(serverQuery.getServer().getId());

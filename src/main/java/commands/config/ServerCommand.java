@@ -1,11 +1,11 @@
 package commands.config;
 
 import commands.model.AbstractCommand;
-import data.Constants;
-import data.Guild;
-import data.ServerDofus;
+import data.*;
 import discord4j.core.event.domain.message.MessageCreateEvent;
 import discord4j.core.object.entity.Message;
+import discord4j.core.object.entity.channel.GuildMessageChannel;
+import discord4j.core.object.entity.channel.MessageChannel;
 import enums.Game;
 import enums.Language;
 import exceptions.BasicDiscordException;
@@ -29,19 +29,20 @@ public class ServerCommand extends AbstractCommand {
     @Override
     public void request(MessageCreateEvent event, Message message, Matcher m, Language lg) {
         Guild guild = Guild.getGuild(message.getGuild().block());
+        MessageChannel channel = message.getChannel().block();
 
         if (m.group(1) != null){
             String serverName = m.group(1).toLowerCase().trim();
 
             if (serverName.equals("-list")) {
-                String sb = Translator.getLabel(lg, "server.list") + "\n" + getServersList();
+                String sb = Translator.getLabel(lg, "server.list") + "\n" + getServersList(lg);
                 message.getChannel().flatMap(chan -> chan.createMessage(sb)).subscribe();
                 return;
             }
 
             if (isUserHasEnoughRights(message)) {
-                if (!serverName.equals("-reset")) {
-                    ServerUtils.ServerQuery query = ServerUtils.getServerDofusFromName(serverName);
+                if (!serverName.startsWith("-channel")) {
+                    ServerUtils.ServerQuery query = ServerUtils.getServerDofusFromName(serverName, lg);
 
                     if (query.hasSucceed()) {
                         guild.setServer(query.getServer());
@@ -55,26 +56,55 @@ public class ServerCommand extends AbstractCommand {
                         query.getExceptions()
                                 .forEach(exception -> exception.throwException(message, this, lg, query.getServersFound()));
                 } else {
-                    guild.setServer(null);
-                    message.getChannel().flatMap(chan -> chan.createMessage(guild.getName()
-                                    + " " + Translator.getLabel(lg, "server.request.3")
-                                    .replace("{game}", Constants.game.getName())))
-                            .subscribe();
+                    ServerUtils.ServerQuery query = ServerUtils.getServerDofusFromName(serverName.replace("-channel", "").trim(), lg);
+                    ChannelServer channelServer = ChannelServer.getChannelServers().get(channel.getId().asLong());
+
+                    if (query.hasSucceed()){
+                        if (channelServer != null){
+                            if (channelServer.getServer().getName().equals(query.getServer().getName())){
+                                channelServer.removeToDatabase();
+                                channel.createMessage(((GuildMessageChannel) channel).getName()
+                                        + " " + Translator.getLabel(lg, "server.request.4")
+                                        .replace("{server}", guild.getServerDofus().toString()))
+                                        .subscribe();
+                            }
+                            else {
+                                channelServer.setServer(query.getServer());
+                                message.getChannel().flatMap(salon -> salon
+                                        .createMessage(((GuildMessageChannel) channel).getName() + " " + Translator
+                                                .getLabel(lg, "server.request.4").replace("{server}", query.getServer().toString())))
+                                        .subscribe();
+                            }
+                        }
+                        else {
+                            final ChannelServer CHAN = new ChannelServer(query.getServer(), channel.getId().asLong());
+                            CHAN.addToDatabase();
+                            message.getChannel().flatMap(salon -> salon
+                                    .createMessage(((GuildMessageChannel) channel).getName() + " " + Translator
+                                            .getLabel(lg, "server.request.4").replace("{server}", query.getServer().toString())))
+                                    .subscribe();
+                        }
+                    } else
+                        query.getExceptions()
+                                .forEach(exception -> exception.throwException(message, this, lg, query.getServersFound()));
                 }
             } else
                 BasicDiscordException.NO_ENOUGH_RIGHTS.throwException(message, this, lg);
         }
         else {
-            if (guild.getServerDofus() != null)
-                message.getChannel().flatMap(chan -> chan.createMessage(guild.getName() + " "
-                        + Translator.getLabel(lg, "server.request.4") + " "
-                        + guild.getServerDofus().getName() + "."))
-                        .subscribe();
-            else
-                message.getChannel().flatMap(chan -> chan.createMessage(guild.getName()
-                        + " " + Translator.getLabel(lg, "server.request.5")
-                        .replace("{game}", Constants.game.getName())))
-                        .subscribe();
+            String text = "**" + guild.getName() + "** "
+                    + (guild.getServerDofus() != null ?
+                        Translator.getLabel(lg, "server.request.4").replace("{server}", guild.getServerDofus().getName()) :
+                        Translator.getLabel(lg, "server.request.5"))
+                            .replace("{game}", Constants.game.getName());
+
+            ChannelServer channelServer = ChannelServer.getChannelServers().get(channel.getId().asLong());
+            if (channelServer != null)
+                text += "\n" + Translator.getLabel(lg, "server.request.6")
+                        .replace("{channel}", ((GuildMessageChannel) channel).getName())
+                        .replace("{server}", channelServer.getServer().getName());
+
+            channel.createMessage(text).subscribe();
         }
     }
 
@@ -92,20 +122,16 @@ public class ServerCommand extends AbstractCommand {
                 + "\n`" + prefix + name + " -list` : " + Translator.getLabel(lg, "server.help.detailed.2")
                 .replace("{game}", Constants.game.getName())
                 + "\n`" + prefix + name + " `*`server`* : " + Translator.getLabel(lg, "server.help.detailed.3")
-                .replace("{game}", Constants.game.getName())
-                + "\n`" + prefix + name + " `*`-reset`* : " + Translator.getLabel(lg, "server.help.detailed.4")
-                .replace("{game}", Constants.game.getName())
-                //+ "\n`" + prefix + name + " -channel `*`server`* : " + Translator.getLabel(lg, "server.help.detailed.5")
-                //.replace("{game}", Constants.game.getName())
-                //+ "\n`" + prefix + name + " -channel -reset` : " + Translator.getLabel(lg, "server.help.detailed.6")
-                //.replace("{game}", Constants.game.getName())
+                    .replace("{game}", Constants.game.getName())
+                + "\n`" + prefix + name + " -channel `*`server`* : " + Translator.getLabel(lg, "server.help.detailed.4")
+                    .replace("{game}", Constants.game.getName())
                 + "\n";
     }
 
-    private String getServersList() {
+    private String getServersList(Language lg) {
         final List<String> SERVERS = ServerDofus.getServersDofus().stream()
-                .filter(server -> server.getGame() == Game.DOFUS_TOUCH)
-                .map(ServerDofus::getName)
+                .filter(server -> server.getGame() == Game.DOFUS)
+                .map(server -> server.getName())
                 .sorted()
                 .collect(Collectors.toList());
         final long SIZE_MAX = SERVERS.stream()

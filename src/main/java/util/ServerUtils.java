@@ -1,15 +1,21 @@
 package util;
 
+import data.ChannelServer;
+import data.Guild;
 import data.ServerDofus;
+import discord4j.core.object.entity.channel.MessageChannel;
 import enums.Game;
+import enums.Language;
 import exceptions.DiscordException;
 import exceptions.NotFoundDiscordException;
 import exceptions.TooMuchDiscordException;
 import exceptions.WrongBotUsedDiscordException;
+import org.jetbrains.annotations.NotNull;
 
 import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public final class ServerUtils {
@@ -18,7 +24,15 @@ public final class ServerUtils {
     private static final DiscordException NOT_FOUND_SERVER = new NotFoundDiscordException("server");
     private static final DiscordException WRONG_BOT_USED = new WrongBotUsedDiscordException();
 
-    public static ServerQuery getServerDofusFromName(String proposedServer){
+
+    public static ServerDofus getDofusServerFrom(Guild guild, MessageChannel channel){
+        return Optional.ofNullable(ChannelServer.getChannelServers().get(channel.getId().asLong()))
+                .map(ChannelServer::getServer)
+                .orElse(guild.getServerDofus());
+    }
+
+    @NotNull
+    public static ServerQuery getServerDofusFromName(String proposedServer, Language language){
         ServerQuery result = new ServerQuery();
         final String PROPOSED_SERVER = Normalizer.normalize(proposedServer, Normalizer.Form.NFD)
                 .replaceAll("\\p{InCombiningDiacriticalMarks}+", "")
@@ -32,8 +46,19 @@ public final class ServerUtils {
                 .collect(Collectors.toList());
 
         List<ServerDofus> serverDofusList = allServers.stream()
-                .filter(server -> server.getGame() == Game.DOFUS_TOUCH)
+            .filter(server -> server.getGame() == Game.DOFUS)
+            .collect(Collectors.toList());
+
+        // Check if the server name is exactly the good one
+        List<ServerDofus> exactMatchDofusServer = serverDofusList.stream()
+                .filter(server -> Normalizer.normalize(server.getName(), Normalizer.Form.NFD)
+                .replaceAll("\\p{InCombiningDiacriticalMarks}+", "")
+                .replaceAll("\\W+", "").toLowerCase().trim()
+                .equals(PROPOSED_SERVER))
                 .collect(Collectors.toList());
+
+        if (exactMatchDofusServer.size() == 1)
+            serverDofusList = exactMatchDofusServer;
 
         if (!serverDofusList.isEmpty()) {
             result.serversFound = serverDofusList;
@@ -64,6 +89,7 @@ public final class ServerUtils {
         public ServerDofus getServer(){
             return server;
         }
+
         public boolean hasSucceed(){
             return exceptions.isEmpty();
         }

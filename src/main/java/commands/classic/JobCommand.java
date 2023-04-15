@@ -65,7 +65,7 @@ public class JobCommand extends AbstractCommand {
             if (Pattern.compile("\\s*-serv\\s+").matcher(content).find()) {
                 String[] split = content.split("\\s*-serv\\s+");
                 content = split[0];
-                ServerUtils.ServerQuery serverQuery = ServerUtils.getServerDofusFromName(split[1]);
+                ServerUtils.ServerQuery serverQuery = ServerUtils.getServerDofusFromName(split[1], lg);
                 if (serverQuery.hasSucceed())
                     server = serverQuery.getServer();
                 else {
