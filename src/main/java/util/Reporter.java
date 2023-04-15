@@ -99,22 +99,26 @@ public class Reporter {
      */
     public void send(Exception exception, Guild guild, Channel channel, User user, discord4j.core.object.entity.Message message){
         try {
-            Sentry.getContext().clearTags();
-            if (guild != null)
-                Sentry.getContext().addTag(GUILD, guild.getId().asString() + " - " + guild.getName());
-            if (channel != null)
-                Sentry.getContext().addTag(CHANNEL, channel.getId().asString() + " - " + channel.getId());
-            if (user != null)
-                Sentry.getContext().addTag(USER, user.getId().asString() + " - " + user.getUsername());
-            if (message != null)
-                Sentry.getContext().addTag(MESSAGE, message.getContent());
+            Sentry.removeTag(GUILD);
+            Sentry.removeTag(CHANNEL);
+            Sentry.removeTag(USER);
+            Sentry.removeTag(MESSAGE);
 
-            Sentry.capture(exception);
+            if (guild != null)
+                Sentry.setTag(GUILD, guild.getId().asString() + " - " + guild.getName());
+            if (channel != null)
+                Sentry.setTag(CHANNEL, channel.getId().asString() + " - " + channel.getId());
+            if (user != null)
+                Sentry.setTag(USER, user.getId().asString() + " - " + user.getUsername());
+            if (message != null)
+                Sentry.setTag(MESSAGE, message.getContent());
+
+            Sentry.captureException(exception);
 
         } catch(Exception e){
-            Sentry.capture(exception);
+            Sentry.captureException(exception);
             LOG.error("report", exception);
-            Sentry.capture(e);
+            Sentry.captureException(e);
             LOG.error("report", e);
         }
     }
