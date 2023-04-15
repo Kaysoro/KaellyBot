@@ -7,7 +7,7 @@
 [![Known Vulnerabilities](https://snyk.io/test/github/kaysoro/kaellybot/badge.svg?targetFile=pom.xml)](https://snyk.io/test/github/kaysoro/kaellybot?targetFile=pom.xml)
 [![Coverage Status](https://coveralls.io/repos/github/Kaysoro/KaellyBot/badge.svg?branch=DevTouch)](https://coveralls.io/github/Kaysoro/KaellyBot?branch=DevTouch)
 
-KaellyTOUCH aims to provide useful commands for DOFUS community (FR/EN)! If you have questions, suggestions or just want to say hello, feel free to join the [discord support server](https://discord.gg/CyJCFDk) :)
+KaellyTOUCH aims to provide useful commands for DOFUS TOUCH community (FR/EN)! If you have questions, suggestions or just want to say hello, feel free to join the [discord support server](https://discord.gg/CyJCFDk) :)
 
 ## Invite KaellyTOUCH to your server
 There is a running official instance used by 1.500+ discord servers and 80.000+ users.  

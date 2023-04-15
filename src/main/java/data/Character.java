@@ -119,8 +119,8 @@ public class Character implements Embedded {
                 .title(pseudo)
                 .url(url)
                 .description(classe + ", " + level)
-                .thumbnail(littleSkinURL)
-                .image(bigSkinURL)
+                .thumbnail(littleSkinURL != null ? littleSkinURL : "")
+                .image(bigSkinURL != null ? bigSkinURL : "")
                 .footer(Translator.getLabel(lg, "whois.server") + " " + server, null);
 
         if (stuffAvailable){
@@ -150,8 +150,7 @@ public class Character implements Embedded {
                 .replace(Translator.getLabel(lg, "whois.extract.level"), "").trim();
         String classe = doc.getElementsByClass("ak-directories-breed").first().text();
         String server = doc.getElementsByClass("ak-directories-server-name").first().text();
-        String score = doc.getElementsByClass("ak-score-text").first().text() + " ("
-                + doc.getElementsByClass("ak-progress-bar-text").first().text() + ")";
+        String score = doc.getElementsByClass("ak-total-success").first().select("span").first().text();
 
         // Optional
         String guildName = null;
@@ -213,7 +212,8 @@ public class Character implements Embedded {
         String classe = doc.getElementsByClass("ak-directories-breed").first().text();
         String server = doc.getElementsByClass("ak-directories-server-name").first().text();
 
-        boolean stuffAvailable = !doc.getElementsByClass("ak-caracteristics-content").isEmpty();
+        boolean stuffAvailable = !doc.getElementsByClass("ak-caracteristics-content").isEmpty()
+                    && ! doc.getElementsByTag("tbody").isEmpty();
         String primaire = null;
         String secondaire = null;
         String dommage = null;

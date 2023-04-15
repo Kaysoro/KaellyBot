@@ -4,7 +4,7 @@ import data.ChannelServer;
 import data.Guild;
 import data.ServerDofus;
 import discord4j.core.object.entity.channel.MessageChannel;
-import enums.Game;
+import data.Constants;
 import enums.Language;
 import exceptions.DiscordException;
 import exceptions.NotFoundDiscordException;
@@ -46,7 +46,7 @@ public final class ServerUtils {
                 .collect(Collectors.toList());
 
         List<ServerDofus> serverDofusList = allServers.stream()
-            .filter(server -> server.getGame() == Game.DOFUS)
+            .filter(server -> server.getGame() == Constants.game)
             .collect(Collectors.toList());
 
         // Check if the server name is exactly the good one

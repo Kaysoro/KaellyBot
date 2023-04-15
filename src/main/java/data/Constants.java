@@ -16,7 +16,7 @@ public class Constants {
     /**
      * Application version
      */
-    public final static String version = "1.1.1";
+    public final static String version = "1.1.2";
 
     /**
      * Changelog
@@ -32,8 +32,8 @@ public class Constants {
     /**
      * Author name
      */
-    public final static String authorName = "Songfu#4099";
-    public final static String authorName2 = "Kaysoro#8327";
+    public final static String authorName = "Songfu#1011";
+    public final static String authorName2 = "Kaysoro#0001";
 
     /**
      * Author avatar

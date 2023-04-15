@@ -6,7 +6,7 @@ import discord4j.core.event.domain.message.MessageCreateEvent;
 import discord4j.core.object.entity.Message;
 import discord4j.core.object.entity.channel.GuildMessageChannel;
 import discord4j.core.object.entity.channel.MessageChannel;
-import enums.Game;
+import data.Constants;
 import enums.Language;
 import exceptions.BasicDiscordException;
 import util.ServerUtils;
@@ -130,7 +130,7 @@ public class ServerCommand extends AbstractCommand {
 
     private String getServersList(Language lg) {
         final List<String> SERVERS = ServerDofus.getServersDofus().stream()
-                .filter(server -> server.getGame() == Game.DOFUS)
+                .filter(server -> server.getGame() == Constants.game)
                 .map(server -> server.getName())
                 .sorted()
                 .collect(Collectors.toList());
