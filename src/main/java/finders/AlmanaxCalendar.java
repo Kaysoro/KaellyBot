@@ -6,7 +6,6 @@ import discord4j.discordjson.json.EmbedData;
 import discord4j.rest.entity.RestChannel;
 import discord4j.rest.http.client.ClientException;
 import enums.Language;
-import reactor.core.publisher.Flux;
 import util.*;
 import exceptions.ExceptionManager;
 import org.slf4j.Logger;
@@ -31,8 +30,8 @@ public class AlmanaxCalendar {
     private static boolean isStarted = false;
 
     private static Map<String, AlmanaxCalendar> almanaxCalendar = null;
-    private String idGuild;
-    private String chan;
+    private final String idGuild;
+    private final String chan;
 
     public AlmanaxCalendar(String idGuild, String chan) {
         this.idGuild = idGuild;
@@ -73,13 +72,11 @@ public class AlmanaxCalendar {
                                 .doOnError(error -> {
                                     if (error instanceof ClientException) {
                                         LOG.warn("AlmanaxCalendar: no access on " + calendar.getChan());
-                                        calendar.removeToDatabase();
                                     } else LOG.error("AlmanaxCalendar", error);
                                 })
                                 .subscribe();
                     } catch (ClientException e) {
                         LOG.warn("AlmanaxCalendar: no access on " + calendar.getChan());
-                        calendar.removeToDatabase();
                     } catch (Exception e) {
                         LOG.error("AlmanaxCalendar", e);
                     }
