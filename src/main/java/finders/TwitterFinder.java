@@ -1,13 +1,18 @@
 package finders;
 
+import payloads.TwitterResponse;
+import discord4j.common.util.Snowflake;
+import discord4j.rest.entity.RestChannel;
+import discord4j.rest.http.client.ClientException;
 import enums.Language;
-import listeners.TwitterListener;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import twitter4j.FilterQuery;
 import util.ClientConfig;
 import util.Connexion;
 import util.Reporter;
+import util.Translator;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -15,58 +20,58 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by steve on 12/01/2017.
  */
+@Getter
+@AllArgsConstructor
 public class TwitterFinder{
-    private final static Logger LOG = LoggerFactory.getLogger(TwitterFinder.class);
-    private static boolean isReady = false;
-    private static Map<Long, TwitterFinder> twitterChannels;
-    private long guildId;
-    private long channelId;
+    private static final Logger LOG = LoggerFactory.getLogger(TwitterFinder.class);
+    private static final long DELTA = 10; // 10min
+    private static boolean isStarted = false;
+    private static Map<String, TwitterFinder> twitterChannels;
+    private String guildId;
+    private String channelId;
+    private long lastUpdate;
 
-
-    public TwitterFinder(long guidId, long channelId) {
-        this.guildId = guidId;
-        this.channelId = channelId;
+    public TwitterFinder(String idGuild, String chan) {
+        this(idGuild, chan, System.currentTimeMillis());
     }
 
-    public synchronized static Map<Long, TwitterFinder> getTwitterChannels(){
-        if (twitterChannels == null) {
-            twitterChannels = new ConcurrentHashMap<>();
+    public synchronized void setLastUpdate(long lastUpdate) {
+        this.lastUpdate = lastUpdate;
 
-            Connexion connexion = Connexion.getInstance();
-            Connection connection = connexion.getConnection();
+        Connexion connexion = Connexion.getInstance();
+        Connection connection = connexion.getConnection();
 
-            try {
-                PreparedStatement query = connection.prepareStatement("SELECT id_guild, id_chan FROM Twitter");
-                ResultSet resultSet = query.executeQuery();
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(
+                    "UPDATE Twitter SET last_update = ? WHERE id_chan = ?;");
+            preparedStatement.setLong(1, lastUpdate);
+            preparedStatement.setString(2, getChannelId());
 
-                while (resultSet.next()){
-                    long idChan = Long.parseLong(resultSet.getString("id_chan"));
-                    long idGuild = Long.parseLong(resultSet.getString("id_guild"));
-                    twitterChannels.put(idChan, new TwitterFinder(idGuild, idChan));
-                }
-            } catch (SQLException e) {
-                Reporter.report(e);
-                LOG.error("getTwitterChannels", e);
-            }
+            preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            LOG.error("setLastUpdate", e);
         }
-        return twitterChannels;
     }
 
     public synchronized void addToDatabase(){
-        if (! getTwitterChannels().containsKey(getChannelId())) {
-            getTwitterChannels().put(getChannelId(), this);
+        if (! getTwitterFinders().containsKey(getChannelId())) {
+            getTwitterFinders().put(getChannelId(), this);
             Connexion connexion = Connexion.getInstance();
             Connection connection = connexion.getConnection();
 
             try {
                 PreparedStatement preparedStatement = connection.prepareStatement(
-                        "INSERT INTO Twitter(id_chan, id_guild) VALUES(?, ?);");
-                preparedStatement.setString(1, String.valueOf(getChannelId()));
-                preparedStatement.setString(2, String.valueOf(getGuildId()));
+                        "INSERT INTO Twitter(id_chan, id_guild, last_update) VALUES(?, ?, ?);");
+                preparedStatement.setString(1, getChannelId());
+                preparedStatement.setString(2, getGuildId());
+                preparedStatement.setLong(3, getLastUpdate());
 
                 preparedStatement.executeUpdate();
             } catch (SQLException e) {
@@ -76,14 +81,14 @@ public class TwitterFinder{
     }
 
     public synchronized void removeToDatabase() {
-        getTwitterChannels().remove(getChannelId());
+        getTwitterFinders().remove(getChannelId());
 
         Connexion connexion = Connexion.getInstance();
         Connection connection = connexion.getConnection();
 
         try {
             PreparedStatement request = connection.prepareStatement("DELETE FROM Twitter WHERE id_chan = ?;");
-            request.setString(1, String.valueOf(getChannelId()));
+            request.setString(1, getChannelId());
             request.executeUpdate();
 
         } catch (SQLException e) {
@@ -91,20 +96,68 @@ public class TwitterFinder{
         }
     }
 
-    public Long getChannelId(){
-        return channelId;
-    }
+    public synchronized static Map<String, TwitterFinder> getTwitterFinders(){
+        if (twitterChannels == null) {
+            twitterChannels = new ConcurrentHashMap<>();
 
-    public Long getGuildId(){
-        return guildId;
+            Connexion connexion = Connexion.getInstance();
+            Connection connection = connexion.getConnection();
+
+            try {
+                PreparedStatement query = connection.prepareStatement("SELECT id_guild, id_chan, last_update FROM Twitter");
+                ResultSet resultSet = query.executeQuery();
+
+                while (resultSet.next()){
+                    String idChan = resultSet.getString("id_chan");
+                    String idGuild = resultSet.getString("id_guild");
+                    long lastUpdate = resultSet.getLong("last_update");
+                    twitterChannels.put(idChan, new TwitterFinder(idGuild, idChan, lastUpdate));
+                }
+            } catch (SQLException e) {
+                Reporter.report(e);
+                LOG.error("getTwitterFinders", e);
+            }
+        }
+        return twitterChannels;
     }
 
     public static void start(){
-        if (ClientConfig.TWITTER() != null && !isReady){
-            isReady = true;
+        if (ClientConfig.TWITTER() != null && !isStarted){
+            LOG.info("Scheduling tweets polling from Twitter API...");
+            isStarted = true;
 
-            LOG.info("Connection to Twitter API...");
-            ClientConfig.TWITTER().startStream();
+            ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+            scheduler.scheduleAtFixedRate(() -> {
+                LOG.info("Dispatching the most recent tweets from Twitter API...");
+                Map<Language, TwitterResponse> allTweets = ClientConfig.TWITTER().getTweets();
+
+                for (TwitterFinder finder : getTwitterFinders().values())
+                    try {
+                        RestChannel chan = ClientConfig.DISCORD().getChannelById(Snowflake.of(finder.channelId));
+                        TwitterResponse response = allTweets.get(Translator.getLanguageFrom(chan));
+                        long lastUpdate = -1;
+
+                        for (TwitterResponse.Tweet tweet : response.getTweets())
+                            if (tweet.getCreatedAt().toEpochMilli() > finder.getLastUpdate()) {
+                                chan.createMessage(tweet.getUrl())
+                                        .doOnError(error -> {
+                                            if (error instanceof ClientException)
+                                                LOG.warn("TwitterFinder: no access on " + finder.getChannelId());
+                                            else LOG.error("TwitterFinder", error);
+                                        })
+                                        .subscribe();
+                                lastUpdate = tweet.getCreatedAt().toEpochMilli();
+                            }
+
+                        if (lastUpdate != -1)
+                            finder.setLastUpdate(lastUpdate);
+                    } catch(ClientException e){
+                        LOG.warn("TwitterFinder: no access on " + finder.getChannelId());
+                    } catch(Exception e){
+                        Reporter.report(e);
+                        LOG.error("TwitterFinder", e);
+                    }
+            }, 0, DELTA, TimeUnit.MINUTES);
         }
     }
 }

@@ -1,8 +1,9 @@
-package util.twitter;
+package external;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import enums.Language;
+import lombok.AllArgsConstructor;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpHeaders;
 import org.apache.http.HttpResponse;
@@ -16,6 +17,7 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import payloads.TwitterResponse;
 import util.StreamUtils;
 import util.Translator;
 
@@ -30,53 +32,34 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class TwitterStream {
-
-    private static final Logger LOG = LoggerFactory.getLogger(TwitterStream.class);
+@AllArgsConstructor
+public class TwitterAPI {
+    private static final Logger LOG = LoggerFactory.getLogger(TwitterAPI.class);
     private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("EEE MMM dd HH:mm:ss Z yyyy")
             .withLocale(Locale.ENGLISH)
             .withZone(ZoneId.of("UTC"));
-    private static final long DELTA = 10; // 10min
     private static final String TWITTER_URL = "https://twitter.com";
     private static final String TWITTER_API_URL = "https://twitter.com/i/api/graphql/BeHK76TOCY3P8nO-FWocjA/UserTweets";
     private static final String COOKIE_GUEST_TOKEN = "gt";
     private static final String COOKIE_SEPARATOR = ";";
     private static final String COOKIE_VALUE_SEPARATOR = "=";
-
     private static final String HEADER_GUEST_TOKEN = "x-guest-token";
     private static final String VARIABLES = "variables";
     private static final String FEATURES = "features";
-    private static final int TWEET_COUNT = 40;
-    public static final String TWITTER_ENTRY_TYPE_TWEET = "Tweet";
+    private static final int TWEET_COUNT = 20;
+    private static final String TWITTER_ENTRY_TYPE_TWEET = "Tweet";
+
+    private static final Map<String, Language> TWITTER_IDS = Stream.of(Language.values())
+            .collect(Collectors.toMap(lg -> Translator.getLabel(lg, "twitter.id"), Function.identity()));
 
     private final String bearerToken;
-    private final List<TwitterStreamListener> listeners;
-    private boolean isStarted;
 
-    public TwitterStream(String bearerToken) {
-        isStarted = false;
-        this.bearerToken = bearerToken;
-        listeners = new CopyOnWriteArrayList<>();
-    }
-
-    public void addListener(TwitterStreamListener listener) {
-        listeners.add(listener);
-    }
-
-    public synchronized void startStream() {
-        if (!isStarted) {
-            isStarted = true;
-            ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
-            scheduler.scheduleAtFixedRate(this::checkTweets, 0, DELTA, TimeUnit.MINUTES);
-        }
-    }
-
-    private void checkTweets(){
-        getGuestToken().ifPresent(guestToken -> Stream.of(Language.values())
-                    .map(lg -> Translator.getLabel(lg, "twitter.id"))
-                    .map(userId -> getUserTweets(bearerToken, guestToken, userId))
-                    .flatMap(Optional::stream)
-                    .forEach(tweet -> listeners.forEach(listener -> listener.onStatus(tweet))));
+    public Map<Language, TwitterResponse> getTweets(){
+        return getGuestToken().stream()
+                .flatMap(guestToken -> TWITTER_IDS.keySet().stream()
+                        .map(userId -> getUserTweets(bearerToken, guestToken, userId))
+                        .flatMap(Optional::stream))
+                .collect(Collectors.toMap(response -> TWITTER_IDS.get(response.getAuthor().getId()), Function.identity()));
     }
 
     private Optional<String> getGuestToken() {
@@ -174,7 +157,7 @@ public class TwitterStream {
             if (! results.isEmpty()){
                 JsonNode userData = results.get(0).path("core").path("user_results")
                         .path("result");
-                User author = User.builder()
+                TwitterResponse.User author = TwitterResponse.User.builder()
                         .id(userData.path("rest_id").textValue())
                         .screenName(userData.path("legacy").path("screen_name").textValue())
                         .build();

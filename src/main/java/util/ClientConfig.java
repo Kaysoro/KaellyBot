@@ -18,15 +18,16 @@ import discord4j.gateway.intent.Intent;
 import discord4j.gateway.intent.IntentSet;
 import io.sentry.Sentry;
 import listeners.*;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import reactor.core.publisher.Mono;
-import twitter4j.TwitterStream;
-import twitter4j.TwitterStreamFactory;
-import twitter4j.conf.ConfigurationBuilder;
+import external.TwitterAPI;
 
 import java.io.*;
 import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
+import java.util.Optional;
 import java.util.Properties;
 
 /**
@@ -38,7 +39,7 @@ public class ClientConfig {
     private final static Logger LOG = LoggerFactory.getLogger(ClientConfig.class);
     private final static String FILENAME = "config.properties";
     private DiscordClient DISCORD;
-    private TwitterStream TWITTER;
+    private TwitterAPI TWITTER;
 
     private ClientConfig(){
         this(System.getProperty("user.dir"));
@@ -49,32 +50,31 @@ public class ClientConfig {
         Properties prop = new Properties();
         String config = path + File.separator + FILENAME;
 
-        try (FileInputStream file = new FileInputStream(URLDecoder.decode(config, "UTF-8"))){
+        try (FileInputStream file = new FileInputStream(URLDecoder.decode(config, StandardCharsets.UTF_8))){
             prop.load(file);
+        } catch(FileNotFoundException e){
+            LOG.error("Configuration file not found");
+            TWITTER = null;
+        } catch (IOException e) {
+            LOG.error("IOException encountered", e);
+            TWITTER = null;
+        }
 
-            try {
-                DISCORD = DiscordClient.create(prop.getProperty("discord.token"));
-            } catch(Throwable e){
-                LOG.error("Impossible de se connecter à Discord : verifiez votre token dans "
-                        + FILENAME + " ainsi que votre connexion.");
-            }
+		try {
+			DISCORD = DiscordClient.create(prop.getProperty("discord.token"));
+		} catch(Throwable e){
+			LOG.error("Impossible de se connecter à Discord : verifiez votre token dans "
+					+ FILENAME + " ainsi que votre connexion.");
+		}
 
-            if (! prop.get("sentry.dsn").equals(""))
-                Sentry.init(prop.getProperty("sentry.dsn"));
+		if (! prop.get("sentry.dsn").equals(""))
+			Sentry.init(prop.getProperty("sentry.dsn"));
 
         Optional.ofNullable(prop.get("twitter.bearer_token"))
                 .map(Object::toString)
                 .filter(StringUtils::isNotBlank)
-                .ifPresentOrElse(bearerToken -> {
-                    try {
-                        TwitterListener listener = new TwitterListener();
-                        TWITTER = new TwitterStream(bearerToken);
-                        TWITTER.addListener(listener);
-                    } catch (Exception e) {
-                        LOG.error("Cannot instantiate twitter client", e);
-                        TWITTER = null;
-                    }
-                }, () -> LOG.error("Twitter bearer token missing, Twitter Finder disabled"));
+                .ifPresentOrElse(bearerToken -> TWITTER = new TwitterAPI(bearerToken),
+                        () -> LOG.error("Twitter bearer token missing, Twitter Finder disabled"));
     }
 
     public static synchronized ClientConfig getInstance(){
@@ -83,7 +83,7 @@ public class ClientConfig {
         return instance;
     }
 
-    public static TwitterStream TWITTER() {
+    public static TwitterAPI TWITTER() {
         return getInstance().TWITTER;
     }
 
