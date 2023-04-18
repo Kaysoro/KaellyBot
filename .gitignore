@@ -18,6 +18,7 @@ hs_err_pid*
 .idea/
 modules/
 target/
+*.iml
 
 # BDD.Sqlite
 *.sqlite
