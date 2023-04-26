@@ -64,7 +64,7 @@ public class TwitterAPI {
 
     private Optional<String> getGuestToken() {
         try (CloseableHttpClient httpClient = HttpClients.createMinimal()) {
-            HttpResponse response = httpClient.execute(new HttpHead(new URIBuilder(TWITTER_URL).build()));
+            HttpResponse response = httpClient.execute(new HttpGet(new URIBuilder(TWITTER_URL).build()));
             if (response.getStatusLine().getStatusCode() == Response.Status.OK.getStatusCode()) {
                 return Stream.of(response.getHeaders(SM.SET_COOKIE))
                         .filter(cookie -> cookie.getValue().contains(COOKIE_GUEST_TOKEN))
