@@ -15,6 +15,7 @@ import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.cookie.SM;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
+import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import payloads.TwitterResponse;
@@ -29,6 +30,8 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.function.Function;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -43,6 +46,7 @@ public class TwitterAPI {
     private static final String COOKIE_GUEST_TOKEN = "gt";
     private static final String COOKIE_SEPARATOR = ";";
     private static final String COOKIE_VALUE_SEPARATOR = "=";
+    private static final Pattern COOKIE_PATTERN = Pattern.compile(COOKIE_GUEST_TOKEN + COOKIE_VALUE_SEPARATOR + "(\\d+);");
     private static final String HEADER_GUEST_TOKEN = "x-guest-token";
     private static final String VARIABLES = "variables";
     private static final String FEATURES = "features";
@@ -66,12 +70,12 @@ public class TwitterAPI {
         try (CloseableHttpClient httpClient = HttpClients.createMinimal()) {
             HttpResponse response = httpClient.execute(new HttpGet(new URIBuilder(TWITTER_URL).build()));
             if (response.getStatusLine().getStatusCode() == Response.Status.OK.getStatusCode()) {
-                return Stream.of(response.getHeaders(SM.SET_COOKIE))
-                        .filter(cookie -> cookie.getValue().contains(COOKIE_GUEST_TOKEN))
-                        .flatMap(cookie -> Stream.of(cookie.getValue().split(COOKIE_SEPARATOR)))
-                        .filter(element -> element.startsWith(COOKIE_GUEST_TOKEN))
-                        .map(element -> element.split(COOKIE_VALUE_SEPARATOR)[1])
-                        .findFirst();
+                Matcher m = COOKIE_PATTERN.matcher(EntityUtils.toString(response.getEntity()));
+                if (m.find()){
+                    return Optional.of(m.group(1));
+                } else {
+                    LOG.warn("Cannot find GT cookie, guest_token could not be retrieved");
+                }
             } else {
             LOG.warn("Cannot consume twitter API, guest_token could not be retrieved: "
                     + response.getStatusLine().getStatusCode());
