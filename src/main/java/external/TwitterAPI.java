@@ -4,17 +4,18 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import enums.Language;
 import lombok.AllArgsConstructor;
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpHeaders;
-import org.apache.http.HttpResponse;
+import org.apache.http.*;
+import org.apache.http.client.CookieStore;
+import org.apache.http.client.RedirectStrategy;
 import org.apache.http.client.config.CookieSpecs;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpHead;
+import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.client.protocol.HttpClientContext;
 import org.apache.http.client.utils.URIBuilder;
-import org.apache.http.cookie.SM;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
+import org.apache.http.impl.client.*;
+import org.apache.http.impl.cookie.BasicClientCookie;
+import org.apache.http.protocol.HttpContext;
 import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,12 +43,15 @@ public class TwitterAPI {
             .withLocale(Locale.ENGLISH)
             .withZone(ZoneId.of("UTC"));
     private static final String TWITTER_URL = "https://twitter.com";
+
+    private static final String TWITTER_DOMAIN = ".twitter.com";
     private static final String TWITTER_API_URL = "https://twitter.com/i/api/graphql/BeHK76TOCY3P8nO-FWocjA/UserTweets";
-    private static final String COOKIE_GUEST_TOKEN = "gt";
-    private static final String COOKIE_SEPARATOR = ";";
-    private static final String COOKIE_VALUE_SEPARATOR = "=";
-    private static final Pattern COOKIE_PATTERN = Pattern.compile(COOKIE_GUEST_TOKEN + COOKIE_VALUE_SEPARATOR + "(\\d+);");
+    private static final String HEADER_GUEST_ID = "guest_id";
     private static final String HEADER_GUEST_TOKEN = "x-guest-token";
+    private static final String COOKIE_GUEST_TOKEN = "gt";
+    private static final String COOKIE_VALUE_SEPARATOR = "=";
+    private static final Pattern GUEST_IO_COOKIE_PATTERN = Pattern.compile(HEADER_GUEST_ID + COOKIE_VALUE_SEPARATOR + "(.+);");
+    private static final Pattern GUEST_TOKEN_COOKIE_PATTERN = Pattern.compile(COOKIE_GUEST_TOKEN + COOKIE_VALUE_SEPARATOR + "(\\d+);");
     private static final String VARIABLES = "variables";
     private static final String FEATURES = "features";
     private static final int TWEET_COUNT = 20;
@@ -67,10 +71,13 @@ public class TwitterAPI {
     }
 
     private Optional<String> getGuestToken() {
-        try (CloseableHttpClient httpClient = HttpClients.createMinimal()) {
+        HttpClientBuilder builder = HttpClientBuilder.create()
+                .setRedirectStrategy(new TwitterRedirectStrategy());
+
+        try (CloseableHttpClient httpClient = builder.build()) {
             HttpResponse response = httpClient.execute(new HttpGet(new URIBuilder(TWITTER_URL).build()));
             if (response.getStatusLine().getStatusCode() == Response.Status.OK.getStatusCode()) {
-                Matcher m = COOKIE_PATTERN.matcher(EntityUtils.toString(response.getEntity()));
+                Matcher m = GUEST_TOKEN_COOKIE_PATTERN.matcher(EntityUtils.toString(response.getEntity()));
                 if (m.find()){
                     return Optional.of(m.group(1));
                 } else {
@@ -184,5 +191,45 @@ public class TwitterAPI {
     private boolean isEntryOriginalTweet(JsonNode result){
         return TWITTER_ENTRY_TYPE_TWEET.equals(result.path("__typename").textValue())
                 && ! result.path("legacy").has("retweeted_status_result");
+    }
+
+    private static class TwitterRedirectStrategy implements RedirectStrategy {
+        private static final int MAX_REDIRECTIONS = 5;
+        private int redirectionNumber;
+
+        public TwitterRedirectStrategy(){
+            redirectionNumber = 0;
+        }
+
+        @Override
+        public boolean isRedirected(HttpRequest request, HttpResponse response, HttpContext context) {
+            boolean isRedirected = isRedirected(response.getStatusLine().getStatusCode());
+            Matcher m = GUEST_IO_COOKIE_PATTERN.matcher(response.getFirstHeader("set-cookie").getValue());
+            if (m.find()){
+                BasicClientCookie cookie = new BasicClientCookie(HEADER_GUEST_ID, m.group(1));
+                cookie.setDomain(TWITTER_DOMAIN);
+                ((CookieStore) context.getAttribute(HttpClientContext.COOKIE_STORE)).addCookie(cookie);
+            } else if (isRedirected) {
+                LOG.warn("Cannot set cookie during redirection");
+            }
+
+            if (isRedirected) {
+                redirectionNumber++;
+                return redirectionNumber < MAX_REDIRECTIONS;
+            }
+            return false;
+        }
+
+        @Override
+        public HttpUriRequest getRedirect(HttpRequest request, HttpResponse response, HttpContext context) {
+            return new HttpGet(request.getRequestLine().getUri());
+        }
+
+        private boolean isRedirected(int statusCode){
+            return statusCode ==  HttpStatus.SC_MOVED_TEMPORARILY
+                    || statusCode == HttpStatus.SC_MOVED_PERMANENTLY
+                    || statusCode == HttpStatus.SC_SEE_OTHER
+                    || statusCode == HttpStatus.SC_TEMPORARY_REDIRECT;
+        }
     }
 }
