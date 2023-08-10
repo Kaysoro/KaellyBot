@@ -1,6 +1,5 @@
 package util;
 
-import commands.CommandManager;
 import data.Constants;
 import discord4j.core.DiscordClient;
 import discord4j.core.GatewayDiscordClient;
@@ -15,7 +14,6 @@ import discord4j.core.object.presence.ClientPresence;
 import discord4j.core.shard.MemberRequestFilter;
 import discord4j.gateway.intent.Intent;
 import discord4j.gateway.intent.IntentSet;
-import discord4j.rest.RestClient;
 import io.sentry.Sentry;
 import listeners.*;
 import org.apache.commons.lang3.StringUtils;
@@ -100,8 +98,6 @@ public class ClientConfig {
     }
 
     public void loginDiscord(){
-        registerSlashCommands(DISCORD()).block();
-
         DISCORD().gateway()
                 .setEnabledIntents(IntentSet.of(
                         Intent.GUILDS,
@@ -141,16 +137,6 @@ public class ClientConfig {
         if (instance == null)
             instance = new ClientConfig(path);
         return instance;
-    }
-
-    private Mono<Void> registerSlashCommands(RestClient client){
-        return client.getApplicationId()
-                .flatMap(id -> client.getApplicationService()
-                        .bulkOverwriteGlobalApplicationCommand(id, CommandManager.getSlashCommandRequests())
-                        .doOnNext(cmd -> LOG.info("Successfully registered Global Command " + cmd.name()))
-                        .collectList()
-                        .then()
-                        .doOnError(e -> LOG.error("Failed to register global commands", e)));
     }
 
     private Mono<Void> legacyCommandListener(GatewayDiscordClient client){
