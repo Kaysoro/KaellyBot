@@ -8,6 +8,7 @@ import java.util.Map;
 public enum Job {
 
     ALCHIMISTE("job.alchimiste"),
+    BESTIOLOGUE("job.bestiologue"),
     BIJOUTIER("job.bijoutier"),
     BRICOLEUR("job.bricoleur"),
     BUCHERON("job.bucheron"),
