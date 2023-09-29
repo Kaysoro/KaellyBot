@@ -45,7 +45,7 @@ public class ServerDofus {
         Connection connection = connexion.getConnection();
 
         try {
-            PreparedStatement query = connection.prepareStatement("SELECT name, id_dofus, game FROM Server");
+            PreparedStatement query = connection.prepareStatement("SELECT name, id_dofus, id_sweet, game FROM Server");
             ResultSet resultSet = query.executeQuery();
 
             while (resultSet.next()) {
