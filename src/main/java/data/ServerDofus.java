@@ -24,12 +24,14 @@ public class ServerDofus {
     private static boolean initialized = false;
     private String name;
     private String id;
+    private String dofusPortalsId;
     private Map<Language, String> labels;
     private Game game;
 
-    public ServerDofus(String name, String id, Game game) {
+    public ServerDofus(String name, String id, String dofusPortalsId, Game game) {
         this.name = name;
         this.id = id;
+        this.dofusPortalsId = dofusPortalsId;
         this.game = game;
         this.labels = new HashMap<>();
     }
@@ -49,6 +51,7 @@ public class ServerDofus {
             while (resultSet.next()) {
                 ServerDofus sd = new ServerDofus(resultSet.getString("name"),
                         resultSet.getString("id_dofus"),
+                        resultSet.getString("id_sweet"),
                         Game.valueOf(resultSet.getString("game")));
                 servers.add(sd);
                 serversMap.put(sd.getName(), sd);
@@ -89,6 +92,10 @@ public class ServerDofus {
 
     public String getId() {
         return id;
+    }
+
+    public String getDofusPortalsId() {
+        return dofusPortalsId;
     }
 
     public Game getGame(){

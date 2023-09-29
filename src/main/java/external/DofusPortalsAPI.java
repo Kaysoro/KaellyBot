@@ -35,7 +35,7 @@ public class DofusPortalsAPI {
 
     public List<PortalDto> getPositions(ServerDofus server) {
         return client.target(ClientConfig.DOFUS_PORTALS_URL() + API_BASE_URL + SERVER_DOMAIN
-                + server.getName().replaceAll("-","_").replaceAll("\\s+","_").toLowerCase() + PORTAL_DOMAIN)
+                + server.getDofusPortalsId() + PORTAL_DOMAIN)
                 .request(MediaType.APPLICATION_JSON)
                 .get()
                 .readEntity(new GenericType<>() {});
@@ -43,7 +43,7 @@ public class DofusPortalsAPI {
 
     public PortalDto getPosition(ServerDofus server, Dimension dimension) {
         return client.target(ClientConfig.DOFUS_PORTALS_URL() + API_BASE_URL+ SERVER_DOMAIN
-                + server.getName().replaceAll("-","_").replaceAll("\\s+","_").toLowerCase() + PORTAL_DOMAIN + dimension.name().toLowerCase())
+                + server.getDofusPortalsId() + PORTAL_DOMAIN + dimension.name().toLowerCase())
                 .request(MediaType.APPLICATION_JSON)
                 .get(PortalDto.class);
     }
