@@ -1,14 +1,15 @@
 package finders;
 
-import payloads.TwitterResponse;
 import discord4j.common.util.Snowflake;
 import discord4j.rest.entity.RestChannel;
 import discord4j.rest.http.client.ClientException;
 import enums.Language;
+import external.TwitterAPI;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import payloads.TweetDto;
 import util.ClientConfig;
 import util.Connexion;
 import util.Reporter;
@@ -18,6 +19,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
@@ -33,6 +35,7 @@ public class TwitterFinder{
     private static final Logger LOG = LoggerFactory.getLogger(TwitterFinder.class);
     private static final long DELTA = 10; // 10min
     private static boolean isStarted = false;
+    private static TwitterAPI twitterAPI;
     private static Map<String, TwitterFinder> twitterChannels;
     private String guildId;
     private String channelId;
@@ -96,7 +99,7 @@ public class TwitterFinder{
         }
     }
 
-    public synchronized static Map<String, TwitterFinder> getTwitterFinders(){
+    public static synchronized Map<String, TwitterFinder> getTwitterFinders(){
         if (twitterChannels == null) {
             twitterChannels = new ConcurrentHashMap<>();
 
@@ -122,22 +125,23 @@ public class TwitterFinder{
     }
 
     public static void start(){
-        if (ClientConfig.TWITTER() != null && !isStarted){
+        if (!isStarted){
             LOG.info("Scheduling tweets polling from Twitter API...");
+            twitterAPI = new TwitterAPI();
             isStarted = true;
 
             ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
             scheduler.scheduleAtFixedRate(() -> {
                 LOG.info("Dispatching the most recent tweets from Twitter API...");
-                Map<Language, TwitterResponse> allTweets = ClientConfig.TWITTER().getTweets();
+                Map<Language, List<TweetDto>> allTweets = twitterAPI.getTweets();
 
                 for (TwitterFinder finder : getTwitterFinders().values())
                     try {
                         RestChannel chan = ClientConfig.DISCORD().getChannelById(Snowflake.of(finder.channelId));
-                        TwitterResponse response = allTweets.get(Translator.getLanguageFrom(chan));
+                        List<TweetDto> tweets = allTweets.get(Translator.getLanguageFrom(chan));
                         long lastUpdate = -1;
 
-                        for (TwitterResponse.Tweet tweet : response.getTweets())
+                        for (TweetDto tweet : tweets)
                             if (tweet.getCreatedAt().toEpochMilli() > finder.getLastUpdate()) {
                                 chan.createMessage(tweet.getUrl())
                                         .doOnError(error -> {

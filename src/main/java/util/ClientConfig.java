@@ -16,16 +16,16 @@ import discord4j.gateway.intent.Intent;
 import discord4j.gateway.intent.IntentSet;
 import io.sentry.Sentry;
 import listeners.*;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import reactor.core.publisher.Mono;
-import external.TwitterAPI;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
-import java.util.Optional;
 import java.util.Properties;
 
 /**
@@ -34,12 +34,12 @@ import java.util.Properties;
 public class ClientConfig {
     
     private static ClientConfig instance = null;
-    private final static Logger LOG = LoggerFactory.getLogger(ClientConfig.class);
-    private final static String FILENAME = "config.properties";
+    private static final Logger LOG = LoggerFactory.getLogger(ClientConfig.class);
+    private static final String FILENAME = "config.properties";
     private DiscordClient DISCORD;
-    private TwitterAPI TWITTER;
     private final String DOFUS_PORTALS_URL;
     private final String DOFUS_PORTALS_TOKEN;
+    private final String TWITTER_URL;
     private final String KAELLY_CACHE_URL;
     private final String KAELLY_CACHE_PASSWORD;
 
@@ -56,32 +56,25 @@ public class ClientConfig {
             prop.load(file);
         } catch(FileNotFoundException e){
             LOG.error("Configuration file not found");
-            TWITTER = null;
         } catch (IOException e) {
             LOG.error("IOException encountered", e);
-            TWITTER = null;
         }
 
         DOFUS_PORTALS_URL = prop.getProperty("dofus_portals.url");
         DOFUS_PORTALS_TOKEN = prop.getProperty("dofus_portals.token");
+        TWITTER_URL = prop.getProperty("twitter.url");
         KAELLY_CACHE_URL = prop.getProperty("kaelly.cache.url");
         KAELLY_CACHE_PASSWORD = prop.getProperty("kaelly.cache.password");
 
         try {
             DISCORD = DiscordClient.create(prop.getProperty("discord.token"));
-        } catch(Throwable e){
+        } catch(Exception e){
                 LOG.error("Impossible to connect to Discord: check your token in "
                         + FILENAME + " as well as your connection.");
         }
 
         if (! prop.get("sentry.dsn").equals(""))
             Sentry.init(prop.getProperty("sentry.dsn"));
-
-        Optional.ofNullable(prop.get("twitter.bearer_token"))
-                .map(Object::toString)
-                .filter(StringUtils::isNotBlank)
-                .ifPresentOrElse(bearerToken -> TWITTER = new TwitterAPI(bearerToken),
-                        () -> LOG.error("Twitter bearer token missing, Twitter Finder disabled"));
     }
 
     public static synchronized ClientConfig getInstance(){
@@ -90,9 +83,6 @@ public class ClientConfig {
         return instance;
     }
 
-    public static TwitterAPI TWITTER() {
-        return getInstance().TWITTER;
-    }
     public static DiscordClient DISCORD() {
         return getInstance().DISCORD;
     }
@@ -123,6 +113,10 @@ public class ClientConfig {
 
     public static String DOFUS_PORTALS_TOKEN(){
         return getInstance().DOFUS_PORTALS_TOKEN;
+    }
+
+    public static String TWITTER_URL(){
+        return getInstance().TWITTER_URL;
     }
 
     public static String KAELLY_CACHE_URL() {
