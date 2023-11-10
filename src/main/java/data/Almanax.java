@@ -5,8 +5,6 @@ import discord4j.discordjson.json.EmbedData;
 import discord4j.discordjson.json.EmbedFieldData;
 import discord4j.discordjson.json.EmbedImageData;
 import enums.Language;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.UriBuilder;
 import org.apache.commons.lang3.time.DateUtils;
 import org.jsoup.nodes.Document;
 import org.slf4j.Logger;
@@ -105,14 +103,14 @@ public class Almanax implements Embedded{
     }
 
     private static Almanax gatheringOnlineData(Language lg, String date) throws IOException {
-        LOG.info("connecting to " + Translator.getLabel(lg, "almanax.url") + date + "?game=dofustouch" + " ...");
-        Document doc = JSoupManager.getDocument(Translator.getLabel(lg, "almanax.url") + date + "?game=dofustouch");
+        LOG.info("connecting to " + Translator.getLabel(lg, "almanax.url") + date + " ...");
+        Document doc = JSoupManager.getDocument(Translator.getLabel(lg, "almanax.url") + date);
 
-        String bonus = doc.getElementsByClass("more").first()
+        String bonus = doc.getElementsByClass("more").get(2)
                 .clone().getElementsByClass("more-infos").empty().parents().first().text();
-        String quest = doc.getElementsByClass("more-infos").first().child(0).text();
-        String ressourceURL = doc.getElementsByClass("more-infos-content").first().children().attr("src");
-        String offrande = doc.getElementsByClass("fleft").get(3).text();
+        String quest = doc.getElementsByClass("more-infos").get(1).child(0).text();
+        String ressourceURL = doc.getElementsByClass("more-infos-content").get(1).children().attr("src");
+        String offrande = doc.getElementsByClass("fleft").get(4).text();
 
         return new Almanax(bonus, offrande, date, quest, ressourceURL);
     }

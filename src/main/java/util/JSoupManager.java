@@ -24,7 +24,7 @@ public final class JSoupManager {
 
     private static final String USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:120.0) Gecko/20100101 Firefox/120.0";
 
-    private static final String REFERER = "https://www.google.com";
+    private static final String REFERER = "https://www.google.com/";
     private static final int TIMEOUT = 10_000;
 
     public static Document getDocument(String url) throws IOException {

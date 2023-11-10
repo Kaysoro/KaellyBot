@@ -1,6 +1,6 @@
 welcome.message=Salut et merci pour l'invitation ! Moi c'est {name}, je suis un robot dédié au jeu {game}; j'ai quelques commandes dans ma manche qui peuvent t'intéresser et qui me permettent d'afficher des items du jeu, des pages personnelles de joueurs ou encore de gérer un annuaire de vos métiers !\nTu veux en savoir plus ? Ecris `{prefix}{help}` pour avoir la liste complète ! :blush:\n\n{owner}, en tant qu'administrateur de {guild}, tu possèdes un ensemble de droits plus poussés te permettant de me configurer. Utilise la commande `{prefix}{lang}` pour changer de langue ou encore les commandes `{prefix}{twitter}`, `{prefix}{almanax-auto}` et `{prefix}{rss}` pour recevoir un maximum de news {game}.\n\nC'est pas génial tout ça ? J'espère que nous allons bien nous amuser tous ensemble ! :smile:
 game.url=https://www.dofus-touch.com
-almanax.url=http://www.krosmoz.com/fr/almanax/
+almanax.url=https://webcache.googleusercontent.com/search?q=cache:https://www.krosmoz.com/fr/almanax/
 feed.url=/fr/rss/news.xml
 twitter.id=3947714549
 twitter.name=@DofusTouch
