@@ -1,5 +1,7 @@
 package util;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -17,33 +19,39 @@ import java.util.Map;
 /**
  * Created by steve on 21/07/2017.
  */
-public class JSoupManager {
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+public final class JSoupManager {
+
+    private static final String USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:120.0) Gecko/20100101 Firefox/120.0";
+
+    private static final String REFERER = "https://www.google.com";
+    private static final int TIMEOUT = 10_000;
 
     public static Document getDocument(String url) throws IOException {
         return Jsoup.connect(url)
-                .userAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:90.0) Gecko/20100101 Firefox/90.0")
-                .referrer("http://www.google.com")
-                .timeout(10000)
+                .userAgent(USER_AGENT)
+                .referrer(REFERER)
+                .timeout(TIMEOUT)
                 .sslSocketFactory(socketFactory())
                 .get();
     }
 
     public static Document postDocument(String url, Map<String, String> header, Map<String, String> data) throws IOException {
         return Jsoup.connect(url)
-                .userAgent("Mozilla/5.0 (Windows NT 10.0; WOW64; rv:54.0) Gecko/20100101 Firefox/54.0")
-                .referrer("http://www.google.com")
+                .userAgent(USER_AGENT)
+                .referrer(REFERER)
                 .headers(header)
                 .data(data)
-                .timeout(10000)
+                .timeout(TIMEOUT)
                 .sslSocketFactory(socketFactory())
                 .post();
     }
 
     public static Connection.Response getResponse(String url) throws IOException {
         return Jsoup.connect(url)
-                .userAgent("Mozilla/5.0 (Windows NT 10.0; WOW64; rv:54.0) Gecko/20100101 Firefox/54.0")
-                .referrer("http://www.google.com")
-                .timeout(10000)
+                .userAgent(USER_AGENT)
+                .referrer(REFERER)
+                .timeout(TIMEOUT)
                 .sslSocketFactory(socketFactory())
                 .execute();
     }
@@ -51,7 +59,7 @@ public class JSoupManager {
     private static SSLSocketFactory socketFactory() {
         TrustManager[] trustAllCerts = new TrustManager[]{ new X509TrustManager() {
             public java.security.cert.X509Certificate[] getAcceptedIssuers() {
-                return null;
+                return new java.security.cert.X509Certificate[0];
             }
 
             public void checkClientTrusted(X509Certificate[] certs, String authType) {}
