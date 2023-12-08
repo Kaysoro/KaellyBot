@@ -69,11 +69,8 @@ There is still a lot to do, but I'm working actively on it! If you wanna help, f
 ## License
 KaellyBOT is [GPL(v3) licensed](./LICENSE).
 
-## Partners
-[JetBrains](https://www.jetbrains.com/?from=KaellyBot) supports this project since the beginning by providing us its products!  
-[![JetBrains logo](https://upload.wikimedia.org/wikipedia/commons/thumb/1/1a/JetBrains_Logo_2016.svg/100px-JetBrains_Logo_2016.svg.png)](https://www.jetbrains.com/?from=KaellyBot)
-
 ## Thank you!
+
 The development and the availability of KaellyBot 24/7 generate ongoing cost. Do not hesitate to help the project grow with a donation!   
 [![Donate](https://www.paypalobjects.com/en_US/FR/i/btn/btn_donateCC_LG.gif)](https://www.paypal.me/kaysoro)
 
@@ -83,4 +80,14 @@ The development and the availability of KaellyBot 24/7 generate ongoing cost. Do
 - Darkrai#8780
 - DreamsVoid#8802
 - ! Siid !#0001
-- Tynagmo
+- Tynagmo  
+
+## Star History
+
+<a href="https://star-history.com/#kaysoro/kaellybot&Date">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=kaysoro/kaellybot&type=Date&theme=dark" />
+    <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=kaysoro/kaellybot&type=Date" />
+    <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=kaysoro/kaellybot&type=Date" />
+  </picture>
+</a>
