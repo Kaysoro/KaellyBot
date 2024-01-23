@@ -2,23 +2,22 @@ package data;
 
 import discord4j.common.util.Snowflake;
 import discord4j.core.object.entity.Member;
-import discord4j.core.object.presence.Presence;
-import discord4j.core.object.presence.Status;
 import discord4j.core.spec.EmbedCreateSpec;
 import enums.City;
 import enums.Language;
 import enums.Order;
-import java.awt.Color;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import util.*;
+import util.Connexion;
+import util.MultiKeySearch;
+import util.Reporter;
+import util.Translator;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
-import java.util.function.Consumer;
 
 /**
  * Created by steve on 19/02/2018.
@@ -139,6 +138,11 @@ public class OrderUser extends ObjectUser {
                 while (resultSet.next()) {
                     Long idUser = resultSet.getLong("id_user");
                     ServerDofus server = ServerDofus.getServersMap().get(resultSet.getString("server_dofus"));
+
+                    if (server == null){
+                        LOG.warn("Cannot find the server '" + resultSet.getString("server_dofus") + "', ignoring this order...");
+                        continue;
+                    }
                     City city = City.getCity(resultSet.getString("name_city"));
                     Order order = Order.getOrder(resultSet.getString("name_order"));
                     int level = resultSet.getInt("level");

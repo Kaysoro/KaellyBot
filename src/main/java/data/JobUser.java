@@ -2,21 +2,21 @@ package data;
 
 import discord4j.common.util.Snowflake;
 import discord4j.core.object.entity.Member;
-import discord4j.core.object.presence.Presence;
-import discord4j.core.object.presence.Status;
 import discord4j.core.spec.EmbedCreateSpec;
 import enums.Job;
 import enums.Language;
-import java.awt.Color;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import util.*;
+import util.Connexion;
+import util.MultiKeySearch;
+import util.Reporter;
+import util.Translator;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
-import java.util.function.Consumer;
 
 /**
  * Created by steve on 12/11/2016.
@@ -115,6 +115,11 @@ public class JobUser extends ObjectUser {
                 while (resultSet.next()) {
                     Long idUser = resultSet.getLong("id_user");
                     ServerDofus server = ServerDofus.getServersMap().get(resultSet.getString("server_dofus"));
+
+                    if (server == null){
+                        LOG.warn("Cannot find the server '" + resultSet.getString("server_dofus") + "', ignoring this job...");
+                        continue;
+                    }
                     Job job = Job.getJob(resultSet.getString("name_job"));
                     int level = resultSet.getInt("level");
                     jobs.add(new JobUser(idUser, server, job, level), idUser, server, job);
