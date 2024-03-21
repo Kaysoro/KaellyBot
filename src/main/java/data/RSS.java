@@ -3,6 +3,7 @@ package data;
 import discord4j.core.spec.EmbedCreateSpec;
 import discord4j.discordjson.json.*;
 import enums.Language;
+import lombok.Getter;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -12,14 +13,15 @@ import java.util.Locale;
 /**
  * Created by steve on 12/01/2017.
  */
+@Getter
 public class RSS implements Comparable<RSS>, Embedded {
 
-    private final static DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy à HH:mm", Locale.FRANCE);
+    private static final DateFormat DATE_FORMAT = new SimpleDateFormat("dd-MM-yyyy à HH:mm", Locale.FRANCE);
 
-    private String title;
-    private String url;
-    private String imageUrl;
-    private long date;
+    private final String title;
+    private final String url;
+    private final String imageUrl;
+    private final long date;
 
     public RSS(String title, String url, String imageUrl, long date) {
         this.title = title;
@@ -31,25 +33,9 @@ public class RSS implements Comparable<RSS>, Embedded {
         this.date = date;
     }
 
-    public String getTitle() {
-        return title;
-    }
-
-    public String getUrl() {
-        return url;
-    }
-
-    public long getDate() {
-        return date;
-    }
-
-    public String toStringDiscord(){
-        return getTitle() + " (" + dateFormat.format(new Date(getDate())) + ")\n" + getUrl();
-    }
-
     @Override
     public String toString(){
-        return getTitle() + " (" + dateFormat.format(new Date(getDate())) + ")\n";
+        return getTitle() + " (" + DATE_FORMAT.format(new Date(getDate())) + ")\n";
     }
 
     @Override
@@ -64,17 +50,17 @@ public class RSS implements Comparable<RSS>, Embedded {
                 .title(getTitle())
                 .image(imageUrl)
                 .thumbnail(Constants.rssIcon)
-                .footer(dateFormat.format(new Date(getDate())), null)
+                .footer(DATE_FORMAT.format(new Date(getDate())), null)
                 .build();
     }
 
-    public EmbedData decorateRestEmbedObject(Language lg) {
+    public EmbedData decorateRestEmbedObject() {
         return EmbedData.builder()
-                .author(EmbedAuthorData.builder().name("Dofus.com").url(getUrl()).build())
                 .title(getTitle())
+                .author(EmbedAuthorData.builder().name("Dofus.com").urlOrNull(getUrl()).build())
                 .image(EmbedImageData.builder().url(imageUrl).build())
                 .thumbnail(EmbedThumbnailData.builder().url(Constants.rssIcon).build())
-                .footer(EmbedFooterData.builder().text(dateFormat.format(new Date(getDate()))).build())
+                .footer(EmbedFooterData.builder().text(DATE_FORMAT.format(new Date(getDate()))).build())
                 .build();
     }
 
