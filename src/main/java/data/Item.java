@@ -10,11 +10,9 @@ import util.JSoupManager;
 import util.Translator;
 import util.URLManager;
 
-import java.awt.*;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Random;
 
 /**
  * Created by steve on 14/07/2016.
@@ -180,8 +178,11 @@ public class Item implements Embedded {
         Document doc = JSoupManager.postDocument(url, header, data);
         Elements lines = doc.getElementsByClass("ak-list-element");
         StringBuilder tmp = new StringBuilder();
-        for (Element line : lines)
-            tmp.append(EmojiManager.getEmojiForStat(lg, line.text())).append(line.text()).append("\n");
+        for (Element line : lines) {
+            String effect = line.text().replaceAll("\\{~p}\\{~z}", "")
+                    .replaceAll("\\{~ps}\\{~zs}", "s");
+            tmp.append(EmojiManager.getEmojiForStat(lg, effect)).append(effect).append("\n");
+        }
         return tmp.toString();
     }
 
@@ -189,8 +190,11 @@ public class Item implements Embedded {
     {
         Elements lines = title.parent().getElementsByClass("ak-title");
         StringBuilder tmp = new StringBuilder();
-        for (Element line : lines)
-            tmp.append(EmojiManager.getEmojiForStat(lg, line.text())).append(line.text()).append("\n");
+        for (Element line : lines) {
+            String effect = line.text().replaceAll("\\{~p}\\{~z}", "")
+                    .replaceAll("\\{~ps}\\{~zs}", "s");
+            tmp.append(EmojiManager.getEmojiForStat(lg, effect)).append(effect).append("\n");
+        }
         return tmp.toString();
     }
 }
