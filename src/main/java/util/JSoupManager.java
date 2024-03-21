@@ -22,15 +22,13 @@ import java.util.Map;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class JSoupManager {
 
-    private static final String USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:120.0) Gecko/20100101 Firefox/120.0";
+    public static final String USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:125.0) Gecko/20100101 Firefox/125.0";
 
-    private static final String REFERER = "https://www.google.com/";
     private static final int TIMEOUT = 10_000;
 
     public static Document getDocument(String url) throws IOException {
         return Jsoup.connect(url)
                 .userAgent(USER_AGENT)
-                .referrer(REFERER)
                 .timeout(TIMEOUT)
                 .sslSocketFactory(socketFactory())
                 .get();
@@ -39,7 +37,6 @@ public final class JSoupManager {
     public static Document postDocument(String url, Map<String, String> header, Map<String, String> data) throws IOException {
         return Jsoup.connect(url)
                 .userAgent(USER_AGENT)
-                .referrer(REFERER)
                 .headers(header)
                 .data(data)
                 .timeout(TIMEOUT)
@@ -50,7 +47,6 @@ public final class JSoupManager {
     public static Connection.Response getResponse(String url) throws IOException {
         return Jsoup.connect(url)
                 .userAgent(USER_AGENT)
-                .referrer(REFERER)
                 .timeout(TIMEOUT)
                 .sslSocketFactory(socketFactory())
                 .execute();

@@ -5,10 +5,12 @@ import discord4j.common.util.Snowflake;
 import discord4j.rest.entity.RestChannel;
 import discord4j.rest.http.client.ClientException;
 import enums.Language;
-import reactor.core.publisher.Flux;
-import util.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import util.ClientConfig;
+import util.Connexion;
+import util.Reporter;
+import util.Translator;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -143,7 +145,7 @@ public class RSSFinder {
 
                         for (RSS rss : rssFeeds)
                             if (rss.getDate() > finder.getLastRSS()) {
-                                chan.createMessage(rss.decorateRestEmbedObject(lg))
+                                chan.createMessage(rss.decorateRestEmbedObject())
                                         .doOnError(error -> {
                                             if (error instanceof ClientException){
                                                 LOG.warn("RSSFinder: no access on " + finder.getChan());
