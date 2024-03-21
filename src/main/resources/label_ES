@@ -1,6 +1,6 @@
 welcome.message=¡Hola, te agradezco la invitación! Soy {name}, un bot dedicado al juego {game}; Tengo algunos comandos en mis manos que pueden interesarle y permitirme mostrarle los objetos del juego o las páginas de los personajes, administrar el libro de trabajos o las posiciones del portal.\n¿Quiere saber más? ¡Escribe `{prefix}{help}` para obtener la lista completa! : blush:\n\n{owner}, como administrador de {guild}, tienes un conjunto de derechos dedicados a configurarme. Use el comando `{prefix}{server}` para definir el servidor de su juego para recibir automáticamente las posiciones del portal, `{prefix}{lang}` para elegir un idioma o los comandos `{prefix}{twitter}`, `{prefix}{almanax-auto}` y `{prefix}{rss}` para recoger un máximo de {game} noticias.\n\nSuena bien, ¿no? ¡Espero que nos divirtamos juntos! :smile:
 game.url=https://www.dofus-touch.com
-almanax.url=https://webcache.googleusercontent.com/search?q=cache:https://www.krosmoz.com/es/almanax/
+almanax.url=https://www.krosmoz.com/es/almanax/
 feed.url=/es/rss/news.xml
 twitter.id=1278714204808241152
 twitter.name=@DOFUSTouch_ES
