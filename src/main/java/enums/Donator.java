@@ -8,7 +8,8 @@ public enum Donator {
     DREAMSVOID("DreamsVoid"),
     SIID("! ༺ -Siid- ༻ !#0001"),
     TYNAGMO("Tynagmo"),
-    NOCKS("Nocks");
+    NOCKS("Nocks"),
+    SACREE_SACRI("Sacree-Sacri");
 
     private String name;
 
