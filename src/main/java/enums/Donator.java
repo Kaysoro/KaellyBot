@@ -2,11 +2,14 @@ package enums;
 
 public enum Donator {
 
-    HART69("Hart69#0001"),
-    ELDER_MASTER("Elder-Master#7684"),
-    DARKRAI("Darkrai#8780"),
-    DREAMSVOID("DreamsVoid#8802"),
-    SIID("! ༺ -Siid- ༻ !#0001");
+    HART69("Hart69"),
+    ELDER_MASTER("Eaglow"),
+    DARKRAI("Darkrai25"),
+    DREAMSVOID("DreamsVoid"),
+    SIID("Siid"),
+    TYNAGMO("Tynagmo"),
+    NOCKS("Nocks"),
+    SACREE_SACRI("Sacree-Sacri");
 
     private String name;
 

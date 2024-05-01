@@ -5,12 +5,13 @@ import discord4j.core.event.domain.message.MessageCreateEvent;
 import discord4j.core.object.entity.Message;
 import discord4j.core.object.entity.channel.PrivateChannel;
 import discord4j.core.object.entity.channel.TextChannel;
+import discord4j.rest.util.Color;
 import enums.Language;
 import enums.Nude;
 import exceptions.BasicDiscordException;
 import util.Translator;
 
-import java.awt.*;
+import java.util.Random;
 import java.util.regex.Matcher;
 
 /**
@@ -18,7 +19,7 @@ import java.util.regex.Matcher;
  */
 public class SendNudeCommand extends AbstractCommand {
 
-    private final static Color PINK_COLOR = new Color(255, 32, 128);
+    private static final Random RANDOM = new Random();
 
     public SendNudeCommand() {
         super("sendnude", "");
@@ -30,12 +31,16 @@ public class SendNudeCommand extends AbstractCommand {
         if (message.getChannel().blockOptional().map(chan -> chan instanceof PrivateChannel).orElse(false)
                 || message.getChannel().blockOptional().map(chan -> ((TextChannel) chan).isNsfw()).orElse(false)){
             message.getChannel().flatMap(chan -> chan.createEmbed(spec -> {
+                int position = RANDOM.nextInt(Nude.values().length);
+                Nude nude = Nude.values()[position];
+
                 spec.setTitle(Translator.getLabel(lg, "sendnude.title"))
+                        .setColor(Color.PINK)
                         .setFooter(Translator.getLabel(lg, "sendnude.author")
-                                .replace("{author}", Nude.MOAM.getAuthor())
-                                .replace("{position}", "1")
-                                .replace("{number}", "1"), null)
-                        .setImage(Nude.MOAM.getImage());
+                                .replace("{author}", nude.getAuthor())
+                                .replace("{position}", String.valueOf(position + 1))
+                                .replace("{number}", String.valueOf(Nude.values().length)), null)
+                        .setImage(nude.getImage());
             })).subscribe();
         }
         else // Exception NSFW

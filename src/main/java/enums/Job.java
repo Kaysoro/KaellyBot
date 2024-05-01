@@ -23,7 +23,7 @@ public enum Job {
     FORGEMAGEMARTEAUX("job.forgemagemarteaux"),
     FORGEMAGEPELLES("job.forgemagepelles"),
     FORGEUREPEES("job.forgeurepees"),
-    FORGEURBOUCLIERS("job.forgeurboucliers"),
+    FACONNEUR("job.faconneur"),
     FORGEURDAGUES("job.forgeurdagues"),
     FORGEURHACHES("job.forgeurhaches"),
     FORGEURMARTEAUX("job.forgeurmarteaux"),

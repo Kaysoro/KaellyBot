@@ -19,7 +19,6 @@ import util.Translator;
 
 import java.text.Normalizer;
 import java.util.*;
-import java.util.function.Consumer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -31,7 +30,7 @@ public class JobCommand extends AbstractCommand {
 
     private final static int MAX_JOB_DISPLAY = 3;
 
-    private DiscordException notFoundServer;
+    private final DiscordException notFoundServer;
 
     public JobCommand(){
         super("job", "(.*)");
@@ -47,47 +46,43 @@ public class JobCommand extends AbstractCommand {
         Optional<discord4j.core.object.entity.Guild> guild = message.getGuild().blockOptional();
         Optional<Member> user = message.getAuthorAsMember().blockOptional();
 
-        if (guild.isPresent() && user.isPresent()) {
-            ServerDofus server = Guild.getGuild(guild.get()).getServerDofus();
+        if (guild.isPresent() && user.isPresent()){
+            ServerDofus server = ServerUtils.getDofusServerFrom(Guild.getGuild(guild.get()), message.getChannel().block());
 
             // Concerned user is the author?
-            if (Pattern.compile("^<@[!|&]?\\d+>").matcher(content).find()) {
+            if(Pattern.compile("^<@[!|&]?\\d+>").matcher(content).find()){
                 content = content.replaceFirst("<@[!|&]?\\d+>", "").trim();
                 Optional<Snowflake> memberId = message.getUserMentionIds().stream().findFirst();
-                if (!memberId.isPresent()) {
+                if (! memberId.isPresent()){
                     BasicDiscordException.USER_NEEDED.throwException(message, this, lg);
                     return;
                 }
                 user = guild.get().getMemberById(memberId.get()).blockOptional();
             }
 
-            // Is the server specified ?
-            if (Pattern.compile("\\s*-serv\\s+").matcher(content).find()) {
-                String[] split = content.split("\\s*-serv\\s+");
-                content = split[0];
-                ServerUtils.ServerQuery serverQuery = ServerUtils.getServerDofusFromName(split[1], lg);
+            //user data consultation
+            ServerUtils.ServerQuery serverQuery = ServerUtils.getServerDofusFromName(content, lg);
+            if (! serverQuery.getServersFound().isEmpty() && Pattern.compile("(.+)").matcher(content).matches()
+                    || content.isEmpty()){
                 if (serverQuery.hasSucceed())
                     server = serverQuery.getServer();
-                else {
-                    serverQuery.getExceptions()
-                            .forEach(e -> e.throwException(message, this, lg, serverQuery.getServersFound()));
+                else if (server == null) {
+                    if (!content.isEmpty())
+                        serverQuery.getExceptions()
+                                .forEach(e -> e.throwException(message, this, lg, serverQuery.getServersFound()));
+                    else
+                        notFoundServer.throwException(message, this, lg);
                     return;
                 }
-            }
 
-            if (server == null) {
-                notFoundServer.throwException(message, this, lg);
-                return;
-            }
-
-            //user data consultation
-            if (content.isEmpty()) {
-                List<EmbedCreateSpec> embeds = JobUser.getJobsFromUser(user.get(), server, lg);
-                for (EmbedCreateSpec embed : embeds)
-                    message.getChannel().flatMap(chan -> chan.createEmbed(embed)).subscribe();
+                if (user.isPresent()) {
+                    List<EmbedCreateSpec> embeds = JobUser.getJobsFromUser(user.get(), server, lg);
+                    for (EmbedCreateSpec embed : embeds)
+                        message.getChannel().flatMap(chan -> chan.createEmbed(embed)).subscribe();
+                }
             }
             // Data recording
-            else if ((m = Pattern.compile("-list|(-all|\\p{L}+(?:\\s+\\p{L}+)*)\\s+(\\d{1,3})").matcher(content)).matches()) {
+            else if((m = Pattern.compile("-list|(-all|\\p{L}+(?:\\s+\\p{L}+)*)\\s+(\\d{1,3})(\\s+.+)?").matcher(content)).matches()) {
                 if (user.isPresent() && message.getAuthor().isPresent() && user.get().getId().equals(message.getAuthor().get().getId())) {
                     if (!m.group(0).equals("-list")) {
                         // Data Parsing and exceptions processing
@@ -128,6 +123,18 @@ public class JobCommand extends AbstractCommand {
 
                         int level = Integer.parseInt(m.group(2));
 
+                        if (m.group(3) != null) {
+                            ServerUtils.ServerQuery query = ServerUtils.getServerDofusFromName(m.group(3), lg);
+                            if (serverQuery.hasSucceed())
+                                server = serverQuery.getServer();
+                            else
+                                serverQuery.getExceptions()
+                                        .forEach(e -> e.throwException(message, this, lg, query.getServersFound()));
+                        } else if (server == null) {
+                            notFoundServer.throwException(message, this, lg);
+                            return;
+                        }
+
                         for (Job job : jobs)
                             if (JobUser.containsKeys(user.get().getId().asLong(), server, job))
                                 JobUser.get(user.get().getId().asLong(), server, job).get(0).setLevel(level);
@@ -157,8 +164,27 @@ public class JobCommand extends AbstractCommand {
                     }
                 } else
                     badUse.throwException(message, this, lg);
-            } else if ((m = Pattern.compile("(?:>\\s*(\\d{1,3})\\s+)?(\\p{L}+(?:\\s+\\p{L}+)*)").matcher(content)).matches()) {
+            }
+            else if ((m = Pattern.compile("(?:>\\s*(\\d{1,3})\\s+)?(\\p{L}+(?:\\s+\\p{L}+)*)").matcher(content)).matches()){
                 List<String> proposals = new LinkedList<>(Arrays.asList(m.group(2).split("\\s+")));
+
+                if (proposals.size() > 1) {
+                    String potentialServer = proposals.get(proposals.size() - 1);
+                    ServerUtils.ServerQuery query = ServerUtils.getServerDofusFromName(potentialServer, lg);
+                    if (query.hasSucceed()){
+                        server = query.getServer();
+                        proposals.remove(potentialServer);
+                    }
+                    else {
+                        query.getExceptions()
+                                .forEach(e -> e.throwException(message, this, lg, query.getServersFound()));
+                        return;
+                    }
+                }
+                else if (server == null){
+                    notFoundServer.throwException(message, this, lg);
+                    return;
+                }
 
                 Set<Job> jobs = new HashSet<>();
 
@@ -174,6 +200,7 @@ public class JobCommand extends AbstractCommand {
                 if (jobs.isEmpty()) {
                     message.getChannel().flatMap(chan -> chan.createMessage(Translator.getLabel(lg, "job.noone")))
                             .subscribe();
+                    return;
                 }
 
                 int level = -1;
@@ -185,7 +212,8 @@ public class JobCommand extends AbstractCommand {
 
                 for (EmbedCreateSpec embed : embeds)
                     message.getChannel().flatMap(chan -> chan.createEmbed(embed)).subscribe();
-            } else
+            }
+            else
                 badUse.throwException(message, this, lg);
         }
     }
@@ -216,10 +244,7 @@ public class JobCommand extends AbstractCommand {
         final long SIZE_MAX = JOBS.stream().map(String::length).max(Integer::compareTo).orElse(20);
 
         StringBuilder sb = new StringBuilder("```");
-        JOBS.forEach(jobName -> sb.append(String.format("%-" + SIZE_MAX + "s",
-                Normalizer.normalize(jobName, Normalizer.Form.NFD)
-                        .replaceAll("\\p{InCombiningDiacriticalMarks}+", "")
-                        .toLowerCase().replaceAll("\\W+", ""))).append("\t"));
+        JOBS.forEach(jobName -> sb.append(String.format("%-" + SIZE_MAX + "s", jobName)).append("\t"));
         sb.append("```");
         return sb.toString();
     }
@@ -232,12 +257,12 @@ public class JobCommand extends AbstractCommand {
     @Override
     public String helpDetailed(Language lg, String prefix) {
         return help(lg, prefix)
-                + "\n`" + prefix + name + " `*`-serv server`* : " + Translator.getLabel(lg, "job.help.detailed.1")
-                + "\n`" + prefix + name + " `*`@user -serv server`* : " + Translator.getLabel(lg, "job.help.detailed.2")
-                + "\n`" + prefix + name + " `*`job1 job2 job3 -serv server`* : " + Translator.getLabel(lg, "job.help.detailed.3")
-                + "\n`" + prefix + name + " > `*`level job1 job2 job3 -serv server`* : " + Translator.getLabel(lg, "job.help.detailed.4")
-                + "\n`" + prefix + name + " `*`job1, job2 job3 level -serv server`* : " + Translator.getLabel(lg, "job.help.detailed.5")
-                + "\n`" + prefix + name + " -all `*`level -serv server`* : " + Translator.getLabel(lg, "job.help.detailed.6")
+                + "\n`" + prefix + name + " `*`server`* : " + Translator.getLabel(lg, "job.help.detailed.1")
+                + "\n`" + prefix + name + " `*`@user server`* : " + Translator.getLabel(lg, "job.help.detailed.2")
+                + "\n`" + prefix + name + " `*`job1 job2 job3 server`* : " + Translator.getLabel(lg, "job.help.detailed.3")
+                + "\n`" + prefix + name + " > `*`level job1 job2 job3 server`* : " + Translator.getLabel(lg, "job.help.detailed.4")
+                + "\n`" + prefix + name + " `*`job1, job2 job3 level server`* : " + Translator.getLabel(lg, "job.help.detailed.5")
+                + "\n`" + prefix + name + " -all `*`level server`* : " + Translator.getLabel(lg, "job.help.detailed.6")
                 + "\n`" + prefix + name + " -list` : " + Translator.getLabel(lg, "job.help.detailed.7") + "\n";
     }
 }

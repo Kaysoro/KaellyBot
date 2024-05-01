@@ -9,7 +9,6 @@ import util.EmojiManager;
 import util.JSoupManager;
 import util.Translator;
 
-import java.awt.*;
 import java.io.IOException;
 import java.util.Random;
 
@@ -96,11 +95,12 @@ public class Character implements Embedded {
             builder.addField(Translator.getLabel(lg, "whois.level") + " " + level,
                     Translator.getLabel(lg, "whois.ladder.none"), true);
 
+        String scoreLabel = score != null ? score : "-";
         if (ladderSuccess != null && ! ladderSuccess.isEmpty())
-            builder.addField(Translator.getLabel(lg, "whois.success") + " " + score,
+            builder.addField(Translator.getLabel(lg, "whois.success") + " " + scoreLabel,
                     ladderSuccess, true);
         else
-            builder.addField(Translator.getLabel(lg, "whois.success") + " " + score,
+            builder.addField(Translator.getLabel(lg, "whois.success") + " " + scoreLabel,
                     Translator.getLabel(lg, "whois.ladder.none"), true);
 
         if (ladderKoli != null && ! ladderKoli.isEmpty())
@@ -150,7 +150,11 @@ public class Character implements Embedded {
                 .replace(Translator.getLabel(lg, "whois.extract.level"), "").trim();
         String classe = doc.getElementsByClass("ak-directories-breed").first().text();
         String server = doc.getElementsByClass("ak-directories-server-name").first().text();
-        String score = doc.getElementsByClass("ak-total-success").first().select("span").first().text();
+
+        String score = null;
+        if (!doc.getElementsByClass("ak-total-success").isEmpty()){
+            score = doc.getElementsByClass("ak-total-success").first().select("span").first().text();
+        }
 
         // Optional
         String guildName = null;

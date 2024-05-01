@@ -75,12 +75,14 @@ The development and the availability of KaellyBot 24/7 generate ongoing cost. Do
 [![Donate](https://www.paypalobjects.com/en_US/FR/i/btn/btn_donateCC_LG.gif)](https://www.paypal.me/kaysoro)
 
 ### Donators
-- Hart69#0001
-- Elder-Master#7684
-- Darkrai#8780
-- DreamsVoid#8802
-- ! Siid !#0001
+- Hart69
+- Eaglow
+- Darkrai25
+- DreamsVoid
+- Siid
 - Tynagmo  
+- Nocks
+- Sacree-Sacri
 
 ## Star History
 

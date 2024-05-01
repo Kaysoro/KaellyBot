@@ -12,7 +12,10 @@ import discord4j.core.spec.EmbedCreateSpec;
 import enums.City;
 import enums.Language;
 import enums.Order;
-import exceptions.*;
+import exceptions.BasicDiscordException;
+import exceptions.DiscordException;
+import exceptions.NotFoundDiscordException;
+import exceptions.TooMuchDiscordException;
 import util.ServerUtils;
 import util.Translator;
 
@@ -21,7 +24,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.function.Consumer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -57,124 +59,197 @@ public class AlignmentCommand extends FetchCommand {
         // Initialisation du Filtre
         City city = null;
         Order order = null;
-        ServerDofus server = Guild.getGuild(message.getGuild().block()).getServerDofus();
 
-        // Is the server specified ?
-        if(Pattern.compile("\\s*-serv\\s+").matcher(content).find()){
-            String[] split = content.split("\\s*-serv\\s+");
-            content = split[0];
-            ServerUtils.ServerQuery serverQuery = ServerUtils.getServerDofusFromName(split[1], lg);
-            if (serverQuery.hasSucceed())
-                server = serverQuery.getServer();
-            else {
-                serverQuery.getExceptions()
-                        .forEach(e -> e.throwException(message, this, lg, serverQuery.getServersFound()));
-                return;
-            }
-        }
+        if (guild.isPresent() && user.isPresent()){
+            ServerDofus server = ServerUtils.getDofusServerFrom(Guild.getGuild(guild.get()), message.getChannel().block());
 
-        if (server == null) {
-            notFoundServer.throwException(message, this, lg);
-            return;
-        }
-
-        // Consultation filtré par niveau
-        if ((m = Pattern.compile(">\\s*(\\d{1,3})").matcher(content)).matches()){
-            int level = Integer.parseInt(m.group(1));
-            List<EmbedCreateSpec> embeds = OrderUser.getOrdersFromLevel(guild.get().getMembers()
-                    .collectList().blockOptional().orElse(Collections.emptyList()), server, level, guild.get(), lg);
-            for (EmbedCreateSpec embed : embeds)
-                message.getChannel().flatMap(chan -> chan.createEmbed(embed)).subscribe();
-        }
-        else {
-            // L'utilisateur concerné est-il l'auteur de la commande ?
-            if(Pattern.compile("^<@[!|&]?\\d+>").matcher(content).find()){
-                content = content.replaceFirst("<@[!|&]?\\d+>", "").trim();
-                Optional<Snowflake> memberId = message.getUserMentionIds().stream().findFirst();
-                if (! memberId.isPresent()){
-                    BasicDiscordException.USER_NEEDED.throwException(message, this, lg);
+            // Consultation filtré par niveau
+            if ((m = Pattern.compile(">\\s+(\\d{1,3})(\\s+.+)?").matcher(content)).matches()){
+                int level = Integer.parseInt(m.group(1));
+                if (m.group(2) != null) {
+                    ServerUtils.ServerQuery serverQuery = ServerUtils.getServerDofusFromName(m.group(2), lg);
+                    if (serverQuery.hasSucceed())
+                        server = serverQuery.getServer();
+                    else {
+                        serverQuery.getExceptions()
+                                .forEach(e -> e.throwException(message, this, lg, serverQuery.getServersFound()));
+                        return;
+                    }
+                } else if (server == null){
+                    notFoundServer.throwException(message, this, lg);
                     return;
                 }
-                user = guild.get().getMemberById(memberId.get()).blockOptional();
-            }
 
-            //Consultation des données filtrés par utilisateur
-            if (content.isEmpty()){
-                List<EmbedCreateSpec> embeds = OrderUser.getOrdersFromUser(user.get(), server, lg);
+                List<EmbedCreateSpec> embeds = OrderUser.getOrdersFromLevel(guild.get().getMembers()
+                        .collectList().blockOptional().orElse(Collections.emptyList()), server, level, guild.get(), lg);
                 for (EmbedCreateSpec embed : embeds)
                     message.getChannel().flatMap(chan -> chan.createEmbed(embed)).subscribe();
             }
-            // Enregistrement des données
-            else if((m = Pattern.compile("(\\p{L}+)\\s+(\\p{L}+)\\s+(\\d{1,3})").matcher(content)).matches()){
-                if(user.isPresent() && message.getAuthor().isPresent() && user.get().getId().equals(message.getAuthor().get().getId())) {
-                    // Parsing des données et traitement des divers exceptions
-                    List<City> cities = findCity(m.group(1), lg);
-                    if (checkData(cities, tooMuchCities, notFoundCity, message, lg)) return;
-                    city = cities.get(0);
-                    List<Order> orders = findOrder(m.group(2), lg);
-                    if (checkData(orders, tooMuchOrders, notFoundOrder, message, lg)) return;
-                    order = orders.get(0);
-                    int level = Integer.parseInt(m.group(3));
+            else {
+                // L'utilisateur concerné est-il l'auteur de la commande ?
+                if(Pattern.compile("^<@[!|&]?\\d+>").matcher(content).find()){
+                    content = content.replaceFirst("<@[!|&]?\\d+>", "").trim();
+                    Optional<Snowflake> memberId = message.getUserMentionIds().stream().findFirst();
+                    if (! memberId.isPresent()){
+                        BasicDiscordException.USER_NEEDED.throwException(message, this, lg);
+                        return;
+                    }
+                    user = guild.get().getMemberById(memberId.get()).blockOptional();
+                }
 
-                    if(OrderUser.containsKeys(user.get().getId().asLong(), server, city, order)) {
-                        OrderUser.get(user.get().getId().asLong(), server, city, order).get(0).setLevel(level);
-                        if (level != 0)
-                            message.getChannel().flatMap(chan -> chan
-                                    .createMessage(Translator.getLabel(lg, "align.update"))).subscribe();
+                //Consultation des données filtrés par utilisateur
+                ServerUtils.ServerQuery serverQuery = ServerUtils.getServerDofusFromName(content, lg);
+                if (! serverQuery.getServersFound().isEmpty() && Pattern.compile("(.+)").matcher(content).matches()
+                        || content.isEmpty()){
+                    if (serverQuery.hasSucceed())
+                        server = serverQuery.getServer();
+                    else if (server == null) {
+                        if (!content.isEmpty())
+                            serverQuery.getExceptions()
+                                    .forEach(e -> e.throwException(message, this, lg, serverQuery.getServersFound()));
                         else
-                            message.getChannel().flatMap(chan -> chan
-                                    .createMessage(Translator.getLabel(lg, "align.reset"))).subscribe();
+                            notFoundServer.throwException(message, this, lg);
+                        return;
+                    }
+
+                    if (user.isPresent()) {
+                        List<EmbedCreateSpec> embeds = OrderUser.getOrdersFromUser(user.get(), server, lg);
+                        for (EmbedCreateSpec embed : embeds)
+                            message.getChannel().flatMap(chan -> chan.createEmbed(embed)).subscribe();
+                    }
+                }
+                // Enregistrement des données
+                else if((m = Pattern.compile("(\\p{L}+)\\s+(\\p{L}+)\\s+(\\d{1,3})(\\s+.+)?").matcher(content)).matches()){
+                    if(user.isPresent() && message.getAuthor().isPresent() && user.get().getId().equals(message.getAuthor().get().getId())) {
+                        // Parsing des données et traitement des divers exceptions
+                        List<City> cities = findCity(m.group(1), lg);
+                        if (checkData(cities, tooMuchCities, notFoundCity, message, lg)) return;
+                        city = cities.get(0);
+                        List<Order> orders = findOrder(m.group(2), lg);
+                        if (checkData(orders, tooMuchOrders, notFoundOrder, message, lg)) return;
+                        order = orders.get(0);
+                        int level = Integer.parseInt(m.group(3));
+
+                        if (m.group(4) != null) {
+                            ServerUtils.ServerQuery query = ServerUtils.getServerDofusFromName(m.group(4), lg);
+                            if (query.hasSucceed())
+                                server = query.getServer();
+                            else {
+                                query.getExceptions()
+                                        .forEach(e -> e.throwException(message, this, lg, query.getServersFound()));
+                                return;
+                            }
+                        } else if (server == null){
+                            notFoundServer.throwException(message, this, lg);
+                            return;
+                        }
+                        if(OrderUser.containsKeys(user.get().getId().asLong(), server, city, order)) {
+                            OrderUser.get(user.get().getId().asLong(), server, city, order).get(0).setLevel(level);
+                            if (level != 0)
+                                message.getChannel().flatMap(chan -> chan
+                                        .createMessage(Translator.getLabel(lg, "align.update"))).subscribe();
+                            else
+                                message.getChannel().flatMap(chan -> chan
+                                        .createMessage(Translator.getLabel(lg, "align.reset"))).subscribe();
+                        }
+                        else {
+                            new OrderUser(user.get().getId().asLong(), server, city, order, level).addToDatabase();
+                            if (level != 0)
+                                message.getChannel().flatMap(chan -> chan
+                                        .createMessage(Translator.getLabel(lg, "align.save"))).subscribe();
+                            else
+                                message.getChannel().flatMap(chan -> chan
+                                        .createMessage(Translator.getLabel(lg, "align.no_reset"))).subscribe();
+                        }
+                    }
+                    else
+                        badUse.throwException(message, this, lg);
+
+                }
+                // Consultation filtré par cité et/ou par ordre
+                else if((m = Pattern.compile("(\\p{L}+)(\\s+\\p{L}+)?(\\s+[\\p{L}|\\W]+)?").matcher(content)).matches()){
+                    if (m.group(3) != null) {
+                        ServerUtils.ServerQuery query = ServerUtils.getServerDofusFromName(m.group(3), lg);
+                        if (query.hasSucceed())
+                            server = query.getServer();
+                        else {
+                            query.getExceptions()
+                                    .forEach(e -> e.throwException(message, this, lg, query.getServersFound()));
+                            return;
+                        }
+                    }
+
+                    // On a précisé à la fois une cité et un ordre
+                    if (m.group(2) != null) {
+                        boolean is2Server = false;
+                        if (m.group(3) == null){
+                            ServerUtils.ServerQuery query = ServerUtils.getServerDofusFromName(m.group(2), lg);
+                            if (query.hasSucceed()) {
+                                server = query.getServer();
+                                is2Server = true;
+                            }
+                            else {
+                                query.getExceptions()
+                                        .forEach(e -> e.throwException(message, this, lg, query.getServersFound()));
+                                return;
+                            }
+                        }
+
+                        if (is2Server){
+                            // Est-ce un ordre ? une cité ?
+                            String value = m.group(1).trim();
+                            List<City> cities = findCity(value, lg);
+                            List<Order> orders = findOrder(value, lg);
+                            if (cities.isEmpty() && orders.isEmpty()){
+                                notFoundFilter.throwException(message, this, lg);
+                                return;
+                            }
+                            if (cities.size() > 1 || orders.size() > 1){
+                                tooMuchFilters.throwException(message, this, lg);
+                                return;
+                            }
+                            if (cities.size() == 1) city = cities.get(0);
+                            if (orders.size() == 1) order = orders.get(0);
+                        }
+                        else {
+                            List<City> cities = findCity(m.group(1).trim(), lg);
+                            if (checkData(cities, tooMuchCities, notFoundCity, message, lg)) return;
+                            city = cities.get(0);
+                            List<Order> orders = findOrder(m.group(2).trim(), lg);
+                            if (checkData(orders, tooMuchOrders, notFoundOrder, message, lg)) return;
+                            order = orders.get(0);
+                        }
                     }
                     else {
-                        new OrderUser(user.get().getId().asLong(), server, city, order, level).addToDatabase();
-                        if (level != 0)
-                            message.getChannel().flatMap(chan -> chan
-                                    .createMessage(Translator.getLabel(lg, "align.save"))).subscribe();
-                        else
-                            message.getChannel().flatMap(chan -> chan
-                                    .createMessage(Translator.getLabel(lg, "align.no_reset"))).subscribe();
+                        // Is an order ? a city ?
+                        List<City> cities = findCity(m.group(1).trim(), lg);
+                        List<Order> orders = findOrder(m.group(1).trim(), lg);
+                        if (cities.isEmpty() && orders.isEmpty()){
+                            notFoundFilter.throwException(message, this, lg);
+                            return;
+                        }
+                        if (cities.size() > 1 || orders.size() > 1){
+                            tooMuchFilters.throwException(message, this, lg);
+                            return;
+                        }
+                        if (cities.size() == 1) city = cities.get(0);
+                        if (orders.size() == 1) order = orders.get(0);
                     }
+
+                    if (server == null){
+                        notFoundServer.throwException(message, this, lg);
+                        return;
+                    }
+
+                    List<EmbedCreateSpec> embeds = OrderUser.getOrdersFromCityOrOrder(guild.get().getMembers()
+                                    .collectList().blockOptional().orElse(Collections.emptyList()),
+                            server, city, order, guild.get(), lg);
+                    for (EmbedCreateSpec embed : embeds)
+                        message.getChannel().flatMap(chan -> chan.createEmbed(embed)).subscribe();
                 }
                 else
                     badUse.throwException(message, this, lg);
-
             }
-            // Consultation filtré par cité et/ou par ordre
-            else if((m = Pattern.compile("(\\p{L}+)(\\s+\\p{L}+)?").matcher(content)).matches()){
-
-                // On a précisé à la fois une cité et un ordre
-                if (m.group(2) != null) {
-                    List<City> cities = findCity(m.group(1).trim(), lg);
-                    if (checkData(cities, tooMuchCities, notFoundCity, message, lg)) return;
-                    city = cities.get(0);
-                    List<Order> orders = findOrder(m.group(2).trim(), lg);
-                    if (checkData(orders, tooMuchOrders, notFoundOrder, message, lg)) return;
-                    order = orders.get(0);
-                }
-                else {
-                    // Is an order ? a city ?
-                    List<City> cities = findCity(m.group(1).trim(), lg);
-                    List<Order> orders = findOrder(m.group(1).trim(), lg);
-                    if (cities.isEmpty() && orders.isEmpty()){
-                        notFoundFilter.throwException(message, this, lg);
-                        return;
-                    }
-                    if (cities.size() > 1 || orders.size() > 1){
-                        tooMuchFilters.throwException(message, this, lg);
-                        return;
-                    }
-                    if (cities.size() == 1) city = cities.get(0);
-                    if (orders.size() == 1) order = orders.get(0);
-                }
-
-                List<EmbedCreateSpec> embeds = OrderUser.getOrdersFromCityOrOrder(guild.get().getMembers()
-                                .collectList().blockOptional().orElse(Collections.emptyList()),
-                        server, city, order, guild.get(), lg);
-                for (EmbedCreateSpec embed : embeds)
-                    message.getChannel().flatMap(chan -> chan.createEmbed(embed)).subscribe();
-            }
-            else
-                badUse.throwException(message, this, lg);
         }
     }
 
@@ -229,10 +304,10 @@ public class AlignmentCommand extends FetchCommand {
     @Override
     public String helpDetailed(Language lg, String prefixe) {
         return help(lg, prefixe)
-                + "\n`" + prefixe + name + " `*`-serv server`* : " + Translator.getLabel(lg, "align.help.detailed.1")
-                + "\n`" + prefixe + name + " `*`order -serv server`* : " + Translator.getLabel(lg, "align.help.detailed.2")
-                + "\n`" + prefixe + name + " `*`> level -serv server`* : " + Translator.getLabel(lg, "align.help.detailed.3")
-                + "\n`" + prefixe + name + " `*`@user -serv server`* : " + Translator.getLabel(lg, "align.help.detailed.4")
-                + "\n`" + prefixe + name + " `*`city order level -serv server`* : " + Translator.getLabel(lg, "align.help.detailed.5") + "\n";
+                + "\n`" + prefixe + name + " `*`server`* : " + Translator.getLabel(lg, "align.help.detailed.1")
+                + "\n`" + prefixe + name + " `*`order server`* : " + Translator.getLabel(lg, "align.help.detailed.2")
+                + "\n`" + prefixe + name + " `*`> level server`* : " + Translator.getLabel(lg, "align.help.detailed.3")
+                + "\n`" + prefixe + name + " `*`@user server`* : " + Translator.getLabel(lg, "align.help.detailed.4")
+                + "\n`" + prefixe + name + " `*`city order level server`* : " + Translator.getLabel(lg, "align.help.detailed.5") + "\n";
     }
 }
