@@ -2,7 +2,7 @@ package enums;
 
 public enum Nude {
 
-    MOAM("Moam#6449 :transgender_flag:", "https://i.imgur.com/BPqxFKm.png", "https://wikitrans.co/intro"),
+    MOAM("Moam#6449 :transgender_flag:", "https://i.imgur.com/0AhFV4F.png", "https://wikitrans.co/intro"),
     EHLYANA("Ehlyana", "https://i.imgur.com/NklWpTc.jpeg", "http://www.ehlyana.com/");
 
     private final String author;
