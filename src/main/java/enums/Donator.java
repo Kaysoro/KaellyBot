@@ -6,7 +6,7 @@ public enum Donator {
     ELDER_MASTER("Eaglow"),
     DARKRAI("Darkrai25"),
     DREAMSVOID("DreamsVoid"),
-    SIID("! ༺ -Siid- ༻ !#0001"),
+    SIID("Siid"),
     TYNAGMO("Tynagmo"),
     NOCKS("Nocks"),
     SACREE_SACRI("Sacree-Sacri");

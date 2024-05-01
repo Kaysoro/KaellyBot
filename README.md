@@ -74,13 +74,16 @@ KaellyBOT is [GPL(v3) licensed](./LICENSE).
 The development and the availability of KaellyBot 24/7 generate ongoing cost. Do not hesitate to help the project grow with a donation!   
 [![Donate](https://www.paypalobjects.com/en_US/FR/i/btn/btn_donateCC_LG.gif)](https://www.paypal.me/kaysoro)
 
-### Donators
-- Hart69#0001
-- Elder-Master#7684
-- Darkrai#8780
-- DreamsVoid#8802
-- ! Siid !#0001
-- Tynagmo  
+### Donors
+
+- Hart69
+- Eaglow
+- Darkrai25
+- DreamsVoid
+- Siid
+- Tynagmo
+- Nocks
+- Sacree-Sacri
 
 ## Star History
 
