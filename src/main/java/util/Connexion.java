@@ -1,16 +1,12 @@
 package util;
 
-import java.io.File;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-
 import data.Constants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sqlite.SQLiteConfig;
+
+import java.io.File;
+import java.sql.*;
 
 public class Connexion {
 	private final static Logger LOG = LoggerFactory.getLogger(Connexion.class);
@@ -36,10 +32,8 @@ public class Connexion {
 			connection = DriverManager.getConnection("jdbc:sqlite:" + database_path  + Constants.database, config.toProperties());
 
 		} catch (ClassNotFoundException e) {
-			Reporter.report(e);
             LOG.error("Librairie SQLite non trouvé.");
 		} catch (SQLException e) {
-			Reporter.report(e);
             LOG.error("Erreur lors de la connexion à la base de données");
 		}
 	}
@@ -50,7 +44,6 @@ public class Connexion {
 			statement.close();
             LOG.info("Fermeture de la connexion");
 		} catch (SQLException e) {
-			Reporter.report(e);
             LOG.error("Erreur lors de la fermeture de la connexion");
 		}
 	}
@@ -68,7 +61,6 @@ public class Connexion {
 		try {
 			resultat = statement.executeQuery(requet);
 		} catch (SQLException e) {
-			Reporter.report(e);
 			LOG.error("Erreur dans la requête : " + requet);
 		}
 		return resultat;

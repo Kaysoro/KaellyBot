@@ -1,6 +1,6 @@
 package listeners;
 
-import commands.*;
+import commands.CommandManager;
 import commands.model.AbstractLegacyCommand;
 import commands.model.LegacyCommand;
 import discord4j.core.event.domain.message.MessageCreateEvent;
@@ -11,7 +11,6 @@ import exceptions.BasicDiscordException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import reactor.core.publisher.Mono;
-import util.Reporter;
 import util.Translator;
 
 import java.util.ArrayList;

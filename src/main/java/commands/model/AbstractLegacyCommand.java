@@ -4,21 +4,18 @@ import data.Constants;
 import data.Guild;
 import discord4j.common.util.Snowflake;
 import discord4j.core.event.domain.message.MessageCreateEvent;
-import discord4j.core.object.entity.*;
+import discord4j.core.object.entity.Message;
+import discord4j.core.object.entity.User;
 import discord4j.core.object.entity.channel.GuildMessageChannel;
-import discord4j.core.object.entity.channel.MessageChannel;
 import discord4j.core.object.entity.channel.PrivateChannel;
 import discord4j.core.object.entity.channel.TextChannel;
 import discord4j.rest.util.Permission;
 import discord4j.rest.util.PermissionSet;
 import enums.Language;
-import exceptions.BadUseCommandDiscordException;
-import exceptions.BasicDiscordException;
-import exceptions.DiscordException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import util.Reporter;
 import util.Translator;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -31,7 +28,6 @@ public abstract class AbstractLegacyCommand implements LegacyCommand {
 
     protected String name;
     protected String pattern;
-    protected DiscordException badUse;
     private boolean isPublic;
     private boolean isUsableInMP;
     private boolean isAdmin;
@@ -46,7 +42,6 @@ public abstract class AbstractLegacyCommand implements LegacyCommand {
         this.isUsableInMP = true;
         this.isAdmin = false;
         this.isHidden = false;
-        badUse = new BadUseCommandDiscordException();
     }
 
     @Override
@@ -69,31 +64,9 @@ public abstract class AbstractLegacyCommand implements LegacyCommand {
             }
 
             // La commande est trouvée
-            if (isFound) {
-                // Mais n'est pas utilisable en MP
-                MessageChannel channel = message.getChannel().block();
-                if (!isUsableInMP() && channel instanceof PrivateChannel) {
-                    BasicDiscordException.NOT_USABLE_IN_MP.throwException(message, this, lg);
-                    return;
-                }
-                // Mais est désactivée par la guilde
-                else if (!(channel instanceof PrivateChannel) && message.getAuthor()
-                        .map(user -> user.getId().asLong() != Constants.authorId).orElse(false)
-                        && isForbidden(Guild.getGuild(message.getGuild().block()))) {
-                    BasicDiscordException.COMMAND_FORBIDDEN.throwException(message, this, lg);
-                    return;
-                }
-            }
-            // Mais est mal utilisée
-            else if (message.getContent().startsWith(getPrefix(message) + getName())) {
-                badUse.throwException(message, this, lg);
-                return;
-            }
             if (isFound)
                 request(event, message, m, lg);
         } catch(Exception e){
-            BasicDiscordException.UNKNOWN_ERROR.throwException(message, this, lg);
-            Reporter.report(e);
             LOG.error("request", e);
         }
     }
@@ -107,7 +80,7 @@ public abstract class AbstractLegacyCommand implements LegacyCommand {
 
     @Override
     public boolean isForbidden(Guild g){
-        return g.getForbiddenCommands().containsKey(getName());
+        return false;
     }
 
     @Override

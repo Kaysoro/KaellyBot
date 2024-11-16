@@ -4,7 +4,6 @@ import enums.Language;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import util.Connexion;
-import util.Reporter;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -44,62 +43,10 @@ public class ChannelLanguage {
                     channelLanguages.put(idChan, new ChannelLanguage(lang, idChan));
                 }
             } catch (SQLException e) {
-                Reporter.report(e);
                 LOG.error("getChannelLanguages", e);
             }
         }
         return channelLanguages;
-    }
-
-    public synchronized void addToDatabase(){
-        if (! getChannelLanguages().containsKey(getChannelId())) {
-            getChannelLanguages().put(getChannelId(), this);
-            Connexion connexion = Connexion.getInstance();
-            Connection connection = connexion.getConnection();
-
-            try {
-                PreparedStatement preparedStatement = connection.prepareStatement(
-                        "INSERT INTO Channel_Language(id_chan, lang) VALUES(?, ?);");
-                preparedStatement.setString(1, String.valueOf(getChannelId()));
-                preparedStatement.setString(2, getLang().getAbrev());
-
-                preparedStatement.executeUpdate();
-            } catch (SQLException e) {
-                LOG.error("addToDatabase", e);
-            }
-        }
-    }
-
-    public synchronized void setLanguage(Language lang){
-        this.lang = lang;
-        Connexion connexion = Connexion.getInstance();
-        Connection connection = connexion.getConnection();
-
-        try {
-            PreparedStatement preparedStatement = connection.prepareStatement(
-                    "UPDATE Channel_Language SET lang = ? WHERE id_chan = ?;");
-            preparedStatement.setString(1, getLang().getAbrev());
-            preparedStatement.setString(2, String.valueOf(getChannelId()));
-            preparedStatement.executeUpdate();
-        } catch (SQLException e) {
-            LOG.error("setLanguage", e);
-        }
-    }
-
-    public synchronized void removeToDatabase() {
-        getChannelLanguages().remove(getChannelId());
-
-        Connexion connexion = Connexion.getInstance();
-        Connection connection = connexion.getConnection();
-
-        try {
-            PreparedStatement request = connection.prepareStatement("DELETE FROM Channel_Language WHERE id_chan = ?;");
-            request.setString(1, String.valueOf(getChannelId()));
-            request.executeUpdate();
-
-        } catch (SQLException e) {
-            LOG.error("removeToDatabase", e);
-        }
     }
 
     public Long getChannelId(){

@@ -3,14 +3,11 @@ package commands.classic;
 import commands.CommandManager;
 import commands.model.AbstractLegacyCommand;
 import commands.model.LegacyCommand;
-import data.Constants;
 import data.Guild;
 import discord4j.core.event.domain.message.MessageCreateEvent;
 import discord4j.core.object.entity.Message;
 import discord4j.core.object.entity.channel.PrivateChannel;
 import enums.Language;
-import exceptions.DiscordException;
-import exceptions.NotFoundDiscordException;
 import util.Translator;
 
 import java.util.ArrayList;
@@ -24,11 +21,8 @@ public class HelpCommand extends AbstractLegacyCommand {
 
     public final static String NAME = "help";
 
-    private DiscordException notFoundCmd;
-
     public HelpCommand(){
         super(NAME,"(\\s+.+)?");
-        notFoundCmd = new NotFoundDiscordException("cmd");
     }
 
     @Override
@@ -60,21 +54,19 @@ public class HelpCommand extends AbstractLegacyCommand {
             messages.add(st.toString());
 
         if (argumentFound && messages.isEmpty())
-            notFoundCmd.throwException(message, this, lg);
+            Translator.getLabel(lg, "help.request");
         else
             for(String msg : messages)
                 message.getChannel().flatMap(chan -> chan.createMessage(msg)).subscribe();
     }
 
     @Override
-    public String help(Language lg, String prefixe) {
-        return "**" + prefixe + name + "** " + Translator.getLabel(lg, "help.help").replace("{name}", Constants.name);
+    public String help(Language lg, String prefix) {
+        return "**" + prefix + name + "** " + Translator.getLabel(lg, "help.help");
     }
 
     @Override
-    public String helpDetailed(Language lg, String prefixe) {
-        return help(lg, prefixe)
-                + "\n`" + prefixe + name + "` : " + Translator.getLabel(lg, "help.help.detailed.1")
-                + "\n`" + prefixe + name + " `*`command`* : " + Translator.getLabel(lg, "help.help.detailed.2") + "\n";
+    public String helpDetailed(Language lg, String prefix) {
+        return Translator.getLabel(lg, "help.request");
     }
 }

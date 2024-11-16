@@ -6,8 +6,6 @@ import discord4j.core.object.entity.Message;
 import enums.Language;
 import util.Translator;
 
-import java.time.Instant;
-import java.time.temporal.ChronoUnit;
 import java.util.regex.Matcher;
 
 /**
@@ -22,7 +20,7 @@ public class PingCommand extends AbstractLegacyCommand {
     @Override
     public void request(MessageCreateEvent event, Message message, Matcher m, Language lg) {
         message.getChannel().flatMap(chan -> chan
-                .createMessage(Math.abs(ChronoUnit.MILLIS.between(Instant.now(), message.getTimestamp())) + "ms!"))
+                        .createMessage(Translator.getLabel(lg, "ping.request")))
                 .subscribe();
     }
 
@@ -33,6 +31,6 @@ public class PingCommand extends AbstractLegacyCommand {
 
     @Override
     public String helpDetailed(Language lg, String prefix) {
-        return help(lg, prefix);
+        return Translator.getLabel(lg, "ping.request");
     }
 }

@@ -18,7 +18,6 @@ import org.jfree.data.time.TimeSeriesCollection;
 import org.slf4j.LoggerFactory;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-import util.Reporter;
 import util.Translator;
 
 import javax.imageio.ImageIO;
@@ -28,7 +27,10 @@ import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.time.Instant;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.stream.Collectors;
 
@@ -94,7 +96,6 @@ public class StatCommand extends AbstractLegacyCommand {
                     .addFile(MessageCreateFields.File.of(Instant.now().toString() + ".png", is))
                     .build();
         } catch(Exception e){
-            Reporter.report(e);
             LoggerFactory.getLogger(StatCommand.class).error("decorateImageMessage", e);
         }
         return MessageCreateSpec.builder().content("Problem during image process").build();
@@ -128,15 +129,12 @@ public class StatCommand extends AbstractLegacyCommand {
     }
 
     @Override
-    public String help(Language lg, String prefixe) {
-        return "**" + prefixe + name + "** " + Translator.getLabel(lg, "stat.help");
+    public String help(Language lg, String prefix) {
+        return "";
     }
 
     @Override
-    public String helpDetailed(Language lg, String prefixe) {
-        return help(lg, prefixe)
-                + "\n`" + prefixe + name + "` : " + Translator.getLabel(lg, "stat.help.detailed.1")
-                + "\n`" + prefixe + name + " -g `*`n`* : " + Translator.getLabel(lg, "stat.help.detailed.2")
-                + "\n`" + prefixe + name + " -hist` : " + Translator.getLabel(lg, "stat.help.detailed.4") + "\n";
+    public String helpDetailed(Language lg, String prefix) {
+        return "";
     }
 }

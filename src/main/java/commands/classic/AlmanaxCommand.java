@@ -1,18 +1,11 @@
 package commands.classic;
 
 import commands.model.AbstractLegacyCommand;
-import data.Almanax;
 import discord4j.core.event.domain.message.MessageCreateEvent;
 import discord4j.core.object.entity.Message;
-import discord4j.core.spec.EmbedCreateSpec;
 import enums.Language;
-import exceptions.*;
 import util.Translator;
 
-import java.io.IOException;
-import java.lang.Exception;
-import java.text.ParseException;
-import java.util.Date;
 import java.util.regex.Matcher;
 
 /**
@@ -26,45 +19,18 @@ public class AlmanaxCommand extends AbstractLegacyCommand {
 
     @Override
     public void request(MessageCreateEvent event, Message message, Matcher m, Language lg) {
-        try {
-            Date date = new Date();
-
-            if (m.group(1) != null && m.group(1).matches("\\s+\\+\\d")) {
-                int number = Integer.parseInt(m.group(1).replaceAll("\\s+\\+", ""));
-                try {
-                    EmbedCreateSpec embed = Almanax.decorateGroupedObject(lg, date, number);
-                    message.getChannel().flatMap(chan -> chan.createEmbed(embed))
-                            .subscribe();
-                } catch (IOException e) {
-                    ExceptionManager.manageIOException(e, message, this, lg, BasicDiscordException.ALMANAX);
-                }
-            } else {
-                if (m.group(1) != null && m.group(1).matches("\\s+\\d{2}/\\d{2}/\\d{4}"))
-                    date = Almanax.discordToBot.parse(m.group(1));
-                Almanax almanax = Almanax.get(lg, date);
-                message.getChannel().flatMap(chan -> chan.createEmbed(almanax.decorateMoreEmbedObject(lg)))
-                        .subscribe();
-            }
-
-        } catch (ParseException e) {
-            BasicDiscordException.INCORRECT_DATE_FORMAT.throwException(message, this, lg);
-        } catch (IOException e) {
-            ExceptionManager.manageIOException(e, message, this, lg, BasicDiscordException.ALMANAX);
-        } catch (Exception e) {
-            ExceptionManager.manageException(e, message, this, lg);
-        }
+        message.getChannel().flatMap(chan -> chan
+                        .createMessage(Translator.getLabel(lg, "almanax.request")))
+                .subscribe();
     }
 
     @Override
-    public String help(Language lg, String prefixe) {
-        return "**" + prefixe + name + "** " + Translator.getLabel(lg, "almanax.help");
+    public String help(Language lg, String prefix) {
+        return "**" + prefix + name + "** " + Translator.getLabel(lg, "almanax.help");
     }
 
     @Override
-    public String helpDetailed(Language lg, String prefixe) {
-        return help(lg, prefixe)
-                + "\n`" + prefixe + name + "` : " + Translator.getLabel(lg, "almanax.help.detailed.1")
-                + "\n`" + prefixe + name + " `*`dd/mm/yyyy`* : " + Translator.getLabel(lg, "almanax.help.detailed.2")
-                + "\n`" + prefixe + name + " `*`+days`* : " + Translator.getLabel(lg, "almanax.help.detailed.3") + "\n";
+    public String helpDetailed(Language lg, String prefix) {
+        return Translator.getLabel(lg, "almanax.request");
     }
 }
