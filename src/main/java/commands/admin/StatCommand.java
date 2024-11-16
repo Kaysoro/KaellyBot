@@ -9,7 +9,6 @@ import discord4j.core.spec.MessageCreateFields;
 import discord4j.core.spec.MessageCreateSpec;
 import discord4j.discordjson.json.GuildData;
 import enums.Language;
-import lombok.extern.slf4j.Slf4j;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
 import org.jfree.data.time.Day;
@@ -37,7 +36,6 @@ import java.util.stream.Collectors;
 /**
  * Created by steve on 23/12/2017.
  */
-@Slf4j
 public class StatCommand extends AbstractLegacyCommand {
 
     private static final int GULD_LIMIT = 10;
@@ -110,8 +108,6 @@ public class StatCommand extends AbstractLegacyCommand {
         List<GuildData> guilds = Flux.from(event.getClient().getGatewayResources().getStore().execute(ReadActions.getGuilds()))
                 .sort(Comparator.comparing(guild -> DateTimeFormatter.ISO_OFFSET_DATE_TIME.parse(guild.joinedAt(), Instant::from)))
                 .collectList().blockOptional().orElse(Collections.emptyList());
-
-        log.info("Computing " + guilds.size() + " guilds history");
         TimeSeriesCollection dataSet = new TimeSeriesCollection();
         TimeSeries series = new TimeSeries("data");
         int guildNumber = 1;
