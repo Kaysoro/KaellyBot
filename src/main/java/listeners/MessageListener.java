@@ -7,7 +7,6 @@ import discord4j.core.event.domain.message.MessageCreateEvent;
 import discord4j.core.object.entity.User;
 import discord4j.core.object.entity.channel.MessageChannel;
 import enums.Language;
-import exceptions.BasicDiscordException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import reactor.core.publisher.Mono;
@@ -44,9 +43,6 @@ public class MessageListener {
                             try {
                                 command.request(event, event.getMessage());
                             } catch (Exception e) {
-                                BasicDiscordException.UNKNOWN_ERROR.throwException(event.getMessage(), command, lg);
-                                Reporter.report(e, null, channel, event.getMessage().getAuthor()
-                                        .orElse(null), event.getMessage());
                                 LOG.error("onReady", e);
                             }
                         }

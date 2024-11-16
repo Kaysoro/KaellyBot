@@ -9,7 +9,6 @@ import discord4j.core.object.presence.ClientPresence;
 import discord4j.core.shard.MemberRequestFilter;
 import discord4j.gateway.intent.Intent;
 import discord4j.gateway.intent.IntentSet;
-import io.sentry.Sentry;
 import listeners.MessageListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,9 +55,6 @@ public class ClientConfig {
                 LOG.error("Impossible to connect to Discord: check your token in "
                         + FILENAME + " as well as your connection.");
         }
-
-        if (! prop.get("sentry.dsn").equals(""))
-            Sentry.init(prop.getProperty("sentry.dsn"));
     }
 
     public static synchronized ClientConfig getInstance(){
