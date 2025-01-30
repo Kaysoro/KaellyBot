@@ -106,7 +106,7 @@ public class Almanax implements Embedded{
         LOG.info("connecting to " + Translator.getLabel(lg, "almanax.url") + date + " ...");
         Document doc = JSoupManager.getDocument(Translator.getLabel(lg, "almanax.url") + date);
 
-        String bonus = doc.getElementsByClass("more").get(2)
+        String bonus = doc.getElementsByClass("more").last()
                 .clone().getElementsByClass("more-infos").empty().parents().first().text();
         String quest = doc.getElementsByClass("more-infos").get(1).child(0).text();
         String ressourceURL = doc.getElementsByClass("more-infos-content").get(1).children().attr("src");
