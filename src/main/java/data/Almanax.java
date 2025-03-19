@@ -109,8 +109,8 @@ public class Almanax implements Embedded{
         String bonus = doc.getElementsByClass("more").last()
                 .clone().getElementsByClass("more-infos").empty().parents().first().text();
         String quest = doc.getElementsByClass("more-infos").get(1).child(0).text();
-        String ressourceURL = doc.getElementsByClass("more-infos-content").get(1).children().attr("src");
-        String offrande = doc.getElementsByClass("fleft").get(4).text();
+        String ressourceURL = doc.getElementsByClass("more-infos-content").last().children().attr("src");
+        String offrande = doc.getElementsByClass("fleft").last().text();
 
         return new Almanax(bonus, offrande, date, quest, ressourceURL);
     }
