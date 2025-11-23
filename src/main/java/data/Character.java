@@ -85,9 +85,15 @@ public class Character implements Embedded {
                 .title(pseudo)
                 .url(url)
                 .description(classe)
-                .thumbnail(littleSkinURL)
-                .image(bigSkinURL)
                 .footer(Translator.getLabel(lg, "whois.server") + " " + server, null);
+
+        if (bigSkinURL != null){
+            builder.image(bigSkinURL);
+        }
+
+        if (littleSkinURL != null){
+            builder.thumbnail(littleSkinURL);
+        }
 
         if (ladderXP != null && ! ladderXP.isEmpty())
             builder.addField(Translator.getLabel(lg, "whois.level") + " " + level, ladderXP, true);
@@ -105,6 +111,9 @@ public class Character implements Embedded {
 
         if (ladderKoli != null && ! ladderKoli.isEmpty())
             builder.addField(Translator.getLabel(lg, "whois.ladder_koli"), ladderKoli, true);
+        else
+            builder.addField(Translator.getLabel(lg, "whois.ladder_koli"),
+                    Translator.getLabel(lg, "whois.ladder.none"), true);
 
         if (guildName != null)
             builder.addField(Translator.getLabel(lg, "whois.guild"), "[" + guildName + "](" + guildUrl + ")", true);
@@ -141,10 +150,20 @@ public class Character implements Embedded {
 
     public static Character getCharacter(String url, Language lg) throws IOException {
         Document doc = JSoupManager.getDocument(url);
-        String bigSkinURL = doc.getElementsByClass("ak-entitylook").first().attr("style");
-        bigSkinURL = bigSkinURL.substring(bigSkinURL.indexOf("https://"), bigSkinURL.indexOf(")"));
-        String littleSkinURL = doc.getElementsByClass("ak-entitylook").last().toString();
-        littleSkinURL = littleSkinURL.substring(littleSkinURL.indexOf("https://"), littleSkinURL.indexOf(")"));
+        String bigSkinURL = null;
+        Element bigSkinElt = doc.getElementsByClass("ak-entitylook").first();
+        if (bigSkinElt != null) {
+            bigSkinURL = bigSkinElt.attr("style");
+            bigSkinURL = bigSkinURL.substring(bigSkinURL.indexOf("https://"), bigSkinURL.indexOf(")"));
+        }
+
+        String littleSkinURL = null;
+        Element littleSkinElt = doc.getElementsByClass("ak-entitylook").last();
+        if (littleSkinElt != null){
+            littleSkinURL = littleSkinElt.toString();
+            littleSkinURL = littleSkinURL.substring(littleSkinURL.indexOf("https://"), littleSkinURL.indexOf(")"));
+        }
+
         String pseudo = doc.getElementsByClass("ak-return-link").first().text();
         String level = doc.getElementsByClass("ak-directories-level").first().text()
                 .replace(Translator.getLabel(lg, "whois.extract.level"), "").trim();
@@ -185,8 +204,10 @@ public class Character implements Embedded {
             ladderXP.append(doc.getElementsByClass("ak-total-xp").first().text()).append("\n");
 
             for(Element cote : doc.getElementsByClass("ak-total-kolizeum"))
-                if (! cote.text().endsWith("-1"))
+                if ((! cote.text().endsWith("-1")) && (! cote.text().endsWith("-"))){
                     ladderKoli.append(cote.text().replace(Translator.getLabel(lg, "whois.extract.koli"), "").trim()).append("\n");
+                }
+
 
             Elements trs = elem.first().getElementsByTag("tbody").first().getElementsByTag("tr");
             for (Element tr : trs) {
