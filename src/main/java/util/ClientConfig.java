@@ -1,6 +1,7 @@
 package util;
 
 import data.Constants;
+import discord4j.common.JacksonResources;
 import discord4j.core.DiscordClient;
 import discord4j.core.DiscordClientBuilder;
 import discord4j.core.GatewayDiscordClient;
@@ -21,6 +22,7 @@ import listeners.*;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import external.TwitterAPI;
 
@@ -61,7 +63,10 @@ public class ClientConfig {
         }
 
 		try {
-			DISCORD = DiscordClient.create(prop.getProperty("discord.token"));
+			DISCORD = DiscordClientBuilder.create(prop.getProperty("discord.token"))
+					.setJacksonResources(JacksonResources.create()
+							.withMapperFunction(mapper -> mapper.registerModule(new PossibleNullFixModule())))
+					.build();
 		} catch(Throwable e){
 			LOG.error("Impossible de se connecter à Discord : verifiez votre token dans "
 					+ FILENAME + " ainsi que votre connexion.");
@@ -98,7 +103,8 @@ public class ClientConfig {
                         Intent.GUILD_MEMBERS,
                         Intent.GUILD_MESSAGES,
                         Intent.GUILD_MESSAGE_REACTIONS,
-                        Intent.DIRECT_MESSAGES))
+                        Intent.DIRECT_MESSAGES,
+                        Intent.MESSAGE_CONTENT))
                 .setInitialPresence(ignored -> ClientPresence.online(ClientActivity.watching(Constants.discordInvite)))
                 .setMemberRequestFilter(MemberRequestFilter.none())
                 .withGateway(client -> Mono.when(
@@ -113,21 +119,30 @@ public class ClientConfig {
     private Mono<Void> commandListener(GatewayDiscordClient client){
         final MessageListener listener = new MessageListener();
         return client.getEventDispatcher().on(MessageCreateEvent.class)
-                .flatMap(listener::onReady)
+                .flatMap(event -> listener.onReady(event).onErrorResume(error -> {
+                    LOG.error("commandListener", error);
+                    return Mono.empty();
+                }))
                 .then();
     }
 
     private Mono<Void> guildCreateListener(GatewayDiscordClient client){
         final GuildCreateListener listener = new GuildCreateListener();
         return client.getEventDispatcher().on(GuildCreateEvent.class)
-                .flatMap(listener::onReady)
+                .flatMap(event -> listener.onReady(event).onErrorResume(error -> {
+                    LOG.error("guildCreateListener", error);
+                    return Flux.empty();
+                }))
                 .then();
     }
 
     private Mono<Void> guildUpdateListener(GatewayDiscordClient client){
         final GuildUpdateListener listener = new GuildUpdateListener();
         return client.getEventDispatcher().on(GuildUpdateEvent.class)
-                .flatMap(listener::onReady)
+                .flatMap(event -> listener.onReady(event).onErrorResume(error -> {
+                    LOG.error("guildUpdateListener", error);
+                    return Mono.empty();
+                }))
                 .then();
     }
 
@@ -135,14 +150,20 @@ public class ClientConfig {
         final GuildLeaveListener listener = new GuildLeaveListener();
         return client.getEventDispatcher().on(GuildDeleteEvent.class)
                 .filter(event -> (! event.isUnavailable()))
-                .flatMap(listener::onReady)
+                .flatMap(event -> listener.onReady(event).onErrorResume(error -> {
+                    LOG.error("guildDeleteListener", error);
+                    return Mono.empty();
+                }))
                 .then();
     }
 
     private Mono<Void> readyListener(GatewayDiscordClient client){
         final ReadyListener listener = new ReadyListener();
         return client.getEventDispatcher().on(ReadyEvent.class)
-                .flatMap(listener::onReady)
+                .flatMap(event -> listener.onReady(event).onErrorResume(error -> {
+                    LOG.error("readyListener", error);
+                    return Mono.empty();
+                }))
                 .then();
     }
 }

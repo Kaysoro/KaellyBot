@@ -16,7 +16,6 @@ import discord4j.core.object.entity.Message;
 import discord4j.core.object.entity.channel.GuildMessageChannel;
 import discord4j.core.object.entity.channel.MessageChannel;
 import discord4j.core.object.entity.channel.TextChannel;
-import discord4j.rest.entity.RestChannel;
 import enums.Language;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -63,23 +62,25 @@ public class Translator {
      * @return Langue de la guilde ou du salon si précisé
      */
     public static Language getLanguageFrom(MessageChannel channel){
-        Language result = Constants.defaultLanguage;
-        if (channel instanceof GuildMessageChannel) {
+        if (! (channel instanceof GuildMessageChannel))
+            return Constants.defaultLanguage;
 
-            Guild guild = Guild.getGuild(((GuildMessageChannel) channel).getGuild().block());
-            result = guild.getLanguage();
-            ChannelLanguage channelLanguage = ChannelLanguage.getChannelLanguages().get(channel.getId().asLong());
-            if (channelLanguage != null)
-                result = channelLanguage.getLang();
-        }
-        return result;
+        return getLanguageFrom(((GuildMessageChannel) channel).getGuildId().asString(),
+                channel.getId().asLong());
     }
 
-    public static Language getLanguageFrom(RestChannel channel) {
-        Guild guild = Guild.getGuilds().get(channel.getData().block().guildId().get().asString());
-        Language result = guild.getLanguage();
+    /**
+     * Fournit la langue utilisée dans un salon textuel, sans appel REST : les identifiants suffisent,
+     * guildes et langues de salon étant déjà en cache.
+     * @param guildId Identifiant de la guilde
+     * @param channelId Identifiant du salon
+     * @return Langue de la guilde ou du salon si précisé
+     */
+    public static Language getLanguageFrom(String guildId, long channelId){
+        Guild guild = Guild.getGuilds().get(guildId);
+        Language result = guild != null ? guild.getLanguage() : Constants.defaultLanguage;
 
-        ChannelLanguage channelLanguage = ChannelLanguage.getChannelLanguages().get(channel.getData().block().id().asLong());
+        ChannelLanguage channelLanguage = ChannelLanguage.getChannelLanguages().get(channelId);
         if (channelLanguage != null)
             result = channelLanguage.getLang();
 

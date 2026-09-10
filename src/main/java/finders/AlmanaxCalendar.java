@@ -66,8 +66,9 @@ public class AlmanaxCalendar {
 
                 for(AlmanaxCalendar calendar : getAlmanaxCalendars().values()) {
                     try {
-                        RestChannel chan = ClientConfig.DISCORD().getChannelById(Snowflake.of(calendar.chan));
-                        Language lg = Translator.getLanguageFrom(chan);
+                        Snowflake chanId = Snowflake.of(calendar.chan);
+                        RestChannel chan = ClientConfig.DISCORD().getChannelById(chanId);
+                        Language lg = Translator.getLanguageFrom(calendar.idGuild, chanId.asLong());
                         chan.createMessage(almanax.get(lg))
                                 .doOnError(error -> {
                                     if (error instanceof ClientException) {

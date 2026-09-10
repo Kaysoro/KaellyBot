@@ -133,8 +133,10 @@ public class TwitterFinder{
 
                 for (TwitterFinder finder : getTwitterFinders().values())
                     try {
-                        RestChannel chan = ClientConfig.DISCORD().getChannelById(Snowflake.of(finder.channelId));
-                        TwitterResponse response = allTweets.get(Translator.getLanguageFrom(chan));
+                        Snowflake chanId = Snowflake.of(finder.channelId);
+                        RestChannel chan = ClientConfig.DISCORD().getChannelById(chanId);
+                        TwitterResponse response = allTweets.get(
+                                Translator.getLanguageFrom(finder.guildId, chanId.asLong()));
                         long lastUpdate = -1;
 
                         for (TwitterResponse.Tweet tweet : response.getTweets())

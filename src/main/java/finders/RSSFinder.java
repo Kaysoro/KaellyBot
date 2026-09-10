@@ -138,9 +138,10 @@ public class RSSFinder {
 
                 for (RSSFinder finder : getRSSFinders().values())
                     try {
-                        RestChannel chan = ClientConfig.DISCORD().getChannelById(Snowflake.of(finder.chan));
-                        Language lg = Translator.getLanguageFrom(chan);
-                        List<RSS> rssFeeds = allFeeds.get(Translator.getLanguageFrom(chan));
+                        Snowflake chanId = Snowflake.of(finder.chan);
+                        RestChannel chan = ClientConfig.DISCORD().getChannelById(chanId);
+                        Language lg = Translator.getLanguageFrom(finder.idGuild, chanId.asLong());
+                        List<RSS> rssFeeds = allFeeds.get(lg);
                         long lastRSS = -1;
 
                         for (RSS rss : rssFeeds)
