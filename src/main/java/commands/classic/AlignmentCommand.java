@@ -79,6 +79,7 @@ public class AlignmentCommand extends FetchCommand {
                     notFoundServer.throwException(message, this, lg);
                     return;
                 }
+                if (ServerUtils.redirectIfRetro(server, message, this, lg)) return;
 
                 List<EmbedCreateSpec> embeds = OrderUser.getOrdersFromLevel(guild.get().getMembers()
                         .collectList().blockOptional().orElse(Collections.emptyList()), server, level, guild.get(), lg);
@@ -103,7 +104,7 @@ public class AlignmentCommand extends FetchCommand {
                         || content.isEmpty()){
                     if (serverQuery.hasSucceed())
                         server = serverQuery.getServer();
-                    else if (server == null) {
+                    else if (server == null || serverQuery.isRetro()) {
                         if (!content.isEmpty())
                             serverQuery.getExceptions()
                                     .forEach(e -> e.throwException(message, this, lg, serverQuery.getServersFound()));
@@ -111,6 +112,7 @@ public class AlignmentCommand extends FetchCommand {
                             notFoundServer.throwException(message, this, lg);
                         return;
                     }
+                    if (ServerUtils.redirectIfRetro(server, message, this, lg)) return;
 
                     if (user.isPresent()) {
                         List<EmbedCreateSpec> embeds = OrderUser.getOrdersFromUser(user.get(), server, lg);
@@ -143,6 +145,7 @@ public class AlignmentCommand extends FetchCommand {
                             notFoundServer.throwException(message, this, lg);
                             return;
                         }
+                        if (ServerUtils.redirectIfRetro(server, message, this, lg)) return;
                         if(OrderUser.containsKeys(user.get().getId().asLong(), server, city, order)) {
                             OrderUser.get(user.get().getId().asLong(), server, city, order).get(0).setLevel(level);
                             if (level != 0)
@@ -240,6 +243,7 @@ public class AlignmentCommand extends FetchCommand {
                         notFoundServer.throwException(message, this, lg);
                         return;
                     }
+                    if (ServerUtils.redirectIfRetro(server, message, this, lg)) return;
 
                     List<EmbedCreateSpec> embeds = OrderUser.getOrdersFromCityOrOrder(guild.get().getMembers()
                                     .collectList().blockOptional().orElse(Collections.emptyList()),

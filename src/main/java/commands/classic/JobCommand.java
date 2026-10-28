@@ -66,7 +66,7 @@ public class JobCommand extends AbstractCommand {
                     || content.isEmpty()){
                 if (serverQuery.hasSucceed())
                     server = serverQuery.getServer();
-                else if (server == null) {
+                else if (server == null || serverQuery.isRetro()) {
                     if (!content.isEmpty())
                         serverQuery.getExceptions()
                                 .forEach(e -> e.throwException(message, this, lg, serverQuery.getServersFound()));
@@ -74,6 +74,7 @@ public class JobCommand extends AbstractCommand {
                         notFoundServer.throwException(message, this, lg);
                     return;
                 }
+                if (ServerUtils.redirectIfRetro(server, message, this, lg)) return;
 
                 if (user.isPresent()) {
                     List<EmbedCreateSpec> embeds = JobUser.getJobsFromUser(user.get(), server, lg);
@@ -125,15 +126,18 @@ public class JobCommand extends AbstractCommand {
 
                         if (m.group(3) != null) {
                             ServerUtils.ServerQuery query = ServerUtils.getServerDofusFromName(m.group(3), lg);
-                            if (serverQuery.hasSucceed())
-                                server = serverQuery.getServer();
-                            else
-                                serverQuery.getExceptions()
+                            if (query.hasSucceed())
+                                server = query.getServer();
+                            else {
+                                query.getExceptions()
                                         .forEach(e -> e.throwException(message, this, lg, query.getServersFound()));
+                                return;
+                            }
                         } else if (server == null) {
                             notFoundServer.throwException(message, this, lg);
                             return;
                         }
+                        if (ServerUtils.redirectIfRetro(server, message, this, lg)) return;
 
                         for (Job job : jobs)
                             if (JobUser.containsKeys(user.get().getId().asLong(), server, job))
@@ -185,6 +189,7 @@ public class JobCommand extends AbstractCommand {
                     notFoundServer.throwException(message, this, lg);
                     return;
                 }
+                if (ServerUtils.redirectIfRetro(server, message, this, lg)) return;
 
                 Set<Job> jobs = new HashSet<>();
 

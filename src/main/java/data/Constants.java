@@ -95,6 +95,12 @@ public class Constants {
     public final static String officialLogo = "https://s.ankama.com/www/static.ankama.com/g/modules/masterpage/block/header/navbar/dofus-touch/logo.png";
 
     /**
+     * KaellyRetro, the bot now handling DOFUS Retro servers
+     */
+    public final static String retroInvite = "https://discordapp.com/oauth2/authorize?&client_id=1239972754132832256&scope=bot";
+    public final static String retroAvatar = "https://raw.githubusercontent.com/kaellybot/kaelly-cdn/refs/heads/main/kaellyretro/id/face.webp";
+
+    /**
      * Tutorial URL
      */
     public final static String papychaURL = "https://papycha.fr/";

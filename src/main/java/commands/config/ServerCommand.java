@@ -131,6 +131,7 @@ public class ServerCommand extends AbstractCommand {
     private String getServersList(Language lg) {
         final List<String> SERVERS = ServerDofus.getServersDofus().stream()
                 .filter(server -> server.getGame() == Constants.game)
+                .filter(server -> !ServerUtils.isRetro(server))
                 .map(server -> server.getName())
                 .sorted()
                 .collect(Collectors.toList());
